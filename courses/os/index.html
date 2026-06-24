@@ -179,6 +179,9 @@ code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.9em;co
 <li>未使用的模块不必运行，大幅减少内存需求</li>
 <li>增强可移植性，修改代码量非常少</li>
 </ol>
+<div class="highlight" style="margin-top:12px">
+<strong>实例：</strong>华为鸿蒙 OS 采用的就是微内核结构，体现了高度模块化和可扩展性的优势。
+</div>
 </div>
 
 <!-- ==================== CH2 ==================== -->
@@ -233,7 +236,10 @@ code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.9em;co
 </div>
 
 <div class="warning">
-<strong>不能实现的转换：</strong>等待态→运行态、就绪态→等待态。加上挂起后有7种状态。
+<strong>不能实现的转换（老师重点强调）：</strong><br>
+① <strong>等待态 → 运行态</strong>（不可能）：等待事件发生后只能进入就绪队列排队，不能直接抢占 CPU。<br>
+② <strong>就绪态 → 等待态</strong>（不可能）：就绪状态尚未拿到 CPU，不会发生需要等待的事件。<br><br>
+<strong>七状态模型：</strong>引入"挂起"状态，当内存不够时将进程换出到外存，用于<strong>平衡系统负载</strong>，对应<strong>中级调度</strong>。加上挂起后共有 7 种状态。
 </div>
 </div>
 
@@ -306,6 +312,11 @@ code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.9em;co
 <div class="key-point">
 <strong>结论：</strong>FCFS性能最差，SJF性能最优（平均周转时间最短），HRRN介于两者之间但兼顾公平性。
 </div>
+
+<div class="warning" style="margin-top:16px">
+<strong>计算题易错点（老师重点提醒）：</strong><br>
+计算平均周转时间和带权周转时间时，<strong>一定要看清题目条件</strong>：是"随到随调度"还是"等所有作业全部到达后再开始调度"。两种方式结果完全不同！（参见课本75页课后题的陷阱）
+</div>
 </div>
 
 <h3 id="ch2-sync">2.3 同步与互斥</h3>
@@ -322,6 +333,24 @@ code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.9em;co
 <ul><li>信号量 S 加 1</li><li>若 S ≤ 0，唤醒一个等待进程</li></ul>
 </div>
 </div>
+</div>
+
+<div class="warning" style="margin-top:16px">
+<strong>生产者-消费者问题纠错（老师课上重点分析）：</strong><br>
+当一个进程既要申请<strong>同步信号量</strong>（如 empty/full），又要申请<strong>互斥信号量</strong>（mutex）时：<br>
+<strong>必须先 P 同步信号量，再 P 互斥信号量！</strong><br>
+如果先 P 互斥再 P 同步，当缓冲区满/空时会造成<strong>死锁</strong>。<br>
+V 操作的顺序无所谓。
+</div>
+
+<div class="card" style="margin-top:16px">
+<div class="card-title">前驱图问题（PV 操作应用）</div>
+<p>用 PV 操作控制进程执行的先后次序：</p>
+<ul>
+<li><strong>前驱进程</strong>执行完后执行 <strong>V 操作</strong>（发信号）</li>
+<li><strong>后继进程</strong>执行前执行 <strong>P 操作</strong>（等信号）</li>
+<li>每条前驱边对应一个信号量，初值为 0</li>
+</ul>
 </div>
 
 <h3 id="ch2-deadlock">2.4 死锁</h3>
@@ -393,6 +422,30 @@ code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.9em;co
 <li>物理地址 = 页框号 + 页内地址（拼接）</li>
 </ol>
 <div class="highlight">引入快表（TLB）后：先查快表，命中则直接得页框号（1次访存）；未命中再查页表（2次访存）</div>
+</div>
+
+<div class="card">
+<div class="card-title">分页地址计算方法 <span class="badge badge-important">重点</span></div>
+<p>若页面大小为 \(4KB = 2^{12}B\)，则逻辑地址的<strong>低 12 位为页内偏移</strong>，高位为页号。</p>
+<div class="highlight">
+<strong>例（课本101页，老师强调）：</strong>16K 页面，逻辑地址 0AC5H 和 1AC5H<br>
+页面大小 16K = 2<sup>14</sup>B → 低 14 位为偏移，高位为页号。<br>
+0AC5H = 00 0010 1011 0001 01 → 页号 = 0，偏移 = 0AC5H<br>
+1AC5H = 00 0110 1011 0001 01 → 页号 = 1，偏移 = 0AC5H<br>
+查页表：页号 0 → 物理块号 X，物理地址 = X 拼接 0AC5H<br>
+<strong>注意十六进制拆分时不要算错位数！</strong>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">分段地址转换与越界检查</div>
+<p>逻辑地址 = (段号, 段内偏移)。查段表得段始址和段长。</p>
+<div class="warning">
+<strong>必做步骤：越界检查！</strong><br>
+必须先比较：<strong>段内偏移 &lt; 段长</strong>？<br>
+&bull; 若越界 → 产生越界中断<br>
+&bull; 若未越界 → 物理地址 = 段始址 + 段内偏移
+</div>
 </div>
 
 <div class="card">
@@ -480,6 +533,15 @@ code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.9em;co
 </ul>
 </div>
 
+<div class="card">
+<div class="card-title">SPOOLing 技术（假脱机技术）</div>
+<p><strong>核心作用：</strong>利用磁盘作为缓冲，将<strong>独占设备</strong>（如打印机）改造为<strong>共享设备</strong>（虚拟设备）。</p>
+<div class="highlight">
+<strong>组成：</strong>输入井 / 输出井、输入缓冲区 / 输出缓冲区、输入进程 / 输出进程。<br>
+<strong>典型应用：</strong>打印机池——多个进程"同时"提交打印请求，实际由 SPOOLing 系统排队依次输出。
+</div>
+</div>
+
 <h3 id="ch4-disk">4.1 磁盘调度算法</h3>
 
 <div class="card">
@@ -557,10 +619,41 @@ code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.9em;co
 <div class="card">
 <div class="card-title">物理结构</div>
 <ul>
-<li><strong>顺序结构</strong>：连续存放，访问快但不灵活</li>
-<li><strong>链接结构</strong>：链表方式，灵活但不支持随机访问</li>
-<li><strong>索引结构</strong>：通过索引表定位，支持随机访问</li>
+<li><strong>顺序结构</strong>：连续存放，访问快但有外部碎片，不利于动态增长</li>
+<li><strong>链接结构</strong>：链表方式，无碎片易扩展，但<strong>只能顺序访问</strong>，可靠性差</li>
+<li><strong>索引结构</strong>：通过索引表定位，支持随机访问，无碎片，但索引表占额外空间</li>
 </ul>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">索引文件最大长度计算 <span class="badge badge-important">经典大题</span></div>
+<div class="highlight">
+<strong>计算套路：</strong>已知磁盘块大小（如 1KB）和盘块号占用字节数（如 4B），算出一个索引块能放的索引项数（1024/4 = 256 项）。<br><br>
+总文件大小 = (直接索引块数 + 一级间接索引项数 + 二级间接索引项数 + ...) &times; 块大小<br><br>
+<strong>例：</strong>13 个索引项，前 10 个直接索引，第 11 个一级间接（256 项），第 12 个二级间接（256&times;256 项），第 13 个三级间接。<br>
+最大文件 = (10 + 256 + 256&sup2; + 256&sup3;) &times; 1KB
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">空闲存储空间管理</div>
+<div class="grid-2">
+<div>
+<h4>位示图法（必考计算）</h4>
+<p>已知字长 \(n\)，第 \(i\) 行第 \(j\) 列：</p>
+<div class="formula">物理块号 b = i &times; n + j</div>
+<p>反之，已知块号 \(b\)：</p>
+<div class="formula">行号 i = b &divide; n&emsp;列号 j = b mod n</div>
+</div>
+<div>
+<h4>成组链接法（Unix/Linux 采用）</h4>
+<ul>
+<li>理解<strong>超级块</strong>的作用（栈顶指针）</li>
+<li><strong>分配</strong>：取栈顶块号；若栈空则读下一组到内存</li>
+<li><strong>回收</strong>：压入栈顶；若栈满则将当前栈写入回收块，新块作栈顶</li>
+</ul>
+</div>
 </div>
 </div>
 
@@ -586,11 +679,15 @@ code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.9em;co
 <strong>重点备考方向：</strong>
 <ul>
 <li>调度算法计算（FCFS / SJF / HRRN）<span class="badge badge-important">应用题</span></li>
+<li>PV 操作（生产者-消费者、前驱图）<span class="badge badge-important">应用题</span></li>
 <li>页面置换算法计算（OPT / FIFO / LRU）<span class="badge badge-important">应用题</span></li>
 <li>银行家算法（安全序列判断）<span class="badge badge-important">应用题</span></li>
-<li>磁盘调度算法（FCFS / SSTF / SCAN）<span class="badge badge-important">应用题</span></li>
-<li>PV操作（同步互斥）<span class="badge badge-info">简答/应用</span></li>
-<li>死锁四条件、页面置换对比<span class="badge badge-info">简答</span></li>
+<li>磁盘调度算法（FCFS / SSTF / SCAN / C-SCAN）— 给定请求序列计算总移动磁道数<span class="badge badge-important">应用题</span></li>
+<li>分页地址计算（十六进制地址转换）<span class="badge badge-important">应用题</span></li>
+<li>索引文件最大长度计算<span class="badge badge-important">应用题</span></li>
+<li>位示图法块号计算<span class="badge badge-info">填空</span></li>
+<li>死锁四条件及预防策略<span class="badge badge-info">简答</span></li>
+<li>微内核优势、SPOOLing 技术<span class="badge badge-info">简答</span></li>
 </ul>
 </div>
 </div>
