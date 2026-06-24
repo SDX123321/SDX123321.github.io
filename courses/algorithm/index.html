@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>算法设计与分析 - 期末复习</title>
+<style>
+:root {
+  --primary: #4f46e5;
+  --primary-light: #818cf8;
+  --primary-dark: #3730a3;
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-code: #1e293b;
+  --text: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --sidebar-w: 280px;
+  --shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+a { color:var(--primary); text-decoration:none; }
+/* Sidebar */
+.sidebar { position:fixed; left:0; top:0; width:var(--sidebar-w); height:100vh; background:#1e293b; color:#cbd5e1; overflow-y:auto; z-index:100; transition:transform .3s; }
+.sidebar-header { padding:24px 20px; border-bottom:1px solid #334155; }
+.sidebar-header h1 { font-size:18px; color:#f1f5f9; font-weight:700; }
+.sidebar-header p { font-size:12px; color:#94a3b8; margin-top:4px; }
+.sidebar nav { padding:12px 0; }
+.sidebar nav a { display:flex; align-items:center; gap:10px; padding:10px 20px; color:#94a3b8; font-size:14px; transition:all .2s; border-left:3px solid transparent; }
+.sidebar nav a:hover, .sidebar nav a.active { background:#334155; color:#f1f5f9; border-left-color:var(--primary-light); }
+.sidebar nav a .icon { font-size:18px; width:24px; text-align:center; }
+.progress-bar { margin:16px 20px; background:#334155; border-radius:8px; height:8px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius:8px; transition:width .5s; }
+.progress-text { padding:0 20px; font-size:12px; color:#94a3b8; }
+/* Main */
+.main { margin-left:var(--sidebar-w); min-height:100vh; }
+.top-bar { position:sticky; top:0; background:rgba(248,250,252,.9); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:12px 32px; display:flex; justify-content:space-between; align-items:center; z-index:50; }
+.menu-btn { display:none; background:none; border:none; font-size:24px; cursor:pointer; color:var(--text); }
+.top-actions { display:flex; gap:8px; }
+.btn { padding:8px 16px; border-radius:8px; border:none; font-size:13px; cursor:pointer; font-weight:500; transition:all .2s; }
+.btn-primary { background:var(--primary); color:#fff; }
+.btn-primary:hover { background:var(--primary-dark); }
+.btn-outline { background:transparent; border:1px solid var(--border); color:var(--text); }
+.btn-outline:hover { background:var(--bg); }
+.content { max-width:960px; margin:0 auto; padding:32px; }
+/* Chapter sections */
+.chapter { margin-bottom:40px; animation:fadeIn .4s; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+.chapter-header { display:flex; align-items:center; gap:12px; padding:20px 24px; background:var(--bg-card); border-radius:12px; box-shadow:var(--shadow); cursor:pointer; transition:all .2s; border:1px solid var(--border); }
+.chapter-header:hover { box-shadow:var(--shadow-lg); transform:translateY(-1px); }
+.chapter-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
+.chapter-title { flex:1; }
+.chapter-title h2 { font-size:18px; font-weight:700; }
+.chapter-title p { font-size:13px; color:var(--text-secondary); margin-top:2px; }
+.expand-icon { font-size:20px; color:var(--text-secondary); transition:transform .3s; }
+.chapter.open .expand-icon { transform:rotate(90deg); }
+.chapter-body { display:none; margin-top:12px; }
+.chapter.open .chapter-body { display:block; animation:fadeIn .3s; }
+/* Cards */
+.card { background:var(--bg-card); border-radius:12px; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:16px; overflow:hidden; }
+.card-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+.card-header h3 { font-size:15px; font-weight:600; }
+.card-body { padding:20px; display:none; }
+.card.open .card-body { display:block; }
+.card-body p, .card-body li { font-size:14px; line-height:1.8; }
+.card-body ul, .card-body ol { padding-left:20px; margin:8px 0; }
+.card-body li { margin-bottom:4px; }
+/* Key points */
+.keypoint { background:#eef2ff; border-left:4px solid var(--primary); padding:12px 16px; border-radius:0 8px 8px 0; margin:12px 0; font-size:14px; }
+.keypoint strong { color:var(--primary-dark); }
+.warn { background:#fef3c7; border-left-color:var(--warning); }
+.warn strong { color:#92400e; }
+/* Code */
+pre { background:var(--bg-code); color:#e2e8f0; padding:16px 20px; border-radius:8px; overflow-x:auto; font-size:13px; line-height:1.6; font-family:'JetBrains Mono','Fira Code',Consolas,monospace; margin:12px 0; position:relative; }
+pre .kw { color:#c084fc; }
+pre .fn { color:#67e8f9; }
+pre .cm { color:#64748b; }
+pre .str { color:#86efac; }
+pre .num { color:#fbbf24; }
+pre .tp { color:#f472b6; }
+.copy-btn { position:absolute; top:8px; right:8px; background:#334155; border:none; color:#94a3b8; padding:4px 8px; border-radius:4px; font-size:12px; cursor:pointer; }
+.copy-btn:hover { background:#475569; color:#e2e8f0; }
+/* Tables */
+table { width:100%; border-collapse:collapse; font-size:14px; margin:12px 0; }
+th { background:#f1f5f9; font-weight:600; text-align:left; padding:10px 12px; border:1px solid var(--border); }
+td { padding:10px 12px; border:1px solid var(--border); }
+tr:hover td { background:#f8fafc; }
+/* Quiz */
+.quiz-container { padding:20px; }
+.quiz-q { margin-bottom:20px; }
+.quiz-q h4 { font-size:14px; font-weight:600; margin-bottom:10px; }
+.quiz-q .opts { display:flex; flex-direction:column; gap:6px; }
+.quiz-opt { padding:10px 14px; border:1px solid var(--border); border-radius:8px; cursor:pointer; font-size:14px; transition:all .2s; }
+.quiz-opt:hover { border-color:var(--primary-light); background:#eef2ff; }
+.quiz-opt.selected { border-color:var(--primary); background:#eef2ff; }
+.quiz-opt.correct { border-color:var(--success); background:#dcfce7; }
+.quiz-opt.wrong { border-color:var(--error); background:#fef2f2; }
+.quiz-opt.disabled { pointer-events:none; }
+.quiz-result { margin-top:8px; padding:8px 12px; border-radius:6px; font-size:13px; font-weight:500; display:none; }
+.quiz-result.show { display:block; }
+.quiz-result.pass { background:#dcfce7; color:#166534; }
+.quiz-result.fail { background:#fef2f2; color:#991b1b; }
+/* Flashcards */
+.flashcard-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; margin:12px 0; }
+.flashcard { perspective:800px; height:160px; cursor:pointer; }
+.flashcard-inner { position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d; }
+.flashcard.flipped .flashcard-inner { transform:rotateX(180deg); }
+.flashcard-front, .flashcard-back { position:absolute; width:100%; height:100%; backface-visibility:hidden; border-radius:12px; display:flex; align-items:center; justify-content:center; padding:16px; text-align:center; font-size:14px; border:1px solid var(--border); }
+.flashcard-front { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; font-weight:600; }
+.flashcard-back { background:var(--bg-card); transform:rotateX(180deg); font-size:13px; line-height:1.6; }
+/* Comparison */
+.compare-table td:first-child { font-weight:600; background:#f8fafc; white-space:nowrap; }
+.tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; }
+.tag-blue { background:#dbeafe; color:#1e40af; }
+.tag-green { background:#dcfce7; color:#166534; }
+.tag-purple { background:#f3e8ff; color:#7c3aed; }
+.tag-orange { background:#ffedd5; color:#9a3412; }
+.tag-red { background:#fef2f2; color:#991b1b; }
+/* Responsive */
+@media(max-width:768px) {
+  .sidebar { transform:translateX(-100%); }
+  .sidebar.open { transform:none; }
+  .main { margin-left:0; }
+  .menu-btn { display:block; }
+  .content { padding:16px; }
+  .flashcard-grid { grid-template-columns:1fr; }
+}
+/* Scroll */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:3px; }
+/* Home section */
+.home-hero { text-align:center; padding:40px 20px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); border-radius:16px; color:#fff; margin-bottom:32px; }
+.home-hero h1 { font-size:28px; margin-bottom:8px; }
+.home-hero p { opacity:.9; font-size:15px; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:24px 0; }
+.stat-card { background:var(--bg-card); border-radius:12px; padding:20px; text-align:center; box-shadow:var(--shadow); border:1px solid var(--border); }
+.stat-card .num { font-size:28px; font-weight:700; color:var(--primary); }
+.stat-card .label { font-size:13px; color:var(--text-secondary); margin-top:4px; }
+/* Tab */
+.tabs { display:flex; gap:4px; border-bottom:2px solid var(--border); margin-bottom:16px; }
+.tab { padding:8px 16px; font-size:14px; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; color:var(--text-secondary); transition:all .2s; }
+.tab.active { color:var(--primary); border-bottom-color:var(--primary); font-weight:600; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+.hidden { display:none!important; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h1>算法设计与分析</h1>
+    <p>期末复习指南</p>
+  </div>
+  <nav style="padding:0;border-bottom:1px solid #334155;margin-bottom:8px;">
+    <a href="../../" style="display:flex;align-items:center;gap:8px;padding:10px 20px;color:#60a5fa;font-size:13px;text-decoration:none;"><span style="font-size:16px;">&#8592;</span> 返回课程主页</a>
+  </nav>
+  <div class="progress-text" style="padding-top:12px">学习进度: <span id="progressPct">0%</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+  <nav id="nav">
+    <a href="#home" class="active" data-ch="0"><span class="icon">&#127968;</span>首页</a>
+    <a href="#ch1" data-ch="1"><span class="icon">&#128214;</span>第1章 算法概述</a>
+    <a href="#ch2" data-ch="2"><span class="icon">&#128260;</span>第2章 递归与分治</a>
+    <a href="#ch3" data-ch="3"><span class="icon">&#128200;</span>第3章 动态规划</a>
+    <a href="#ch4" data-ch="4"><span class="icon">&#128176;</span>第4章 贪心算法</a>
+    <a href="#ch5" data-ch="5"><span class="icon">&#128270;</span>第5章 回溯法</a>
+    <a href="#ch6" data-ch="6"><span class="icon">&#128256;</span>第6章 分支限界法</a>
+    <a href="#ch7" data-ch="7"><span class="icon">&#127922;</span>第7章 随机化方法</a>
+    <a href="#compare" data-ch="8"><span class="icon">&#128202;</span>算法对比总结</a>
+    <a href="#quiz-all" data-ch="9"><span class="icon">&#9999;&#65039;</span>综合测验</a>
+  </nav>
+</aside>
+
+<!-- Main content -->
+<div class="main">
+  <div class="top-bar">
+    <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+    <div class="top-actions">
+      <button class="btn btn-outline" onclick="resetProgress()">重置进度</button>
+      <button class="btn btn-primary" onclick="toggleAllChapters()">展开/折叠全部</button>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+    <!-- ==================== HOME ==================== -->
+    <section id="home" class="chapter-section">
+      <div class="home-hero">
+        <h1>算法设计与分析</h1>
+        <p>基于复习课录音 + 课件 + 课本 + 笔记整理</p>
+      </div>
+      <div class="stats">
+        <div class="stat-card"><div class="num">7</div><div class="label">章节</div></div>
+        <div class="stat-card"><div class="num">50+</div><div class="label">核心知识点</div></div>
+        <div class="stat-card"><div class="num">60+</div><div class="label">练习题</div></div>
+        <div class="stat-card"><div class="num">20+</div><div class="label">代码示例</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header" onclick="toggleCard(this)"><h3>复习重点提示 (来自复习课)</h3><span class="expand-icon">&#9654;</span></div>
+        <div class="card-body">
+          <div class="keypoint"><strong>考试形式：</strong>开卷考试，有代码题(约5-6分)，选择题</div>
+          <ul>
+            <li><strong>第1章：</strong>算法四大性质(理解)、时间复杂度分析、渐进表达式O(n)、log默认以2为底、快速排序用平均复杂度</li>
+            <li><strong>第2章：</strong>递归函数两要素(递归体+递归出口)、分治三步骤(分解→递归→合并)、平衡子问题+独立子问题、二分查找/合并排序/快速排序</li>
+            <li><strong>第3章：</strong>最优子结构+重叠子问题、状态转移方程(必考!)、矩阵连乘、最长公共子序列、0-1背包、备忘录方法(自顶向下) vs 动态规划(自底向上)</li>
+            <li><strong>第4章：</strong>贪心选择性质+最优子结构、Dijkstra迭代过程(必考!)、哈夫曼编码(前缀码)、最小生成树、分数背包</li>
+            <li><strong>第5章：</strong>子集树(2^n) vs 排列树(n!)、约束函数剪枝(不可行解) vs 限界函数剪枝(非最优解)、DFS+剪枝</li>
+            <li><strong>第6章：</strong>BFS+剪枝、队列式 vs 优先队列式、限界函数设计、0-1背包/单源最短路径</li>
+            <li><strong>第7章：</strong>蒙特卡洛(大概率正确) vs 拉斯维加斯(完全正确/时间不确定)、概念题(2分)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CH1 ==================== -->
+    <section id="ch1" class="chapter-section hidden">
+      <div class="chapter" data-chapter="1">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#dbeafe;color:#2563eb">1</div>
+          <div class="chapter-title"><h2>第1章 算法概述</h2><p>算法定义、性质、复杂度分析</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <!-- 知识点 -->
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>1.1 算法的定义与性质</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p><strong>算法</strong>是解决问题的有规则的有限集合。</p>
+            <div class="keypoint"><strong>四大性质(必须理解)：</strong><br>
+            1. <strong>有限性</strong>：执行有限步后结束<br>
+            2. <strong>确定性</strong>：每步有确切定义，无歧义<br>
+            3. <strong>可行性</strong>：现有条件下可实现<br>
+            4. <strong>输入/输出</strong>：0个或多个输入，1个或多个输出</div>
+            <div class="keypoint warn"><strong>易错点：</strong>算法可以没有输入(0个输入)，但必须有输出！</div>
+            <p><strong>算法 vs 程序：</strong>算法具有有限性，程序可以无限运行(如操作系统)。</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>1.2 算法复杂性分析</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p><strong>时间复杂度</strong>分析一般采用<strong>最坏情况</strong>下的时间复杂度。</p>
+            <div class="keypoint warn"><strong>特例：</strong>快速排序使用<strong>平均时间复杂度</strong>进行分析(实验课讲过)！</div>
+            <p><strong>渐进复杂度排序：</strong></p>
+            <p style="font-family:monospace;padding:12px;background:#f1f5f9;border-radius:8px;text-align:center;font-size:15px">
+              O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n&sup2;) &lt; O(n&sup3;) &lt; O(2&sup;n) &lt; O(n!) &lt; O(n&sup;n)
+            </p>
+            <div class="keypoint"><strong>重要：</strong>本书中 log n 默认以 <strong>2为底</strong>，不是10也不是e！(与通信中的信噪比不同)</div>
+            <p><strong>渐进表达式求法：</strong></p>
+            <ol>
+              <li>去掉所有加法项常数</li>
+              <li>只保留最高阶项</li>
+              <li>去除高阶项系数</li>
+            </ol>
+            <p>例：3n&sup2;+10n → O(n&sup2;)，n&sup2;/100+2&sup;n → O(2&sup;n)，10log3&sup;n = 10n&middot;log3 → O(n)</p>
+            <p><strong>空间复杂度：</strong>递归算法空间复杂度 = 每层辅助空间 &times; 递归深度</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>1.3 渐进分析三种表示法</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table>
+              <tr><th>符号</th><th>含义</th><th>定义</th></tr>
+              <tr><td><strong>O (低阶)</strong></td><td>f的阶不高于g</td><td>&exist;C,n&sub0;，&forall;n&gt;n&sub0;，f(n)&le;Cg(n)</td></tr>
+              <tr><td><strong>&Omega; (高阶)</strong></td><td>f的阶不低于g</td><td>&exist;C,n&sub0;，&forall;n&gt;n&sub0;，f(n)&ge;Cg(n)</td></tr>
+              <tr><td><strong>&theta; (等阶)</strong></td><td>f与g同阶</td><td>f=O(g) 且 f=&Omega;(g)</td></tr>
+            </table>
+            <p><strong>证明方法：</strong>反证法、极限法</p>
+            <p>例：证明n&sup3;不是O(n&sup2;)：假设成立则n&sup3;&le;Cn&sup2;，即n&le;C对所有n成立，矛盾。</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第1章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch1"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CH2 ==================== -->
+    <section id="ch2" class="chapter-section hidden">
+      <div class="chapter" data-chapter="2">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#dcfce7;color:#16a34a">2</div>
+          <div class="chapter-title"><h2>第2章 递归与分治</h2><p>递归概念、分治策略、排序算法</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>2.1 递归基础</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>递归函数两要素：</strong><br>1. <strong>递归体</strong>：递归调用部分<br>2. <strong>递归出口(边界条件)</strong>：终止条件</div>
+            <div class="keypoint warn"><strong>没有递归出口 = 死循环 = 错误的递归！</strong></div>
+            <p><strong>经典递归：</strong>阶乘函数 n!、斐波那契数列</p>
+<pre><span class="kw">int</span> <span class="fn">factorial</span>(<span class="kw">int</span> n) {
+    <span class="kw">if</span>(n == <span class="num">1</span>) <span class="kw">return</span> <span class="num">1</span>;      <span class="cm">// 递归出口</span>
+    <span class="kw">return</span> <span class="fn">factorial</span>(n-<span class="num">1</span>) * n;  <span class="cm">// 递归体</span>
+}</pre>
+            <p><strong>递归复杂度分析：</strong>替换法、递归树法、主方法</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>2.2 分治法基本思想</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>分治三步骤：</strong><br>1. <strong>分解(Decompose)</strong>：大问题 → 小问题<br>2. <strong>递归(Conquer)</strong>：递归求解子问题<br>3. <strong>合并(Combine)</strong>：合并子问题的解</div>
+            <div class="keypoint"><strong>两个关键思想：</strong><br>
+            1. <strong>平衡子问题</strong>：子问题规模大致相等(如大学分班)<br>
+            2. <strong>独立子问题</strong>：子问题之间无重叠(如一个人不能同时在两个班)</div>
+            <div class="keypoint warn"><strong>分治 vs 动态规划关键区别：</strong>分治是<strong>独立</strong>子问题，动态规划是<strong>重叠</strong>子问题！</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>2.3 典型分治算法</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table>
+              <tr><th>算法</th><th>时间复杂度</th><th>要点</th></tr>
+              <tr><td>二分查找</td><td>O(log n)</td><td>有序序列，每次排除一半</td></tr>
+              <tr><td>归并排序</td><td>O(n log n)</td><td>稳定排序，需要额外空间</td></tr>
+              <tr><td>快速排序</td><td>O(n log n) 平均</td><td><strong>用平均复杂度分析</strong>，不稳定</td></tr>
+              <tr><td>棋盘覆盖</td><td>-</td><td>了解即可</td></tr>
+            </table>
+<pre><span class="cm">// 归并排序</span>
+<span class="kw">void</span> <span class="fn">mergeSort</span>(<span class="kw">int</span> a[], <span class="kw">int</span> left, <span class="kw">int</span> right) {
+    <span class="kw">if</span>(left < right) {
+        <span class="kw">int</span> mid = (left + right) >> <span class="num">1</span>;
+        <span class="fn">mergeSort</span>(a, left, mid);
+        <span class="fn">mergeSort</span>(a, mid+<span class="num">1</span>, right);
+        <span class="fn">merge</span>(a, left, mid, right);  <span class="cm">// 合并</span>
+    }
+}</pre>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>2.4 主方法(Master Theorem)</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p>对形如 T(n) = aT(n/b) + f(n) 的递归方程：</p>
+            <table>
+              <tr><th>情况</th><th>条件</th><th>结果</th></tr>
+              <tr><td>1</td><td>f(n) = O(n<sup>log<sub>b</sub>a-&epsilon;</sup>)</td><td>T(n) = &theta;(n<sup>log<sub>b</sub>a</sup>)</td></tr>
+              <tr><td>2</td><td>f(n) = &theta;(n<sup>log<sub>b</sub>a</sup>)</td><td>T(n) = &theta;(n<sup>log<sub>b</sub>a</sup> log n)</td></tr>
+              <tr><td>3</td><td>f(n) = &Omega;(n<sup>log<sub>b</sub>a+&epsilon;</sup>)</td><td>T(n) = &theta;(f(n))</td></tr>
+            </table>
+            <p>例：T(n) = 2T(n/2) + n → a=2, b=2, f(n)=n, n<sup>log<sub>2</sub>2</sup>=n，属于情况2，T(n)=&theta;(n log n)</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第2章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch2"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CH3 ==================== -->
+    <section id="ch3" class="chapter-section hidden">
+      <div class="chapter" data-chapter="3">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#fef3c7;color:#d97706">3</div>
+          <div class="chapter-title"><h2>第3章 动态规划</h2><p>最优子结构、状态转移方程、经典问题</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.1 两个基本要素</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>动态规划两大基本要素：</strong><br>
+            1. <strong>最优子结构性质</strong>：问题最优解包含子问题最优解<br>
+            2. <strong>重叠子问题性质</strong>：子问题被反复计算</div>
+            <div class="keypoint"><strong>动态规划的核心：</strong><br>
+            &bull; <strong>状态定义</strong>：明确 dp[i] 代表什么<br>
+            &bull; <strong>状态转移方程</strong>：当前状态与上一状态的关系(类似递归方程)<br>
+            &bull; <strong>转移顺序</strong>：<strong>自底向上</strong>，从最小规模子问题开始</div>
+            <div class="keypoint warn"><strong>复习课重点：</strong>状态转移方程一定要会推导！给你几个矩阵/序列，要能写出方程并算出最优解。</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.2 矩阵连乘问题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p>给定n个矩阵 &#123;A&sub1;,A&sub2;,...,A&subn;&#125;，其中A&subi;的维度为 p&sub(i-1); &times; p&subi;，求最优连乘顺序使乘法次数最少。</p>
+            <div class="keypoint"><strong>关键：</strong>矩阵连乘满足<strong>结合律</strong>但不满足<strong>交换律</strong></div>
+            <p><strong>状态定义：</strong>m[i][j] 表示 A&subi;...A&subj; 连乘的最少乘法次数</p>
+            <p><strong>状态转移方程：</strong></p>
+<pre>m[i][j] = {
+  <span class="num">0</span>                              , i = j
+  min{m[i][k] + m[k+1][j]         , i &le; k &lt; j
+      + p&sub(i-1);&middot;p&subk;&middot;p&subj;}
+}</pre>
+            <p><strong>求解顺序：</strong>自底向上，先算1个矩阵(为0)，再算2个矩阵连乘，逐步扩大到n个</p>
+            <div class="keypoint warn"><strong>复习课强调：</strong>给若干个矩阵(如3个2&times;2维矩阵)，要会算最小计算次数和最优结合顺序！</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.3 最长公共子序列(LCS)</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p><strong>子序列：</strong>不要求连续，但保持相对顺序。<strong>子串：</strong>要求连续。</p>
+            <p><strong>状态定义：</strong>c[i][j] 表示 X&subi; 和 Y&subj; 的LCS长度</p>
+            <p><strong>状态转移方程：</strong></p>
+<pre>c[i][j] = {
+  <span class="num">0</span>                              , i=0 或 j=0
+  c[i-1][j-1] + <span class="num">1</span>               , x&subi; = y&subj;
+  max(c[i-1][j], c[i][j-1])      , x&subi; &ne; y&subj;
+}</pre>
+            <div class="keypoint"><strong>应用场景：</strong>版本对比(标红差异)、论文查重(主位宾结构比对)、DNA序列比对</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.4 动态规划 vs 备忘录方法</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table>
+              <tr><th>对比项</th><th>动态规划</th><th>备忘录方法</th></tr>
+              <tr><td>求解方向</td><td><strong>自底向上</strong></td><td><strong>自顶向下</strong></td></tr>
+              <tr><td>实现方式</td><td>迭代(填表)</td><td>递归 + 缓存</td></tr>
+              <tr><td>子问题求解</td><td>求解所有子问题</td><td>只求解需要的子问题</td></tr>
+              <tr><td>算法复杂度</td><td>相同</td><td>相同</td></tr>
+            </table>
+            <div class="keypoint warn"><strong>复习课提醒：</strong>AI可能说动态规划不一定是自底向上，那是因为它包含了备忘录方法。课本定义：<strong>动态规划 = 自底向上</strong>，备忘录方法是另一种形式。</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.5 0-1背包(动态规划)</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p><strong>状态定义：</strong>dp[i][p] 表示前i个物品在背包容量为p时的最大价值</p>
+            <p><strong>状态转移方程：</strong></p>
+<pre>dp[i][p] = max(
+  dp[i-1][p],                  <span class="cm">// 不选第i个</span>
+  dp[i-1][p-w[i]] + v[i]       <span class="cm">// 选第i个(需p&ge;w[i])</span>
+)</pre>
+            <div class="keypoint"><strong>0-1背包用动态规划(非贪心)，分数背包用贪心算法！</strong></div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第3章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch3"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CH4 ==================== -->
+    <section id="ch4" class="chapter-section hidden">
+      <div class="chapter" data-chapter="4">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#fce7f3;color:#db2777">4</div>
+          <div class="chapter-title"><h2>第4章 贪心算法</h2><p>贪心选择性质、Dijkstra、哈夫曼编码</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>4.1 贪心算法基本要素</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>贪心算法两大性质：</strong><br>
+            1. <strong>贪心选择性质</strong>：通过一系列局部最优选择达到全局最优<br>
+            2. <strong>最优子结构性质</strong>：最优解包含子问题最优解(与动态规划相同)</div>
+            <table>
+              <tr><th>对比</th><th>相同点</th><th>不同点</th></tr>
+              <tr><td>动态规划</td><td>最优子结构</td><td>重叠子问题</td></tr>
+              <tr><td>贪心算法</td><td>最优子结构</td><td>贪心选择性质</td></tr>
+            </table>
+            <div class="keypoint warn"><strong>多段图最短路径：</strong>能用动态规划，<strong>不能</strong>用贪心算法！(复习课重点)</div>
+            <div class="keypoint"><strong>贪心不保证最优解，但通常接近最优解。</strong>在分支限界法中，贪心算法用于求下界。</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>4.2 Dijkstra单源最短路径</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>复习课重点：Dijkstra迭代过程必考！</strong>不仅要知道结果，还要写出过程。</div>
+            <p><strong>算法思想：</strong>从原点出发，每次选择距原点最近的未确定顶点加入S集合，更新distance数组。</p>
+            <p><strong>核心概念：</strong></p>
+            <ul>
+              <li><strong>S集合</strong>：已确定最短路径的顶点集合</li>
+              <li><strong>特殊路径</strong>：从源到u且只经过S中顶点的路径</li>
+              <li><strong>贪心选择</strong>：从V-S中选距离最小的顶点加入S</li>
+            </ul>
+            <p><strong>迭代过程：</strong></p>
+            <ol>
+              <li>初始化：S=&#123;v&sub0;&#125;，distance[i]=cost[v&sub0;][i]</li>
+              <li>从V-S中选distance最小的顶点w加入S</li>
+              <li>更新：distance[j] = min(distance[j], distance[w]+cost[w][j])</li>
+              <li>重复直到S包含所有顶点</li>
+            </ol>
+<pre><span class="kw">void</span> <span class="fn">Dijkstra</span>(<span class="kw">int</span> cost[][], <span class="kw">int</span> n, <span class="kw">int</span> v0, <span class="kw">int</span> dist[], <span class="kw">int</span> prev[]) {
+    <span class="kw">int</span> s[n] = &#123;<span class="num">0</span>&#125;;
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>; i<n; i++) &#123;
+        dist[i] = cost[v0][i];  prev[i] = (dist[i]&lt;MAX)?v0:-<span class="num">1</span>;
+    &#125;
+    dist[v0]=<span class="num">0</span>; s[v0]=<span class="num">1</span>;
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>; i&lt;n; i++) &#123;
+        <span class="cm">// 贪心选择：找V-S中distance最小的顶点u</span>
+        <span class="kw">int</span> u=v0, mindis=MAX;
+        <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>; j&lt;n; j++)
+            <span class="kw">if</span>(!s[j] && dist[j]&lt;mindis) &#123; mindis=dist[j]; u=j; &#125;
+        s[u]=<span class="num">1</span>;
+        <span class="cm">// 更新distance</span>
+        <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>; j&lt;n; j++)
+            <span class="kw">if</span>(!s[j] && cost[u][j]&lt;MAX)
+                dist[j] = min(dist[j], dist[u]+cost[u][j]);
+    &#125;
+&#125;</pre>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>4.3 哈夫曼编码</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>核心概念 - 前缀码：</strong>任何一个字符的代码都不是其他字符代码的前缀。避免解码歧义！</div>
+            <p><strong>应用：</strong>文本无损压缩(与图像/视频的有损压缩不同)</p>
+            <p><strong>构建过程：</strong></p>
+            <ol>
+              <li>统计每个字符出现频率</li>
+              <li>每次选频率最小的两个节点合并</li>
+              <li>重复直到只剩一棵树</li>
+              <li>左分支编码0，右分支编码1</li>
+            </ol>
+            <p><strong>哈夫曼树特点：</strong>没有度为1的节点，权值越大的节点离根越近。</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>4.4 最小生成树 & 其他</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table>
+              <tr><th>算法</th><th>策略</th><th>方法</th></tr>
+              <tr><td><strong>Kruskal</strong></td><td>每次选全局最小边</td><td>边排序 + 并查集判环</td></tr>
+              <tr><td><strong>Prim</strong></td><td>每次扩展最近顶点</td><td>从一个顶点开始扩展</td></tr>
+            </table>
+            <p><strong>分数背包(部分背包)：</strong>按单位重量价值 v/w 降序排列，依次装入。</p>
+<pre><span class="cm">// 分数背包 - 贪心</span>
+<span class="kw">double</span> <span class="fn">greedyKnapsack</span>(Item items[], <span class="kw">int</span> n, <span class="kw">int</span> cap) &#123;
+    sort(items, items+n, cmp);  <span class="cm">// 按v/w降序</span>
+    <span class="kw">double</span> ans = <span class="num">0</span>;
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>; i&lt;n; i++) &#123;
+        <span class="kw">if</span>(cap >= items[i].w) &#123; ans += items[i].v; cap -= items[i].w; &#125;
+        <span class="kw">else</span> &#123; ans += (<span class="kw">double</span>)cap * items[i].v / items[i].w; <span class="kw">break</span>; &#125;
+    &#125;
+    <span class="kw">return</span> ans;
+&#125;</pre>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第4章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch4"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CH5 ==================== -->
+    <section id="ch5" class="chapter-section hidden">
+      <div class="chapter" data-chapter="5">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#e0e7ff;color:#4f46e5">5</div>
+          <div class="chapter-title"><h2>第5章 回溯法</h2><p>解空间树、剪枝策略、DFS</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>5.1 基本概念</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>回溯法 = DFS + 剪枝</strong><br>
+            目的：找出<strong>所有解</strong><br>
+            数据结构：栈(隐式递归栈)<br>
+            搜索方式：<strong>深度优先搜索</strong></div>
+            <p><strong>解空间树类型：</strong></p>
+            <table>
+              <tr><th>类型</th><th>叶子节点数</th><th>典型问题</th></tr>
+              <tr><td><strong>子集树</strong></td><td>2<sup>n</sup></td><td>0-1背包、子集和问题</td></tr>
+              <tr><td><strong>排列树</strong></td><td>n!</td><td>TSP旅行售货员、N皇后</td></tr>
+              <tr><td><strong>满m叉树</strong></td><td>m<sup>n</sup></td><td>图着色(m种颜色)</td></tr>
+            </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>5.2 剪枝策略</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>两种剪枝函数：</strong><br>
+            1. <strong>约束函数</strong>：剪去<strong>不可行解</strong>(不满足约束条件)<br>
+            2. <strong>限界函数</strong>：剪去<strong>可行但非最优解</strong></div>
+            <p><strong>以0-1背包为例(子集树)：</strong></p>
+            <ul>
+              <li><strong>左分支(选)</strong>：约束剪枝 tw+w[i] &le; W</li>
+              <li><strong>右分支(不选)</strong>：限界剪枝，用上界函数bound判断</li>
+            </ul>
+            <div class="keypoint"><strong>回溯法框架(子集树)：</strong></div>
+<pre><span class="kw">void</span> <span class="fn">backtrack</span>(<span class="kw">int</span> i) &#123;
+    <span class="kw">if</span>(i > n) <span class="fn">output</span>(x);  <span class="cm">// 叶子节点，找到一个解</span>
+    <span class="kw">else</span> &#123;
+        x[i] = <span class="num">1</span>;  <span class="cm">// 左分支：选择</span>
+        <span class="kw">if</span>(constraint(i) && bound(i)) <span class="fn">backtrack</span>(i+<span class="num">1</span>);
+        x[i] = <span class="num">0</span>;  <span class="cm">// 右分支：不选</span>
+        <span class="kw">if</span>(constraint(i) && bound(i)) <span class="fn">backtrack</span>(i+<span class="num">1</span>);
+    &#125;
+&#125;</pre>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>5.3 经典问题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p><strong>N皇后问题：</strong>在N&times;N棋盘放N个皇后，不能同行/同列/同斜线</p>
+            <p>约束：x[i]&ne;x[j] 且 |i-j| &ne; |x[i]-x[j]|</p>
+<pre><span class="kw">int</span> <span class="fn">place</span>(<span class="kw">int</span> j) &#123;
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>; i&lt;j; i++)
+        <span class="kw">if</span>(abs(j-i)==abs(x[j]-x[i]) || x[j]==x[i]) <span class="kw">return</span> <span class="num">0</span>;
+    <span class="kw">return</span> <span class="num">1</span>;
+&#125;
+<span class="kw">void</span> <span class="fn">queen</span>(<span class="kw">int</span> t) &#123;
+    <span class="kw">if</span>(t>=n) sum++;
+    <span class="kw">else for</span>(<span class="kw">int</span> j=t; j&lt;=n; j++) &#123;
+        swap(x[t], x[j]);
+        <span class="kw">if</span>(<span class="fn">place</span>(t)) <span class="fn">queen</span>(t+<span class="num">1</span>);
+        swap(x[t], x[j]);
+    &#125;
+&#125;</pre>
+            <p><strong>TSP旅行售货员：</strong>排列树，找经过所有城市恰好一次并回到起点的最短回路。</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第5章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch5"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CH6 ==================== -->
+    <section id="ch6" class="chapter-section hidden">
+      <div class="chapter" data-chapter="6">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#fef9c3;color:#ca8a04">6</div>
+          <div class="chapter-title"><h2>第6章 分支限界法</h2><p>BFS搜索、限界函数、最优解</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>6.1 基本概念</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>分支限界法 = BFS + 剪枝</strong><br>
+            目的：找出<strong>最优解</strong>(单个)<br>
+            数据结构：队列 / 优先队列(堆)<br>
+            搜索方式：<strong>广度优先搜索</strong></div>
+            <table>
+              <tr><th>对比</th><th>回溯法</th><th>分支限界法</th></tr>
+              <tr><td>搜索方式</td><td>DFS(深度优先)</td><td>BFS(广度优先)</td></tr>
+              <tr><td>目的</td><td>所有解</td><td>最优解</td></tr>
+              <tr><td>数据结构</td><td>栈</td><td>队列/优先队列</td></tr>
+              <tr><td>剪枝</td><td>约束+限界</td><td>约束+限界</td></tr>
+              <tr><td>结点扩展</td><td>一次一个孩子</td><td>一次所有孩子</td></tr>
+            </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>6.2 两种组织形式</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>队列式(普通)：</strong>FIFO，按入队顺序扩展<br>
+            <strong>优先队列式：</strong>按优先级(如上界值)扩展，<strong>上界越高越优先</strong></div>
+            <div class="keypoint warn"><strong>复习课重点：</strong>优先队列分支限界法要注意使用的<strong>数据结构</strong>是堆(大根堆/小根堆)。优先级根据上界(UB)确定。</div>
+            <p><strong>限界函数设计：</strong>每个活结点计算一个上界值，决定扩展顺序。</p>
+            <p><strong>保存最优解向量的两种方法：</strong></p>
+            <ol>
+              <li>每个结点保存从根到该结点的路径(空间大但简单)</li>
+              <li>记录父节点信息，找到最优解后回溯路径(空间小)</li>
+            </ol>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>6.3 单源最短路径(分支限界)</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p>用BFS/优先队列BFS求解：</p>
+<pre><span class="cm">// 优先队列式 - 用小根堆</span>
+<span class="kw">struct</span> Node &#123;
+    <span class="kw">int</span> vno, length;
+    <span class="kw">bool</span> <span class="kw">operator</span>&lt;(<span class="kw">const</span> Node&amp; b) <span class="kw">const</span> &#123;
+        <span class="kw">return</span> length > b.length;  <span class="cm">// 小根堆</span>
+    &#125;
+&#125;;
+<span class="kw">void</span> <span class="fn">bfs</span>(<span class="kw">int</span> v) &#123;
+    priority_queue&lt;Node&gt; pq;
+    pq.push(&#123;v, <span class="num">0</span>&#125;); dist[v]=<span class="num">0</span>;
+    <span class="kw">while</span>(!pq.empty()) &#123;
+        Node e = pq.top(); pq.pop();
+        <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>; j&lt;n; j++)
+            <span class="kw">if</span>(a[e.vno][j]&lt;INF && e.length+a[e.vno][j]&lt;dist[j]) &#123;
+                dist[j] = e.length + a[e.vno][j];
+                prev[j] = e.vno;
+                pq.push(&#123;j, dist[j]&#125;);
+            &#125;
+    &#125;
+&#125;</pre>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第6章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch6"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CH7 ==================== -->
+    <section id="ch7" class="chapter-section hidden">
+      <div class="chapter" data-chapter="7">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#f3e8ff;color:#7c3aed">7</div>
+          <div class="chapter-title"><h2>第7章 随机化方法</h2><p>蒙特卡洛 vs 拉斯维加斯</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>7.1 两种随机算法</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>复习课：随机算法就一道2分的概念题！把概念搞清楚即可。</strong></div>
+            <table>
+              <tr><th>类型</th><th>结果正确性</th><th>时间确定性</th><th>应用</th></tr>
+              <tr><td><strong>蒙特卡洛(Monte Carlo)</strong></td><td>大概率正确，小概率出错</td><td>确定</td><td>素数判定、图像处理去噪</td></tr>
+              <tr><td><strong>拉斯维加斯(Las Vegas)</strong></td><td>完全正确</td><td>不确定</td><td>N皇后问题</td></tr>
+            </table>
+            <div class="keypoint"><strong>记忆口诀：</strong><br>
+            蒙特卡洛 = 概率保真，可能出错(有时间保证)<br>
+            拉斯维加斯 = 结果保真，可能慢(无时间保证)</div>
+            <p><strong>应用背景(数字媒体)：</strong></p>
+            <ul>
+              <li>图像加白噪声 → 随机算法</li>
+              <li>复现实验 → 保存噪声图像 或 多组数据取平均</li>
+              <li>噪声是随机的，信道突发错误是随机的</li>
+            </ul>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第7章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch7"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== COMPARE ==================== -->
+    <section id="compare" class="chapter-section hidden">
+      <div class="chapter" data-chapter="8">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#f1f5f9;color:#475569">&#128202;</div>
+          <div class="chapter-title"><h2>算法对比总结</h2><p>核心算法横向对比、闪卡复习</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>六大算法策略对比</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table class="compare-table">
+              <tr><th>策略</th><th>关键性质</th><th>搜索方式</th><th>子问题</th><th>目的</th><th>典型问题</th></tr>
+              <tr><td>分治法</td><td>平衡+独立子问题</td><td>递归</td><td>独立</td><td>分解求解</td><td>归并排序、快速排序</td></tr>
+              <tr><td>动态规划</td><td>最优子结构+重叠</td><td>自底向上</td><td>重叠</td><td>最优解</td><td>矩阵连乘、LCS、背包</td></tr>
+              <tr><td>贪心算法</td><td>贪心选择+最优子结构</td><td>局部最优</td><td>独立</td><td>近似最优</td><td>Dijkstra、哈夫曼</td></tr>
+              <tr><td>回溯法</td><td>约束+限界剪枝</td><td>DFS</td><td>-</td><td>所有解</td><td>N皇后、TSP</td></tr>
+              <tr><td>分支限界</td><td>限界函数</td><td>BFS</td><td>-</td><td>最优解</td><td>0-1背包、最短路径</td></tr>
+              <tr><td>随机化</td><td>概率性</td><td>-</td><td>-</td><td>近似/精确</td><td>素数判定、N皇后</td></tr>
+            </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>0-1背包问题：各章解法对比</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table class="compare-table">
+              <tr><th>方法</th><th>复杂度</th><th>能否最优</th><th>章节</th></tr>
+              <tr><td>动态规划</td><td>O(nW)</td><td>是</td><td>第3章</td></tr>
+              <tr><td>回溯法(子集树)</td><td>O(2<sup>n</sup>)(剪枝后降低)</td><td>是</td><td>第5章</td></tr>
+              <tr><td>分支限界法</td><td>最坏指数级</td><td>是</td><td>第6章</td></tr>
+              <tr><td>贪心(分数背包)</td><td>O(n log n)</td><td>分数背包最优，0-1不一定</td><td>第4章</td></tr>
+            </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>闪卡复习 - 点击翻转</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="flashcard-grid" id="flashcardGrid"></div>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== QUIZ ALL ==================== -->
+    <section id="quiz-all" class="chapter-section hidden">
+      <div class="chapter" data-chapter="9">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#fee2e2;color:#dc2626">&#9999;&#65039;</div>
+          <div class="chapter-title"><h2>综合测验</h2><p>涵盖全部章节的综合练习</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card">
+            <div class="card-body quiz-container" data-quiz="final"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// ==================== QUIZ DATA ====================
+const quizzes = {
+ch1: [
+  {q:"算法的四大基本性质不包括以下哪项？", opts:["有限性","确定性","并行性","可行性"], ans:2, explain:"算法四大性质：有限性、确定性、可行性、输入/输出。并行性不是算法的基本性质。"},
+  {q:"以下关于算法输入的说法正确的是？", opts:["算法必须有至少一个输入","算法可以没有输入(0个)","算法必须有多个输入","没有输入的不是算法"], ans:1, explain:"算法可以有0个或多个输入。例如计算常数的算法不需要输入。"},
+  {q:"快速排序的算法复杂度通常用什么来分析？", opts:["最坏情况","最好情况","平均情况","空间复杂度"], ans:2, explain:"快速排序的特例：使用平均时间复杂度O(n log n)来分析，而非最坏情况O(n²)。"},
+  {q:"本书中log n默认以什么为底？", opts:["10","e","2","任意"], ans:2, explain:"本书默认log n以2为底。与通信领域(常用10为底)不同。"},
+  {q:"10·log₃ⁿ的渐进表达式是？", opts:["O(log n)","O(n)","O(n log n)","O(n²)"], ans:1, explain:"10·log₃ⁿ = 10·n·log₃，去掉常数得O(n)。"},
+  {q:"O(n log n)与O(n)的复杂度关系是？", opts:["O(n log n)更低","相同","O(n log n)更高","无法比较"], ans:2, explain:"O(n log n)的增长速度快于O(n)，复杂度更高。"},
+  {q:"f(n)=O(g(n))表示什么含义？", opts:["f的阶高于g","f的阶不高于g","f与g同阶","f的阶不低于g"], ans:1, explain:"O(低阶)表示f的阶不高于g，即存在C使得f(n)≤Cg(n)。"}
+],
+ch2: [
+  {q:"递归函数的两要素是什么？", opts:["分解与合并","递归体与递归出口","输入与输出","参数与返回值"], ans:1, explain:"递归函数需要：递归体(递归调用部分)和递归出口(边界条件)。"},
+  {q:"分治法的三个步骤依次是？", opts:["搜索、剪枝、输出","分解、递归求解、合并","初始化、迭代、终止","选择、交换、排序"], ans:1, explain:"分治法：分解问题→递归求解子问题→合并子问题的解。"},
+  {q:"分治法的子问题具有什么特征？", opts:["重叠且不独立","独立且平衡","独立但不平衡","重叠且平衡"], ans:1, explain:"分治法要求子问题独立(无重叠)且平衡(规模大致相等)。"},
+  {q:"快速排序的平均时间复杂度是？", opts:["O(n)","O(n log n)","O(n²)","O(log n)"], ans:1, explain:"快速排序平均O(n log n)，最坏O(n²)(已排序时)。"},
+  {q:"归并排序与快速排序相比，哪个是稳定的？", opts:["快速排序","都稳定","归并排序","都不稳定"], ans:2, explain:"归并排序是稳定排序，快速排序是不稳定的。"},
+  {q:"T(n)=2T(n/2)+n 的解是？", opts:["O(n)","O(n log n)","O(n²)","O(log n)"], ans:1, explain:"用主方法：a=2,b=2,f(n)=n, n^(log₂2)=n，情况2，T(n)=θ(n log n)。"},
+  {q:"没有递归出口的递归函数会导致？", opts:["编译错误","栈溢出/死循环","正常运行","返回0"], ans:1, explain:"没有递归出口意味着无限递归，最终导致栈溢出。"},
+  {q:"二分查找的时间复杂度是？", opts:["O(n)","O(log n)","O(n log n)","O(1)"], ans:1, explain:"二分查找每次排除一半元素，时间复杂度O(log n)。"}
+],
+ch3: [
+  {q:"动态规划的两个核心性质是？", opts:["贪心选择+最优子结构","最优子结构+重叠子问题","独立子问题+平衡子问题","约束+限界"], ans:1, explain:"动态规划：最优子结构性质+重叠子问题性质。"},
+  {q:"动态规划的求解方向是？", opts:["自顶向下","自底向上","随机","从左到右"], ans:1, explain:"标准动态规划是自底向上，从最小规模子问题开始求解。"},
+  {q:"备忘录方法的求解方向是？", opts:["自底向上","自顶向下","随机","无所谓"], ans:1, explain:"备忘录方法是自顶向下的递归+缓存方式。两者复杂度相同。"},
+  {q:"矩阵连乘满足什么运算律？", opts:["交换律","结合律","交换律+结合律","分配律"], ans:1, explain:"矩阵连乘满足结合律但不满足交换律，所以计算顺序影响计算量。"},
+  {q:"状态转移方程与递归方程的关系是？", opts:["完全不同","概念类似但有区别","完全相同","互斥"], ans:1, explain:"状态转移方程和递归方程概念类似但有区别，是动态规划中的特定概念。"},
+  {q:"斐波那契数列递归解的时间复杂度和DP解分别是？", opts:["O(n)和O(n)","O(2^n)和O(n)","O(n²)和O(n)","O(n!)和O(n)"], ans:1, explain:"直接递归O(2^n)(重叠子问题)，动态规划O(n)。"},
+  {q:"LCS(最长公共子序列)不要求子序列？", opts:["有序","连续","非空","不同"], ans:1, explain:"子序列不要求连续，但要保持相对顺序。子串才要求连续。"},
+  {q:"动态规划和分治法的关键区别是？", opts:["子问题是否独立","是否有递归","是否用数组","是否排序"], ans:0, explain:"分治法=独立子问题，动态规划=重叠子问题。这是关键区别。"}
+],
+ch4: [
+  {q:"贪心算法与动态规划的相同点是？", opts:["都有贪心选择性质","都有最优子结构性质","都自底向上","都求所有解"], ans:1, explain:"两者都有最优子结构性质。区别：贪心有贪心选择性质，DP有重叠子问题。"},
+  {q:"多段图最短路径问题能用贪心算法求解吗？", opts:["能","不能","有时能","视情况而定"], ans:1, explain:"多段图最短路径能用动态规划，但不能用贪心算法。这是复习课重点！"},
+  {q:"哈夫曼编码是什么类型的压缩？", opts:["有损压缩","无损压缩","混合压缩","不压缩"], ans:1, explain:"哈夫曼编码是无损数据压缩(文本压缩)。图像视频才是有损压缩。"},
+  {q:"前缀码的定义是什么？", opts:["所有编码等长","一个编码不是另一个的前缀","编码长度最短","使用二进制"], ans:1, explain:"前缀码：任何字符的代码都不是其他字符代码的前缀，避免解码歧义。"},
+  {q:"Dijkstra算法每次从V-S中选择什么顶点加入S？", opts:["距离最远的","距离最近的","度数最大的","编号最小的"], ans:1, explain:"贪心选择：从V-S中选distance最小(距源点最近)的顶点加入S。"},
+  {q:"Kruskal最小生成树算法的策略是？", opts:["每次选最近顶点","每次选最小边","每次选最大边","随机选边"], ans:1, explain:"Kruskal每次选全局最小的边(如果不成环就加入)。Prim是从顶点扩展。"},
+  {q:"分数背包的贪心策略是？", opts:["选最轻的","选最贵的","选单位价值最大的","选体积最小的"], ans:2, explain:"分数背包按v/w(单位重量价值)降序排列，依次装入。"},
+  {q:"用贪心算法求解不一定能得到最优解，但一般能？", opts:["得到最差解","得到精确解","接近最优解","无解"], ans:2, explain:"即使不满足贪心选择性质，贪心算法一般也能接近最优解。在分支限界中用于求下界。"}
+],
+ch5: [
+  {q:"回溯法的搜索方式是？", opts:["BFS","DFS","随机搜索","贪心搜索"], ans:1, explain:"回溯法 = DFS + 剪枝，深度优先搜索解空间树。"},
+  {q:"回溯法的目的是？", opts:["找最优解","找所有解","找一个解","排序"], ans:1, explain:"回溯法目的是找出所有满足条件的解。分支限界法才找最优解。"},
+  {q:"0-1背包问题的解空间树是什么类型？", opts:["排列树","子集树","满m叉树","二叉搜索树"], ans:1, explain:"0-1背包每个物品选或不选，对应子集树(2^n个叶子节点)。"},
+  {q:"旅行售货员问题(TSP)的解空间树是什么类型？", opts:["子集树","满m叉树","排列树","线性表"], ans:2, explain:"TSP是排列树(n!个叶子节点)，枚举城市的所有排列。"},
+  {q:"约束函数剪枝去掉的是什么？", opts:["最优解","可行解","不可行解","所有解"], ans:2, explain:"约束函数去掉不满足约束条件的不可行解。限界函数去掉可行但非最优的解。"},
+  {q:"回溯法的空间复杂度通常是？", opts:["O(2^n)","O(n!)","O(n)","O(n²)"], ans:2, explain:"空间复杂度为递归深度O(n)，这是回溯法的一个优势。"},
+  {q:"子集树的时间复杂度(不剪枝)是？", opts:["O(n)","O(n²)","O(2^n)","O(n!)"], ans:2, explain:"子集树有2^n个叶子节点，总结点数O(2^n)。"},
+  {q:"N皇后问题的约束条件是？", opts:["不同行","不同列","不同行+不同列+不同斜线","只是不同行"], ans:2, explain:"N皇后：任意两皇后不同行、不同列、不同对角线。|i-j|≠|x[i]-x[j]|。"}
+],
+ch6: [
+  {q:"分支限界法的搜索方式是？", opts:["DFS","BFS","随机","贪心"], ans:1, explain:"分支限界法 = BFS + 剪枝，广度优先搜索。"},
+  {q:"分支限界法的目的是？", opts:["找所有解","找最优解","找一个可行解","排序"], ans:1, explain:"分支限界法目的是找最优解(单个)，而回溯法找所有解。"},
+  {q:"优先队列式分支限界法中，上界值越高表示？", opts:["越不值得扩展","越值得优先扩展","无所谓","已找到最优解"], ans:1, explain:"上界值越高，说明该分支越有可能产生最优解，应优先扩展。"},
+  {q:"分支限界法扩展结点的方式是？", opts:["一次扩展一个孩子","一次扩展所有孩子","随机扩展","不扩展"], ans:1, explain:"分支限界法一次性产生当前扩展结点的所有孩子结点。"},
+  {q:"队列式分支限界法使用什么数据结构？", opts:["栈","优先队列","普通队列","二叉树"], ans:2, explain:"队列式用普通队列(FIFO)，优先队列式用堆(按优先级)。"},
+  {q:"分支限界法与回溯法最大的区别是？", opts:["剪枝方式","搜索方式(DFS vs BFS)","时间复杂度","空间复杂度"], ans:1, explain:"最核心区别是搜索方式：回溯法用DFS，分支限界用BFS。"}
+],
+ch7: [
+  {q:"蒙特卡洛算法的特点是？", opts:["结果一定正确，时间不确定","大概率正确，可能出错","完全正确且时间确定","随机且无意义"], ans:1, explain:"蒙特卡洛：大概率正确，小概率出错(概率容错)，时间确定。"},
+  {q:"拉斯维加斯算法的特点是？", opts:["大概率正确","完全正确，时间不确定","一定在O(n)内完成","可能返回错误结果"], ans:1, explain:"拉斯维加斯：结果完全正确，但运行时间不确定。"},
+  {q:"以下哪个应用适合使用随机算法？", opts:["排序","图像去噪中的噪声模拟","查找","字符串匹配"], ans:1, explain:"图像处理中噪声是随机的，适合用随机算法模拟和处理。"},
+  {q:"蒙特卡洛搜索(MCTS)的典型应用是？", opts:["排序","AlphaGo围棋AI","编译器","数据库"], ans:1, explain:"MCTS(蒙特卡洛树搜索)广泛用于博弈AI，如AlphaGo。"},
+  {q:"复现随机实验的正确方法是？", opts:["改变算法","保存随机种子或噪声图，多组数据取平均","增加数据量","重新编译"], ans:1, explain:"保存噪声图像/使用相同随机种子，或用多组随机数据取平均值。"}
+],
+final: [
+  {q:"[第1章] 算法的输入个数可以是？", opts:["必须1个","必须多个","0个或多个","不能为0"], ans:2, explain:"算法可以有0个或多个输入。"},
+  {q:"[第2章] 分治法和动态规划的关键区别？", opts:["子问题是否独立","是否用递归","是否有最优解","是否用数组"], ans:0, explain:"分治=独立子问题，DP=重叠子问题。"},
+  {q:"[第3章] 动态规划求解矩阵连乘的时间复杂度是？", opts:["O(n)","O(n²)","O(n³)","O(2^n)"], ans:2, explain:"矩阵连乘DP解法时间复杂度O(n³)。"},
+  {q:"[第3章] DP与备忘录方法的算法复杂度？", opts:["DP更快","备忘录更快","相同","无法比较"], ans:2, explain:"虽然求解方向不同，但两者算法复杂度相同。"},
+  {q:"[第4章] Dijkstra算法属于什么类型算法？", opts:["动态规划","分治","贪心","回溯"], ans:2, explain:"Dijkstra是贪心算法，每次选距源点最近的顶点。"},
+  {q:"[第4章] 哈夫曼编码中，频率高的字符编码应该？", opts:["更长","更短","等长","随机"], ans:1, explain:"频率高的字符离根更近，编码更短(实现压缩)。"},
+  {q:"[第5章] 回溯法解N皇后问题，解空间树是？", opts:["子集树","排列树","满n叉树","都可以"], ans:1, explain:"N皇后用排列树(每行选一列放置皇后)。"},
+  {q:"[第5章] 限界函数剪掉的是？", opts:["不可行解","可行非最优解","最优解","所有解"], ans:1, explain:"限界函数剪去可行但不可能是最优解的分支。"},
+  {q:"[第6章] 分支限界法使用什么数据结构？", opts:["栈","队列或优先队列","链表","哈希表"], ans:1, explain:"队列式用队列，优先队列式用堆。"},
+  {q:"[第6章] 分支限界法找的是？", opts:["所有可行解","最优解","最大解","任意解"], ans:1, explain:"分支限界法目的：找出最优解。"},
+  {q:"[第7章] 拉斯维加斯算法的缺点是？", opts:["结果可能错误","时间不确定","需要大量空间","无法并行"], ans:1, explain:"拉斯维加斯算法结果一定正确，但运行时间不确定。"},
+  {q:"[综合] 0-1背包不能用什么算法求最优解？", opts:["动态规划","回溯法","贪心算法","分支限界法"], ans:2, explain:"0-1背包不能用贪心求最优(分数背包才能用贪心)。"},
+  {q:"[综合] 以下哪个问题最适合用动态规划？", opts:["全排列","最长公共子序列","图着色","随机采样"], ans:1, explain:"LCS具有最优子结构和重叠子问题，最适合DP。"},
+  {q:"[综合] 时间复杂度O(n!)对应什么解空间树？", opts:["子集树","排列树","满m叉树","平衡树"], ans:1, explain:"排列树叶子节点数=n!，如TSP问题。"},
+  {q:"[综合] 哪种排序算法是分治法的典型应用且不稳定？", opts:["冒泡排序","归并排序","快速排序","插入排序"], ans:2, explain:"快速排序是分治法典型应用，不稳定。归并排序虽然也是分治但稳定。"}
+]
+};
+
+// ==================== FLASHCARDS ====================
+const flashcards = [
+  {front:"算法四大性质", back:"有限性、确定性、可行性、输入(0个或多个)/输出(1个或多个)"},
+  {front:"分治法三步骤", back:"分解 → 递归求解 → 合并\n子问题：独立 + 平衡"},
+  {front:"动态规划两要素", back:"1. 最优子结构性质\n2. 重叠子问题性质\n求解方向：自底向上"},
+  {front:"贪心算法两性质", back:"1. 贪心选择性质\n2. 最优子结构性质\n局部最优 → 全局最优"},
+  {front:"回溯法 vs 分支限界", back:"回溯：DFS + 剪枝 → 所有解\n分支限界：BFS + 剪枝 → 最优解"},
+  {front:"子集树 vs 排列树", back:"子集树：2^n 叶子(背包、子集)\n排列树：n! 叶子(TSP、N皇后)"},
+  {front:"蒙特卡洛 vs 拉斯维加斯", back:"MC：大概率正确，时间确定\nLV：完全正确，时间不确定"},
+  {front:"约束函数 vs 限界函数", back:"约束：去不可行解\n限界：去可行非最优解"},
+  {front:"前缀码定义", back:"任何字符的代码都不是其他字符代码的前缀\n→ 保证解码唯一性"},
+  {front:"Dijkstra核心思想", back:"贪心：每次从V-S选distance最小的顶点\n加入S集合，更新distance数组"},
+  {front:"矩阵连乘关键", back:"满足结合律，不满足交换律\nDP: O(n³)\n状态：m[i][j] = A_i到A_j最少乘法次数"},
+  {front:"LCS状态转移", back:"c[i][j] = \n  c[i-1][j-1]+1    若 x_i = y_j\n  max(c[i-1][j], c[i][j-1])  否则"},
+  {front:"快速排序特点", back:"分治法、不稳定\n平均O(n log n)、最坏O(n²)\n用平均复杂度分析！"},
+  {front:"哈夫曼树特点", back:"无度为1的节点\n权值越大离根越近 → 编码越短\n用于无损压缩"},
+  {front:"DP vs 备忘录", back:"DP：自底向上，迭代填表\n备忘录：自顶向下，递归+缓存\n复杂度相同！"},
+  {front:"0-1背包各方法", back:"DP: O(nW) | 回溯: O(2^n)\n分支限界: 指数级\n贪心：分数背包才能用！"},
+  {front:"递归函数两要素", back:"1. 递归体(递归调用)\n2. 递归出口(边界条件)\n没有出口 = 死循环"},
+  {front:"log n的底", back:"本书默认 log n 以 2 为底\n与通信领域(10为底)不同"},
+  {front:"空间复杂度(递归)", back:"= 每层辅助空间 × 递归深度\n回溯法：O(n)"},
+  {front:"优先队列分支限界", back:"用堆实现\n上界越高越优先扩展\n注意大根堆/小根堆的选择"}
+];
+
+// ==================== STATE ====================
+let visited = JSON.parse(localStorage.getItem('algo_visited') || '{}');
+let quizScores = JSON.parse(localStorage.getItem('algo_quiz') || '{}');
+
+// ==================== RENDER ====================
+function init() {
+  renderQuizzes();
+  renderFlashcards();
+  updateProgress();
+  setupNav();
+  showSection('home');
+}
+
+function renderQuizzes() {
+  document.querySelectorAll('.quiz-container').forEach(el => {
+    const id = el.dataset.quiz;
+    const qs = quizzes[id];
+    if (!qs) return;
+    let html = '';
+    qs.forEach((q, i) => {
+      html += `<div class="quiz-q" data-qi="${i}">
+        <h4>${i+1}. ${q.q}</h4>
+        <div class="opts">
+          ${q.opts.map((o,j) => `<div class="quiz-opt" data-qi="${i}" data-oi="${j}" onclick="selectAnswer('${id}',${i},${j})">${String.fromCharCode(65+j)}. ${o}</div>`).join('')}
+        </div>
+        <div class="quiz-result" id="qr-${id}-${i}"></div>
+      </div>`;
+    });
+    html += `<div style="margin-top:16px;text-align:center"><button class="btn btn-primary" onclick="scoreQuiz('${id}')">查看得分</button> <span id="score-${id}" style="margin-left:12px;font-weight:600"></span></div>`;
+    el.innerHTML = html;
+  });
+}
+
+function selectAnswer(qi, qIdx, oIdx) {
+  const container = document.querySelector(`.quiz-container[data-quiz="${qi}"]`);
+  const opts = container.querySelectorAll(`.quiz-opt[data-qi="${qIdx}"]`);
+  const q = quizzes[qi][qIdx];
+  opts.forEach(o => o.classList.remove('selected','correct','wrong','disabled'));
+  opts[oIdx].classList.add('selected');
+  if (oIdx === q.ans) {
+    opts[oIdx].classList.add('correct');
+  } else {
+    opts[oIdx].classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+  }
+  opts.forEach(o => o.classList.add('disabled'));
+  const res = document.getElementById(`qr-${qi}-${qIdx}`);
+  res.textContent = oIdx === q.ans ? '✓ 正确！' : '✗ 错误。' + q.explain;
+  res.className = 'quiz-result show ' + (oIdx === q.ans ? 'pass' : 'fail');
+  quizScores[`${qi}-${qIdx}`] = oIdx === q.ans;
+  localStorage.setItem('algo_quiz', JSON.stringify(quizScores));
+}
+
+function scoreQuiz(qi) {
+  const qs = quizzes[qi];
+  let correct = 0, total = qs.length;
+  qs.forEach((q, i) => { if (quizScores[`${qi}-${i}`]) correct++; });
+  document.getElementById(`score-${qi}`).textContent = `得分: ${correct}/${total} (${Math.round(correct/total*100)}%)`;
+}
+
+function renderFlashcards() {
+  const grid = document.getElementById('flashcardGrid');
+  if (!grid) return;
+  grid.innerHTML = flashcards.map((fc, i) =>
+    `<div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">${fc.front}</div>
+        <div class="flashcard-back">${fc.back.replace(/\n/g,'<br>')}</div>
+      </div>
+    </div>`
+  ).join('');
+}
+
+function setupNav() {
+  document.querySelectorAll('#nav a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const sec = a.getAttribute('href').substring(1);
+      showSection(sec);
+      document.querySelectorAll('#nav a').forEach(n => n.classList.remove('active'));
+      a.classList.add('active');
+      document.getElementById('sidebar').classList.remove('open');
+    });
+  });
+}
+
+function showSection(id) {
+  document.querySelectorAll('.chapter-section').forEach(s => s.classList.add('hidden'));
+  const sec = document.getElementById(id);
+  if (sec) {
+    sec.classList.remove('hidden');
+    visited[id] = true;
+    localStorage.setItem('algo_visited', JSON.stringify(visited));
+    updateProgress();
+  }
+  window.scrollTo(0, 0);
+}
+
+function toggleChapter(header) {
+  header.closest('.chapter').classList.toggle('open');
+}
+
+function toggleCard(header) {
+  header.closest('.card').classList.toggle('open');
+}
+
+function toggleAllChapters() {
+  const chapters = document.querySelectorAll('.chapter');
+  const anyOpen = [...chapters].some(c => c.classList.contains('open'));
+  chapters.forEach(c => c.classList.toggle('open', !anyOpen));
+}
+
+function updateProgress() {
+  const total = 10; // sections
+  const done = Object.keys(visited).length;
+  const pct = Math.round(done / total * 100);
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function resetProgress() {
+  if (confirm('确定要重置所有学习进度和测验记录吗？')) {
+    visited = {};
+    quizScores = {};
+    localStorage.removeItem('algo_visited');
+    localStorage.removeItem('algo_quiz');
+    updateProgress();
+    document.querySelectorAll('.quiz-result').forEach(r => r.className = 'quiz-result');
+    document.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('selected','correct','wrong','disabled'));
+    document.querySelectorAll('[id^="score-"]').forEach(s => s.textContent = '');
+    document.querySelectorAll('.flashcard').forEach(f => f.classList.remove('flipped'));
+  }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('sidebar').classList.remove('open');
+});
+
+init();
+</script>
+</body>
+</html>
