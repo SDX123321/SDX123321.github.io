@@ -175,22 +175,28 @@ h1 {
       <a class="btn-star" href="https://github.com/SDX123321/SDX123321.github.io" target="_blank">&#9733; Star</a>
     </div>
     <div style="margin-top:16px;">
-      <span onclick="toggleReward()" style="cursor:pointer;color:#94a3b8;font-size:0.85rem;user-select:none;transition:color 0.2s;" onmouseover="this.style.color='#f59e0b'" onmouseout="this.style.color='#94a3b8'">
+      <span onclick="document.getElementById('rewardModal').style.display='flex'" style="cursor:pointer;color:#94a3b8;font-size:0.85rem;user-select:none;transition:color 0.2s;" onmouseover="this.style.color='#f59e0b'" onmouseout="this.style.color='#94a3b8'">
         通过赞赏码请作者喝杯咖啡 &#9749;
       </span>
-      <div id="rewardQr" style="display:none;margin-top:14px;animation:fadeIn 0.3s ease;">
-        <img src="赞赏码.png" alt="赞赏码" width="180" style="border-radius:12px;border:1px solid #334155;box-shadow:0 4px 20px rgba(0,0,0,0.3);">
-        <p style="color:#64748b;font-size:0.78rem;margin-top:6px;">微信 / 支付宝扫码赞赏</p>
-      </div>
     </div>
   </div>
 </div>
+
+<!-- 赞赏码弹窗 -->
+<div id="rewardModal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;justify-content:center;align-items:center;animation:fadeIn 0.2s ease;">
+  <div style="position:relative;background:#1e293b;border-radius:16px;padding:28px 28px 20px;text-align:center;border:1px solid #334155;box-shadow:0 20px 60px rgba(0,0,0,0.5);max-width:90vw;">
+    <span onclick="this.closest('#rewardModal').style.display='none'" style="position:absolute;top:10px;right:14px;cursor:pointer;color:#64748b;font-size:1.4rem;line-height:1;transition:color 0.2s;" onmouseover="this.style.color='#e2e8f0'" onmouseout="this.style.color='#64748b'">&times;</span>
+    <img src="赞赏码.png" alt="赞赏码" style="width:260px;border-radius:12px;display:block;margin:0 auto;">
+    <p style="color:#cbd5e1;font-size:0.9rem;margin-top:14px;">微信扫码赞赏</p>
+    <p style="color:#64748b;font-size:0.78rem;margin-top:4px;">感谢支持 &#10084;</p>
+  </div>
+</div>
+
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 <script>
-function toggleReward(){
-  var el=document.getElementById('rewardQr');
-  el.style.display=el.style.display==='none'?'block':'none';
-}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')document.getElementById('rewardModal').style.display='none';
+});
 </script>
 </body>
 </html>
