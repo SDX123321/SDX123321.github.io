@@ -125,6 +125,25 @@ h1 {
   border: 1px solid var(--border); box-shadow: 0 24px 80px rgba(0,0,0,0.6);
   max-width: 92vw; animation: splashIn 0.35s ease;
 }
+
+@media(max-width:640px){
+  .container{padding:24px 14px 30px}
+  h1{font-size:1.8rem}
+  .subtitle{font-size:.9rem}
+  .source{padding:14px 16px;font-size:.82rem}
+  .cards{grid-template-columns:1fr;gap:14px}
+  .card{padding:20px}
+  .card h2{font-size:1.1rem}
+  .star-box{flex-direction:column;text-align:center;padding:10px 16px;font-size:.82rem}
+  .star-box a.btn-star{width:100%;justify-content:center}
+  .theme-btn{top:8px;right:8px;width:36px;height:36px;font-size:1rem}
+  .cl-box{padding:20px 16px 16px}
+  .splash-box{padding:24px 18px 20px}
+  .splash-box img{width:200px!important}
+}
+@media(min-width:641px) and (max-width:1024px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 </head>
 <body>

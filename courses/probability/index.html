@@ -232,9 +232,25 @@ body {
 }
 /* Responsive */
 @media (max-width: 768px) {
-  .sidebar { display: none; }
+  .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; width: 280px; }
+  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,0.3); }
   .main { margin-left: 0; padding: 16px; }
   .progress-bar { left: 0; }
+  .header h1 { font-size: 1.5rem; }
+  .header p { font-size: 0.88rem; }
+  .part-title { font-size: 1rem; padding: 10px 14px; }
+  .kb { padding: 12px 14px; }
+  .kb table { font-size: 0.8rem; }
+  .kb th, .kb td { padding: 5px 6px; }
+  .example { font-size: 0.85rem; }
+  .ref-grid { grid-template-columns: repeat(2, 1fr); }
+  .section-header h2 { font-size: 1rem; }
+  .mobile-menu-btn { display: flex !important; }
+  .back-top { right: 16px; bottom: 16px; }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .main { padding: 20px 24px; }
+  .kb table { font-size: 0.88rem; }
 }
 /* Print */
 @media print {
@@ -256,9 +272,23 @@ body {
 .dark .kb .example { background: rgba(16,185,129,0.1); border-color: #065f46; }
 .dark .kb .note { background: rgba(245,158,11,0.15); color: #fbbf24; }
 .theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:38px;height:38px;border-radius:50%;background:var(--card,#fff);border:1px solid var(--border,#e2e8f0);color:var(--text,#1e293b);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.15)}.theme-btn:hover{transform:scale(1.1);border-color:var(--primary,#2563eb)}
+.mobile-menu-btn {
+  display: none; position: fixed; top: 10px; left: 10px; z-index: 200;
+  width: 38px; height: 38px; border-radius: 8px; border: none;
+  background: var(--primary); color: white; font-size: 1.2rem;
+  cursor: pointer; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  z-index: 99;
+}
+.sidebar-overlay.show { display: block; }
 </style>
 </head>
 <body>
+<button class="mobile-menu-btn" onclick="toggleSidebar()" id="menuBtn">&#9776;</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">&#9789;</button>
 
 <!-- Sidebar -->
@@ -1528,6 +1558,12 @@ window.addEventListener('load', () => {
 function applyTheme(dark){document.body.classList.toggle('dark',dark);document.getElementById('themeBtn').innerHTML=dark?'&#9789;':'&#9790;';localStorage.setItem('theme',dark?'dark':'light');}
 function toggleTheme(){applyTheme(!document.body.classList.contains('dark'));}
 (function(){var t=localStorage.getItem('theme');if(t==='dark')applyTheme(true);else applyTheme(false);})();
+function toggleSidebar(){
+  var s=document.querySelector('.sidebar');
+  var o=document.getElementById('sidebarOverlay');
+  s.classList.toggle('open');
+  o.classList.toggle('show');
+}
 </script>
 </body>
 </html>
