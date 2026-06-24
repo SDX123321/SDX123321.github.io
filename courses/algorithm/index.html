@@ -149,9 +149,19 @@ tr:hover td { background:#f8fafc; }
 .tab-content { display:none; }
 .tab-content.active { display:block; }
 .hidden { display:none!important; }
+.dark{--primary:#818cf8;--primary-light:#a5b4fc;--primary-dark:#a5b4fc;--bg:#0f172a;--bg-card:#1e293b;--text:#e2e8f0;--text-secondary:#94a3b8;--border:#334155;--bg-code:#0f172a;--success:#34d399;--error:#f87171;--warning:#fbbf24}
+.dark .sidebar{background:#0f172a}
+.dark .sidebar-header{border-bottom-color:#334155}
+.dark .sidebar-header h1{color:#a5b4fc}
+.dark .sidebar nav a{color:#94a3b8}
+.dark .sidebar nav a:hover,.dark .sidebar nav a.active{background:#1e293b;color:#e2e8f0;border-left-color:var(--primary-light)}
+.dark .progress-bar{background:#334155}
+.dark code{background:#1e293b;color:#fbbf24}
+.theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:38px;height:38px;border-radius:50%;background:var(--bg-card,#fff);border:1px solid(var(--border,#e2e8f0));color:var(--text,#1e293b);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.15)}.theme-btn:hover{transform:scale(1.1);border-color:var(--primary,#4f46e5)}
 </style>
 </head>
 <body>
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">&#9789;</button>
 
 <!-- Sidebar -->
 <aside class="sidebar" id="sidebar">
@@ -1008,6 +1018,10 @@ document.addEventListener('keydown', e => {
 });
 
 init();
+// Theme toggle
+function applyTheme(dark){document.body.classList.toggle('dark',dark);document.getElementById('themeBtn').innerHTML=dark?'&#9789;':'&#9790;';localStorage.setItem('theme',dark?'dark':'light');}
+function toggleTheme(){applyTheme(!document.body.classList.contains('dark'));}
+(function(){var t=localStorage.getItem('theme');if(t==='dark')applyTheme(true);else applyTheme(false);})();
 </script>
 
 <!-- 访问统计 -->

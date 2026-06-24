@@ -246,9 +246,20 @@ body {
 .cb-item { display: flex; align-items: flex-start; gap: 8px; margin: 4px 0; }
 .cb-item input[type="checkbox"] { margin-top: 5px; accent-color: var(--primary); }
 .cb-item label { cursor: pointer; }
+.light {} /* no-op, page is light by default */
+.dark { --primary: #60a5fa; --primary-light: #93c5fd; --primary-dark: #93c5fd; --bg: #0f172a; --card: #1e293b; --text: #e2e8f0; --text-light: #94a3b8; --border: #334155; --accent: #fbbf24; }
+.dark .sidebar { background: linear-gradient(180deg, #0f172a 0%, #020617 100%); }
+.dark .section { background: var(--card); border-color: var(--border); }
+.dark .section-header:hover { background: #1e293b; }
+.dark .kb { background: #1e293b; }
+.dark .kb .formula { background: #0f172a; border-color: var(--border); }
+.dark .kb .example { background: rgba(16,185,129,0.1); border-color: #065f46; }
+.dark .kb .note { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:38px;height:38px;border-radius:50%;background:var(--card,#fff);border:1px solid var(--border,#e2e8f0);color:var(--text,#1e293b);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.15)}.theme-btn:hover{transform:scale(1.1);border-color:var(--primary,#2563eb)}
 </style>
 </head>
 <body>
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">&#9789;</button>
 
 <!-- Sidebar -->
 <nav class="sidebar" id="sidebar">
@@ -1513,6 +1524,10 @@ window.addEventListener('load', () => {
     });
   }
 });
+// Theme toggle
+function applyTheme(dark){document.body.classList.toggle('dark',dark);document.getElementById('themeBtn').innerHTML=dark?'&#9789;':'&#9790;';localStorage.setItem('theme',dark?'dark':'light');}
+function toggleTheme(){applyTheme(!document.body.classList.contains('dark'));}
+(function(){var t=localStorage.getItem('theme');if(t==='dark')applyTheme(true);else applyTheme(false);})();
 </script>
 </body>
 </html>

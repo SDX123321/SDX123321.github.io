@@ -130,9 +130,18 @@ tr:nth-child(even) { background: rgba(255,255,255,0.02); }
 .search-box:focus { border-color: var(--accent); }
 
 .section-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 40px 0; }
+.light{--bg:#f8fafc;--card:#ffffff;--card-hover:#f1f5f9;--accent:#4f46e5;--accent2:#0284c7;--accent3:#e11d48;--text:#1e293b;--text-dim:#64748b;--green:#059669;--orange:#d97706;--border:#e2e8f0}
+.light .nav{background:#fff;border-right-color:#e2e8f0}
+.light .nav-title{color:#4f46e5;border-bottom-color:#e2e8f0}
+.light .nav-group-title{color:#94a3b8}
+.light .nav a{color:#64748b}
+.light .nav a:hover,.light .nav a.active{color:#4f46e5;background:rgba(79,70,229,.06);border-left-color:#4f46e5}
+.light .nav a[href="../../"]{color:#4f46e5;border-bottom-color:#e2e8f0}
+.theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.3)}.theme-btn:hover{transform:scale(1.1);border-color:var(--accent)}
 </style>
 </head>
 <body>
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">&#9790;</button>
 
 <button class="nav-toggle" onclick="document.querySelector('.nav').classList.toggle('open')">&#9776;</button>
 
@@ -1241,5 +1250,10 @@ document.querySelectorAll('.quiz-options input').forEach(input => {
   <span id="busuanzi_container_page_pv" style="display:inline;">&#128196; <span id="busuanzi_value_page_pv">...</span></span>
 </div>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script>
+function applyTheme(dark){document.documentElement.classList.toggle('light',!dark);document.getElementById('themeBtn').innerHTML=dark?'&#9790;':'&#9789;';localStorage.setItem('theme',dark?'dark':'light');}
+function toggleTheme(){applyTheme(document.documentElement.classList.contains('light'));}
+(function(){var t=localStorage.getItem('theme');if(t==='light')applyTheme(false);else applyTheme(true);})();
+</script>
 </body>
 </html>

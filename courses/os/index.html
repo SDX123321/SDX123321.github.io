@@ -109,9 +109,20 @@ tr:hover{background:rgba(108,92,231,.1)}
 ul,ol{padding-left:24px;margin:8px 0}
 li{margin:4px 0}
 code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.9em;color:var(--orange)}
+.light{--bg:#f8fafc;--card:#ffffff;--card2:#f1f5f9;--accent:#6c5ce7;--accent2:#4f46e5;--green:#059669;--red:#dc2626;--orange:#d97706;--blue:#2563eb;--text:#1e293b;--text2:#64748b;--border:#e2e8f0}
+.light tr:nth-child(even){background:rgba(108,92,231,.04)}
+.light .step-log .hit{color:#059669}
+.light .step-log .miss{color:#dc2626}
+.light nav{background:#fff;border-right-color:#e2e8f0}
+.light nav a{color:#64748b}
+.light nav a:hover,.light nav a.active{color:#4f46e5;background:rgba(108,92,231,.06)}
+.light nav .logo{color:#4f46e5;border-bottom-color:#e2e8f0}
+.light nav .tag{background:rgba(220,38,38,.1);color:#dc2626}
+.theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.3)}.theme-btn:hover{transform:scale(1.1);border-color:var(--accent)}
 </style>
 </head>
 <body>
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">&#9790;</button>
 
 <nav id="sidebar">
 <div class="logo">OS 期末复习</div>
@@ -1146,6 +1157,10 @@ function runDiskSched(){
 
 // Init
 buildBankerTable();
+// Theme toggle
+function applyTheme(dark){document.body.classList.toggle('light',!dark);document.getElementById('themeBtn').innerHTML=dark?'&#9790;':'&#9789;';localStorage.setItem('theme',dark?'dark':'light');}
+function toggleTheme(){applyTheme(document.body.classList.contains('light'));}
+(function(){var t=localStorage.getItem('theme');if(t==='light')applyTheme(false);else applyTheme(true);})();
 </script>
 </body>
 </html>
