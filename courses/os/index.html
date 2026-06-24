@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>操作系统 - 期末复习</title>
+<style>
+:root {
+  --primary: #059669;
+  --primary-light: #d1fae5;
+  --primary-dark: #065f46;
+  --accent: #f59e0b;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --purple: #7c3aed;
+  --sidebar-w: 260px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; font-size: 15px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.7;
+}
+.sidebar {
+  position: fixed; top:0; left:0; width: var(--sidebar-w); height: 100vh;
+  background: linear-gradient(180deg, #064e3b 0%, #022c22 100%);
+  color: #e2e8f0; overflow-y: auto; z-index: 100; padding: 20px 0;
+  scrollbar-width: thin; scrollbar-color: #475569 transparent;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+.sidebar-title {
+  text-align: center; padding: 10px 16px 20px;
+  font-size: 1.1rem; font-weight: 700;
+  border-bottom: 1px solid #334155; margin-bottom: 10px; color: #f8fafc;
+}
+.sidebar .nav-group { margin-bottom: 6px; }
+.sidebar .nav-group-title {
+  padding: 8px 16px 4px; font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 1px; color: #94a3b8; font-weight: 600;
+}
+.sidebar a {
+  display: block; padding: 6px 16px 6px 24px;
+  color: #cbd5e1; text-decoration: none;
+  font-size: 0.85rem; border-left: 3px solid transparent; transition: all 0.2s;
+}
+.sidebar a:hover, .sidebar a.active {
+  background: rgba(255,255,255,0.08); color: #6ee7b7; border-left-color: #6ee7b7;
+}
+.sidebar .exam-info {
+  margin: 16px 12px; padding: 12px;
+  background: rgba(245,158,11,0.15); border-radius: 8px;
+  font-size: 0.8rem; border: 1px solid rgba(245,158,11,0.3);
+}
+.sidebar .exam-info strong { color: #fbbf24; }
+.main { margin-left: var(--sidebar-w); padding: 30px 40px 60px; max-width: 1000px; }
+.header {
+  text-align: center; padding: 30px 0 20px;
+  margin-bottom: 30px; border-bottom: 2px solid var(--border);
+}
+.header h1 { font-size: 2rem; color: var(--primary-dark); margin-bottom: 8px; }
+.header p { color: var(--text-light); font-size: 1rem; }
+.progress-bar {
+  position: fixed; top:0; left: var(--sidebar-w); right:0;
+  height: 3px; background: var(--border); z-index: 90;
+}
+.progress-bar .fill {
+  height: 100%; background: linear-gradient(90deg, var(--primary), var(--purple));
+  width: 0; transition: width 0.3s;
+}
+.ch {
+  background: var(--card); border-radius: 12px; border: 1px solid var(--border);
+  margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.ch-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; cursor: pointer; user-select: none; transition: background 0.2s;
+}
+.ch-header:hover { background: #f1f5f9; }
+.ch-header h2 { font-size: 1.15rem; }
+.ch-header .arrow { transition: transform 0.3s; color: var(--text-light); font-size: 1.2rem; }
+.ch.collapsed .arrow { transform: rotate(-90deg); }
+.ch-body {
+  padding: 0 20px 20px; max-height: 8000px;
+  overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease, opacity 0.3s ease; opacity: 1;
+}
+.ch.collapsed .ch-body { max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; }
+.kb {
+  margin: 14px 0; padding: 16px 18px;
+  background: #f8fafc; border-radius: 8px; border-left: 4px solid var(--primary);
+}
+.kb h3 { font-size: 1rem; color: var(--primary-dark); margin-bottom: 10px; }
+.kb p, .kb li { margin: 5px 0; font-size: 0.95rem; }
+.kb ul, .kb ol { padding-left: 20px; }
+.kb .key {
+  display: inline-block; padding: 2px 8px; margin: 2px;
+  background: #dcfce7; border-radius: 4px; font-weight: 600; font-size: 0.9rem;
+}
+.kb .highlight {
+  background: #fef3c7; padding: 10px 14px; border-radius: 6px;
+  border-left: 3px solid #f59e0b; margin: 8px 0; font-size: 0.9rem;
+}
+.kb .warn {
+  background: #fef2f2; padding: 10px 14px; border-radius: 6px;
+  border-left: 3px solid #ef4444; margin: 8px 0; font-size: 0.9rem; color: #991b1b;
+}
+.kb table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.9rem; }
+.kb th, .kb td { padding: 8px 12px; border: 1px solid var(--border); text-align: center; }
+.kb th { background: var(--primary); color: white; font-weight: 600; }
+.kb tr:nth-child(even) { background: #f8fafc; }
+.tag {
+  display: inline-block; font-size: 0.7rem; padding: 3px 10px;
+  border-radius: 20px; font-weight: 600;
+}
+.tag-g { background: #dcfce7; color: #166534; }
+.tag-b { background: #dbeafe; color: #1e40af; }
+.tag-r { background: #fef3c7; color: #92400e; }
+.tag-p { background: #ede9fe; color: #5b21b6; }
+.back-top {
+  position: fixed; bottom: 30px; right: 30px;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--primary); color: white;
+  display: none; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1.2rem; z-index: 80;
+  box-shadow: 0 4px 12px rgba(5,150,105,0.4); transition: transform 0.2s;
+}
+.back-top:hover { transform: scale(1.1); }
+.nav-link { color: #2563eb; text-decoration: none; font-size: 0.9rem; }
+.nav-link:hover { text-decoration: underline; }
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px; }
+  .progress-bar { left: 0; }
+}
+@media print {
+  .sidebar, .progress-bar, .back-top { display: none !important; }
+  .main { margin-left: 0; }
+  .ch.collapsed .ch-body { max-height: none; opacity: 1; padding-bottom: 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-title">操作系统</div>
+  <div class="exam-info">
+    <strong>题型分布</strong><br>
+    选择 10&times;2 = 20分<br>
+    填空 10&times;1 = 10分<br>
+    简答 5&times;6 = 30分<br>
+    应用 4&times;10 = 40分
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">章节导航</div>
+    <a href="#ch1">Ch1 概述</a>
+    <a href="#ch2">Ch2 处理器管理</a>
+    <a href="#ch3">Ch3 存储管理</a>
+    <a href="#ch4">Ch4 设备管理</a>
+    <a href="#ch5">Ch5 文件系统</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">其他</div>
+    <a href="../index.html">&#8592; 返回课程主页</a>
+  </div>
+</nav>
+
+<div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+
+<div class="main">
+  <div class="header">
+    <h1>操作系统</h1>
+    <p>期末复习知识点总结 &middot; 点击各节标题展开/收起</p>
+  </div>
+
+  <!-- ===== 第一章 概述 ===== -->
+  <div id="ch1" class="ch">
+    <div class="ch-header" onclick="toggleSection(this)">
+      <h2>第一章 操作系统概述</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="ch-body">
+      <div class="kb">
+        <h3>1. 四个设计目标</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">
+          <span class="key">方便性</span>
+          <span class="key">有效性</span>
+          <span class="key">可扩充性</span>
+          <span class="key">开放性</span>
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3>2. 四个基本特征</h3>
+        <table>
+          <tr><th>特征</th><th>含义</th></tr>
+          <tr><td><strong>并发性</strong></td><td>多个程序在同一时间段内交替执行（最基本特征）</td></tr>
+          <tr><td><strong>共享性</strong></td><td>系统中的资源可供多个并发执行的进程共同使用</td></tr>
+          <tr><td><strong>虚拟性</strong></td><td>通过某种技术把一个物理实体变成若干个逻辑上的对应物</td></tr>
+          <tr><td><strong>不确定性</strong></td><td>程序执行结果不可再现，执行顺序和时间不可预测</td></tr>
+        </table>
+      </div>
+
+      <div class="kb">
+        <h3>3. 四种结构</h3>
+        <table>
+          <tr><th>结构</th><th>特点</th></tr>
+          <tr><td>整体式结构</td><td>模块化设计，各模块可相互调用，结构紧凑但模块间接口复杂</td></tr>
+          <tr><td>层次式结构</td><td>按功能分层，每层只能调用下层功能，结构清晰</td></tr>
+          <tr><td>C/S（客户-服务器）结构</td><td>将 OS 分为若干服务器进程，客户端通过消息请求服务</td></tr>
+          <tr><td>微内核结构</td><td>仅将最核心功能放入内核，其他功能作为用户态服务进程</td></tr>
+        </table>
+      </div>
+
+      <div class="kb">
+        <h3>4. 微内核的优势</h3>
+        <ol>
+          <li>代码量少，内核变得更简洁</li>
+          <li>充分模块化，更换任一模块不影响其他模块，方便第三方开发</li>
+          <li>当前未使用的模块不必运行，大幅减少内存需求</li>
+          <li>增强可移植性，移植时只需重点修改微内核部分，代码量很少</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 第二章 处理器管理 ===== -->
+  <div id="ch2" class="ch">
+    <div class="ch-header" onclick="toggleSection(this)">
+      <h2>第二章 处理器管理</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="ch-body">
+
+      <div class="kb">
+        <h3>1. 进程</h3>
+        <p><strong>定义：</strong>进程是具有独立功能的程序关于某个数据集合上的一次运行活动，是系统进行<strong>资源分配、调度和保护</strong>的独立单位。</p>
+        <p><strong>三种基本状态：</strong></p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">
+          <span class="key">运行态</span>
+          <span class="key">就绪态</span>
+          <span class="key">等待态（阻塞态）</span>
+        </div>
+
+        <p><strong>四种状态转换：</strong></p>
+        <table>
+          <tr><th>转换</th><th>触发条件</th></tr>
+          <tr>
+            <td style="color:#059669;font-weight:700;">就绪 &rarr; 运行</td>
+            <td>CPU 调度程序选择该进程占有 CPU</td>
+          </tr>
+          <tr>
+            <td style="color:#dc2626;font-weight:700;">运行 &rarr; 就绪</td>
+            <td>&#9312; 时间片用完，被剥夺 CPU<br>&#9313; 抢占式系统中被高优先级进程抢占</td>
+          </tr>
+          <tr>
+            <td style="color:#dc2626;font-weight:700;">运行 &rarr; 等待</td>
+            <td>&#9312; 申请资源（如内存）但系统当前没有足够资源<br>&#9313; 需要 I/O 操作或等待信号/服务，但尚未准备好</td>
+          </tr>
+          <tr>
+            <td style="color:#059669;font-weight:700;">等待 &rarr; 就绪</td>
+            <td>等待的资源/服务/信号可以提供，或等待的事件发生</td>
+          </tr>
+        </table>
+
+        <div class="warn">
+          <strong>不可能的转换：</strong>就绪 &harr; 等待（必须经过运行态）。加上挂起状态后共有 7 种状态。
+        </div>
+
+        <p><strong>进程创建原语 fork()：</strong></p>
+        <table>
+          <tr><th>返回值</th><th>含义</th></tr>
+          <tr><td>-1</td><td>创建失败</td></tr>
+          <tr><td>0</td><td>在子进程中返回</td></tr>
+          <tr><td>&gt;0</td><td>在父进程中返回（返回子进程 PID）</td></tr>
+        </table>
+      </div>
+
+      <div class="kb">
+        <h3>2. 处理器调度</h3>
+        <p><strong>三级调度：</strong></p>
+        <table>
+          <tr><th>调度类型</th><th>别名</th><th>功能</th></tr>
+          <tr><td>高级调度</td><td>作业调度</td><td>从后备队列选择作业调入内存</td></tr>
+          <tr><td>中级调度</td><td>平衡负载</td><td>将进程在内存和外存之间交换</td></tr>
+          <tr><td>低级调度</td><td>进程调度</td><td>从就绪队列选择进程分配 CPU</td></tr>
+        </table>
+
+        <p><strong>周转时间相关指标：</strong></p>
+        <ul>
+          <li><strong>周转时间</strong> = 完成时刻 - 到达时刻</li>
+          <li><strong>平均周转时间</strong> = 各进程周转时间之和 / 进程数</li>
+          <li><strong>带权周转时间</strong> = 周转时间 / 服务时间</li>
+        </ul>
+
+        <p><strong>调度算法：</strong></p>
+        <table>
+          <tr><th>算法</th><th>全称</th><th>特点</th></tr>
+          <tr><td>FCFS</td><td>先来先服务</td><td>非抢占式，简单公平，对长作业有利</td></tr>
+          <tr><td>SJF</td><td>最短作业优先</td><td>平均等待时间最短，但可能导致长作业饥饿</td></tr>
+          <tr><td>SRTF</td><td>最短剩余时间优先</td><td>SJF 的抢占式版本</td></tr>
+          <tr><td>HRRN</td><td>最高响应比优先</td><td>响应比 = (等待时间+服务时间)/服务时间</td></tr>
+          <tr><td>RR</td><td>时间片轮转</td><td>每个进程运行固定时间片后切换</td></tr>
+        </table>
+      </div>
+
+      <div class="kb">
+        <h3>3. 同步与互斥 — PV 操作</h3>
+        <p><strong>信号量机制：</strong></p>
+        <ul>
+          <li><strong>P 操作（wait）</strong>：S = S - 1；若 S &lt; 0，进程阻塞进入等待队列</li>
+          <li><strong>V 操作（signal）</strong>：S = S + 1；若 S &le; 0，唤醒等待队列中的一个进程</li>
+        </ul>
+
+        <div class="highlight">
+          <strong>PV 操作要点：</strong><br>
+          &bull; 互斥信号量初值通常为 1（mutex）<br>
+          &bull; 同步信号量初值根据资源数确定<br>
+          &bull; P 操作在"进入临界区前"，V 操作在"离开临界区后"<br>
+          &bull; 互斥的 PV 操作必须成对出现在同一进程中
+        </div>
+
+        <p><strong>经典同步问题：</strong></p>
+        <ul>
+          <li><strong>生产者-消费者问题</strong>：需要 3 个信号量（mutex 互斥、empty 空缓冲区数、full 满缓冲区数）</li>
+          <li><strong>读者-写者问题</strong>：读者可并发读，写者独占</li>
+          <li><strong>哲学家就餐问题</strong>：避免死锁的资源分配</li>
+        </ul>
+      </div>
+
+      <div class="kb">
+        <h3>4. 死锁</h3>
+        <p><strong>四个必要条件（缺一不可）：</strong></p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">
+          <span class="key">互斥使用</span>
+          <span class="key">不可抢占</span>
+          <span class="key">请求与保持</span>
+          <span class="key">循环等待</span>
+        </div>
+
+        <p><strong>三种解决策略：</strong></p>
+        <table>
+          <tr><th>策略</th><th>方法</th></tr>
+          <tr><td>预防（破坏条件）</td><td>破坏"不可抢占"、"请求与保持"、"循环等待"之一</td></tr>
+          <tr><td>避免</td><td><strong>银行家算法</strong>：检查分配后系统是否处于安全状态</td></tr>
+          <tr><td>检测与恢复</td><td>允许死锁发生，检测到后进行恢复</td></tr>
+        </table>
+
+        <div class="highlight">
+          <strong>银行家算法核心：</strong>对每个请求，假设分配后检查是否存在安全序列。若存在则分配，否则拒绝。<br>
+          安全序列：存在一个进程执行顺序，使得每个进程都能获得所需的最大资源并顺利完成。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 第三章 存储管理 ===== -->
+  <div id="ch3" class="ch">
+    <div class="ch-header" onclick="toggleSection(this)">
+      <h2>第三章 存储管理</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="ch-body">
+
+      <div class="kb">
+        <h3>1. 地址转换与分页管理</h3>
+        <p><strong>逻辑地址 &rarr; 物理地址：</strong>页号 &rarr; 查页表 &rarr; 页框号（物理块号）&rarr; 物理地址</p>
+        <p><strong>快表（TLB）查找流程：</strong></p>
+        <ol>
+          <li>先在快表中查找该页号（速度极快）</li>
+          <li>若命中，直接取出页框号</li>
+          <li>若未命中，访问内存中的页表，同时将该映射关系加入快表</li>
+        </ol>
+        <div class="highlight">
+          引入快表后，有效访问时间 = 命中率 &times; (快表访问时间 + 内存访问时间) + (1 - 命中率) &times; (快表访问时间 + 2 &times; 内存访问时间)
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3>2. 分段管理</h3>
+        <ul>
+          <li>按程序逻辑结构分段，每段有段名和段长</li>
+          <li>逻辑地址 = (段号, 段内偏移)</li>
+          <li>通过段表查找：段号 &rarr; 段基址 + 段内偏移 = 物理地址</li>
+          <li>段的长度可变，便于共享和保护</li>
+        </ul>
+      </div>
+
+      <div class="kb">
+        <h3>3. 段页式存储</h3>
+        <p>结合分段和分页的优点：</p>
+        <ol>
+          <li>先分段（逻辑划分）</li>
+          <li>每段再分页（物理管理）</li>
+          <li>地址结构：(段号, 页号, 页内偏移)</li>
+          <li>需三次访存：段表 &rarr; 页表 &rarr; 物理地址</li>
+        </ol>
+      </div>
+
+      <div class="kb">
+        <h3>4. 局部性原理</h3>
+        <table>
+          <tr><th>类型</th><th>含义</th></tr>
+          <tr><td><strong>时间局部性</strong></td><td>刚被访问的数据很可能在近期再次被访问（如循环变量）</td></tr>
+          <tr><td><strong>空间局部性</strong></td><td>访问某个地址后，其附近的地址很可能被访问（如顺序执行）</td></tr>
+          <tr><td><strong>顺序局部性</strong></td><td>程序通常按指令顺序依次执行</td></tr>
+        </table>
+      </div>
+
+      <div class="kb">
+        <h3>5. 页面置换算法</h3>
+        <p>当发生<strong>缺页中断</strong>且内存已满时，需要选择一个页面换出。</p>
+        <table>
+          <tr><th>算法</th><th>策略</th><th>特点</th></tr>
+          <tr><td><strong>OPT</strong></td><td>淘汰未来最长时间内不再使用的页面</td><td>理论最优，无法实现，用作参照</td></tr>
+          <tr><td><strong>FIFO</strong></td><td>淘汰最早进入内存的页面</td><td>简单，但可能出现 <strong>Belady 异常</strong>（增加页框数反而缺页率上升）</td></tr>
+          <tr><td><strong>LRU</strong></td><td>淘汰最近最久未使用的页面</td><td>性能好，接近 OPT，无 Belady 异常</td></tr>
+        </table>
+
+        <div class="warn">
+          <strong>Belady 异常：</strong>FIFO 算法特有现象——增加物理页框数后，缺页中断次数反而增加。LRU 和 OPT 不会出现此现象。
+        </div>
+
+        <div class="highlight">
+          <strong>计算要点：</strong><br>
+          &bull; 缺页率 = 缺页中断次数 / 总访问次数<br>
+          &bull; LRU 的实现：用栈或计数器记录各页面最后访问时间<br>
+          &bull; FIFO 的实现：用队列，最早进入的页面在队首
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 第四章 设备管理 ===== -->
+  <div id="ch4" class="ch">
+    <div class="ch-header" onclick="toggleSection(this)">
+      <h2>第四章 设备管理</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="ch-body">
+
+      <div class="kb">
+        <h3>1. 五个设计目标</h3>
+        <ol>
+          <li>提高系统利用率，实现设备的并行运行</li>
+          <li>采用虚拟技术，实现设备的动态分配</li>
+          <li>采用缓冲技术，减小主机和外设的速度差异</li>
+          <li>方便用户使用，屏蔽设备的物理特性</li>
+          <li>实现与文件系统等其他模块的有机协同工作</li>
+        </ol>
+      </div>
+
+      <div class="kb">
+        <h3>2. I/O 控制方式</h3>
+        <table>
+          <tr><th>方式</th><th>特点</th><th>CPU 介入程度</th></tr>
+          <tr><td>程序询问方式</td><td>CPU 不断轮询检查设备状态</td><td>极高（忙等待）</td></tr>
+          <tr><td>中断驱动方式</td><td>设备准备好后发中断通知 CPU</td><td>中等</td></tr>
+          <tr><td>DMA 方式</td><td>直接内存访问，数据不经过 CPU</td><td>低（仅开始和结束）</td></tr>
+          <tr><td>通道方式</td><td>专用 I/O 处理器执行通道程序</td><td>最低</td></tr>
+        </table>
+        <div class="highlight">
+          发展趋势：CPU 参与度越来越低，I/O 效率越来越高。通道是最高效的方式。
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3>3. 缓冲技术</h3>
+        <p>引入缓冲的三个目的：</p>
+        <ol>
+          <li>改善主机和 I/O 设备之间速度不匹配的问题</li>
+          <li>提高 CPU 和 I/O 设备的并行性，提高资源利用率</li>
+          <li>减少 I/O 中断次数，放宽对 CPU 中断响应的要求</li>
+        </ol>
+        <p>缓冲类型：单缓冲、双缓冲、循环缓冲、缓冲池</p>
+      </div>
+
+      <div class="kb">
+        <h3>4. 磁盘数据访问</h3>
+        <p><strong>访问时间 = 寻道时间 + 旋转延迟 + 数据传输时间</strong></p>
+        <ul>
+          <li><strong>寻道时间</strong>：磁头移动到目标磁道的时间（通常最耗时）</li>
+          <li><strong>旋转延迟</strong>：等待目标扇区旋转到磁头下方的时间（平均为转半圈）</li>
+          <li><strong>数据传输时间</strong>：实际读写数据的时间</li>
+        </ul>
+
+        <p><strong>磁盘调度算法：</strong></p>
+        <table>
+          <tr><th>算法</th><th>策略</th></tr>
+          <tr><td>FCFS</td><td>按请求到达顺序服务</td></tr>
+          <tr><td>SSTF</td><td>最短查找时间优先：选择离当前磁头最近的请求</td></tr>
+          <tr><td>SCAN（电梯算法）</td><td>磁头单向移动，到头后反向</td></tr>
+          <tr><td>C-SCAN</td><td>循环扫描：单向移动，到头后直接回到起点再扫描</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 第五章 文件系统 ===== -->
+  <div id="ch5" class="ch">
+    <div class="ch-header" onclick="toggleSection(this)">
+      <h2>第五章 文件系统</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="ch-body">
+
+      <div class="kb">
+        <h3>1. 文件的逻辑结构</h3>
+        <table>
+          <tr><th>类型</th><th>说明</th></tr>
+          <tr><td>流式文件</td><td>由一串字节流组成，无结构（如 .txt, .exe）</td></tr>
+          <tr><td>记录式文件</td><td>由若干记录组成，每条记录有特定含义</td></tr>
+        </table>
+      </div>
+
+      <div class="kb">
+        <h3>2. 文件的物理结构</h3>
+        <table>
+          <tr><th>结构</th><th>说明</th><th>优缺点</th></tr>
+          <tr>
+            <td><strong>顺序结构</strong></td>
+            <td>文件占用连续的物理块</td>
+            <td>顺序访问快，但不利于动态增长和插入删除</td>
+          </tr>
+          <tr>
+            <td><strong>链接结构</strong></td>
+            <td>文件的各物理块通过指针链接</td>
+            <td>解决了外部碎片和动态增长问题，但只能顺序访问</td>
+          </tr>
+          <tr>
+            <td><strong>索引结构</strong></td>
+            <td>为每个文件建立索引表</td>
+            <td>支持随机访问，但索引表占用额外空间</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="kb">
+        <h3>3. 文件安全</h3>
+        <ul>
+          <li><strong>访问控制</strong>：通过访问控制表 (ACL) 或用户权限列表控制</li>
+          <li><strong>备份与恢复</strong>：定期备份，建立日志</li>
+          <li>访问权限：读(r)、写(w)、执行(x)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 考试题型提示 -->
+  <div class="ch" style="border-left: 4px solid #f59e0b; background: #fffbeb;">
+    <div class="ch-header" onclick="toggleSection(this)">
+      <h2 style="color:#92400e;">&#9888; 考试题型与分值</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="ch-body">
+      <div class="kb" style="border-left-color:#f59e0b;">
+        <table>
+          <tr><th>题型</th><th>题量</th><th>分值</th><th>考查重点</th></tr>
+          <tr><td>选择题</td><td>10 题</td><td>20 分</td><td>基本概念、特征、分类</td></tr>
+          <tr><td>填空题</td><td>10 题</td><td>10 分</td><td>关键术语、参数、条件</td></tr>
+          <tr><td>简答题</td><td>5 题</td><td>30 分</td><td>原理阐述、比较分析</td></tr>
+          <tr><td>应用题</td><td>4 题</td><td>40 分</td><td>PV操作、调度算法、页面置换、银行家算法</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</div>
+
+<script>
+function toggleSection(header) {
+  header.parentElement.classList.toggle('collapsed');
+}
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('backTop').style.display = h.scrollTop > 400 ? 'flex' : 'none';
+});
+const navLinks = document.querySelectorAll('.sidebar a[href^="#"]');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+document.querySelectorAll('[id]').forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

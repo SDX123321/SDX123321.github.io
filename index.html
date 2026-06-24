@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>期末复习</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #0f172a; color: #e2e8f0; min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.container { max-width: 800px; width: 100%; padding: 40px 20px; }
+h1 {
+  text-align: center; font-size: 2.5rem; margin-bottom: 8px;
+  background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.subtitle { text-align: center; color: #94a3b8; margin-bottom: 50px; font-size: 1.05rem; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.card {
+  background: #1e293b; border-radius: 16px; padding: 32px;
+  border: 1px solid #334155; text-decoration: none; color: #e2e8f0;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  border-color: #60a5fa;
+}
+.card .icon {
+  width: 56px; height: 56px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+}
+.card h2 { font-size: 1.35rem; color: #f8fafc; }
+.card p { font-size: 0.92rem; color: #94a3b8; line-height: 1.6; flex-grow: 1; }
+.card .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.card .tag {
+  font-size: 0.72rem; padding: 3px 10px; border-radius: 20px;
+  background: rgba(255,255,255,0.08); color: #cbd5e1;
+}
+.icon-blue { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+.icon-green { background: linear-gradient(135deg, #059669, #10b981); }
+.footer {
+  text-align: center; margin-top: 60px; padding: 20px;
+  color: #475569; font-size: 0.82rem;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>期末复习</h1>
+  <p class="subtitle">2025-2026 学年第二学期 &middot; 知识点总结与例题精讲</p>
+
+  <div class="cards">
+    <a class="card" href="courses/probability/">
+      <div class="icon icon-blue">&#128202;</div>
+      <h2>概率论与数理统计</h2>
+      <p>涵盖随机事件与概率、随机变量及其分布、多维随机变量、数字特征、大数定律与中心极限定理、参数估计、假设检验。含完整例题解答和易错点汇总。</p>
+      <div class="tags">
+        <span class="tag">7 章</span>
+        <span class="tag">公式速查表</span>
+        <span class="tag">经典例题</span>
+        <span class="tag">考试重点</span>
+      </div>
+    </a>
+
+    <a class="card" href="courses/os/">
+      <div class="icon icon-green">&#128187;</div>
+      <h2>操作系统</h2>
+      <p>涵盖操作系统概述、处理器管理（进程/调度/PV操作/死锁）、存储管理（分页/分段/页面置换）、设备管理、文件系统。含经典算法解析。</p>
+      <div class="tags">
+        <span class="tag">5 章</span>
+        <span class="tag">PV 操作</span>
+        <span class="tag">调度算法</span>
+        <span class="tag">银行家算法</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="footer">
+    Built with &#10084; &middot; <a href="https://github.com/SDX123321" style="color:#60a5fa;text-decoration:none;">@SDX123321</a>
+  </div>
+</div>
+</body>
+</html>

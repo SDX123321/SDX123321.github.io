@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概率论与数理统计 - 期末复习</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-light: #dbeafe;
+  --primary-dark: #1e40af;
+  --accent: #f59e0b;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --success: #10b981;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --sidebar-w: 260px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; font-size: 15px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+}
+/* Sidebar */
+.sidebar {
+  position: fixed; top:0; left:0;
+  width: var(--sidebar-w); height: 100vh;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  color: #e2e8f0;
+  overflow-y: auto; z-index: 100;
+  padding: 20px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #475569 transparent;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+.sidebar-title {
+  text-align: center; padding: 10px 16px 20px;
+  font-size: 1.1rem; font-weight: 700;
+  border-bottom: 1px solid #334155; margin-bottom: 10px;
+  color: #f8fafc;
+}
+.sidebar .nav-group { margin-bottom: 6px; }
+.sidebar .nav-group-title {
+  padding: 8px 16px 4px;
+  font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 1px; color: #94a3b8; font-weight: 600;
+}
+.sidebar a {
+  display: block; padding: 6px 16px 6px 24px;
+  color: #cbd5e1; text-decoration: none;
+  font-size: 0.85rem; border-left: 3px solid transparent;
+  transition: all 0.2s;
+}
+.sidebar a:hover, .sidebar a.active {
+  background: rgba(255,255,255,0.08);
+  color: #60a5fa;
+  border-left-color: #60a5fa;
+}
+.sidebar .exam-info {
+  margin: 16px 12px; padding: 12px;
+  background: rgba(245,158,11,0.15);
+  border-radius: 8px; font-size: 0.8rem;
+  border: 1px solid rgba(245,158,11,0.3);
+}
+.sidebar .exam-info strong { color: #fbbf24; }
+/* Main content */
+.main { margin-left: var(--sidebar-w); padding: 30px 40px 60px; max-width: 1000px; }
+/* Header */
+.header {
+  text-align: center; padding: 30px 0 20px;
+  margin-bottom: 30px; border-bottom: 2px solid var(--border);
+}
+.header h1 { font-size: 2rem; color: var(--primary-dark); margin-bottom: 8px; }
+.header p { color: var(--text-light); font-size: 1rem; }
+/* Progress bar */
+.progress-bar {
+  position: fixed; top:0; left: var(--sidebar-w); right:0;
+  height: 3px; background: var(--border); z-index: 90;
+}
+.progress-bar .fill {
+  height: 100%; background: linear-gradient(90deg, var(--primary), var(--purple));
+  width: 0; transition: width 0.3s;
+}
+/* Part title */
+.part-title {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 20px; margin: 40px 0 20px;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  color: white; border-radius: 12px; font-size: 1.3rem; font-weight: 700;
+}
+.part-title .badge {
+  background: rgba(255,255,255,0.25); padding: 4px 12px;
+  border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+}
+/* Section */
+.section {
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  cursor: pointer; user-select: none;
+  transition: background 0.2s;
+}
+.section-header:hover { background: #f1f5f9; }
+.section-header h2 { font-size: 1.15rem; color: var(--text); }
+.section-header .tag {
+  font-size: 0.7rem; padding: 3px 10px;
+  border-radius: 20px; font-weight: 600;
+}
+.tag-ch { background: #dbeafe; color: #1e40af; }
+.tag-t { background: #dcfce7; color: #166534; }
+.tag-f { background: #fef3c7; color: #92400e; }
+.tag-z { background: #ede9fe; color: #5b21b6; }
+.tag-jy { background: #fce7f3; color: #9d174d; }
+.section-header .arrow {
+  transition: transform 0.3s; color: var(--text-light); font-size: 1.2rem;
+}
+.section.collapsed .arrow { transform: rotate(-90deg); }
+.section-body {
+  padding: 0 20px 20px;
+  max-height: 8000px;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+.section.collapsed .section-body {
+  max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0;
+}
+/* Knowledge block */
+.kb {
+  margin: 14px 0; padding: 16px 18px;
+  background: #f8fafc; border-radius: 8px;
+  border-left: 4px solid var(--primary);
+}
+.kb h3 {
+  font-size: 1rem; color: var(--primary-dark);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.kb h3 .num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--primary); color: white; font-size: 0.75rem;
+}
+.kb p, .kb li { margin: 6px 0; font-size: 0.95rem; }
+.kb ul { padding-left: 20px; }
+.kb .formula {
+  margin: 10px 0; padding: 12px 16px;
+  background: white; border-radius: 6px;
+  border: 1px solid var(--border);
+  text-align: center; font-size: 1.05rem;
+  overflow-x: auto;
+}
+.kb .note {
+  margin: 8px 0; padding: 10px 14px;
+  background: #fef3c7; border-radius: 6px;
+  font-size: 0.88rem; color: #92400e;
+  border-left: 3px solid #f59e0b;
+}
+.kb .example {
+  margin: 10px 0; padding: 12px 14px;
+  background: #ecfdf5; border-radius: 6px;
+  font-size: 0.9rem; border: 1px solid #a7f3d0;
+}
+.kb .example strong { color: #065f46; }
+.kb table {
+  width: 100%; border-collapse: collapse; margin: 10px 0;
+  font-size: 0.9rem;
+}
+.kb th, .kb td {
+  padding: 8px 12px; border: 1px solid var(--border);
+  text-align: center;
+}
+.kb th {
+  background: var(--primary); color: white; font-weight: 600;
+}
+.kb tr:nth-child(even) { background: #f8fafc; }
+/* Quick ref card */
+.ref-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px; margin: 12px 0;
+}
+.ref-card {
+  padding: 12px; background: white; border-radius: 8px;
+  border: 1px solid var(--border); text-align: center;
+}
+.ref-card .name { font-weight: 700; font-size: 0.9rem; color: var(--primary-dark); margin-bottom: 4px; }
+.ref-card .val { font-size: 0.88rem; color: var(--text-light); }
+/* Back to top */
+.back-top {
+  position: fixed; bottom: 30px; right: 30px;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--primary); color: white;
+  display: none; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1.2rem; z-index: 80;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+  transition: transform 0.2s;
+}
+.back-top:hover { transform: scale(1.1); }
+/* Search */
+.search-box {
+  margin: 0 12px 12px; position: relative;
+}
+.search-box input {
+  width: 100%; padding: 8px 12px 8px 32px;
+  border: 1px solid #334155; border-radius: 8px;
+  background: rgba(255,255,255,0.08); color: #e2e8f0;
+  font-size: 0.82rem; outline: none;
+}
+.search-box input::placeholder { color: #64748b; }
+.search-box input:focus { border-color: #60a5fa; }
+.search-box::before {
+  content: "🔍"; position: absolute;
+  left: 10px; top: 50%; transform: translateY(-50%);
+  font-size: 0.8rem;
+}
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px; }
+  .progress-bar { left: 0; }
+}
+/* Print */
+@media print {
+  .sidebar, .progress-bar, .back-top { display: none !important; }
+  .main { margin-left: 0; }
+  .section.collapsed .section-body { max-height: none; opacity: 1; padding-bottom: 20px; }
+}
+/* Checkbox toggle */
+.cb-item { display: flex; align-items: flex-start; gap: 8px; margin: 4px 0; }
+.cb-item input[type="checkbox"] { margin-top: 5px; accent-color: var(--primary); }
+.cb-item label { cursor: pointer; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-title">概率论与数理统计</div>
+  <div class="exam-info">
+    <strong>考试时间</strong><br>6月29日(周一) 10:25-12:15<br>
+    <strong>答疑</strong> 6月26日(周五) 8:00-12:00<br>
+    教二325 统计学办公室
+  </div>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="搜索知识点..." oninput="filterNav(this.value)">
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">概率论</div>
+    <a href="#ch1" data-keywords="事件 概率 条件概率 全概率 贝叶斯">Ch1 随机事件及其概率</a>
+    <a href="#ch2" data-keywords="随机变量 分布 分布函数 密度函数">Ch2 随机变量及其分布</a>
+    <a href="#ch3" data-keywords="多维 联合分布 边缘分布 独立性">Ch3 多维随机变量及其分布</a>
+    <a href="#ch4" data-keywords="期望 方差 协方差 相关系数 数字特征">Ch4 随机变量的数字特征</a>
+    <a href="#ch5" data-keywords="大数定律 中心极限定理 切比雪夫">Ch5 大数定律与中心极限定理</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">数理统计</div>
+    <a href="#dist" data-keywords="卡方分布 t分布 F分布 三大分布">三大抽样分布</a>
+    <a href="#ch7" data-keywords="参数估计 矩估计 最大似然 置信区间 无偏">Ch7 参数估计</a>
+    <a href="#ch8" data-keywords="假设检验 拒绝域 Z检验 T检验">Ch8 假设检验</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">附录</div>
+    <a href="#distributions" data-keywords="常用分布 公式 期望 方差">常用分布速查表</a>
+    <a href="#formulas" data-keywords="公式 总结">核心公式汇总</a>
+    <a href="#tips" data-keywords="易错 陷阱 注意 考试">易错点与考试提示</a>
+  </div>
+</nav>
+
+<!-- Progress bar -->
+<div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+
+<!-- Main content -->
+<div class="main">
+  <div class="header">
+    <h1>概率论与数理统计</h1>
+    <p>期末复习知识点总结 &middot; 点击各节标题展开/收起</p>
+  </div>
+
+  <!-- 考试重点提示 -->
+  <div class="section" style="border-left: 4px solid #ef4444; background: #fef2f2;">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2 style="color:#b91c1c;">&#9888; 考试重点提示（来自复习课）</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="kb" style="border-left-color:#ef4444; background:#fff;">
+        <h3>题型分布</h3>
+        <ul>
+          <li><strong>填空题</strong>：模拟卷填空前 3 题（概率计算）+ 最后一题（假设检验）</li>
+          <li><strong>大题1</strong>：全概率公式 + 贝叶斯公式</li>
+          <li><strong>大题2</strong>：随机变量函数的分布（分布函数法 / 公式法）</li>
+          <li><strong>大题3</strong>：二维随机变量（联合分布、边缘分布、独立性、协方差）</li>
+          <li><strong>大题4</strong>：分布可加性（泊松 / 二项）+ 二维正态分布</li>
+          <li><strong>大题5</strong>：参数估计（矩估计 / MLE + 无偏性）</li>
+          <li><strong>大题6</strong>：置信区间计算（参考教材 P178 表 7.1）</li>
+          <li><strong>大题7</strong>：假设检验（按教材 P197 表 8.2 的步骤）</li>
+        </ul>
+        <div class="note">
+          <strong>复习课强调的练习来源：</strong>练习册 4 套模拟试卷（尤其是第 6、7 题和填空题）。
+          教材重点表格：P178 表 7.1（置信区间）、P197 表 8.2（假设检验）。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 概率论部分 ==================== -->
+  <div class="part-title">
+    概率论部分
+    <span class="badge">第1-5章</span>
+  </div>
+
+  <!-- ===== 第一章 ===== -->
+  <div id="ch1" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2>第一章 随机事件及其概率</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+
+      <div class="kb">
+        <h3><span class="num">1</span>事件间的关系与运算</h3>
+        <ul>
+          <li><strong>包含：</strong>\(A \subset B\) 表示 A 发生必导致 B 发生</li>
+          <li><strong>相等：</strong>\(A = B \Leftrightarrow A \subset B \text{ 且 } B \subset A\)</li>
+          <li><strong>和（并）：</strong>\(A \cup B\) 表示 A 与 B 至少一个发生</li>
+          <li><strong>交（积）：</strong>\(A \cap B\) 表示 A 与 B 同时发生</li>
+          <li><strong>差：</strong>\(A - B = A\bar{B}\) 表示 A 发生但 B 不发生</li>
+          <li><strong>互斥（互不相容）：</strong>\(A \cap B = \varnothing\)</li>
+          <li><strong>对立（互补）：</strong>\(A \cup \bar{A} = \Omega,\; A \cap \bar{A} = \varnothing\)</li>
+        </ul>
+        <div class="note">
+          <strong>De Morgan 律（对偶律）：</strong>
+          \(\overline{A \cup B} = \bar{A} \cap \bar{B}\)，\(\overline{A \cap B} = \bar{A} \cup \bar{B}\)
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">2</span>概率的基本性质</h3>
+        <ul>
+          <li>\(0 \le P(A) \le 1\)</li>
+          <li>\(P(\Omega) = 1,\; P(\varnothing) = 0\)</li>
+          <li><strong>加法公式：</strong>\(P(A \cup B) = P(A) + P(B) - P(AB)\)</li>
+          <li><strong>对立事件：</strong>\(P(\bar{A}) = 1 - P(A)\)</li>
+          <li><strong>减法公式：</strong>\(P(A - B) = P(A) - P(AB)\)</li>
+          <li><strong>若 \(A \subset B\)：</strong>\(P(B - A) = P(B) - P(A)\)，\(P(A) \le P(B)\)</li>
+        </ul>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">3</span>条件概率</h3>
+        <div class="formula">
+          \(P(B|A) = \dfrac{P(AB)}{P(A)}, \quad P(A) > 0\)
+        </div>
+        <ul>
+          <li><strong>乘法公式：</strong>\(P(AB) = P(A) \cdot P(B|A) = P(B) \cdot P(A|B)\)</li>
+          <li><strong>推广：</strong>\(P(A_1 A_2 \cdots A_n) = P(A_1) P(A_2|A_1) P(A_3|A_1 A_2) \cdots P(A_n|A_1 \cdots A_{n-1})\)</li>
+        </ul>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">4</span>全概率公式与贝叶斯公式</h3>
+        <p>设 \(A_1, A_2, \ldots, A_n\) 为 \(\Omega\) 的一个完备事件组（划分），即 \(A_i\) 两两互斥且 \(\bigcup_{i=1}^n A_i = \Omega\)。</p>
+        <div class="formula">
+          <strong>全概率公式：</strong>\(P(B) = \sum_{i=1}^{n} P(A_i)\, P(B|A_i)\)
+        </div>
+        <div class="formula">
+          <strong>贝叶斯公式（逆概率公式）：</strong>
+          \(P(A_i|B) = \dfrac{P(A_i)\, P(B|A_i)}{\displaystyle\sum_{j=1}^{n} P(A_j)\, P(B|A_j)}\)
+        </div>
+        <div class="example">
+          <strong>【例题】</strong>某晶体管由三家工厂供货，次品率分别为 0.02, 0.01, 0.03，供货份额分别为 0.15, 0.80, 0.05。<br>
+          (1) 随机取一只，是次品的概率？<br>
+          (2) 取到次品，出自各厂的概率？
+          <br><br>
+          <strong>解：</strong>设 \(A_i\) = 第 i 厂产品，B = 次品。<br>
+          \(P(B) = 0.15 \times 0.02 + 0.80 \times 0.01 + 0.05 \times 0.03 = 0.003 + 0.008 + 0.0015 = 0.0125\)<br>
+          \(P(A_1|B) = \frac{0.003}{0.0125} = 0.24\)，\(P(A_2|B) = \frac{0.008}{0.0125} = 0.64\)，\(P(A_3|B) = \frac{0.0015}{0.0125} = 0.12\)
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">5</span>独立性与三大概型</h3>
+        <p><strong>独立性：</strong>A、B 独立 \(\Leftrightarrow P(AB) = P(A) \cdot P(B)\)</p>
+        <ul>
+          <li><strong>古典概型：</strong>等可能有限样本空间，\(P(A) = \frac{|A|}{|\Omega|}\)</li>
+          <li><strong>几何概型：</strong>\(P(A) = \frac{S_A}{S_\Omega}\)（测度之比）</li>
+          <li><strong>伯努利概型（n重独立试验）：</strong>\(P(X = k) = C_n^k p^k (1-p)^{n-k},\; X \sim B(n,p)\)</li>
+        </ul>
+      </div>
+
+      <div class="kb" style="border-left-color: #ef4444;">
+        <h3 style="color:#b91c1c;">&#9998; 经典例题精讲</h3>
+
+        <div class="example">
+          <strong>【例1 · 条件概率】</strong>设 \(P(A) = \frac{1}{4}\)，\(P(B) = \frac{1}{2}\)，求 \(P(B\bar{A})\)。
+          <br><br>
+          <strong>(1) A与B互斥时：</strong><br>
+          因 A、B 互斥，\(AB = \varnothing\)，故 \(B\bar{A} = B - AB = B\)。
+          \(P(B\bar{A}) = P(B) = \dfrac{1}{2}\)
+          <br><br>
+          <strong>(2) \(A \subset B\) 时：</strong><br>
+          因 \(A \subset B\)，\(B\bar{A} = B - A\)，所以 \(P(B\bar{A}) = P(B) - P(A) = \frac{1}{2} - \frac{1}{4} = \frac{1}{4}\)
+          <br><br>
+          <strong>(3) \(P(AB) = \frac{1}{9}\) 时：</strong><br>
+          \(P(B\bar{A}) = P(B - AB) = P(B) - P(AB) = \frac{1}{2} - \frac{1}{9} = \frac{7}{18}\)
+        </div>
+
+        <div class="example">
+          <strong>【例2 · 加法公式】</strong>设 \(P(A) = P(B) = P(C) = \frac{1}{4}\)，\(P(AB) = P(BC) = 0\)，\(P(AC) = \frac{1}{8}\)，求 \(P(A \cup B \cup C)\)。
+          <br><br>
+          <strong>解：</strong>由三事件加法公式：
+          \(P(A \cup B \cup C) = P(A) + P(B) + P(C) - P(AB) - P(AC) - P(BC) + P(ABC)\)
+          注意 \(AB = \varnothing \Rightarrow ABC = \varnothing\)，所以
+          \(= 3 \times \frac{1}{4} - 0 - \frac{1}{8} - 0 + 0 = \dfrac{5}{8}\)
+        </div>
+
+        <div class="example">
+          <strong>【例3 · 乘法公式】</strong>透镜第一次落下打破概率 \(\frac{1}{2}\)，若未打破，第二次打破概率 \(\frac{7}{10}\)，若仍未打破，第三次打破概率 \(\frac{9}{10}\)。求三次落下未打破的概率。
+          <br><br>
+          <strong>解：</strong>设 \(A_i\) = 第 i 次落下打破。三次未打破 = \(\bar{A_1}\bar{A_2}\bar{A_3}\)，由乘法公式：
+          \(P(\bar{A_1}\bar{A_2}\bar{A_3}) = P(\bar{A_1}) \cdot P(\bar{A_2}|\bar{A_1}) \cdot P(\bar{A_3}|\bar{A_1}\bar{A_2})\)
+          \(= \left(1-\frac{1}{2}\right)\left(1-\frac{7}{10}\right)\left(1-\frac{9}{10}\right) = \frac{1}{2} \times \frac{3}{10} \times \frac{1}{10} = \dfrac{3}{200}\)
+        </div>
+
+        <div class="example">
+          <strong>【例4 · 全概率+贝叶斯（枪射击）】</strong>5支枪中2支未校正、3支已校正。校正枪中靶率 0.9，未校正枪中靶率 0.4。<br>
+          (1) 任取一支射击，中靶概率？<br>
+          (2) 射击未中靶，求该枪未校正的概率。
+          <br><br>
+          <strong>解：</strong>设 A = 枪已校正，B = 中靶。\(P(A) = 0.6\)，\(P(\bar{A}) = 0.4\)，\(P(B|A) = 0.9\)，\(P(B|\bar{A}) = 0.4\)。
+          <br><br>
+          <strong>(1)</strong> 全概率公式：
+          \(P(B) = P(A)P(B|A) + P(\bar{A})P(B|\bar{A}) = 0.6 \times 0.9 + 0.4 \times 0.4 = 0.54 + 0.16 = 0.70\)
+          <br><br>
+          <strong>(2)</strong> 贝叶斯公式：\(P(\bar{A}|\bar{B}) = \frac{P(\bar{A})P(\bar{B}|\bar{A})}{P(\bar{B})} = \frac{0.4 \times 0.6}{0.30} = 0.8\)
+        </div>
+
+        <div class="example">
+          <strong>【例5 · 贝叶斯（癌症筛查）】</strong>某地区肝癌发病率 0.0004。甲胎蛋白法检测：肝癌患者阳性率 99%，非肝癌者假阳性率 0.1%。某人检查阳性，求真患肝癌的概率。
+          <br><br>
+          <strong>解：</strong>设 B = 患肝癌，A = 检查阳性。
+          \(P(B) = 0.0004\)，\(P(\bar{B}) = 0.9996\)，\(P(A|B) = 0.99\)，\(P(A|\bar{B}) = 0.001\)
+          <br>
+          由贝叶斯公式：
+          \(P(B|A) = \frac{P(B)P(A|B)}{P(B)P(A|B) + P(\bar{B})P(A|\bar{B})}\)
+          \(= \frac{0.0004 \times 0.99}{0.0004 \times 0.99 + 0.9996 \times 0.001} = \frac{0.000396}{0.000396 + 0.0009996} \approx 0.284\)
+          <div class="note">即使检查呈阳性，真正患癌概率仅约 28.4%。这是因为肝癌发病率极低，假阳性的"基数"远大于真阳性。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 第二章 ===== -->
+  <div id="ch2" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2>第二章 随机变量及其分布</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+
+      <div class="kb">
+        <h3><span class="num">1</span>离散型随机变量</h3>
+        <p>分布律：\(P(X = x_k) = p_k,\; k = 1,2,\ldots\)，满足 \(p_k \ge 0\)，\(\sum_k p_k = 1\)。</p>
+        <p>常见离散分布：<strong>0-1分布、二项分布 \(B(n,p)\)、泊松分布 \(\pi(\lambda)\)</strong> 等。</p>
+        <div class="formula">
+          <strong>泊松定理（二项近似泊松）：</strong>
+          若 \(n\) 大、\(p\) 小、\(np = \lambda\) 适中，则
+          \(C_n^k p^k(1-p)^{n-k} \approx \dfrac{\lambda^k e^{-\lambda}}{k!}\)
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">2</span>连续型随机变量</h3>
+        <p><strong>概率密度 \(f(x)\)：</strong>\(f(x) \ge 0\)，\(\int_{-\infty}^{+\infty} f(x)\,dx = 1\)</p>
+        <p><strong>分布函数：</strong>\(F(x) = P(X \le x) = \int_{-\infty}^{x} f(t)\,dt\)</p>
+        <p><strong>概率计算：</strong>\(P(a < X \le b) = F(b) - F(a) = \int_a^b f(x)\,dx\)</p>
+        <p>在 \(f(x)\) 的连续点处：\(F'(x) = f(x)\)</p>
+        <p>常见连续分布：<strong>均匀分布 \(U(a,b)\)、指数分布 \(Exp(\lambda)\)、正态分布 \(N(\mu, \sigma^2)\)</strong></p>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">3</span>随机变量函数的分布</h3>
+        <p><strong>离散型：</strong>直接列 \(Y = g(X)\) 的取值与概率。</p>
+        <p><strong>连续型——分布函数法：</strong></p>
+        <ul>
+          <li>先求 \(F_Y(y) = P(Y \le y) = P(g(X) \le y)\)</li>
+          <li>再求导 \(f_Y(y) = F_Y'(y)\)</li>
+        </ul>
+        <p><strong>公式法（严格单调时）：</strong></p>
+        <div class="formula">
+          设 \(Y = g(X)\) 严格单调，反函数 \(x = h(y)\) 有连续导数，则
+          \(f_Y(y) = f_X[h(y)] \cdot |h'(y)|,\quad a < y < b\)
+        </div>
+        <div class="note">
+          <strong>正态分布线性变换：</strong>若 \(X \sim N(\mu, \sigma^2)\)，则 \(Y = aX + b \sim N(a\mu+b,\; a^2\sigma^2)\)，特别 \(\frac{X-\mu}{\sigma} \sim N(0,1)\)。
+        </div>
+      </div>
+
+      <div class="kb" style="border-left-color: #ef4444;">
+        <h3 style="color:#b91c1c;">&#9998; 经典例题精讲</h3>
+
+        <div class="example">
+          <strong>【例1 · 分布函数法】</strong>设 \(X \sim U(0,1)\)，求 \(Y = -2\ln X\) 的概率密度。
+          <br><br>
+          <strong>解：</strong>先求 \(Y\) 的分布函数 \(F_Y(y) = P(Y \le y) = P(-2\ln X \le y)\)
+          <br>
+          当 \(y > 0\) 时：\(P(-2\ln X \le y) = P(\ln X \ge -\frac{y}{2}) = P(X \ge e^{-y/2}) = 1 - e^{-y/2}\)
+          <br>
+          当 \(y \le 0\) 时：\(F_Y(y) = 0\)
+          <br><br>
+          求导得：\(f_Y(y) = \begin{cases} \frac{1}{2}e^{-y/2}, & y > 0 \\ 0, & y \le 0 \end{cases}\)
+          <br>
+          即 \(Y \sim Exp(\frac{1}{2})\)。
+        </div>
+
+        <div class="example">
+          <strong>【例2 · 公式法】</strong>设 \(X \sim N(0,1)\)，\(Y = X^2\)，求 \(f_Y(y)\)。
+          <br><br>
+          <strong>解：</strong>当 \(y > 0\) 时，\(Y = x^2\) 的反函数为 \(x = \pm\sqrt{y}\)，有两个分支。
+          <br>
+          由公式法：\(f_Y(y) = f_X(\sqrt{y}) \cdot |(\sqrt{y})'| + f_X(-\sqrt{y}) \cdot |(-\sqrt{y})'|\)
+          <br>
+          \(= \frac{1}{\sqrt{2\pi}}e^{-y/2} \cdot \frac{1}{2\sqrt{y}} + \frac{1}{\sqrt{2\pi}}e^{-y/2} \cdot \frac{1}{2\sqrt{y}} = \frac{1}{\sqrt{2\pi y}} e^{-y/2}\)
+          <br>
+          当 \(y \le 0\) 时：\(f_Y(y) = 0\)。这正是 \(\chi^2(1)\) 分布的密度。
+        </div>
+
+        <div class="example">
+          <strong>【例3 · 线性变换】</strong>设 \(X \sim N(2, 9)\)，求 \(Y = 2X + 1\) 的分布及 \(P(Y > 7)\)。
+          <br><br>
+          <strong>解：</strong>由正态分布的线性变换性质：\(Y = 2X + 1 \sim N(2 \times 2 + 1,\; 4 \times 9) = N(5, 36)\)
+          <br>
+          标准化：\(P(Y > 7) = P\left(\frac{Y-5}{6} > \frac{7-5}{6}\right) = P(Z > \frac{1}{3}) = 1 - \Phi(0.333) \approx 1 - 0.6304 = 0.3696\)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 第三章 ===== -->
+  <div id="ch3" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2>第三章 多维随机变量及其分布</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+
+      <div class="kb">
+        <h3><span class="num">1</span>联合分布与边缘分布</h3>
+        <p><strong>联合分布函数：</strong>\(F(x,y) = P(X \le x, Y \le y)\)</p>
+        <p><strong>离散型——联合分布列与边缘分布列：</strong></p>
+        <div class="formula">
+          \(P(X = x_i) = \sum_j P(X = x_i, Y = y_j) = p_{i\cdot}\)
+        </div>
+        <p><strong>连续型——联合密度与边缘密度：</strong></p>
+        <div class="formula">
+          \(f_X(x) = \int_{-\infty}^{+\infty} f(x,y)\,dy, \quad f_Y(y) = \int_{-\infty}^{+\infty} f(x,y)\,dx\)
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">2</span>独立性判断</h3>
+        <div class="formula">
+          X, Y 独立 \(\Leftrightarrow F(x,y) = F_X(x) \cdot F_Y(y)\)，对一切 \(x,y\) 成立
+        </div>
+        <p>等价条件：</p>
+        <ul>
+          <li>离散型：\(p_{ij} = p_{i\cdot} \cdot p_{\cdot j}\) 对所有 \(i,j\) 成立</li>
+          <li>连续型：\(f(x,y) = f_X(x) \cdot f_Y(y)\) 对几乎所有 \((x,y)\) 成立</li>
+        </ul>
+        <div class="note">
+          若联合密度的定义域不能分解为两个独立变量各自的范围之积（如三角形区域），则 X, Y <strong>一定不独立</strong>。
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">3</span>条件分布</h3>
+        <p><strong>离散型：</strong>\(P(Y = y_j | X = x_i) = \frac{p_{ij}}{p_{i\cdot}}\)</p>
+        <p><strong>连续型：</strong>\(f_{Y|X}(y|x) = \frac{f(x,y)}{f_X(x)},\; f_X(x) > 0\)</p>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">4</span>二维正态分布</h3>
+        <div class="formula">
+          \((X,Y) \sim N(\mu_1, \mu_2; \sigma_1^2, \sigma_2^2; \rho)\)
+        </div>
+        <ul>
+          <li>边缘分布：\(X \sim N(\mu_1, \sigma_1^2)\)，\(Y \sim N(\mu_2, \sigma_2^2)\)</li>
+          <li>\(\rho = 0\) \(\Leftrightarrow\) X 与 Y 独立 \(\Leftrightarrow\) X 与 Y 不相关（正态下三者等价）</li>
+          <li>线性组合仍为正态：\(aX + bY \sim N(a\mu_1 + b\mu_2,\; a^2\sigma_1^2 + b^2\sigma_2^2 + 2ab\rho\sigma_1\sigma_2)\)</li>
+        </ul>
+      </div>
+
+      <div class="kb" style="border-left-color: #ef4444;">
+        <h3 style="color:#b91c1c;">&#9998; 经典例题精讲</h3>
+
+        <div class="example">
+          <strong>【例1 · 联合分布律与边缘分布律】</strong>袋中 2 白球 3 黑球，有放回摸两次，每次一球。令 \(X\) = 第一次摸出白球，\(Y\) = 第二次摸出白球。求联合分布律与边缘分布律。
+          <br><br>
+          <strong>解：</strong>有放回时 X、Y 独立，\(P(X=1)=P(Y=1)=\frac{2}{5}\)，\(P(X=0)=P(Y=0)=\frac{3}{5}\)。
+          <br>
+          联合分布律：
+          <table style="margin:10px auto;width:70%;">
+            <tr><th>\(X \backslash Y\)</th><th>0</th><th>1</th><th>\(p_{i\cdot}\)</th></tr>
+            <tr><td>0</td><td>9/25</td><td>6/25</td><td>3/5</td></tr>
+            <tr><td>1</td><td>6/25</td><td>4/25</td><td>2/5</td></tr>
+            <tr><th>\(p_{\cdot j}\)</th><td>3/5</td><td>2/5</td><td>1</td></tr>
+          </table>
+          边缘分布即为各行/列之和。
+        </div>
+
+        <div class="example">
+          <strong>【例2 · 边缘密度与独立性】</strong>设 \((X,Y)\) 的联合密度为
+          \(f(x,y) = \begin{cases} cy(2-x), & 0 \le x \le 1,\; 0 \le y \le x \\ 0, & \text{其他} \end{cases}\)
+          (1) 求常数 \(c\)；(2) 求边缘密度；(3) 判断 X, Y 是否独立。
+          <br><br>
+          <strong>解：</strong>
+          (1) 由 \(\int\int f(x,y)\,dxdy = 1\)，积分区域为 \(0 \le y \le x \le 1\)：
+          \(\int_0^1 \int_0^x cy(2-x)\,dy\,dx = \int_0^1 \frac{c}{2}x^2(2-x)\,dx = \frac{c}{2} \cdot \frac{5}{12} = 1\)，故 \(c = \frac{24}{5}\)
+          <br><br>
+          (2) \(f_X(x) = \int_0^x \frac{24}{5}y(2-x)\,dy = \frac{12}{5}x^2(2-x),\; 0 \le x \le 1\)
+          <br>
+          \(f_Y(y) = \int_y^1 \frac{24}{5}y(2-x)\,dx = \frac{12}{5}y(3-4y+y^2),\; 0 \le y \le 1\)
+          <br><br>
+          (3) 由于 \(f(x,y) \ne f_X(x) \cdot f_Y(y)\)，X 与 Y <strong>不独立</strong>。
+          <div class="note">当联合密度的支撑区域不是矩形区域（如三角形、圆形），X 与 Y 一定不独立。</div>
+        </div>
+
+        <div class="example">
+          <strong>【例3 · 协方差计算】</strong>设 \((X,Y)\) 的联合分布律为
+          <table style="margin:10px auto;width:60%;">
+            <tr><th>\(X \backslash Y\)</th><th>-1</th><th>0</th><th>1</th></tr>
+            <tr><td>0</td><td>0.07</td><td>0.18</td><td>0.15</td></tr>
+            <tr><td>1</td><td>0.08</td><td>0.32</td><td>0.20</td></tr>
+          </table>
+          求 \(\text{Cov}(X,Y)\) 并判断 X, Y 是否独立。
+          <br><br>
+          <strong>解：</strong>
+          \(E(X) = 0 \times 0.4 + 1 \times 0.6 = 0.6\)
+          \(E(Y) = (-1) \times 0.15 + 0 \times 0.5 + 1 \times 0.35 = 0.2\)
+          \(E(XY) = 0 \times 0 \times 0.18 + 1 \times (-1) \times 0.08 + 1 \times 1 \times 0.20 = 0.12\)
+          <br>
+          \(\text{Cov}(X,Y) = E(XY) - E(X)E(Y) = 0.12 - 0.6 \times 0.2 = 0\)
+          <br>
+          \(\text{Cov}(X,Y) = 0\)，X 与 Y 不相关。再验证独立性：
+          \(p_{11} = 0.07\)，\(p_{1\cdot} \times p_{\cdot 1} = 0.4 \times 0.15 = 0.06 \ne 0.07\)
+          所以 X 与 Y <strong>不独立</strong>，但不相关。这就是"不相关未必独立"的典型反例。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 第四章 ===== -->
+  <div id="ch4" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2>第四章 随机变量的数字特征</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+
+      <div class="kb">
+        <h3><span class="num">1</span>数学期望</h3>
+        <div class="formula">
+          离散型：\(E(X) = \sum_k x_k p_k\)；连续型：\(E(X) = \int_{-\infty}^{+\infty} x f(x)\,dx\)
+        </div>
+        <p><strong>随机变量函数的期望（LOTUS）：</strong></p>
+        <div class="formula">
+          \(E[g(X)] = \sum_k g(x_k) p_k\) 或 \(\int_{-\infty}^{+\infty} g(x) f(x)\,dx\)
+        </div>
+        <p><strong>性质：</strong></p>
+        <ul>
+          <li>\(E(c) = c\)，\(E(aX + b) = aE(X) + b\)</li>
+          <li>\(E(X + Y) = E(X) + E(Y)\)（不需要独立）</li>
+          <li>若 X, Y 独立：\(E(XY) = E(X) \cdot E(Y)\)</li>
+        </ul>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">2</span>方差</h3>
+        <div class="formula">
+          \(D(X) = E[X - E(X)]^2 = E(X^2) - [E(X)]^2\)
+        </div>
+        <p><strong>性质：</strong></p>
+        <ul>
+          <li>\(D(c) = 0\)，\(D(aX + b) = a^2 D(X)\)</li>
+          <li>若 X, Y 独立：\(D(X + Y) = D(X) + D(Y)\)</li>
+          <li>\(D(X \pm Y) = D(X) + D(Y) \pm 2\text{Cov}(X,Y)\)</li>
+        </ul>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">3</span>协方差与相关系数</h3>
+        <div class="formula">
+          <strong>协方差：</strong>\(\text{Cov}(X,Y) = E[(X - EX)(Y - EY)] = E(XY) - E(X)E(Y)\)
+        </div>
+        <div class="formula">
+          <strong>相关系数：</strong>\(\rho_{XY} = \dfrac{\text{Cov}(X,Y)}{\sqrt{D(X)}\,\sqrt{D(Y)}}\)
+        </div>
+        <p><strong>性质：</strong></p>
+        <ul>
+          <li>\(\text{Cov}(aX, bY) = ab\,\text{Cov}(X,Y)\)</li>
+          <li>\(\text{Cov}(X_1 + X_2, Y) = \text{Cov}(X_1, Y) + \text{Cov}(X_2, Y)\)</li>
+          <li>\(|\rho_{XY}| \le 1\)；\(|\rho_{XY}| = 1\) \(\Leftrightarrow\) 存在线性关系 \(P(Y = aX + b) = 1\)</li>
+          <li>\(\rho_{XY} = 0\) 称为 <strong>不相关</strong></li>
+        </ul>
+        <div class="note">
+          <strong>独立与不相关的关系：</strong>独立 \(\Rightarrow\) 不相关，反之不一定。但<strong>二维正态分布</strong>下：独立 \(\Leftrightarrow\) 不相关 \(\Leftrightarrow \rho = 0\)。
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">4</span>矩与协方差矩阵</h3>
+        <ul>
+          <li><strong>k 阶原点矩：</strong>\(E(X^k)\)</li>
+          <li><strong>k 阶中心矩：</strong>\(E[X - E(X)]^k\)</li>
+          <li>\(E(X)\) 是一阶原点矩，\(D(X)\) 是二阶中心矩</li>
+        </ul>
+      </div>
+
+      <div class="kb" style="border-left-color: #ef4444;">
+        <h3 style="color:#b91c1c;">&#9998; 经典例题精讲</h3>
+
+        <div class="example">
+          <strong>【例1 · 期望计算（候车问题）】</strong>某车站每天 8:00-9:00 和 9:00-10:00 各有一班车到站，到站时刻独立，规律如下：
+          <table style="margin:10px auto;width:80%;">
+            <tr><th>到站时刻</th><th>8:10 / 9:10</th><th>8:30 / 9:30</th><th>8:50 / 9:50</th></tr>
+            <tr><td>概率</td><td>1/6</td><td>3/6</td><td>2/6</td></tr>
+          </table>
+          一旅客 8:20 到站，求候车时间的期望。
+          <br><br>
+          <strong>解：</strong>旅客 8:20 到站，候车时间 \(X\) 的可能取值及概率：
+          <table style="margin:10px auto;width:80%;">
+            <tr><th>X（分钟）</th><th>10</th><th>30</th><th>50</th><th>70</th><th>90</th></tr>
+            <tr><td>p</td><td>3/6</td><td>2/6</td><td>1/36</td><td>3/36</td><td>2/36</td></tr>
+          </table>
+          其中 70 分钟 = 第一班 8:10 已过 + 等第二班 9:30，\(P(X=70) = \frac{1}{6} \times \frac{3}{6} = \frac{3}{36}\)
+          <br>
+          \(E(X) = 10 \times \frac{3}{6} + 30 \times \frac{2}{6} + 50 \times \frac{1}{36} + 70 \times \frac{3}{36} + 90 \times \frac{2}{36} = \frac{27.22}{1} \approx 27.22 \text{（分钟）}\)
+        </div>
+
+        <div class="example">
+          <strong>【例2 · 期望技巧（指示变量法）】</strong>20 位旅客在 10 个车站下车（等可能），各旅客独立。若某站无人下车则不停车。求停车次数 \(X\) 的期望。
+          <br><br>
+          <strong>解：</strong>引入指示变量 \(X_i = \begin{cases} 0, & \text{第 } i \text{ 站无人下车} \\ 1, & \text{第 } i \text{ 站有人下车} \end{cases}\)，则 \(X = X_1 + X_2 + \cdots + X_{10}\)。
+          <br>
+          每位旅客不在第 \(i\) 站下车的概率 = \(\frac{9}{10}\)，20 人都不在第 \(i\) 站下车的概率 = \((\frac{9}{10})^{20}\)
+          <br>
+          \(E(X_i) = P(X_i = 1) = 1 - \left(\frac{9}{10}\right)^{20}\)
+          <br>
+          \(E(X) = 10 \times \left[1 - \left(\frac{9}{10}\right)^{20}\right] \approx 10 \times (1 - 0.1216) = 8.784\)
+        </div>
+
+        <div class="example">
+          <strong>【例3 · 方差计算】</strong>设 \(X \sim U(a,b)\)，求 \(D(X)\)。
+          <br><br>
+          <strong>解：</strong>\(E(X) = \frac{a+b}{2}\)
+          <br>
+          \(E(X^2) = \int_a^b x^2 \cdot \frac{1}{b-a}\,dx = \frac{1}{3} \cdot \frac{b^3 - a^3}{b-a} = \frac{a^2 + ab + b^2}{3}\)
+          <br>
+          \(D(X) = E(X^2) - [E(X)]^2 = \frac{a^2+ab+b^2}{3} - \frac{(a+b)^2}{4} = \frac{(b-a)^2}{12}\)
+        </div>
+
+        <div class="example">
+          <strong>【例4 · 分布可加性】</strong>设 \(X \sim \pi(2)\)，\(Y \sim \pi(2)\)，X 与 Y 独立，求 \(P(X+Y=3)\)。
+          <br><br>
+          <strong>解：</strong>由泊松分布可加性：\(X + Y \sim \pi(2+2) = \pi(4)\)
+          <br>
+          \(P(X+Y=3) = \frac{4^3 e^{-4}}{3!} = \frac{64 \times 0.0183}{6} \approx 0.1954\)
+        </div>
+
+        <div class="example">
+          <strong>【例5 · 二项分布可加性】</strong>设 \(X \sim B(2, 0.5)\)，\(Y \sim B(3, 0.5)\)，X 与 Y 独立，求 \(P(X+Y=1)\)。
+          <br><br>
+          <strong>解：</strong>由二项分布可加性：\(X + Y \sim B(2+3, 0.5) = B(5, 0.5)\)
+          <br>
+          \(P(X+Y=1) = C_5^1 \times 0.5^1 \times 0.5^4 = 5 \times \frac{1}{32} = \frac{5}{32} = 0.15625\)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 第五章 ===== -->
+  <div id="ch5" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2>第五章 大数定律与中心极限定理</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+
+      <div class="kb">
+        <h3><span class="num">1</span>切比雪夫不等式</h3>
+        <div class="formula">
+          设 \(E(X)\) 和 \(D(X)\) 存在，则对任意 \(\varepsilon > 0\)：
+          \(P\{|X - E(X)| \ge \varepsilon\} \le \dfrac{D(X)}{\varepsilon^2}\)
+          <br>等价地：\(P\{|X - E(X)| < \varepsilon\} \ge 1 - \dfrac{D(X)}{\varepsilon^2}\)
+        </div>
+        <div class="note">
+          切比雪夫不等式不需要知道分布形式，只需要期望和方差存在，可用于估计概率的上/下界。
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">2</span>大数定律</h3>
+        <ul>
+          <li><strong>切比雪夫大数定律：</strong>若 \(X_1, X_2, \ldots\) 相互独立，且方差有上界 \(D(X_i) \le C\)，则
+            \(\frac{1}{n}\sum_{i=1}^n X_i \xrightarrow{P} \frac{1}{n}\sum_{i=1}^n E(X_i)\)</li>
+          <li><strong>伯努利大数定律：</strong>频率依概率收敛于概率：\(\frac{n_A}{n} \xrightarrow{P} p\)</li>
+          <li><strong>辛钦大数定律：</strong>若 \(X_i\) 独立同分布，\(E(X_i) = \mu\) 存在，则 \(\bar{X} \xrightarrow{P} \mu\)</li>
+        </ul>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">3</span>中心极限定理</h3>
+        <div class="formula">
+          <strong>独立同分布 CLT（林德伯格-列维）：</strong><br>
+          设 \(X_i\) iid，\(E(X_i) = \mu\)，\(D(X_i) = \sigma^2 > 0\)，则当 \(n\) 充分大时：
+          \(\dfrac{\displaystyle\sum_{i=1}^n X_i - n\mu}{\sqrt{n}\,\sigma} \;\xrightarrow{d}\; N(0,1)\)
+        </div>
+        <div class="formula">
+          <strong>棣莫弗-拉普拉斯 CLT（二项近似正态）：</strong><br>
+          若 \(X \sim B(n,p)\)，则当 \(n\) 充分大时：
+          \(\dfrac{X - np}{\sqrt{np(1-p)}} \;\xrightarrow{d}\; N(0,1)\)
+        </div>
+        <div class="example">
+          <strong>【应用技巧】</strong>遇到"n 较大"的二项分布/独立求和问题时，用正态近似：
+          \(P(a \le X \le b) \approx \Phi\!\left(\frac{b - np}{\sqrt{npq}}\right) - \Phi\!\left(\frac{a - np}{\sqrt{npq}}\right)\)
+        </div>
+      </div>
+
+      <div class="kb" style="border-left-color: #ef4444;">
+        <h3 style="color:#b91c1c;">&#9998; 经典例题精讲</h3>
+
+        <div class="example">
+          <strong>【例1 · 切比雪夫不等式】</strong>设 \(E(X) = \mu\)，\(D(X) = \sigma^2\)，用切比雪夫不等式估计 \(P(|X - \mu| \ge 3\sigma)\) 的上界。
+          <br><br>
+          <strong>解：</strong>取 \(\varepsilon = 3\sigma\)，由切比雪夫不等式：
+          \(P(|X - \mu| \ge 3\sigma) \le \frac{D(X)}{(3\sigma)^2} = \frac{\sigma^2}{9\sigma^2} = \frac{1}{9}\)
+          <br>
+          即：随机变量偏离均值超过 3 倍标准差的概率不超过 \(\frac{1}{9} \approx 11.1\%\)。
+        </div>
+
+        <div class="example">
+          <strong>【例2 · CLT 应用（二项近似正态）】</strong>某工厂产品的次品率为 0.05。求在 200 件产品中次品数不超过 15 件的概率。
+          <br><br>
+          <strong>解：</strong>设 X = 次品数，\(X \sim B(200, 0.05)\)。\(np = 10\)，\(\sqrt{np(1-p)} = \sqrt{9.5} \approx 3.082\)
+          <br>
+          由中心极限定理：
+          \(P(X \le 15) = P\left(\frac{X - 10}{3.082} \le \frac{15 - 10}{3.082}\right) \approx \Phi(1.622) \approx 0.9474\)
+        </div>
+
+        <div class="example">
+          <strong>【例3 · CLT 应用（独立求和）】</strong>一加法器同时收到 20 个噪声电压 \(V_k\)，各 \(V_k\) 独立同分布于 \(U(0,10)\)。求总电压 \(V = \sum_{k=1}^{20} V_k\) 超过 105 的概率。
+          <br><br>
+          <strong>解：</strong>每个 \(V_k\) 的 \(E(V_k) = 5\)，\(D(V_k) = \frac{100}{12}\)。
+          <br>
+          \(\sum V_k\) 的 \(E = 20 \times 5 = 100\)，\(D = 20 \times \frac{100}{12} = \frac{500}{3}\)
+          <br>
+          \(P(V > 105) = P\left(\frac{V - 100}{\sqrt{500/3}} > \frac{105 - 100}{\sqrt{500/3}}\right) \approx 1 - \Phi(0.387) \approx 1 - 0.6517 = 0.3483\)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 数理统计部分 ==================== -->
+  <div class="part-title">
+    数理统计部分
+    <span class="badge">三大分布 · 参数估计 · 假设检验</span>
+  </div>
+
+  <!-- ===== 三大抽样分布 ===== -->
+  <div id="dist" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2>三大抽样分布</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+
+      <div class="kb">
+        <h3><span class="num">1</span>\(\chi^2\) 分布</h3>
+        <div class="formula">
+          若 \(X_1, X_2, \ldots, X_n\) iid，\(X_i \sim N(0,1)\)，则
+          \(\chi^2 = X_1^2 + X_2^2 + \cdots + X_n^2 \sim \chi^2(n)\)
+        </div>
+        <p><strong>性质：</strong></p>
+        <ul>
+          <li>\(E(\chi^2) = n\)，\(D(\chi^2) = 2n\)</li>
+          <li><strong>可加性：</strong>若 \(X \sim \chi^2(n_1)\)，\(Y \sim \chi^2(n_2)\) 且独立，则 \(X + Y \sim \chi^2(n_1 + n_2)\)</li>
+        </ul>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">2</span>t 分布</h3>
+        <div class="formula">
+          若 \(X \sim N(0,1)\)，\(Y \sim \chi^2(n)\)，且 X, Y 独立，则
+          \(T = \dfrac{X}{\sqrt{Y/n}} \sim t(n)\)
+        </div>
+        <p><strong>性质：</strong></p>
+        <ul>
+          <li>t 分布关于 0 对称</li>
+          <li>当 \(n\) 足够大时，\(t(n)\) 近似 \(N(0,1)\)</li>
+          <li>若 \(T \sim t(n)\)，则 \(T^2 \sim F(1, n)\)</li>
+        </ul>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">3</span>F 分布</h3>
+        <div class="formula">
+          若 \(X \sim \chi^2(n_1)\)，\(Y \sim \chi^2(n_2)\)，且独立，则
+          \(F = \dfrac{X/n_1}{Y/n_2} \sim F(n_1, n_2)\)
+        </div>
+        <p><strong>性质：</strong></p>
+        <ul>
+          <li>若 \(F \sim F(n_1, n_2)\)，则 \(\frac{1}{F} \sim F(n_2, n_1)\)</li>
+          <li>\(F_{1-\alpha}(n_1, n_2) = \frac{1}{F_\alpha(n_2, n_1)}\)</li>
+        </ul>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">4</span>正态总体下的抽样分布（重要！）</h3>
+        <p>设 \(X_1, \ldots, X_n\) 是来自 \(N(\mu, \sigma^2)\) 的样本，\(\bar{X}\) 和 \(S^2\) 分别为样本均值和样本方差：</p>
+        <div class="formula">
+          (1) \(\bar{X} \sim N\!\left(\mu, \dfrac{\sigma^2}{n}\right)\)，即 \(\dfrac{\bar{X} - \mu}{\sigma / \sqrt{n}} \sim N(0,1)\)
+        </div>
+        <div class="formula">
+          (2) \(\dfrac{(n-1)S^2}{\sigma^2} \sim \chi^2(n-1)\)
+        </div>
+        <div class="formula">
+          (3) \(\bar{X}\) 与 \(S^2\) <strong>相互独立</strong>
+        </div>
+        <div class="formula">
+          (4) \(\dfrac{\bar{X} - \mu}{S / \sqrt{n}} \sim t(n-1)\)
+        </div>
+        <div class="note">
+          <strong>样本均值与样本方差的期望：</strong>
+          \(E(\bar{X}) = \mu\)，\(D(\bar{X}) = \frac{\sigma^2}{n}\)，\(E(S^2) = \sigma^2\)
+        </div>
+      </div>
+
+      <div class="kb" style="border-left-color: #ef4444;">
+        <h3 style="color:#b91c1c;">&#9998; 经典例题精讲</h3>
+
+        <div class="example">
+          <strong>【例1 · 抽样分布性质】</strong>设总体 \(X \sim \pi(\lambda)\)（泊松分布），\(X_1, \ldots, X_n\) 是样本，求 \(E(\bar{X})\)，\(D(\bar{X})\) 和 \(E(S^2)\)。
+          <br><br>
+          <strong>解：</strong>泊松分布的 \(E(X) = \lambda\)，\(D(X) = \lambda\)。
+          <br>
+          \(E(\bar{X}) = E(X) = \lambda\)
+          <br>
+          \(D(\bar{X}) = \frac{D(X)}{n} = \frac{\lambda}{n}\)
+          <br>
+          \(E(S^2) = D(X) = \lambda\)
+          <div class="note">不论总体服从什么分布，\(\bar{X}\) 总是 \(\mu\) 的无偏估计，\(S^2\) 总是 \(\sigma^2\) 的无偏估计。</div>
+        </div>
+
+        <div class="example">
+          <strong>【例2 · 正态总体概率计算】</strong>设 \(X_1, \ldots, X_{25}\) 是来自 \(N(10, 4)\) 的样本，求 \(P(|\bar{X} - 10| > 0.5)\)。
+          <br><br>
+          <strong>解：</strong>\(\bar{X} \sim N(10, \frac{4}{25}) = N(10, 0.16)\)，即 \(\bar{X} \sim N(10, 0.4^2)\)。
+          <br>
+          \(P(|\bar{X} - 10| > 0.5) = 1 - P(|\bar{X} - 10| \le 0.5) = 1 - P\left(\left|\frac{\bar{X}-10}{0.4}\right| \le \frac{0.5}{0.4}\right)\)
+          <br>
+          \(= 1 - P(|Z| \le 1.25) = 1 - [2\Phi(1.25) - 1] = 2 - 2\Phi(1.25) = 2 - 2 \times 0.8944 = 0.2112\)
+        </div>
+
+        <div class="example">
+          <strong>【例3 · t 分布构造】</strong>设 \(X_1, \ldots, X_{10}\) 是来自 \(N(0, \sigma^2)\) 的样本，求 \(\frac{\sqrt{10}\,\bar{X}}{S}\) 的分布。
+          <br><br>
+          <strong>解：</strong>\(\bar{X} \sim N(0, \frac{\sigma^2}{10})\)，故 \(\frac{\bar{X}}{\sigma/\sqrt{10}} \sim N(0,1)\)。
+          <br>
+          \(\frac{9S^2}{\sigma^2} \sim \chi^2(9)\)，且 \(\bar{X}\) 与 \(S^2\) 独立。
+          <br>
+          由 t 分布定义：\(\frac{\bar{X}/(\sigma/\sqrt{10})}{\sqrt{9S^2/(9\sigma^2)}} = \frac{\sqrt{10}\,\bar{X}}{S} \sim t(9)\)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 第七章 ===== -->
+  <div id="ch7" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2>第七章 参数估计</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+
+      <div class="kb">
+        <h3><span class="num">1</span>矩估计</h3>
+        <p><strong>基本思想：</strong>用样本矩 \(A_k = \frac{1}{n}\sum X_i^k\) 替换总体矩 \(E(X^k)\)，解出参数。</p>
+        <p><strong>步骤：</strong></p>
+        <ul>
+          <li>一个参数：令 \(E(X) = \bar{X}\)，解出 \(\hat{\theta}\)</li>
+          <li>两个参数：令 \(E(X) = \bar{X}\)，\(E(X^2) = \frac{1}{n}\sum X_i^2\)，联立解出参数</li>
+        </ul>
+        <div class="example">
+          <strong>【例】</strong>设 \(X \sim Exp(\lambda)\)，则 \(E(X) = 1/\lambda\)。令 \(1/\hat{\lambda} = \bar{X}\)，得 \(\hat{\lambda} = 1/\bar{X}\)。
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">2</span>最大似然估计 (MLE)</h3>
+        <p><strong>基本思想：</strong>选取使样本出现概率最大的参数值。</p>
+        <p><strong>步骤：</strong></p>
+        <ul>
+          <li>写出似然函数 \(L(\theta) = \prod_{i=1}^n f(x_i; \theta)\)</li>
+          <li>取对数 \(\ln L(\theta)\)</li>
+          <li>对 \(\theta\) 求导令其为 0，解出 \(\hat{\theta}_{MLE}\)</li>
+        </ul>
+        <p><strong>另一种情形：</strong>若 \(L(\theta)\) 是单调增/减函数（如均匀分布），则通过观察确定最大值点（通常在边界取到）。</p>
+        <div class="note">
+          <strong>最大似然估计的不变性：</strong>若 \(\hat{\theta}\) 是 \(\theta\) 的 MLE，则 \(g(\hat{\theta})\) 是 \(g(\theta)\) 的 MLE。
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">3</span>估计量的评价标准</h3>
+        <ul>
+          <li><strong>无偏性：</strong>\(E(\hat{\theta}) = \theta\)，则 \(\hat{\theta}\) 是 \(\theta\) 的无偏估计</li>
+          <li>样本均值 \(\bar{X}\) 是 \(\mu\) 的无偏估计</li>
+          <li>样本方差 \(S^2 = \frac{1}{n-1}\sum(X_i - \bar{X})^2\) 是 \(\sigma^2\) 的无偏估计（注意分母是 \(n-1\)！）</li>
+          <li><strong>有效性：</strong>在无偏估计中方差最小的更有效</li>
+        </ul>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">4</span>置信区间</h3>
+        <p>置信水平 \(1-\alpha\) 下的置信区间表示参数有 \((1-\alpha)\times 100\%\) 的概率落在此区间内。</p>
+        <table>
+          <tr><th>条件</th><th>参数</th><th>枢轴量</th><th>置信区间</th></tr>
+          <tr>
+            <td>\(\sigma^2\) 已知</td>
+            <td>\(\mu\)</td>
+            <td>\(Z = \frac{\bar{X}-\mu}{\sigma/\sqrt{n}}\)</td>
+            <td>\(\bar{X} \pm z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}\)</td>
+          </tr>
+          <tr>
+            <td>\(\sigma^2\) 未知</td>
+            <td>\(\mu\)</td>
+            <td>\(T = \frac{\bar{X}-\mu}{S/\sqrt{n}}\)</td>
+            <td>\(\bar{X} \pm t_{\alpha/2}(n-1) \cdot \frac{S}{\sqrt{n}}\)</td>
+          </tr>
+          <tr>
+            <td>\(\mu\) 未知</td>
+            <td>\(\sigma^2\)</td>
+            <td>\(\chi^2 = \frac{(n-1)S^2}{\sigma^2}\)</td>
+            <td>\(\left[\frac{(n-1)S^2}{\chi^2_{\alpha/2}(n-1)},\; \frac{(n-1)S^2}{\chi^2_{1-\alpha/2}(n-1)}\right]\)</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="kb" style="border-left-color: #ef4444;">
+        <h3 style="color:#b91c1c;">&#9998; 经典例题精讲</h3>
+
+        <div class="example">
+          <strong>【例1 · 矩估计】</strong>设总体 \(X \sim U(a, b)\)，\(a, b\) 未知，\(X_1, \ldots, X_n\) 是样本，求 \(a, b\) 的矩估计量。
+          <br><br>
+          <strong>解：</strong>
+          \(\mu_1 = E(X) = \frac{a+b}{2}\)，\(\mu_2 = E(X^2) = D(X) + [E(X)]^2 = \frac{(b-a)^2}{12} + \frac{(a+b)^2}{4}\)
+          <br>
+          联立方程：\(\begin{cases} a + b = 2\mu_1 \\ (b-a)^2 = 12(\mu_2 - \mu_1^2) \end{cases}\)
+          <br>
+          解得：\(\hat{a} = \bar{X} - \sqrt{3B_2}\)，\(\hat{b} = \bar{X} + \sqrt{3B_2}\)
+          <br>
+          其中 \(B_2 = \frac{1}{n}\sum(X_i - \bar{X})^2\) 为二阶中心矩。
+        </div>
+
+        <div class="example">
+          <strong>【例2 · MLE（伯努利/二项）】</strong>设 \(X_1, \ldots, X_n\) 是来自 \(B(1, p)\) 的样本，求 \(p\) 的最大似然估计量。
+          <br><br>
+          <strong>解：</strong>\(P(X=x) = p^x(1-p)^{1-x},\; x=0,1\)
+          <br>
+          似然函数：\(L(p) = \prod_{i=1}^n p^{x_i}(1-p)^{1-x_i} = p^{\sum x_i}(1-p)^{n-\sum x_i}\)
+          <br>
+          取对数：\(\ln L = (\sum x_i)\ln p + (n - \sum x_i)\ln(1-p)\)
+          <br>
+          对 \(p\) 求导令其为 0：\(\frac{\sum x_i}{p} - \frac{n - \sum x_i}{1-p} = 0\)
+          <br>
+          解得：\(\hat{p}_{MLE} = \frac{1}{n}\sum X_i = \bar{X}\)
+        </div>
+
+        <div class="example">
+          <strong>【例3 · MLE（正态总体）】</strong>设 \(X_1, \ldots, X_n\) 是来自 \(N(\mu, \sigma^2)\) 的样本，求 \(\mu, \sigma^2\) 的最大似然估计量。
+          <br><br>
+          <strong>解：</strong>
+          \(\ln L = -\frac{n}{2}\ln(2\pi) - \frac{n}{2}\ln(\sigma^2) - \frac{1}{2\sigma^2}\sum(x_i - \mu)^2\)
+          <br>
+          对 \(\mu\) 求导：\(\frac{\partial \ln L}{\partial \mu} = \frac{1}{\sigma^2}\sum(x_i - \mu) = 0\) \(\Rightarrow\) \(\hat{\mu} = \bar{X}\)
+          <br>
+          对 \(\sigma^2\) 求导：\(\frac{\partial \ln L}{\partial(\sigma^2)} = -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4}\sum(x_i - \mu)^2 = 0\)
+          <br>
+          \(\hat{\sigma}^2 = \frac{1}{n}\sum(X_i - \bar{X})^2 = B_2\)
+          <div class="note">注意：MLE 求出的 \(\hat{\sigma}^2 = \frac{1}{n}\sum(X_i-\bar{X})^2\) 是有偏估计（分母为 n）。无偏估计量是样本方差 \(S^2 = \frac{1}{n-1}\sum(X_i-\bar{X})^2\)（分母为 n-1）。</div>
+        </div>
+
+        <div class="example">
+          <strong>【例4 · MLE（均匀分布，观察法）】</strong>设 \(X \sim U(0, \theta)\)，\(x_1, \ldots, x_n\) 是样本值，求 \(\theta\) 的 MLE。
+          <br><br>
+          <strong>解：</strong>似然函数 \(L(\theta) = \frac{1}{\theta^n}\)，约束条件 \(0 \le x_i \le \theta\)，即 \(\theta \ge x_{(n)} = \max(x_1, \ldots, x_n)\)。
+          <br>
+          \(L(\theta) = \frac{1}{\theta^n}\) 在 \(\theta \ge x_{(n)}\) 上是减函数，所以在 \(\theta = x_{(n)}\) 处取得最大值。
+          <br>
+          \(\hat{\theta}_{MLE} = X_{(n)} = \max(X_1, \ldots, X_n)\)
+          <div class="note">均匀分布的 MLE 不能用求导法，需通过观察似然函数的单调性确定。这是考试重点题型之一。</div>
+        </div>
+
+        <div class="example">
+          <strong>【例5 · 置信区间计算】</strong>某零件重量 \(N(\mu, \sigma^2)\)，\(\sigma^2\) 未知。抽取 16 个零件，测得 \(\bar{x} = 5.2\)（克），\(s = 0.4\)（克）。求 \(\mu\) 的 95% 置信区间。（\(t_{0.025}(15) = 2.1315\)）
+          <br><br>
+          <strong>解：</strong>\(\sigma^2\) 未知，使用 T 统计量：\(T = \frac{\bar{X} - \mu}{S/\sqrt{n}} \sim t(n-1)\)
+          <br>
+          置信区间：\(\bar{x} \pm t_{\alpha/2}(n-1) \cdot \frac{s}{\sqrt{n}} = 5.2 \pm 2.1315 \times \frac{0.4}{4}\)
+          <br>
+          \(= 5.2 \pm 0.21315 = [4.987,\; 5.413]\)
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="ch8" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2>第八章 假设检验</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+
+      <div class="kb">
+        <h3><span class="num">1</span>基本步骤</h3>
+        <ol>
+          <li><strong>提出假设：</strong>原假设 \(H_0\) 和备择假设 \(H_1\)</li>
+          <li><strong>选择检验统计量</strong></li>
+          <li><strong>确定拒绝域：</strong>由显著性水平 \(\alpha\) 确定临界值</li>
+          <li><strong>计算实测值</strong></li>
+          <li><strong>判断：</strong>实测值落入拒绝域则拒绝 \(H_0\)，否则接受 \(H_0\)</li>
+        </ol>
+        <div class="note">
+          <strong>两类错误：</strong><br>
+          第一类（弃真）：\(H_0\) 为真却拒绝，概率为 \(\alpha\)<br>
+          第二类（取伪）：\(H_0\) 为假却接受，概率为 \(\beta\)
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">2</span>正态总体参数的假设检验</h3>
+        <table>
+          <tr><th>检验</th><th>条件</th><th>统计量</th><th>双侧拒绝域</th></tr>
+          <tr>
+            <td>Z 检验</td>
+            <td>\(\sigma^2\) 已知，检验 \(\mu\)</td>
+            <td>\(Z = \frac{\bar{X} - \mu_0}{\sigma/\sqrt{n}}\)</td>
+            <td>\(|Z| \ge z_{\alpha/2}\)</td>
+          </tr>
+          <tr>
+            <td>T 检验</td>
+            <td>\(\sigma^2\) 未知，检验 \(\mu\)</td>
+            <td>\(T = \frac{\bar{X} - \mu_0}{S/\sqrt{n}}\)</td>
+            <td>\(|T| \ge t_{\alpha/2}(n-1)\)</td>
+          </tr>
+          <tr>
+            <td>\(\chi^2\) 检验</td>
+            <td>\(\mu\) 未知，检验 \(\sigma^2\)</td>
+            <td>\(\chi^2 = \frac{(n-1)S^2}{\sigma_0^2}\)</td>
+            <td>\(\chi^2 \ge \chi^2_{\alpha/2}\) 或 \(\le \chi^2_{1-\alpha/2}\)</td>
+          </tr>
+        </table>
+
+        <div class="example">
+          <strong>【完整例题】</strong>某产品指标 \(N(\mu, 150^2)\)，\(\sigma = 150\) 已知。抽 16 个样本，均值 \(\bar{x} = 1607\)。检验 \(H_0: \mu = 1600\) vs \(H_1: \mu \ne 1600\)，\(\alpha = 0.05\)。
+          <br><br>
+          <strong>解：</strong>
+          (1) \(H_0: \mu = 1600\)，\(H_1: \mu \ne 1600\)<br>
+          (2) \(Z = \frac{\bar{X} - 1600}{150/\sqrt{16}} = \frac{1607 - 1600}{37.5} = 0.187\)<br>
+          (3) 拒绝域：\(|Z| \ge z_{0.025} = 1.96\)<br>
+          (4) \(|0.187| < 1.96\)，未落入拒绝域<br>
+          (5) 接受 \(H_0\)，可以认为该批产品指标均值为 1600。
+        </div>
+
+        <div class="example">
+          <strong>【T 检验例题】</strong>某厂灯泡寿命 \(N(\mu, \sigma^2)\)，\(\sigma^2\) 未知。抽取 9 只，\(\bar{x} = 1120\) 小时，\(s = 30\) 小时。检验 \(H_0: \mu = 1100\) vs \(H_1: \mu > 1100\)，\(\alpha = 0.05\)。（\(t_{0.05}(8) = 1.8595\)）
+          <br><br>
+          <strong>解：</strong>
+          (1) \(H_0: \mu = 1100\)，\(H_1: \mu > 1100\)（右侧检验）<br>
+          (2) \(T = \frac{\bar{X} - 1100}{S/\sqrt{n}} = \frac{1120 - 1100}{30/\sqrt{9}} = \frac{20}{10} = 2.0\)<br>
+          (3) 拒绝域：\(T \ge t_{0.05}(8) = 1.8595\)<br>
+          (4) \(2.0 > 1.8595\)，落入拒绝域<br>
+          (5) 拒绝 \(H_0\)，认为灯泡平均寿命显著大于 1100 小时。
+        </div>
+
+        <div class="example">
+          <strong>【\(\chi^2\) 检验例题】</strong>纤维强力 \(N(\mu, \sigma^2)\)，\(\mu\) 未知。抽取 20 根，\(s^2 = 2.5\)。检验 \(H_0: \sigma^2 = 4\) vs \(H_1: \sigma^2 < 4\)，\(\alpha = 0.05\)。（\(\chi^2_{0.95}(19) = 10.117\)）
+          <br><br>
+          <strong>解：</strong>
+          (1) \(H_0: \sigma^2 = 4\)，\(H_1: \sigma^2 < 4\)（左侧检验）<br>
+          (2) \(\chi^2 = \frac{(n-1)S^2}{\sigma_0^2} = \frac{19 \times 2.5}{4} = 11.875\)<br>
+          (3) 拒绝域：\(\chi^2 \le \chi^2_{0.95}(19) = 10.117\)<br>
+          (4) \(11.875 > 10.117\)，未落入拒绝域<br>
+          (5) 接受 \(H_0\)，不能认为方差有显著减小。
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3><span class="num">3</span>单侧检验</h3>
+        <p>当关心参数是否偏大或偏小时，使用单侧检验：</p>
+        <ul>
+          <li><strong>右侧检验：</strong>\(H_0: \mu \le \mu_0\) vs \(H_1: \mu > \mu_0\)，拒绝域：\(Z \ge z_\alpha\)</li>
+          <li><strong>左侧检验：</strong>\(H_0: \mu \ge \mu_0\) vs \(H_1: \mu < \mu_0\)，拒绝域：\(Z \le -z_\alpha\)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 附录 ==================== -->
+  <div class="part-title">
+    附录
+    <span class="badge">速查表</span>
+  </div>
+
+  <!-- ===== 常用分布 ===== -->
+  <div id="distributions" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2>常用分布速查表</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="kb">
+        <h3>离散型分布</h3>
+        <table>
+          <tr>
+            <th>分布</th><th>记号</th><th>分布律</th><th>E(X)</th><th>D(X)</th>
+          </tr>
+          <tr>
+            <td>0-1 分布</td><td>\(B(1,p)\)</td>
+            <td>\(P(X=k)=p^k(1-p)^{1-k},\;k=0,1\)</td>
+            <td>\(p\)</td><td>\(p(1-p)\)</td>
+          </tr>
+          <tr>
+            <td>二项分布</td><td>\(B(n,p)\)</td>
+            <td>\(P(X=k)=C_n^k p^k(1-p)^{n-k}\)</td>
+            <td>\(np\)</td><td>\(np(1-p)\)</td>
+          </tr>
+          <tr>
+            <td>泊松分布</td><td>\(\pi(\lambda)\)</td>
+            <td>\(P(X=k)=\frac{\lambda^k e^{-\lambda}}{k!}\)</td>
+            <td>\(\lambda\)</td><td>\(\lambda\)</td>
+          </tr>
+          <tr>
+            <td>几何分布</td><td>\(G(p)\)</td>
+            <td>\(P(X=k)=p(1-p)^{k-1}\)</td>
+            <td>\(\frac{1}{p}\)</td><td>\(\frac{1-p}{p^2}\)</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="kb">
+        <h3>连续型分布</h3>
+        <table>
+          <tr>
+            <th>分布</th><th>记号</th><th>密度函数</th><th>E(X)</th><th>D(X)</th>
+          </tr>
+          <tr>
+            <td>均匀分布</td><td>\(U(a,b)\)</td>
+            <td>\(f(x) = \frac{1}{b-a},\; a<x<b\)</td>
+            <td>\(\frac{a+b}{2}\)</td><td>\(\frac{(b-a)^2}{12}\)</td>
+          </tr>
+          <tr>
+            <td>指数分布</td><td>\(Exp(\lambda)\)</td>
+            <td>\(f(x) = \lambda e^{-\lambda x},\; x>0\)</td>
+            <td>\(\frac{1}{\lambda}\)</td><td>\(\frac{1}{\lambda^2}\)</td>
+          </tr>
+          <tr>
+            <td>正态分布</td><td>\(N(\mu,\sigma^2)\)</td>
+            <td>\(f(x) = \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(x-\mu)^2}{2\sigma^2}}\)</td>
+            <td>\(\mu\)</td><td>\(\sigma^2\)</td>
+          </tr>
+          <tr>
+            <td>标准正态</td><td>\(N(0,1)\)</td>
+            <td>\(\varphi(x) = \frac{1}{\sqrt{2\pi}}e^{-x^2/2}\)</td>
+            <td>\(0\)</td><td>\(1\)</td>
+          </tr>
+        </table>
+        <div class="note">
+          <strong>标准正态性质：</strong>\(\Phi(-x) = 1 - \Phi(x)\)，\(\Phi(0) = 0.5\)，\(\Phi(1.96) = 0.975\)，\(\Phi(1.645) = 0.95\)
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3>分布可加性</h3>
+        <table>
+          <tr><th>条件</th><th>结论</th></tr>
+          <tr><td>\(X \sim B(n_1, p)\)，\(Y \sim B(n_2, p)\)，独立</td><td>\(X + Y \sim B(n_1 + n_2, p)\)</td></tr>
+          <tr><td>\(X \sim \pi(\lambda_1)\)，\(Y \sim \pi(\lambda_2)\)，独立</td><td>\(X + Y \sim \pi(\lambda_1 + \lambda_2)\)</td></tr>
+          <tr><td>\(X \sim N(\mu_1, \sigma_1^2)\)，\(Y \sim N(\mu_2, \sigma_2^2)\)，独立</td><td>\(X + Y \sim N(\mu_1+\mu_2, \sigma_1^2+\sigma_2^2)\)</td></tr>
+          <tr><td>\(X \sim \chi^2(n_1)\)，\(Y \sim \chi^2(n_2)\)，独立</td><td>\(X + Y \sim \chi^2(n_1 + n_2)\)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 核心公式汇总 ===== -->
+  <div id="formulas" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2>核心公式汇总</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="kb">
+        <h3>概率公式</h3>
+        <div class="formula">
+          加法公式：\(P(A \cup B) = P(A) + P(B) - P(AB)\)
+        </div>
+        <div class="formula">
+          条件概率：\(P(B|A) = \frac{P(AB)}{P(A)}\)
+        </div>
+        <div class="formula">
+          全概率：\(P(B) = \sum_{i=1}^n P(A_i)P(B|A_i)\)
+        </div>
+        <div class="formula">
+          贝叶斯：\(P(A_i|B) = \frac{P(A_i)P(B|A_i)}{\sum_j P(A_j)P(B|A_j)}\)
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3>数字特征公式</h3>
+        <div class="formula">
+          \(D(X) = E(X^2) - [E(X)]^2\)
+        </div>
+        <div class="formula">
+          \(\text{Cov}(X,Y) = E(XY) - E(X)E(Y)\)
+        </div>
+        <div class="formula">
+          \(D(X \pm Y) = D(X) + D(Y) \pm 2\text{Cov}(X,Y)\)
+        </div>
+        <div class="formula">
+          \(\rho_{XY} = \frac{\text{Cov}(X,Y)}{\sqrt{D(X)}\sqrt{D(Y)}}\)
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3>统计量公式</h3>
+        <div class="formula">
+          样本均值：\(\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i\)
+        </div>
+        <div class="formula">
+          样本方差：\(S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar{X})^2\)
+        </div>
+        <div class="formula">
+          正态下：\(\bar{X} \sim N(\mu, \sigma^2/n)\)，\(\frac{(n-1)S^2}{\sigma^2} \sim \chi^2(n-1)\)，\(\frac{\bar{X}-\mu}{S/\sqrt{n}} \sim t(n-1)\)
+        </div>
+      </div>
+
+      <div class="kb">
+        <h3>正态分布常用值</h3>
+        <div class="ref-grid">
+          <div class="ref-card">
+            <div class="name">\(z_{0.025}\)</div>
+            <div class="val">1.96</div>
+          </div>
+          <div class="ref-card">
+            <div class="name">\(z_{0.05}\)</div>
+            <div class="val">1.645</div>
+          </div>
+          <div class="ref-card">
+            <div class="name">\(z_{0.005}\)</div>
+            <div class="val">2.576</div>
+          </div>
+          <div class="ref-card">
+            <div class="name">\(z_{0.01}\)</div>
+            <div class="val">2.326</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 易错点总结 -->
+  <div id="tips" class="part-title" style="background: linear-gradient(135deg, #ef4444, #f59e0b);">
+    易错点 & 陷阱
+    <span class="badge">必看</span>
+  </div>
+
+  <div class="section" style="border-left: 4px solid #ef4444;">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2 style="color:#b91c1c;">高频易错点汇总</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="kb" style="border-left-color:#ef4444;">
+        <h3>概率论易错点</h3>
+        <ul>
+          <li><strong>互斥 vs 独立：</strong>互斥（\(AB = \varnothing\)）不等于独立。互斥事件若概率都 > 0，则一定不独立。</li>
+          <li><strong>条件概率陷阱：</strong>\(P(A|B) \ne P(B|A)\)，贝叶斯公式正是用来区分这两者。</li>
+          <li><strong>分布函数法做题时</strong>：\(F_Y(y) = P(Y \le y)\) 要注意 \(Y = g(X)\) 的取值范围，分段讨论。</li>
+          <li><strong>公式法的条件</strong>：\(y = g(x)\) 必须严格单调。不单调时只能用分布函数法。</li>
+          <li><strong>边缘分布不能确定联合分布</strong>：知道 \(f_X(x)\) 和 \(f_Y(y)\) 不能唯一确定 \(f(x,y)\)，还需要知道相关结构。</li>
+          <li><strong>不相关 ≠ 独立</strong>：\(\rho = 0\)（不相关）不代表独立。只有二维正态分布下两者等价。</li>
+        </ul>
+      </div>
+
+      <div class="kb" style="border-left-color:#ef4444;">
+        <h3>数理统计易错点</h3>
+        <ul>
+          <li><strong>样本方差分母是 n-1：</strong>\(S^2 = \frac{1}{n-1}\sum(X_i - \bar{X})^2\)，不是 \(n\)！用 n 做分母的是 \(B_2 = \frac{1}{n}\sum(X_i - \bar{X})^2\)。</li>
+          <li><strong>\(\bar{X}\) 与 \(S^2\) 独立</strong>只在正态总体下成立，一般总体不保证。</li>
+          <li><strong>\(\frac{(n-1)S^2}{\sigma^2} \sim \chi^2(n-1)\)</strong>，自由度是 \(n-1\) 不是 \(n\)。</li>
+          <li><strong>\(\frac{\bar{X}-\mu}{S/\sqrt{n}} \sim t(n-1)\)</strong>，自由度也是 \(n-1\)。</li>
+          <li><strong>MLE 的不变性</strong>：若 \(\hat{\theta}\) 是 MLE，则 \(g(\hat{\theta})\) 是 \(g(\theta)\) 的 MLE。但矩估计没有此性质。</li>
+          <li><strong>均匀分布 MLE</strong>：不能用求导法，需观察似然函数单调性。\(\hat{\theta} = X_{(n)} = \max(X_1, \ldots, X_n)\)。</li>
+          <li><strong>假设检验</strong>：先确定是双侧还是单侧，再选择对应的拒绝域。不要混淆 \(z_{\alpha}\) 和 \(z_{\alpha/2}\)。</li>
+        </ul>
+      </div>
+
+      <div class="kb" style="border-left-color:#ef4444;">
+        <h3>计算技巧</h3>
+        <ul>
+          <li>正态分布标准化：先减 \(\mu\) 再除 \(\sigma\)，\(\frac{X-\mu}{\sigma} \sim N(0,1)\)</li>
+          <li>泊松分布：\(E(X) = D(X) = \lambda\)，期望等于方差</li>
+          <li>利用分布可加性简化计算，比直接计算联合分布快得多</li>
+          <li>指示变量法求期望：将复杂随机变量拆成 0-1 变量之和</li>
+          <li>检验统计量与枢轴量的区别：检验统计量用 \(\mu_0\)（假设值），枢轴量用 \(\mu\)（真实参数）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Back to top -->
+<div class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</div>
+
+<script>
+// Toggle sections
+function toggleSection(header) {
+  header.parentElement.classList.toggle('collapsed');
+}
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('backTop').style.display = h.scrollTop > 400 ? 'flex' : 'none';
+});
+
+// Active nav link
+const sections = document.querySelectorAll('.section[id], .part-title[id]');
+const navLinks = document.querySelectorAll('.sidebar a[href^="#"]');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+document.querySelectorAll('[id]').forEach(s => observer.observe(s));
+
+// Search
+function filterNav(query) {
+  const q = query.toLowerCase();
+  navLinks.forEach(a => {
+    const text = (a.textContent + ' ' + (a.dataset.keywords || '')).toLowerCase();
+    a.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+// Render KaTeX on load
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof renderMathInElement === 'function') {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true},
+        {left: '$$', right: '$$', display: true}
+      ],
+      throwOnError: false
+    });
+  }
+});
+// Fallback if auto-render loads after DOMContentLoaded
+window.addEventListener('load', () => {
+  if (typeof renderMathInElement === 'function') {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true},
+        {left: '$$', right: '$$', display: true}
+      ],
+      throwOnError: false
+    });
+  }
+});
+</script>
+</body>
+</html>
