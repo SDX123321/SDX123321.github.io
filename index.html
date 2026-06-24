@@ -174,8 +174,23 @@ h1 {
       <span>觉得有帮助？给个 Star 鼓励一下吧 &#9733;</span>
       <a class="btn-star" href="https://github.com/SDX123321/SDX123321.github.io" target="_blank">&#9733; Star</a>
     </div>
+    <div style="margin-top:16px;">
+      <span onclick="toggleReward()" style="cursor:pointer;color:#94a3b8;font-size:0.85rem;user-select:none;transition:color 0.2s;" onmouseover="this.style.color='#f59e0b'" onmouseout="this.style.color='#94a3b8'">
+        通过赞赏码请作者喝杯咖啡 &#9749;
+      </span>
+      <div id="rewardQr" style="display:none;margin-top:14px;animation:fadeIn 0.3s ease;">
+        <img src="赞赏码.png" alt="赞赏码" width="180" style="border-radius:12px;border:1px solid #334155;box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+        <p style="color:#64748b;font-size:0.78rem;margin-top:6px;">微信 / 支付宝扫码赞赏</p>
+      </div>
+    </div>
   </div>
 </div>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script>
+function toggleReward(){
+  var el=document.getElementById('rewardQr');
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+</script>
 </body>
 </html>
