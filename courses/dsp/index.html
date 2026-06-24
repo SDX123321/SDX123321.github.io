@@ -184,7 +184,9 @@ tr:nth-child(even) { background: rgba(255,255,255,0.02); }
   </div>
   <div class="nav-group">
     <div class="nav-group-title">第6章 系统实现</div>
-    <a href="#ch6" onclick="navClick(this)">量化与噪声</a>
+    <a href="#ch6-struct-iir" onclick="navClick(this)">IIR 结构 <span class="tag tag-L">重点</span></a>
+    <a href="#ch6-struct-fir" onclick="navClick(this)">FIR 结构 <span class="tag tag-L">重点</span></a>
+    <a href="#ch6-quant" onclick="navClick(this)">有限字长效应</span></a>
   </div>
   <div class="nav-group">
     <div class="nav-group-title">自测</div>
@@ -871,37 +873,195 @@ $z_i^*$（共轭）、$1/z_i$（倒数）、$1/z_i^*$（共轭倒数）<br>
 <!-- ==================== CH6 ==================== -->
 <h2 id="ch6">第6章 数字信号处理系统的实现</h2>
 
-<h3 class="collapsible open" onclick="toggleCollapse(this)">量化噪声</h3>
+<!-- IIR 结构 -->
+<h3 id="ch6-struct-iir" class="collapsible open" onclick="toggleCollapse(this)">IIR 滤波器的网络结构 <span class="badge badge-important">必考</span></h3>
 <div class="collapsible-content show">
 
 <div class="keypoint">
-<strong>定点制运算</strong>：用有限字长表示数据，尾数做舍入处理。量化噪声方差：<br>
-$$\boxed{\sigma_e^2 = \frac{q^2}{12}}$$
-其中 $q = 2^{-B}$ 为量化步长，$B$ 为尾数有效位数（含符号位）。
+流图的三种基本运算单元：<strong>加法器</strong>、<strong>乘法器（标量）</strong>、<strong>延迟器（$z^{-1}$）</strong>。<br>
+画流图时，$z^{-1}$ 项的系数必须为 <strong>1</strong>。若差分方程中某项系数不为 1，需分子分母同除以该系数化为标准形式。
 </div>
 
-<div class="example">
-<strong>习题讲解（二阶 IIR 滤波器量化噪声）：</strong>
-<ol style="margin:8px 0 0 20px;font-size:14px">
-<li>给定系统函数 $H(z)$，做部分分式展开（通分对应系数相等法求待定系数）</li>
-<li><strong>必须画信号流图</strong>！确定各乘法器的位置和噪声注入点</li>
-<li>每个噪声源的量化噪声方差 = $q^2/12$</li>
-<li>求每个噪声通过的<strong>后续子网络</strong>的单位脉冲响应能量 $\sum |h_i(n)|^2$</li>
-<li>总输出噪声方差 = 各噪声源贡献之和</li>
-</ol>
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 直接 I 型结构</div>
+<ul>
+<li>上下各一条延迟链：上面对应<strong>分子</strong>（前馈），下面对应<strong>分母</strong>（反馈）</li>
+<li>延迟单元数 = 分子阶次 + 分母阶次</li>
+<li><strong>箭头方向</strong>：全部向右</li>
+<li>分子系数直接对应；分母系数取<strong>相反数</strong></li>
+</ul>
 </div>
 
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 直接 II 型（正准型 / Canonic）结构 <span class="badge badge-important">重点</span></div>
+<ul>
+<li>将直接 I 型的两条延迟链<strong>合并为中间一条</strong></li>
+<li>延迟单元数 = <strong>max(分子阶次, 分母阶次)</strong>（最节省延迟单元）</li>
+<li>左半部分为分母（反馈），右半部分为分子（前馈）</li>
+<li>反馈方向<strong>向左</strong>，前馈方向<strong>向右</strong></li>
+</ul>
 <div class="warning">
-<strong>常见错误：</strong>
-<ul style="margin:8px 0 0 20px;font-size:14px">
-<li>不画流图直接计算（80% 的人犯此错误）</li>
-<li>漏掉零点（$z^{-1}$ 形式要乘 $z$ 化为正幂次）</li>
-<li>后续子网络写错（特别是当乘法器放在后面时，后续网络更复杂）</li>
+<strong>直接型的缺点：</strong>零极点控制难——每个系数的改变都会影响所有零极点分布。对系数量化敏感，阶次高时影响更大。
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">★ 级联型（串联型）结构</div>
+<ul>
+<li>将 $H(z)$ 分解为一阶/二阶因式相乘：$H(z) = \prod H_k(z)$</li>
+<li>每个基本节用<strong>正准型</strong>结构，串联连接</li>
+<li><strong>优点</strong>：零点和极点可以<strong>单独控制</strong>调整</li>
+<li><strong>注意</strong>：各基本节顺序可调换，结构<strong>不唯一</strong></li>
+</ul>
+</div>
+
+<div class="card">
+<div class="card-title">★ 并联型结构</div>
+<ul>
+<li>将 $H(z)$ 做<strong>部分分式展开</strong>：$H(z) = \sum H_k(z)$</li>
+<li>各基本节<strong>并列</strong>连接，输出相加</li>
+<li><strong>优点</strong>：极点易控制；可<strong>并行运算</strong>，速度快</li>
+<li><strong>缺点</strong>：二阶节的零点不是系统零点，<strong>零点不易控制</strong></li>
 </ul>
 </div>
 
 <div class="keypoint">
-<strong>做题建议：</strong>将常数乘法器尽量放在前面（靠近输入端），这样后续网络更简单。例如一阶系统 $\frac{1/4}{1-0.4z^{-1}}$，把 $1/4$ 放前面比放后面计算更简单。
+<strong>三种 IIR 结构对比：</strong>
+<table>
+<tr><th>结构</th><th>零极点控制</th><th>运算速度</th><th>量化误差</th></tr>
+<tr><td>直接型</td><td>难（系数间耦合大）</td><td>一般</td><td style="color:var(--red)">最大</td></tr>
+<tr><td>级联型</td><td>零极点均可单独控制</td><td>一般</td><td style="color:var(--orange)">居中</td></tr>
+<tr><td>并联型</td><td>极点可控，零点不可控</td><td style="color:var(--green)">最快（并行）</td><td style="color:var(--green)">最小</td></tr>
+</table>
+</div>
+</div>
+
+<!-- FIR 结构 -->
+<h3 id="ch6-struct-fir" class="collapsible" onclick="toggleCollapse(this)">FIR 滤波器的网络结构 <span class="badge badge-important">必考画图</span></h3>
+<div class="collapsible-content">
+
+<div class="warning">
+<strong>重要辨析：</strong>FIR 滤波器<strong>不全是</strong>非递归结构！频率采样型结构<strong>有反馈</strong>，是递归结构。
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 横截型（直接型）结构</div>
+<ul>
+<li>上面一条延迟链，$N$ 长序列需 $N-1$ 个延迟单元</li>
+<li>每个抽头乘以对应系数 $h(0), h(1), \ldots, h(N-1)$</li>
+<li>所有乘法器输出相加得 $y(n)$</li>
+</ul>
+</div>
+
+<div class="card">
+<div class="card-title">级联型结构</div>
+<p>将 $H(z)$ 分解为二阶因式相乘，每个二阶节用直接型画出，串联连接。</p>
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 线性相位型结构 <span class="badge badge-important">必考画图</span></div>
+<p><strong>核心优势：乘法器次数可以减少近一半！</strong></p>
+<p>利用 $h(n)$ 的对称性（偶对称/奇对称），将对称项合并：</p>
+<ul>
+<li><strong>偶对称</strong>：$h(n) = h(N-1-n)$，对称项直接相加后乘一次系数</li>
+<li><strong>奇对称</strong>：$h(n) = -h(N-1-n)$，对称项先取反再合并（引入乘 $-1$）</li>
+<li>中间项（若有）单独处理</li>
+</ul>
+<div class="keypoint">
+<strong>线性相位 FIR 滤波器分类：</strong>
+<table>
+<tr><th>类型</th><th>N</th><th>对称性</th><th>特征</th></tr>
+<tr><td>第 I 类</td><td>奇数</td><td>偶对称</td><td>最常用</td></tr>
+<tr><td>第 II 类</td><td>偶数</td><td>偶对称</td><td>$H(\pi)=0$，不能做高通</td></tr>
+<tr><td>第 III 类</td><td>奇数</td><td>奇对称</td><td>$h(\frac{N-1}{2})=0$</td></tr>
+<tr><td>第 IV 类</td><td>偶数</td><td>奇对称</td><td>$H(0)=0$</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">频率采样型结构</div>
+<ul>
+<li>由两部分组成：<strong>梳状滤波器</strong> + <strong>一阶谐振器并联</strong></li>
+<li>梳状滤波器：$H_1(z) = 1 - z^{-N}$，差分方程 $y(n) = x(n) - x(n-N)$</li>
+<li>频响 $|H_1(e^{j\omega})| = 2|\sin\frac{N\omega}{2}|$（梳齿状）</li>
+<li>特别适用于<strong>窄带滤波器</strong>（如雷达信号处理），可节约运算量</li>
+<li><strong>有反馈</strong>（谐振器部分是 IIR 一阶结构）</li>
+</ul>
+<div class="warning">
+<strong>不需要画频率采样型流图</strong>，但要知道其组成和特点。
+</div>
+</div>
+</div>
+
+<!-- 有限字长效应 -->
+<h3 id="ch6-quant" class="collapsible" onclick="toggleCollapse(this)">有限字长效应</h3>
+<div class="collapsible-content">
+
+<div class="card">
+<div class="card-title">三种量化误差来源</div>
+<table>
+<tr><th>来源</th><th>说明</th></tr>
+<tr><td><strong>A/D 转换</strong></td><td>采样后叠加量化噪声</td></tr>
+<tr><td><strong>系数量化</strong></td><td>滤波器系数用有限位表示，改变零极点位置</td></tr>
+<tr><td><strong>运算量化</strong></td><td>乘法运算引入舍入噪声（主要指乘法器）</td></tr>
+</table>
+</div>
+
+<div class="card">
+<div class="card-title">A/D 转换量化效应</div>
+<ul>
+<li>可建模为：理想采样 + 量化噪声 $e(n)$</li>
+<li>舍入处理：均值 = 0，方差 $\sigma_e^2 = \frac{q^2}{12}$，其中 $q = 2^{-B}$</li>
+<li>$B$ = 有效尾数位数（<strong>不含</strong>符号位）</li>
+</ul>
+<div class="keypoint">
+<strong>★ 量化信噪比结论（必记）：</strong>有效位数每增加 1 位，量化信噪比约增加 <strong>6 dB</strong>。
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">运算量化误差（乘法舍入噪声）</div>
+<p><strong>输出噪声方差公式：</strong></p>
+<div class="formula" style="font-size:1.1em;color:var(--accent)">
+$$\sigma_{y}^2 = \sigma_e^2 \sum_{n=0}^{\infty} |h_i(n)|^2 = \frac{q^2}{12} \sum |h_i(n)|^2$$
+</div>
+<p>其中 $h_i(n)$ 为第 $i$ 个噪声源到输出的<strong>后续子网络</strong>的单位脉冲响应。</p>
+
+<div class="highlight">
+<strong>三种 IIR 结构的输出噪声大小比较：</strong><br>
+<span style="color:var(--red)">直接型（最大）</span> > <span style="color:var(--orange)">级联型（居中）</span> > <span style="color:var(--green)">并联型（最小）</span><br>
+<strong>原因：</strong>并联型的每个噪声源直接到输出端，不经过其他子网络放大。
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">FIR 滤波器输出噪声（简单！）</div>
+<div class="formula" style="font-size:1.1em;color:var(--accent)">
+$$\sigma_y^2 = M \cdot \frac{q^2}{12}$$
+</div>
+<p><strong>$M$ = 乘法器个数。</strong>因为 FIR 滤波器的所有量化噪声直接加到输出端（非递归），只需数乘法器个数即可。</p>
+</div>
+
+<div class="card">
+<div class="card-title">系数量化与极点灵敏度</div>
+<ul>
+<li>系数量化对滤波器的影响与<strong>字长</strong>和<strong>结构</strong>有关</li>
+<li><strong>极点位置灵敏度</strong>：各极点位置对系数偏差的敏感程度</li>
+<li>极点位置灵敏度与<strong>极点间距离成反比</strong></li>
+<li>并联型/级联型灵敏度<strong>小</strong>，直接型灵敏度<strong>大</strong></li>
+</ul>
+<div class="keypoint">
+<strong>结论：</strong>高阶滤波器应避免使用直接型，应分解为低阶结构的并联或级联形式。
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">极限环振荡</div>
+<ul>
+<li><strong>零输入极限环振荡</strong>：信号归零后，由于舍入引起的非线性，输出不趋于 0，而停留在某个值或在固定值间振荡</li>
+<li><strong>大信号极限环振荡（溢出振荡）</strong>：定点补码加法运算中产生溢出，大信号时引起系统振荡</li>
+</ul>
 </div>
 </div>
 
