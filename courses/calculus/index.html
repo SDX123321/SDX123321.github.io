@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高等数学 - 期末复习</title>
+<script>
+MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']]},svg:{fontCache:'global'}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d2e;--card2:#232640;--accent:#e74c3c;--accent2:#f39c12;--accent3:#3498db;--text:#e0e0e0;--text-dim:#8892b0;--green:#2ecc71;--orange:#f39c12;--red:#e74c3c;--border:#2d3436;--radius:12px}
+.light{--bg:#f8fafc;--card:#fff;--card2:#f1f5f9;--accent:#dc2626;--accent2:#d97706;--accent3:#2563eb;--text:#1e293b;--text-dim:#64748b;--green:#059669;--orange:#d97706;--red:#dc2626;--border:#e2e8f0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;scroll-behavior:smooth}
+a{color:var(--accent3);text-decoration:none}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+
+.nav{position:fixed;top:0;left:0;width:270px;height:100vh;background:var(--card);border-right:1px solid var(--border);overflow-y:auto;z-index:100;transition:transform .3s;padding:0}
+.nav-title{padding:20px 16px 14px;font-size:1.1em;font-weight:700;color:var(--accent);border-bottom:1px solid var(--border)}
+.nav-title small{display:block;font-size:.75em;color:var(--text-dim);font-weight:400;margin-top:2px}
+.nav-group{padding:6px 0}
+.nav-group-title{padding:4px 16px;font-size:.7em;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);font-weight:600}
+.nav a{display:block;padding:7px 16px 7px 28px;font-size:.85em;color:var(--text-dim);transition:all .2s;border-left:3px solid transparent}
+.nav a:hover,.nav a.active{color:var(--accent);background:rgba(231,76,60,.06);border-left-color:var(--accent)}
+.nav .tag{display:inline-block;font-size:.65em;padding:1px 6px;border-radius:4px;margin-left:4px;font-weight:600}
+.tag-L{background:rgba(231,76,60,.15);color:var(--red)}
+
+.main{margin-left:270px;padding:32px 40px 80px;max-width:960px}
+h1{font-size:2em;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+h2{font-size:1.5em;color:var(--accent);margin:40px 0 16px;padding-bottom:8px;border-bottom:2px solid var(--accent);display:flex;align-items:center;gap:8px}
+h3{font-size:1.15em;color:var(--accent2);margin:24px 0 10px}
+h4{font-size:1.02em;color:var(--accent3);margin:16px 0 8px}
+
+.card{background:var(--card);border-radius:var(--radius);padding:20px 24px;margin:14px 0;border:1px solid var(--border);transition:border-color .2s}
+.card:hover{border-color:var(--accent)}
+.card-title{font-weight:600;color:var(--accent2);margin-bottom:10px;font-size:1em}
+.highlight{background:var(--card2);border-left:3px solid var(--orange);padding:12px 16px;border-radius:0 var(--radius) var(--radius) 0;margin:10px 0}
+.keypoint{background:rgba(231,76,60,.08);border:1px dashed var(--accent);padding:12px 16px;border-radius:var(--radius);margin:10px 0}
+.warning{background:rgba(231,76,60,.1);border-left:3px solid var(--red);padding:12px 16px;border-radius:0 var(--radius) var(--radius) 0;margin:10px 0}
+.formula{background:var(--card2);padding:10px 16px;border-radius:var(--radius);margin:10px 0;font-size:1em;text-align:center;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9em}
+th{background:var(--accent);color:#fff;padding:8px 12px;text-align:center;font-weight:600}
+td{padding:7px 12px;text-align:center;border-bottom:1px solid var(--border)}
+tr:nth-child(even){background:rgba(128,128,128,.04)}
+
+.exam-banner{background:linear-gradient(135deg,rgba(231,76,60,.12),rgba(243,156,18,.08));border:1px solid var(--accent);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px}
+.exam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:12px}
+.exam-item{background:var(--card);padding:10px 14px;border-radius:8px;font-size:.9em;border:1px solid var(--border)}
+
+.collapsible{cursor:pointer;user-select:none;position:relative;padding-right:30px}
+.collapsible::after{content:'▼';position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:.7em;transition:transform .3s;color:var(--text-dim)}
+.collapsible.open::after{transform:translateY(-50%) rotate(180deg)}
+.collapsible-content{display:none;margin-top:8px}
+.collapsible-content.show{display:block}
+
+.quiz-container{background:var(--card);border-radius:var(--radius);padding:20px 24px;margin:14px 0;border:1px solid var(--border)}
+.quiz-q{font-weight:600;margin-bottom:10px}
+.quiz-options label{display:block;padding:6px 12px;margin:4px 0;border-radius:8px;cursor:pointer;transition:background .2s;font-size:.92em}
+.quiz-options label:hover{background:rgba(128,128,128,.08)}
+.quiz-btn{margin-top:10px;padding:8px 20px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-size:.88em;transition:all .2s}
+.quiz-btn:hover{background:var(--accent);color:#fff}
+.quiz-result{margin-top:10px;font-size:.9em;padding:10px;border-radius:8px;display:none}
+.quiz-result.correct{display:block;background:rgba(46,204,113,.1);color:var(--green);border:1px solid rgba(46,204,113,.3)}
+.quiz-result.wrong{display:block;background:rgba(231,76,60,.1);color:var(--red);border:1px solid rgba(231,76,60,.3)}
+
+.section-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:36px 0}
+.back-top{position:fixed;bottom:30px;right:30px;width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;opacity:0;transition:opacity .3s;box-shadow:0 4px 15px rgba(231,76,60,.4);z-index:99}
+.back-top.show{opacity:1}
+.theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.3)}.theme-btn:hover{transform:scale(1.1);border-color:var(--accent)}
+ul,ol{padding-left:22px;margin:6px 0}li{margin:3px 0}
+@media(max-width:900px){.nav{transform:translateX(-100%)}main{margin-left:0;padding:20px}}
+</style>
+</head>
+<body>
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">&#9790;</button>
+
+<nav class="nav" id="nav">
+<div class="nav-title">高等数学<small>期末复习 · 基于复习课录音</small></div>
+<a href="../../" style="display:flex;align-items:center;gap:6px;padding:10px 16px;color:var(--accent3);font-size:.82em;border-bottom:1px solid var(--border);">← 返回课程主页</a>
+<div class="nav-group"><div class="nav-group-title">考试范围</div>
+<a href="#exam-info">分值分布</a></div>
+<div class="nav-group"><div class="nav-group-title">常微分方程 ~5分</div>
+<a href="#ode">二阶常系数方程</a></div>
+<div class="nav-group"><div class="nav-group-title">多元微分 ~20分</div>
+<a href="#pde-partial">偏导数计算 <span class="tag tag-L">必考</span></a>
+<a href="#pde-chain">复合函数求导 <span class="tag tag-L">必考</span></a>
+<a href="#pde-continuous">分段函数讨论</a>
+<a href="#pde-dir">方向导数与梯度</a>
+<a href="#pde-extreme">极值与最值</a></div>
+<div class="nav-group"><div class="nav-group-title">多元积分 ~38分</div>
+<a href="#int-multiple">重积分</a>
+<a href="#int-green">格林公式 <span class="tag tag-L">重点</span></a>
+<a href="#int-gauss">高斯公式</a></div>
+<div class="nav-group"><div class="nav-group-title">复变函数 ~12分</div>
+<a href="#complex-derive">可导性与解析性</a>
+<a href="#complex-integral">柯西积分公式</a></div>
+<div class="nav-group"><div class="nav-group-title">自测</div>
+<a href="#quiz">综合练习</a></div>
+</nav>
+
+<div class="main">
+<h1>高等数学 期末复习</h1>
+<p style="color:var(--text-dim);margin-bottom:20px">基于三节复习课录音整理 · 重点例题与考试要点</p>
+
+<div id="exam-info" class="exam-banner">
+<h3>考试范围与分值分布</h3>
+<div class="exam-grid">
+<div class="exam-item"><strong>常微分方程</strong>：~5 分（选择/填空）</div>
+<div class="exam-item"><strong>多元函数微分</strong>：~20 分（偏导、极值）</div>
+<div class="exam-item"><strong>多元函数积分</strong>：~38 分（重积分+曲线+曲面）</div>
+<div class="exam-item"><strong>复变函数</strong>：~12 分（2 题，送分题）</div>
+</div>
+<div class="warning" style="margin-top:14px">
+<strong>不考内容：</strong>曲线积分/曲面积分中的多个公式、以 2L 为周期的傅里叶级数、复数幂运算、调和函数。<br>
+<strong>必拿分：</strong>复变函数 12 分（套路固定，年年考同样的点）。
+</div>
+</div>
+
+<!-- 常微分方程 -->
+<div class="section-divider"></div>
+<h2 id="ode">常微分方程（~5 分）</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">二阶常系数非齐次方程的特解形式 <span class="tag tag-L">必考</span></h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>步骤：</strong>
+<ol>
+<li>写出特征方程：将 $y'', y', y$ 替换为 $r^2, r, 1$，右边=0</li>
+<li>求特征根 $r_1, r_2$</li>
+<li>从右端提取参数 $\lambda$ 和 $\omega$，构造复数 $\lambda \pm i\omega$</li>
+<li>判断 $\lambda \pm i\omega$ 是否为特征根，确定 $k$ 的取值</li>
+<li>写出特解形式</li>
+</ol>
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 例题：$y'' - 2y' + 5y = e^x \cos 2x$ 的特解形式</div>
+<p><strong>Step 1：</strong>特征方程 $r^2 - 2r + 5 = 0$</p>
+<p><strong>Step 2：</strong>$r = 1 \pm 2i$</p>
+<p><strong>Step 3：</strong>$\lambda = 1, \omega = 2$，构造 $\lambda \pm i\omega = 1 \pm 2i$</p>
+<p><strong>Step 4：</strong>$1 \pm 2i$ <strong>恰好是特征根</strong>，所以 $k = 1$</p>
+<p><strong>Step 5：</strong>特解形式：</p>
+<div class="formula">
+$y^* = x^1 e^x [(A\cos 2x + B\sin 2x)]$
+</div>
+<div class="warning">
+<strong>填空题易扣分点（老师反复强调）：</strong><br>
+① <strong>必须有 $\sin$ 项！</strong>即使原题只有 $\cos$，特解中也必须写 $A\cos 2x + B\sin 2x$。缺 $\sin$ 项 → 全扣。<br>
+② <strong>必须有 $x^k$ 因子！</strong>若 $\lambda \pm i\omega$ 是特征根则 $k=1$，不是则 $k=0$。漏 $x$ → 扣一半分。<br>
+③ 填空题规则：错一处扣一半，错两处全扣。
+</div>
+</div>
+</div>
+
+<!-- 多元微分 -->
+<div class="section-divider"></div>
+<h2 id="pde-partial">多元函数微分（~20 分）</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">偏导数计算</h3>
+<div class="collapsible-content show">
+<div class="card">
+<div class="card-title">偏导数定义（分段函数必用）</div>
+<div class="formula">
+$f_x(x_0, y_0) = \lim_{\Delta x \to 0} \frac{f(x_0 + \Delta x, y_0) - f(x_0, y_0)}{\Delta x}$
+</div>
+<p>对分段函数在分段点处，<strong>必须用定义求偏导</strong>，不能直接代公式。</p>
+</div>
+</div>
+
+<h3 id="pde-chain" class="collapsible open" onclick="toggleCollapse(this)">复合函数与抽象函数求导 <span class="tag tag-L">每年必考</span></h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>链式法则画"连线图"：</strong><br>
+以 $z = f(u,v), u = g(x,y), v = h(x,y)$ 为例：<br>
+$\frac{\partial z}{\partial x} = \frac{\partial f}{\partial u}\frac{\partial u}{\partial x} + \frac{\partial f}{\partial v}\frac{\partial v}{\partial x}$<br><br>
+<strong>口诀：连线相乘，分线相加。</strong><br>
+每条从 $z$ 到 $x$ 的路径上各偏导相乘，不同路径的结果相加。
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 例题：$z = f(e^{x^2} + y^2,\; xy)$，求 $z_x, z_{xy}$（抽象函数二阶偏导）</div>
+<p>令 $u = e^{x^2} + y^2$，$v = xy$，则 $z = f(u,v)$</p>
+<h4>一阶偏导：</h4>
+<div class="formula">
+$z_x = f_1 \cdot 2xe^{x^2} + f_2 \cdot y$
+</div>
+<p>其中 $f_1 = \frac{\partial f}{\partial u}$，$f_2 = \frac{\partial f}{\partial v}$（下标表示对第几个位置求偏导）</p>
+
+<h4>二阶偏导 $z_{xy}$（难点）：</h4>
+<p>对 $z_x = f_1 \cdot 2xe^{x^2} + f_2 \cdot y$ 再对 $y$ 求偏导，用<strong>乘法法则 + 链式法则</strong>：</p>
+<div class="formula">
+$z_{xy} = [f_{11} \cdot 2y + f_{12} \cdot x] \cdot 2xe^{x^2} + f_2 + [f_{21} \cdot 2y + f_{22} \cdot x] \cdot y$
+</div>
+<p>若 $f$ 有二阶连续偏导，则 $f_{12} = f_{21}$，可合并。</p>
+<div class="warning">
+<strong>关键易错点：</strong><br>
+① $f_1, f_2$ 仍然是 $u, v$ 的函数，对 $y$ 求导时<strong>仍需链式法则</strong><br>
+② 别忘了乘法法则中的"不求导"项（如 $f_2 \cdot y$ 对 $y$ 求导时 $f_2$ 也要对 $y$ 求导）<br>
+③ 最后用 $f_{12} = f_{21}$ 合并同类项
+</div>
+</div>
+</div>
+
+<h3 id="pde-continuous" class="collapsible" onclick="toggleCollapse(this)">分段函数连续性与偏导存在性讨论</h3>
+<div class="collapsible-content">
+<div class="keypoint">
+<strong>方法：</strong><br>
+① 偏导数：在分段点处<strong>必须用定义</strong>求<br>
+② 连续性：找特殊路径（常用 $y = kx$），若不同 $k$ 极限不同则不连续<br>
+③ <strong>偏导存在 ≠ 连续</strong>（和一元函数不同！）
+</div>
+</div>
+
+<h3 id="pde-dir" class="collapsible" onclick="toggleCollapse(this)">方向导数与梯度</h3>
+<div class="collapsible-content">
+<div class="formula">
+$\frac{\partial u}{\partial l} = \frac{\partial u}{\partial x}\cos\alpha + \frac{\partial u}{\partial y}\cos\beta + \frac{\partial u}{\partial z}\cos\gamma$
+</div>
+<p>其中 $\cos\alpha, \cos\beta, \cos\gamma$ 为方向 $l$ 的<strong>方向余弦</strong>。</p>
+<div class="formula">
+$\text{grad}\, u = \left(\frac{\partial u}{\partial x},\; \frac{\partial u}{\partial y},\; \frac{\partial u}{\partial z}\right)$
+</div>
+<div class="warning">
+<strong>计算不能出错！</strong>偏导数求错或方向余弦求错都会扣分。
+</div>
+</div>
+
+<h3 id="pde-extreme" class="collapsible" onclick="toggleCollapse(this)">二元函数极值与最值</h3>
+<div class="collapsible-content">
+<div class="keypoint">
+<strong>极值判定步骤：</strong>
+<ol>
+<li>求驻点：$f_x = 0, f_y = 0$</li>
+<li>计算 $A = f_{xx}, B = f_{xy}, C = f_{yy}$</li>
+<li>判别 $\Delta = AC - B^2$：
+<ul><li>$\Delta > 0, A > 0$ → 极小值</li>
+<li>$\Delta > 0, A < 0$ → 极大值</li>
+<li>$\Delta < 0$ → 非极值（鞍点）</li>
+<li>$\Delta = 0$ → 需另法判断</li></ul>
+</li>
+</ol>
+</div>
+<div class="card">
+<div class="card-title">有界闭区域上最值求法</div>
+<p>① 求区域内部的驻点函数值<br>② 求边界上的最值（可化为一元函数或用条件极值/拉格朗日乘数法）<br>③ 比较所有候选值，最大/最小者为最值</p>
+</div>
+</div>
+
+<!-- 多元积分 -->
+<div class="section-divider"></div>
+<h2 id="int-multiple">多元函数积分（~38 分）</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">重积分计算</h3>
+<div class="collapsible-content show">
+<div class="keypoint">
+<strong>二重积分：</strong>画积分区域 → 确定积分次序 → 化为累次积分<br>
+<strong>三重积分：</strong>"先一后二"或"先二后一"（投影法/截面法）
+</div>
+<div class="highlight">
+<strong>换元法（重要考点）：</strong><br>
+极坐标换元：$x = r\cos\theta, y = r\sin\theta$，面积元素 $dxdy = r\,drd\theta$<br>
+注意不要忘记 <strong>Jacobi 行列式 $r$</strong>！
+</div>
+</div>
+
+<h3 id="int-green" class="collapsible open" onclick="toggleCollapse(this)">格林公式 <span class="tag tag-L">重点</span></h3>
+<div class="collapsible-content show">
+<div class="formula">
+$\oint_L P\,dx + Q\,dy = \iint_D \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right) dxdy$
+</div>
+<div class="keypoint">
+<strong>使用条件：</strong>$L$ 为正向（逆时针）闭曲线，$P, Q$ 在 $D$ 内有连续偏导数。<br>
+<strong>思路：</strong>曲线积分 → 二重积分（化难为易）。<br>
+若曲线不闭合，可<strong>补线</strong>使其闭合后用格林公式，再减去补上的线积分。
+</div>
+</div>
+
+<h3 id="int-gauss" class="collapsible" onclick="toggleCollapse(this)">高斯公式</h3>
+<div class="collapsible-content">
+<div class="formula">
+$\oiint_\Sigma P\,dydz + Q\,dzdx + R\,dxdy = \iiint_\Omega \left(\frac{\partial P}{\partial x} + \frac{\partial Q}{\partial y} + \frac{\partial R}{\partial z}\right) dxdydz$
+</div>
+<p><strong>思路：</strong>曲面积分 → 三重积分。曲面取<strong>外侧</strong>为正方向。</p>
+</div>
+
+<!-- 复变函数 -->
+<div class="section-divider"></div>
+<h2 id="complex-derive">复变函数（~12 分，必拿分）</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">可导性与解析性判断 <span class="tag tag-L">每年必考</span></h3>
+<div class="collapsible-content show">
+<div class="keypoint">
+<strong>方法：C-R（柯西-黎曼）条件</strong><br>
+设 $f(z) = u(x,y) + iv(x,y)$ 在点 $z_0$ 可导的充要条件：
+<div class="formula">
+$\frac{\partial u}{\partial x} = \frac{\partial v}{\partial y}, \quad \frac{\partial u}{\partial y} = -\frac{\partial v}{\partial x}$
+</div>
+<p>且四个偏导数在该点<strong>连续</strong>。</p>
+<p><strong>解析</strong> = 在某点及该点邻域内处处可导。</p>
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 判断流程</div>
+<ol>
+<li>写出 $u(x,y)$ 和 $v(x,y)$</li>
+<li>求四个偏导数 $u_x, u_y, v_x, v_y$</li>
+<li>验证 C-R 条件是否成立</li>
+<li>若满足且偏导连续 → 可导（/解析）；否则不可导</li>
+</ol>
+</div>
+</div>
+
+<h3 id="complex-integral" class="collapsible open" onclick="toggleCollapse(this)">柯西积分公式 <span class="tag tag-L">每年必考</span></h3>
+<div class="collapsible-content show">
+<div class="formula">
+$f(z_0) = \frac{1}{2\pi i} \oint_C \frac{f(z)}{z - z_0} dz$
+</div>
+<p>其中 $C$ 为正向简单闭曲线，$z_0$ 在 $C$ 内部，$f(z)$ 在 $C$ 内及 $C$ 上解析。</p>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 解题套路（老师强调：年年考同样的点）</div>
+<ol>
+<li>识别被积函数是否为 $\frac{f(z)}{z - z_0}$ 形式</li>
+<li>确认 $f(z)$ 在围道内解析，$z_0$ 在围道内</li>
+<li>直接代入公式：$\oint = 2\pi i \cdot f(z_0)$</li>
+<li>若需先用<strong>复合闭路定理</strong>变形围道，再用柯西积分公式</li>
+</ol>
+<div class="highlight">
+<strong>老师原话：</strong>"复变函数虽然难学，但不难考。考的点每年基本固定，按套路多做题，这 12 分是送分给你一定要拿到。"
+</div>
+</div>
+</div>
+
+<!-- 自测 -->
+<div class="section-divider"></div>
+<h2 id="quiz">综合自测</h2>
+
+<div class="quiz-container" data-correct="1">
+<div class="quiz-q">1. $y'' - 2y' + 5y = e^x \cos 2x$ 的特解形式中 $x$ 的幂次 $k$ 是？</div>
+<div class="quiz-options">
+<label><input type="radio" name="q1" value="0"> $k = 0$（$1 \pm 2i$ 不是特征根）</label>
+<label><input type="radio" name="q1" value="1"> $k = 1$（$1 \pm 2i$ 是特征根）</label>
+<label><input type="radio" name="q1" value="2"> $k = 2$</label>
+</div>
+<button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+<div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+<div class="quiz-q">2. 多元函数在某点偏导数存在，能否推出该点连续？</div>
+<div class="quiz-options">
+<label><input type="radio" name="q2" value="0"> 一定连续</label>
+<label><input type="radio" name="q2" value="1"> 取决于偏导是否连续</label>
+<label><input type="radio" name="q2" value="2"> 不一定连续（与一元函数不同）</label>
+</div>
+<button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+<div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+<div class="quiz-q">3. 格林公式的正方向是？</div>
+<div class="quiz-options">
+<label><input type="radio" name="q3" value="0"> 逆时针</label>
+<label><input type="radio" name="q3" value="1"> 顺时针</label>
+<label><input type="radio" name="q3" value="2"> 无方向要求</label>
+</div>
+<button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+<div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+<div class="quiz-q">4. $f(z) = u + iv$ 在点 $z_0$ 可导的充要条件是？</div>
+<div class="quiz-options">
+<label><input type="radio" name="q4" value="0"> $u, v$ 偏导存在</label>
+<label><input type="radio" name="q4" value="1"> C-R 条件成立且偏导连续</label>
+<label><input type="radio" name="q4" value="2"> $f(z)$ 连续</label>
+</div>
+<button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+<div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+<div class="quiz-q">5. 柯西积分公式 $\oint_C \frac{f(z)}{z-z_0}dz = ?$（$z_0$ 在 $C$ 内，$f$ 解析）</div>
+<div class="quiz-options">
+<label><input type="radio" name="q5" value="0"> $f(z_0)$</label>
+<label><input type="radio" name="q5" value="1"> $2\pi f(z_0)$</label>
+<label><input type="radio" name="q5" value="2"> $2\pi i \cdot f(z_0)$</label>
+</div>
+<button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+<div class="quiz-result"></div>
+</div>
+
+<div style="text-align:center;padding:40px 0;color:var(--text-dim);font-size:.9em">祝考试顺利！</div>
+</div>
+
+<div class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+<div style="position:fixed;bottom:12px;left:286px;background:rgba(26,29,46,.9);padding:6px 14px;border-radius:20px;font-size:.75rem;color:var(--text-dim);z-index:80;border:1px solid var(--border);backdrop-filter:blur(8px)">
+<span id="busuanzi_container_site_pv">&#128065; <span id="busuanzi_value_site_pv">...</span></span> · <span id="busuanzi_container_page_pv">&#128196; <span id="busuanzi_value_page_pv">...</span></span>
+</div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<script>
+function toggleCollapse(el){el.classList.toggle('open');el.nextElementSibling.classList.toggle('show');}
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('backTop').classList.toggle('show',h.scrollTop>300);});
+function checkQuiz(btn){const c=btn.closest('.quiz-container'),ans=c.dataset.correct,r=c.querySelector('.quiz-result'),sel=c.querySelector('input:checked');if(!sel){r.className='quiz-result wrong';r.textContent='请先选择答案';return;}if(sel.value===ans){r.className='quiz-result correct';r.textContent='✅ 正确！';}else{r.className='quiz-result wrong';r.textContent='❌ 错误，正确答案是第 '+(parseInt(ans)+1)+' 个选项';}}
+function applyTheme(dark){document.documentElement.classList.toggle('light',!dark);document.getElementById('themeBtn').innerHTML=dark?'&#9790;':'&#9789;';localStorage.setItem('theme',dark?'dark':'light');}
+function toggleTheme(){applyTheme(document.documentElement.classList.contains('light'));}
+(function(){var t=localStorage.getItem('theme');if(t==='light')applyTheme(false);else applyTheme(true);})();
+</script>
+</body>
+</html>
