@@ -271,6 +271,18 @@ body {
 .dark .kb .formula { background: #0f172a; border-color: var(--border); }
 .dark .kb .example { background: rgba(16,185,129,0.1); border-color: #065f46; }
 .dark .kb .note { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.dark .kb tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+.dark .kb th { background: #1e40af; }
+.dark .ref-card { background: #1e293b; border-color: var(--border); }
+.dark .section-header { background: var(--card); border-color: var(--border); }
+.dark .part-title { background: linear-gradient(135deg, #1e40af, #581c87); }
+.dark .exam-info { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.25); }
+.dark .back-top { background: var(--primary); }
+.dark .footer { border-top-color: var(--border); color: var(--text-light); }
+.dark .star-box { background: #1e293b; border-color: var(--border); }
+.dark .cl-box { background: #1e293b; border-color: var(--border); }
+.dark .splash-box { background: #1e293b; border-color: var(--border); }
+.dark ::selection { background: var(--primary); color: #fff; }
 .theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:38px;height:38px;border-radius:50%;background:var(--card,#fff);border:1px solid var(--border,#e2e8f0);color:var(--text,#1e293b);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.15)}.theme-btn:hover{transform:scale(1.1);border-color:var(--primary,#2563eb)}
 .mobile-menu-btn {
   display: none; position: fixed; top: 10px; left: 10px; z-index: 200;
@@ -343,7 +355,7 @@ body {
       <span class="arrow">▼</span>
     </div>
     <div class="section-body">
-      <div class="kb" style="border-left-color:#ef4444; background:#fff;">
+      <div class="kb" style="border-left-color:#ef4444; background:var(--card);">
         <h3>题型分布</h3>
         <ul>
           <li><strong>填空题</strong>：模拟卷填空前 3 题（概率计算）+ 最后一题（假设检验）</li>

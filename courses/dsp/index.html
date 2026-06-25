@@ -102,6 +102,34 @@ tr:nth-child(even) { background: rgba(255,255,255,0.02); }
 .stat-num { font-size: 32px; font-weight: 800; color: var(--accent); }
 .stat-label { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
 
+.light{--bg:#f8fafc;--card:#fff;--card-hover:#f1f5f9;--accent:#4f46e5;--accent2:#0284c7;--accent3:#e11d48;--text:#1e293b;--text-dim:#64748b;--green:#059669;--orange:#d97706;--red:#dc2626;--border:#e2e8f0;--formula-bg:#f1f5f9}
+.light body{background:var(--bg);color:var(--text)}
+.light .nav{background:#fff;border-right-color:#e2e8f0}
+.light .nav-title{color:#4f46e5;border-bottom-color:#e2e8f0}
+.light .nav a{color:#64748b}
+.light .nav a:hover,.light .nav a.active{color:#4f46e5;background:rgba(79,70,229,.06);border-left-color:#4f46e5}
+.light .nav a[href="../../"]{color:#4f46e5;border-bottom-color:#e2e8f0}
+.light .nav-group-title{color:#4f46e5}
+.light h1{background:linear-gradient(135deg,#4f46e5,#0284c7)}
+.light h2{color:#4f46e5;border-bottom-color:#e2e8f0}
+.light h3{color:#0284c7}
+.light h4{color:#e11d48}
+.light .card{background:#fff;border-color:#e2e8f0}
+.light .card:hover{border-color:#4f46e5}
+.light .keypoint{background:rgba(5,150,105,.06);border-color:rgba(5,150,105,.25)}
+.light .warning{background:rgba(217,119,6,.06);border-color:rgba(217,119,6,.25)}
+.light .formula{background:#f1f5f9;border-color:#e2e8f0}
+.light table th{background:rgba(79,70,229,.1);color:#4f46e5;border-color:#e2e8f0}
+.light table td{border-color:#e2e8f0}
+.light tr:nth-child(even){background:rgba(0,0,0,.02)}
+.light .collapsible-content{border-left-color:#e2e8f0}
+.light .quiz-container{background:#fff;border-color:#e2e8f0}
+.light .quiz-correct{background:rgba(5,150,105,.1);border-color:rgba(5,150,105,.2)}
+.light .quiz-wrong{background:rgba(220,38,38,.1);border-color:rgba(220,38,38,.2)}
+.light .progress-bar{border-color:#e2e8f0}
+.light .back-top{background:#4f46e5}
+.light .search-box{background:#fff;border-color:#e2e8f0;color:#1e293b}
+.light .section-divider{background:linear-gradient(90deg,transparent,#e2e8f0,transparent)}
 /* Mobile nav toggle */
 .nav-toggle { display: none; position: fixed; top: 12px; left: 12px; z-index: 200; background: var(--accent); border: none; color: #fff; width: 40px; height: 40px; border-radius: 8px; font-size: 20px; cursor: pointer; }
 @media (max-width: 768px) {
