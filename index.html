@@ -252,7 +252,9 @@ h1 {
     var c=document.getElementById('fileCount');
     var l=document.getElementById('fileList');
     c.textContent='共 '+files.length+' 个文件';
+    var dlCounts=JSON.parse(localStorage.getItem('dl_counts')||'{}');
     l.innerHTML=files.map(function(f){
+      var cnt=dlCounts[f.p]||0;
       return '<div class="file-card" data-s="'+f.s+'" data-t="'+f.t+'">'
         +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
         +'<div style="width:36px;height:36px;border-radius:8px;background:'+f.c+'20;color:'+f.c+';display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">&#128196;</div>'
@@ -261,10 +263,11 @@ h1 {
         +'<div style="font-size:.72rem;color:var(--text3);margin-top:1px">'
         +'<span style="display:inline-block;padding:1px 6px;border-radius:4px;background:'+f.c+'15;color:'+f.c+';font-weight:600">'+f.sn+'</span> '
         +'<span style="display:inline-block;padding:1px 6px;border-radius:4px;background:rgba(128,128,128,.1);color:var(--text3)">'+f.tn+'</span> '
+        +'<span style="color:var(--text3);opacity:.7"> &#128065;'+cnt+'</span> '
         +f.sz+'</div></div></div>'
         +'<div style="display:flex;gap:4px;flex-shrink:0;margin-left:8px">'
         +'<a href="'+f.p+'" target="_blank" class="dl-btn" style="background:var(--card2);border:1px solid var(--border);color:var(--text2)">预览</a>'
-        +'<a href="'+f.p+'" download class="dl-btn" style="background:var(--accent);color:#fff;border:1px solid var(--accent)">下载</a>'
+        +'<a href="'+f.p+'" download onclick="trackDl(this.href)" class="dl-btn" style="background:var(--accent);color:#fff;border:1px solid var(--accent)">下载</a>'
         +'</div></div>';
     }).join('');
   }
@@ -275,6 +278,12 @@ h1 {
     renderFiles(FILES.filter(function(f){return f[key==='subject'?'s':'t']===val;}));
   }
   renderFiles(FILES);
+  function trackDl(href){
+    var key=href.replace(window.location.origin+'/','');
+    var c=JSON.parse(localStorage.getItem('dl_counts')||'{}');
+    c[key]=(c[key]||0)+1;
+    localStorage.setItem('dl_counts',JSON.stringify(c));
+  }
   </script>
   <style>
   .filter-btn{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.78rem;cursor:pointer;transition:all .2s;font-weight:500}
@@ -286,6 +295,37 @@ h1 {
   .dl-btn:hover{opacity:.8}
   @media(max-width:640px){#fileList{grid-template-columns:1fr!important}.file-card{flex-direction:column;align-items:flex-start;gap:8px}.file-card>div:last-child{margin-left:46px!important}}
   </style>
+
+  <!-- 改进建议与评论 -->
+  <div style="margin-bottom:32px;">
+    <h2 style="font-size:1.15rem;color:var(--text);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#128172; 改进建议与评论</h2>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;">
+      <p style="color:var(--text2);font-size:.88rem;margin-bottom:14px;">发现错误、缺少内容、或有改进建议？欢迎通过以下方式反馈：</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+        <a href="https://github.com/SDX123321/SDX123321.github.io/issues/new?title=%E6%94%B9%E8%BF%9B%E5%BB%BA%E8%AE%AE%EF%BC%9A&body=%E8%AF%B7%E6%8F%8F%E8%BF%B0%E4%BD%A0%E7%9A%84%E5%BB%BA%E8%AE%AE%E6%88%96%E5%8F%91%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%0A%0A%E6%B6%89%E5%8F%8A%E8%AF%BE%E7%A8%8B%EF%BC%9A%0A%E5%85%B7%E4%BD%93%E4%BD%8D%E7%BD%AE%EF%BC%9A" target="_blank" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);text-decoration:none;color:var(--text);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 2px 12px rgba(0,0,0,.1)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+          <span style="font-size:1.3rem;">&#128172;</span>
+          <div>
+            <div style="font-weight:600;font-size:.88rem;">提交 Issue</div>
+            <div style="font-size:.75rem;color:var(--text3);">在 GitHub 上提建议或报告错误</div>
+          </div>
+        </a>
+        <a href="https://github.com/SDX123321/SDX123321.github.io/issues" target="_blank" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);text-decoration:none;color:var(--text);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 2px 12px rgba(0,0,0,.1)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+          <span style="font-size:1.3rem;">&#128214;</span>
+          <div>
+            <div style="font-weight:600;font-size:.88rem;">查看已有反馈</div>
+            <div style="font-size:.75rem;color:var(--text3);">浏览其他人的建议与讨论</div>
+          </div>
+        </a>
+        <a href="https://github.com/SDX123321/SDX123321.github.io/pulls" target="_blank" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);text-decoration:none;color:var(--text);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 2px 12px rgba(0,0,0,.1)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+          <span style="font-size:1.3rem;">&#128736;</span>
+          <div>
+            <div style="font-weight:600;font-size:.88rem;">贡献内容</div>
+            <div style="font-size:.75rem;color:var(--text3);">提交 PR 直接改进网页</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
 
   <div class="footer">
     <span id="busuanzi_container_site_pv">&#128065; 本站总访问量 <span id="busuanzi_value_site_pv" style="color:var(--accent);">...</span> 次</span>
