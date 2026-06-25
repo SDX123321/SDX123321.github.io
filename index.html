@@ -115,10 +115,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button onclick="setFilter('t','review')" class="filter-btn" data-g="t" data-v="review">复习资料</button>
         <button onclick="setFilter('t','answer')" class="filter-btn" data-g="t" data-v="answer">参考答案</button>
         <button onclick="setFilter('t','textbook')" class="filter-btn" data-g="t" data-v="textbook">电子课本</button>
+        <button onclick="setFilter('t','slides')" class="filter-btn" data-g="t" data-v="slides">课件</button>
+        <button onclick="setFilter('t','homework')" class="filter-btn" data-g="t" data-v="homework">作业</button>
+        <button onclick="setFilter('t','lab')" class="filter-btn" data-g="t" data-v="lab">实验</button>
       </div>
     </div>
     <div id="fileCount" style="font-size:.8rem;color:var(--text3);margin-bottom:10px;"></div>
-    <div id="fileList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;"></div>
+    <div id="fileList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;max-height:480px;overflow-y:auto;padding-right:4px;"></div>
   </div>
 
   <!-- 全站搜索 -->
