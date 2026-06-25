@@ -450,6 +450,77 @@ tr:hover td { background:#f8fafc; }
             </div>
           </div></div>
 
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>数学归纳法证明 DP 正确性（3 个例子）</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>证明套路：</strong>归纳基础（n=1 最小子问题正确）→ 归纳假设（假设规模 &lt; n 的子问题最优）→ 归纳步骤（利用最优子结构性质，证明规模 n 的解也最优）</div>
+
+            <h4>例1：矩阵连乘（Matrix Chain Multiplication）</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>状态转移方程：</strong></p>
+                <p>\(m[i][j] = \min_{i \le k < j}\{m[i][k] + m[k+1][j] + p_{i-1}p_k p_j\}\)</p>
+                <p><strong>归纳证明：</strong></p>
+                <p><strong>基础：</strong>\(m[i][i] = 0\)（单个矩阵无需乘法，显然最优）</p>
+                <p><strong>假设：</strong>对所有链长 &lt; \(j-i+1\) 的子问题，\(m\) 值已是最优</p>
+                <p><strong>步骤：</strong>链长 \(j-i+1\) 的最优解必在某处 \(k\) 断开。由假设，\(m[i][k]\) 和 \(m[k+1][j]\) 均已最优，枚举所有 \(k\) 取最小即得全局最优。</p>
+              </div>
+              <div class="col-code"><pre><span class="cm">// 自底向上填表</span>
+<span class="kw">for</span>(<span class="kw">int</span> len=<span class="num">2</span>; len&lt;=n; len++)    <span class="cm">// 链长从小到大</span>
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>; i&lt;=n-len+<span class="num">1</span>; i++){
+    <span class="kw">int</span> j = i+len-<span class="num">1</span>;
+    m[i][j] = INF;
+    <span class="kw">for</span>(<span class="kw">int</span> k=i; k&lt;j; k++){     <span class="cm">// 枚举断点</span>
+      <span class="kw">int</span> cost=m[i][k]+m[k+<span class="num">1</span>][j]
+             +p[i-<span class="num">1</span>]*p[k]*p[j];
+      m[i][j]=min(m[i][j],cost);
+    }
+  }</pre></div>
+            </div>
+
+            <h4>例2：0-1 背包（0-1 Knapsack）</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>状态转移方程：</strong></p>
+                <p>\(dp[i][w] = \max(dp[i-1][w],\; dp[i-1][w-w_i] + v_i)\)</p>
+                <p><strong>归纳证明：</strong></p>
+                <p><strong>基础：</strong>\(dp[0][w] = 0\)（无物品，价值为 0）</p>
+                <p><strong>假设：</strong>\(dp[i-1][w]\) 对所有 \(w\) 是前 \(i-1\) 件物品的最优解</p>
+                <p><strong>步骤：</strong>第 \(i\) 件物品只有「选」或「不选」两种。选：价值 \(dp[i-1][w-w_i]+v_i\)；不选：价值 \(dp[i-1][w]\)。取较大者即为前 \(i\) 件的最优解。</p>
+              </div>
+              <div class="col-code"><pre><span class="cm">// dp[i][w]: 前i件物品,容量w的最大价值</span>
+<span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>; i&lt;=n; i++)
+  <span class="kw">for</span>(<span class="kw">int</span> w=<span class="num">0</span>; w&lt;=W; w++){
+    dp[i][w] = dp[i-<span class="num">1</span>][w];   <span class="cm">// 不选</span>
+    <span class="kw">if</span>(w &gt;= wt[i])           <span class="cm">// 能装下</span>
+      dp[i][w]=max(dp[i][w],
+        dp[i-<span class="num">1</span>][w-wt[i]]+val[i]);
+    <span class="cm">// 选: 价值更大则更新</span>
+  }</pre></div>
+            </div>
+
+            <h4>例3：最长公共子序列（LCS）</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>状态转移方程：</strong></p>
+                <p>\(c[i][j] = \begin{cases} c[i-1][j-1]+1 & x_i = y_j \\ \max(c[i-1][j], c[i][j-1]) & x_i \ne y_j \end{cases}\)</p>
+                <p><strong>归纳证明：</strong></p>
+                <p><strong>基础：</strong>\(c[0][j] = c[i][0] = 0\)（空序列 LCS 长度为 0）</p>
+                <p><strong>假设：</strong>\(c[i'][j']\) 对所有 \(i'&lt;i\) 或 \(j'&lt;j\) 已是最优</p>
+                <p><strong>步骤：</strong>若 \(x_i = y_j\)，LCS 必包含此字符，长度 = 子问题 +1。若不等，LCS 要么不含 \(x_i\) 要么不含 \(y_j\)，取两者较大。</p>
+              </div>
+              <div class="col-code"><pre><span class="cm">// c[i][j]: X前i个与Y前j个的LCS长度</span>
+<span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>; i&lt;=m; i++)
+  <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">1</span>; j&lt;=n; j++){
+    <span class="kw">if</span>(X[i]==Y[j])
+      c[i][j]=c[i-<span class="num">1</span>][j-<span class="num">1</span>]+<span class="num">1</span>;
+    <span class="kw">else</span>
+      c[i][j]=max(c[i-<span class="num">1</span>][j],
+                  c[i][j-<span class="num">1</span>]);
+  }
+<span class="cm">// c[m][n] 即为 LCS 长度</span></pre></div>
+            </div>
+          </div></div>
+
           <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第2章 经典代码 · 双栏对照</h3><span class="expand-icon">&#9654;</span></div>
           <div class="card-body">
 
@@ -1278,6 +1349,9 @@ function showSection(id) {
   const sec = document.getElementById(id);
   if (sec) {
     sec.classList.remove('hidden');
+    // Auto-expand the chapter inside this section
+    const ch = sec.querySelector('.chapter');
+    if (ch) ch.classList.add('open');
     visited[id] = true;
     localStorage.setItem('algo_visited', JSON.stringify(visited));
     updateProgress();
