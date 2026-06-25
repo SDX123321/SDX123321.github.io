@@ -195,6 +195,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <span style="color:var(--text3);font-size:.85rem;">查看全部 &#8250;</span>
   </div>
 
+  <!-- 累计学习时间 -->
+  <div id="studyTimeBox" style="display:none;max-width:560px;margin:0 auto 28px;padding:14px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center;">
+    <span style="font-size:1.3rem;">&#128214;</span>
+    <span style="font-size:.92rem;color:var(--text);font-weight:600;margin-left:8px;">累计学习时间</span>
+    <span id="totalStudyTime" style="font-size:1.1rem;color:var(--accent);font-weight:700;margin-left:8px;">--</span>
+  </div>
+
   <div class="cards">
     <a class="card" href="courses/probability/">
       <div class="icon icon-blue">&#128202;</div>
@@ -329,6 +336,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     renderFiles(res);
   }
   renderFiles(FILES);
+
+  // === 累计学习时间 ===
+  (function(){
+    var total = 0;
+    for(var i = 0; i < localStorage.length; i++){
+      var key = localStorage.key(i);
+      if(key && key.indexOf('dwell_') === 0){
+        try {
+          var data = JSON.parse(localStorage.getItem(key));
+          for(var section in data){
+            total += data[section];
+          }
+        } catch(e){}
+      }
+    }
+    if(total > 60){
+      var box = document.getElementById('studyTimeBox');
+      var el = document.getElementById('totalStudyTime');
+      var h = Math.floor(total / 3600);
+      var m = Math.floor((total % 3600) / 60);
+      el.textContent = h > 0 ? h + ' 小时 ' + m + ' 分钟' : m + ' 分钟';
+      box.style.display = 'block';
+    }
+  })();
 
   // === 免责声明弹窗（电子课本专用）===
   function confirmTextbook(path, action){
@@ -683,6 +714,7 @@ function closeGuide(){
 })();
 </script>
 <script src="stats.js"></script>
+<script src="search.js"></script>
 <script src="remember.js"></script>
 </body>
 </html>
