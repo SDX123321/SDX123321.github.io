@@ -550,7 +550,7 @@ function buildNav() {
   html += `<div class="nav-item" data-chapter="welcome"><span>🏠</span><span>首页</span></div>`;
   DATA.forEach(ch => {
     const total = ch.sections.reduce((s, sec) => s + sec.qa.length, 0);
-    const known = ch.sections.reduce((s, sec) => s + sec.qa.filter(qa => state.knownCards[qa.q]).length, 0);
+    const known = ch.sections.reduce((s, sec) => s + sec.qa.filter(qa => state.knownCards[qa.q]==='known').length, 0);
     const done = known === total && total > 0;
     html += `<div class="nav-item" data-chapter="${ch.id}">
       <span class="progress-dot ${done ? 'done' : ''}"></span>
@@ -602,6 +602,7 @@ function bindEvents() {
     document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     state.mode = tab.dataset.mode;
+    if (!state.currentChapter) state.currentChapter = DATA[0];
     render();
   });
 
@@ -655,7 +656,7 @@ function showWelcome() {
   state.currentChapter = null;
   updateNavActive();
   const totalQA = DATA.reduce((s, ch) => s + ch.sections.reduce((ss, sec) => ss + sec.qa.length, 0), 0);
-  const knownCount = Object.keys(state.knownCards).length;
+  const knownCount = Object.keys(state.knownCards).filter(k => state.knownCards[k] === 'known').length;
   const content = document.getElementById('content');
   content.innerHTML = `
     <div class="welcome fade-in">
@@ -687,7 +688,7 @@ function showWelcome() {
         <h3 style="font-size:16px; margin-bottom:12px; color:var(--accent);">快速选择章节</h3>
         ${DATA.map(ch => {
           const total = ch.sections.reduce((s, sec) => s + sec.qa.length, 0);
-          const known = ch.sections.reduce((s, sec) => s + sec.qa.filter(qa => state.knownCards[qa.q]).length, 0);
+          const known = ch.sections.reduce((s, sec) => s + sec.qa.filter(qa => state.knownCards[qa.q]==='known').length, 0);
           const pct = total ? Math.round(known/total*100) : 0;
           return `<div class="welcome-card" style="display:flex; align-items:center; gap:12px; margin-bottom:8px; cursor:pointer;" onclick="openChapter('${ch.id}')">
             <span style="font-size:24px;">${ch.icon}</span>
@@ -709,14 +710,14 @@ function showWelcome() {
 function startBrowse() { state.mode='browse'; document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode==='browse')); if(!state.currentChapter) state.currentChapter=DATA[0]; render(); }
 function startFlashcard() { state.mode='flashcard'; document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode==='flashcard')); if(!state.currentChapter) state.currentChapter=DATA[0]; render(); }
 function startQuiz() { state.mode='quiz'; document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode==='quiz')); if(!state.currentChapter) state.currentChapter=DATA[0]; render(); }
-function startStats() { state.mode='stats'; document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode==='stats')); render(); }
+function startStats() { state.mode='stats'; document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode==='stats')); if(!state.currentChapter) state.currentChapter=DATA[0]; render(); }
 function openChapter(id) { state.currentChapter = DATA.find(c=>c.id===id); state.mode='browse'; document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode==='browse')); render(); }
 
 // ==================== BROWSE MODE ====================
 function renderBrowse() {
   const ch = state.currentChapter;
   const totalQA = ch.sections.reduce((s, sec) => s + sec.qa.length, 0);
-  const knownCount = ch.sections.reduce((s, sec) => s + sec.qa.filter(qa => state.knownCards[qa.q]).length, 0);
+  const knownCount = ch.sections.reduce((s, sec) => s + sec.qa.filter(qa => state.knownCards[qa.q]==='known').length, 0);
   const content = document.getElementById('content');
   content.innerHTML = `
     <div class="fade-in">
@@ -729,7 +730,7 @@ function renderBrowse() {
       </div>
       ${ch.sections.map((sec, si) => {
         const isOpen = state.openSections.has(si);
-        const secKnown = sec.qa.filter(qa => state.knownCards[qa.q]).length;
+        const secKnown = sec.qa.filter(qa => state.knownCards[qa.q]==='known').length;
         return `<div class="section">
           <div class="section-header ${isOpen ? 'open' : ''}" data-section="${si}">
             <span class="arrow">▶</span>
@@ -1114,3 +1115,4 @@ if(!localStorage.getItem('sg_done_marx'))document.getElementById('subGuide').sty
 <script src="../../remember.js"></script>
 </body>
 </html>
+
