@@ -85,8 +85,4 @@ document.querySelectorAll('.quiz-options input').forEach(input => {
   } catch(e) {}
 })();
 
-// Theme toggle
-function applyTheme(dark){document.documentElement.classList.toggle('light',!dark);document.getElementById('themeBtn').innerHTML=dark?'&#9790;':'&#9789;';localStorage.setItem('theme',dark?'dark':'light');}
-function toggleTheme(){applyTheme(document.documentElement.classList.contains('light'));}
-(function(){var t=localStorage.getItem('theme');if(t==='light')applyTheme(false);else applyTheme(true);})();
 if(!localStorage.getItem('sg_done_dsp'))document.getElementById('subGuide').style.display='flex';

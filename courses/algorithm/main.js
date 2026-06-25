@@ -265,19 +265,6 @@ document.addEventListener('keydown', e => {
 
 init();
 
-// Theme toggle
-function applyTheme(dark){
-  document.body.classList.toggle('dark',dark);
-  document.getElementById('themeBtn').innerHTML=dark?'&#9789;':'&#9790;';
-  localStorage.setItem('theme',dark?'dark':'light');
-}
-function toggleTheme(){applyTheme(!document.body.classList.contains('dark'));}
-(function(){
-  var t=localStorage.getItem('theme');
-  if(t==='dark') applyTheme(true);
-  else applyTheme(false);
-})();
-
 if(!localStorage.getItem('sg_done_algo')) document.getElementById('subGuide').style.display='flex';
 
 // KaTeX auto-render

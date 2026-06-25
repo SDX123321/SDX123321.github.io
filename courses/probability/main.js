@@ -60,10 +60,6 @@ window.addEventListener('load', () => {
     });
   }
 });
-// Theme toggle
-function applyTheme(dark){document.body.classList.toggle('dark',dark);document.getElementById('themeBtn').innerHTML=dark?'&#9789;':'&#9790;';localStorage.setItem('theme',dark?'dark':'light');}
-function toggleTheme(){applyTheme(!document.body.classList.contains('dark'));}
-(function(){var t=localStorage.getItem('theme');if(t==='dark')applyTheme(true);else applyTheme(false);})();
 function toggleSidebar(){
   var s=document.querySelector('.sidebar');
   var o=document.getElementById('sidebarOverlay');

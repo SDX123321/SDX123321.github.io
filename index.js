@@ -197,20 +197,6 @@ var _searchIndex = null;
     if(e.key==='Escape') document.getElementById('searchResults').style.display='none';
   });
 
-// === Inline Script ===
-// === 主题切换 ===
-function applyTheme(dark){
-  document.documentElement.classList.toggle('light',!dark);
-  document.getElementById('themeBtn').innerHTML=dark?'&#9789;':'&#9790;';
-  localStorage.setItem('theme',dark?'dark':'light');
-}
-function toggleTheme(){applyTheme(document.documentElement.classList.contains('light'));}
-(function(){
-  var t=localStorage.getItem('theme');
-  if(t==='light')applyTheme(false);
-  else applyTheme(true);
-})();
-
 // === 更新日志（仅首次展示）===
 (function(){
   if(!localStorage.getItem('changelog_seen')){

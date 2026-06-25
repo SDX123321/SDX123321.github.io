@@ -435,9 +435,5 @@ function runDiskSched(){
 
 // Init
 buildBankerTable();
-// Theme toggle
-function applyTheme(dark){document.body.classList.toggle('light',!dark);document.getElementById('themeBtn').innerHTML=dark?'&#9790;':'&#9789;';localStorage.setItem('theme',dark?'dark':'light');}
-function toggleTheme(){applyTheme(document.body.classList.contains('light'));}
-(function(){var t=localStorage.getItem('theme');if(t==='light')applyTheme(false);else applyTheme(true);})();
 function toggleSidebar(){var s=document.getElementById('sidebar');var o=document.getElementById('sidebarOverlay');s.classList.toggle('open');o.classList.toggle('show');}
 if(!localStorage.getItem('sg_done_os'))document.getElementById('subGuide').style.display='flex';
