@@ -121,6 +121,18 @@ tr:hover td { background:#f8fafc; }
 .tag-purple { background:#f3e8ff; color:#7c3aed; }
 .tag-orange { background:#ffedd5; color:#9a3412; }
 .tag-red { background:#fef2f2; color:#991b1b; }
+/* Two-column layout for text + code */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:14px 0; }
+.two-col .col-text { padding:16px 18px; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; font-size:14px; line-height:1.8; }
+.two-col .col-code { background:var(--bg-code); border-radius:10px; padding:16px 18px; overflow-x:auto; }
+.two-col .col-code pre { margin:0; font-size:13px; line-height:1.6; color:#e2e8f0; white-space:pre; font-family:'Fira Code','Consolas',monospace; }
+.two-col .col-code .kw{color:#c792ea} .two-col .col-code .fn{color:#82aaff} .two-col .col-code .cm{color:#546e7a} .two-col .col-code .str{color:#c3e88d} .two-col .col-code .num{color:#f78c6c}
+.supplement-section { background:var(--bg-card); border:2px solid var(--primary); border-radius:14px; padding:28px 32px; margin:24px 0; }
+.supplement-section h2 { color:var(--primary); margin:0 0 8px; font-size:1.3em; border:none; padding:0; }
+.supplement-section > p { color:var(--text-secondary); margin-bottom:20px; font-size:14px; }
+@media(max-width:768px){
+  .two-col{grid-template-columns:1fr}
+  .two-col .col-code pre{font-size:12px}
 /* Responsive */
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%);transition:transform .3s ease}
@@ -197,6 +209,7 @@ tr:hover td { background:#f8fafc; }
     <a href="#ch6" data-ch="6"><span class="icon">&#128256;</span>第6章 分支限界法</a>
     <a href="#ch7" data-ch="7"><span class="icon">&#127922;</span>第7章 随机化方法</a>
     <a href="#compare" data-ch="8"><span class="icon">&#128202;</span>算法对比总结</a>
+    <a href="#supplement" data-ch="10"><span class="icon">&#128218;</span>经典代码补遗</a>
     <a href="#quiz-all" data-ch="9"><span class="icon">&#9999;&#65039;</span>综合测验</a>
   </nav>
 </aside>
@@ -717,6 +730,250 @@ tr:hover td { background:#f8fafc; }
 
           <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第7章 练习题</h3><span class="expand-icon">&#9654;</span></div>
           <div class="card-body quiz-container" data-quiz="ch7"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SUPPLEMENT ==================== -->
+    <section id="supplement" class="chapter-section hidden">
+      <div class="chapter" data-chapter="10">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#dbeafe;color:#1e40af">&#128218;</div>
+          <div class="chapter-title"><h2>经典代码示例补遗</h2><p>复习课与CSDN重点——文本与代码双栏对照</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+
+          <!-- 递归：全排列 -->
+          <div class="supplement-section">
+            <h2>递归 · 集合全排列</h2>
+            <p>将 n 个元素全排列问题拆为：分别将每个元素交换到首位，再递归求剩余元素全排列。递归出口：只有一个元素时排列即自身。</p>
+            <div class="two-col">
+              <div class="col-text">
+                <strong>思路：</strong>
+                <ol>
+                  <li>对数组 list[k..m]，依次将 list[j]（j=k..m）交换到位置 k</li>
+                  <li>递归求 list[k+1..m] 的全排列</li>
+                  <li>回溯时恢复交换</li>
+                </ol>
+                <p><strong>复杂度：</strong>时间 O(n·n!)，空间 O(n)</p>
+              </div>
+              <div class="col-code"><pre><span class="kw">void</span> <span class="fn">Perm</span>(<span class="kw">int</span> list[], <span class="kw">int</span> k, <span class="kw">int</span> m) {
+  <span class="kw">if</span>(k == m) {        <span class="cm">// 递归出口</span>
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>; i<=m; i++)
+      cout &lt;&lt; list[i] &lt;&lt; <span class="str">" "</span>;
+  } <span class="kw">else</span> {
+    <span class="kw">for</span>(<span class="kw">int</span> j=k; j<=m; j++) {
+      swap(list[k], list[j]);
+      <span class="fn">Perm</span>(list, k+<span class="num">1</span>, m);  <span class="cm">// 递归</span>
+      swap(list[k], list[j]); <span class="cm">// 回溯</span>
+    }
+  }
+}</pre></div>
+            </div>
+          </div>
+
+          <!-- 分治：快速排序 -->
+          <div class="supplement-section">
+            <h2>分治 · 快速排序</h2>
+            <p>选基准 x，将序列分为 ≤x 和 >x 两部分，递归排序。平均 O(nlogn)，最坏 O(n²)。</p>
+            <div class="two-col">
+              <div class="col-text">
+                <strong>关键步骤：</strong>
+                <ol>
+                  <li>选中间元素为基准 x</li>
+                  <li>双指针 i,j 从两端向中间扫描</li>
+                  <li>i 找到 ≥x 停，j 找到 ≤x 停，交换</li>
+                  <li>直到 i ≥ j，递归处理左右两半</li>
+                </ol>
+                <p><strong>注意：</strong>基准选中间可避免最坏情况</p>
+              </div>
+              <div class="col-code"><pre><span class="kw">void</span> <span class="fn">quick_sort</span>(<span class="kw">int</span> q[], <span class="kw">int</span> l, <span class="kw">int</span> r) {
+  <span class="kw">if</span>(l >= r) <span class="kw">return</span>;
+  <span class="kw">int</span> i = l-<span class="num">1</span>, j = r+<span class="num">1</span>;
+  <span class="kw">int</span> x = q[l + r >> <span class="num">1</span>]; <span class="cm">// 基准</span>
+  <span class="kw">while</span>(i &lt; j) {
+    <span class="kw">do</span> i++; <span class="kw">while</span>(q[i] &lt; x);
+    <span class="kw">do</span> j--; <span class="kw">while</span>(q[j] &gt; x);
+    <span class="kw">if</span>(i &lt; j) swap(q[i], q[j]);
+  }
+  <span class="fn">quick_sort</span>(q, l, j);
+  <span class="fn">quick_sort</span>(q, j+<span class="num">1</span>, r);
+}</pre></div>
+            </div>
+          </div>
+
+          <!-- 分治：归并排序 -->
+          <div class="supplement-section">
+            <h2>分治 · 归并排序</h2>
+            <p>将序列一分为二，递归排序后合并。稳定排序，时间 O(nlogn)，空间 O(n)。</p>
+            <div class="two-col">
+              <div class="col-text">
+                <strong>merge 函数：</strong>
+                <ol>
+                  <li>双指针 i,j 分别指向左右两半</li>
+                  <li>比较 a[i] 和 a[j]，较小者放入 temp</li>
+                  <li>剩余元素直接追加</li>
+                  <li>拷贝回原数组</li>
+                </ol>
+              </div>
+              <div class="col-code"><pre><span class="kw">void</span> <span class="fn">merge</span>(<span class="kw">int</span> a[], <span class="kw">int</span> l, <span class="kw">int</span> m, <span class="kw">int</span> r){
+  <span class="kw">int</span> *t = (<span class="kw">int</span>*)malloc(
+    (r-l+<span class="num">1</span>)*<span class="kw">sizeof</span>(<span class="kw">int</span>));
+  <span class="kw">int</span> i=l, j=m+<span class="num">1</span>, k=<span class="num">0</span>;
+  <span class="kw">while</span>(i&lt;=m && j&lt;=r)
+    t[k++] = a[i]&lt;=a[j]
+           ? a[i++] : a[j++];
+  <span class="kw">while</span>(i&lt;=m) t[k++]=a[i++];
+  <span class="kw">while</span>(j&lt;=r) t[k++]=a[j++];
+  <span class="kw">for</span>(k=<span class="num">0</span>,i=l; i&lt;=r; k++,i++)
+    a[i]=t[k];
+  free(t);
+}</pre></div>
+            </div>
+          </div>
+
+          <!-- 贪心：Dijkstra -->
+          <div class="supplement-section">
+            <h2>贪心 · Dijkstra 单源最短路径</h2>
+            <p>每次从 V-S 中选取距源点最近的顶点加入 S，更新邻居距离。适用于非负权图。</p>
+            <div class="two-col">
+              <div class="col-text">
+                <strong>算法步骤：</strong>
+                <ol>
+                  <li>初始化 dist[i] = cost[v0][i]</li>
+                  <li>循环 n-1 次：找 dist 最小的未访问顶点 u</li>
+                  <li>标记 u 已访问，用 u 松弛所有邻居</li>
+                  <li>dist[j] = min(dist[j], dist[u]+cost[u][j])</li>
+                </ol>
+                <p><strong>复杂度：</strong>O(n²)，可用堆优化到 O(ElogV)</p>
+              </div>
+              <div class="col-code"><pre><span class="kw">void</span> <span class="fn">Dijkstra</span>(<span class="kw">int</span> cost[][], <span class="kw">int</span> n,
+              <span class="kw">int</span> v0, <span class="kw">int</span> dist[]) {
+  <span class="kw">int</span> *s = <span class="kw">new int</span>[n]();
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;n;i++)
+    dist[i]=cost[v0][i];
+  dist[v0]=<span class="num">0</span>; s[v0]=<span class="num">1</span>;
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>;i&lt;n;i++){
+    <span class="kw">int</span> u=<span class="num">0</span>, mn=INF;
+    <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>;j&lt;n;j++)
+      <span class="kw">if</span>(!s[j]&&dist[j]&lt;mn)
+        {mn=dist[j];u=j;}
+    s[u]=<span class="num">1</span>;
+    <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>;j&lt;n;j++)
+      <span class="kw">if</span>(!s[j]&&dist[u]+
+         cost[u][j]&lt;dist[j])
+        dist[j]=dist[u]+cost[u][j];
+  }
+}</pre></div>
+            </div>
+          </div>
+
+          <!-- 回溯：子集树框架 -->
+          <div class="supplement-section">
+            <h2>回溯法 · 子集树框架与 0-1 背包</h2>
+            <p>子集树：每个元素选或不选，共 2ⁿ 个叶子。回溯法通过约束函数和限界函数剪枝。</p>
+            <div class="two-col">
+              <div class="col-text">
+                <strong>0-1 背包剪枝策略：</strong>
+                <ul>
+                  <li><strong>左剪枝（约束）：</strong>tw + w[i] > W 则不选</li>
+                  <li><strong>右剪枝（限界）：</strong>bound(i) ≤ maxv 则不扩展</li>
+                </ul>
+                <p><strong>上界函数：</strong>按单位价值降序排列后，贪心地装入剩余物品计算价值上界。bound ≤ maxv 时剪掉右子树。</p>
+              </div>
+              <div class="col-code"><pre><span class="kw">int</span> <span class="fn">bound</span>(<span class="kw">int</span> i, <span class="kw">int</span> tw, <span class="kw">int</span> tv) {
+  i++;
+  <span class="kw">while</span>(i&lt;=n && tw+A[i].w&lt;=W){
+    tw+=A[i].w; tv+=A[i].v; i++;
+  }
+  <span class="kw">if</span>(i&lt;=n)
+    <span class="kw">return</span> tv+(W-tw)*A[i].p;
+  <span class="kw">else return</span> tv;
+}
+<span class="kw">void</span> <span class="fn">dfs</span>(<span class="kw">int</span> i,<span class="kw">int</span> tw,<span class="kw">int</span> tv) {
+  <span class="kw">if</span>(i&gt;n) { <span class="cm">/* 更新最优 */</span> }
+  <span class="kw">else</span> {
+    <span class="kw">if</span>(tw+w[i]&lt;=W) { <span class="cm">// 左</span>
+      op[i]=<span class="num">1</span>;
+      <span class="fn">dfs</span>(i+<span class="num">1</span>,tw+w[i],tv+v[i]);
+    }
+    <span class="kw">if</span>(<span class="fn">bound</span>(i,tw,tv)&gt;maxv){
+      op[i]=<span class="num">0</span>; <span class="cm">// 右</span>
+      <span class="fn">dfs</span>(i+<span class="num">1</span>,tw,tv);
+    }
+  }
+}</pre></div>
+            </div>
+          </div>
+
+          <!-- 回溯：N皇后 -->
+          <div class="supplement-section">
+            <h2>回溯法 · N 皇后问题（排列树）</h2>
+            <p>在 N×N 棋盘上放置 N 个皇后，使其互不攻击（不同行、列、对角线）。</p>
+            <div class="two-col">
+              <div class="col-text">
+                <strong>约束条件：</strong>
+                <ul>
+                  <li>不同列：x[i] ≠ x[j]</li>
+                  <li>不同对角线：|i-j| ≠ |x[i]-x[j]|</li>
+                </ul>
+                <p><strong>框架：</strong>排列树 —— 对每行选择列位置，用 place() 检查合法性。</p>
+              </div>
+              <div class="col-code"><pre><span class="kw">int</span> <span class="fn">place</span>(<span class="kw">int</span> j) {
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>;i&lt;j;i++)
+    <span class="kw">if</span>(abs(j-i)==abs(x[j]-x[i])
+       || x[j]==x[i])
+      <span class="kw">return</span> <span class="num">0</span>;
+  <span class="kw">return</span> <span class="num">1</span>;
+}
+<span class="kw">void</span> <span class="fn">queen</span>(<span class="kw">int</span> t) {
+  <span class="kw">if</span>(t&gt;=n) sum++; <span class="cm">// 找到解</span>
+  <span class="kw">else</span> <span class="kw">for</span>(<span class="kw">int</span> j=t;j&lt;=n;j++){
+    swap(x[j], x[t]);
+    <span class="kw">if</span>(<span class="fn">place</span>(t))
+      <span class="fn">queen</span>(t+<span class="num">1</span>);
+    swap(x[j], x[t]); <span class="cm">// 回溯</span>
+  }
+}</pre></div>
+            </div>
+          </div>
+
+          <!-- 分支限界：单源最短路径 -->
+          <div class="supplement-section">
+            <h2>分支限界 · 单源最短路径（队列式 vs 优先队列式）</h2>
+            <p>与 Dijkstra 的贪心不同，分支限界法用 BFS 搜索解空间树，用限界函数剪枝。</p>
+            <div class="two-col">
+              <div class="col-text">
+                <strong>队列式（FIFO）：</strong>
+                <ul><li>用普通队列，按入队顺序扩展</li><li>找到目标即返回（第一个解即最优）</li></ul>
+                <strong>优先队列式（小根堆）：</strong>
+                <ul><li>按 dist 值小的优先出队</li><li>扩展时记录前驱 prev[]</li><li>找到所有最短路径后通过 prev 回溯路径</li></ul>
+              </div>
+              <div class="col-code"><pre><span class="kw">struct</span> Node {
+  <span class="kw">int</span> vno, length;
+  <span class="kw">bool operator</span>&lt;(<span class="kw">const</span> Node&amp;b)
+    <span class="kw">const</span> {
+    <span class="kw">return</span> length &gt; b.length;
+  }  <span class="cm">// 小根堆</span>
+};
+<span class="kw">void</span> <span class="fn">bfs</span>(<span class="kw">int</span> v) {
+  priority_queue&lt;Node&gt; pq;
+  pq.push({v,<span class="num">0</span>}); dist[v]=<span class="num">0</span>;
+  <span class="kw">while</span>(!pq.empty()){
+    Node e=pq.top(); pq.pop();
+    <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>;j&lt;n;j++){
+      <span class="kw">int</span> d=e.length+a[e.vno][j];
+      <span class="kw">if</span>(d&lt;dist[j]){
+        dist[j]=d; prev[j]=e.vno;
+        pq.push({j,d});
+      }
+    }
+  }
+}</pre></div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
