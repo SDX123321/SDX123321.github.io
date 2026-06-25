@@ -207,20 +207,85 @@ h1 {
   <!-- 资料下载 -->
   <div style="margin-bottom:40px;">
     <h2 style="font-size:1.15rem;color:var(--text);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#128196; 资料下载</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;">
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:14px;">
-        <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#ef4444,#f97316);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#128196;</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:600;font-size:.92rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">DSP 试卷合集</div>
-          <div style="font-size:.78rem;color:var(--text3);margin-top:2px;">PDF · 22MB · 数字信号处理历年试卷</div>
-        </div>
-        <div style="display:flex;gap:6px;flex-shrink:0;">
-          <a href="files/dsp试卷合集.pdf" target="_blank" style="padding:6px 12px;border-radius:8px;background:var(--card2);border:1px solid var(--border);color:var(--text2);font-size:.78rem;text-decoration:none;transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">预览</a>
-          <a href="files/dsp试卷合集.pdf" download style="padding:6px 12px;border-radius:8px;background:var(--accent);color:#fff;font-size:.78rem;text-decoration:none;transition:opacity .2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">下载</a>
-        </div>
-      </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;" id="filterBar">
+      <button onclick="filterFiles('all','all')" class="filter-btn active" data-f="all">全部</button>
+      <span style="color:var(--text3);font-size:.8rem;line-height:28px;margin:0 4px;">|</span>
+      <button onclick="filterFiles('subject','probability')" class="filter-btn" data-f="probability">概率论</button>
+      <button onclick="filterFiles('subject','os')" class="filter-btn" data-f="os">操作系统</button>
+      <button onclick="filterFiles('subject','algorithm')" class="filter-btn" data-f="algorithm">算法</button>
+      <button onclick="filterFiles('subject','dsp')" class="filter-btn" data-f="dsp">数字信号</button>
+      <button onclick="filterFiles('subject','marxism')" class="filter-btn" data-f="marxism">马克思</button>
+      <span style="color:var(--text3);font-size:.8rem;line-height:28px;margin:0 4px;">|</span>
+      <button onclick="filterFiles('type','exam')" class="filter-btn" data-f="exam">历年试卷</button>
+      <button onclick="filterFiles('type','review')" class="filter-btn" data-f="review">复习资料</button>
+      <button onclick="filterFiles('type','answer')" class="filter-btn" data-f="answer">参考答案</button>
     </div>
+    <div id="fileCount" style="font-size:.8rem;color:var(--text3);margin-bottom:10px;"></div>
+    <div id="fileList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;"></div>
   </div>
+  <script>
+  var FILES=[
+    {s:"algorithm",sn:"算法",c:"#7c3aed",n:"2021-22 算法试卷A卷.pdf",p:"files/algorithm/2021-22第二学期期末算法试卷a卷-试卷.pdf",sz:"0.3MB",t:"exam",tn:"历年试卷"},
+    {s:"algorithm",sn:"算法",c:"#7c3aed",n:"算法试卷合集1.pdf",p:"files/algorithm/算法设计与分析_试卷合集1.pdf",sz:"32.3MB",t:"exam",tn:"历年试卷"},
+    {s:"algorithm",sn:"算法",c:"#7c3aed",n:"算法试卷合集2.pdf",p:"files/algorithm/算法设计与分析_试卷合集2.pdf",sz:"2.1MB",t:"exam",tn:"历年试卷"},
+    {s:"dsp",sn:"数字信号",c:"#6c63ff",n:"DSP试卷合集.pdf",p:"files/dsp/数字信号处理试卷合集.pdf",sz:"21.1MB",t:"exam",tn:"历年试卷"},
+    {s:"dsp",sn:"数字信号",c:"#6c63ff",n:"DSP双语版试卷.pdf",p:"files/dsp/数字信号处理（双语版 上古试卷）.pdf",sz:"27.7MB",t:"exam",tn:"历年试卷"},
+    {s:"marxism",sn:"马克思",c:"#e63946",n:"马克思主义原理 A卷(23-24).pdf",p:"files/marxism/2023-2024-2 马克思主义原理 A卷.pdf",sz:"1.1MB",t:"exam",tn:"历年试卷"},
+    {s:"marxism",sn:"马克思",c:"#e63946",n:"马克思主义原理期末试卷.pdf",p:"files/marxism/《马克思主义基本原理概论》期末试卷 (1).pdf",sz:"34.7MB",t:"exam",tn:"历年试卷"},
+    {s:"marxism",sn:"马克思",c:"#e63946",n:"马克思主义基本原理知识点.pdf",p:"files/marxism/马克思主义基本原理知识点.pdf",sz:"33.8MB",t:"notes",tn:"知识点"},
+    {s:"os",sn:"操作系统",c:"#059669",n:"操作系统A卷+答案(24-25).pdf",p:"files/os/2024-2025-1 操作系统基础 A卷 答案.pdf",sz:"0.2MB",t:"answer",tn:"参考答案"},
+    {s:"os",sn:"操作系统",c:"#059669",n:"操作系统A卷(24-25).pdf",p:"files/os/2024-2025-1 操作系统基础 A卷.pdf",sz:"0.2MB",t:"exam",tn:"历年试卷"},
+    {s:"os",sn:"操作系统",c:"#059669",n:"操作系统A卷+答案.pdf",p:"files/os/操作系统A_不知年月_试卷、答案.pdf",sz:"0.1MB",t:"exam",tn:"历年试卷"},
+    {s:"os",sn:"操作系统",c:"#059669",n:"操作系统B卷(21-22).pdf",p:"files/os/操作系统B_21-22-2_A卷.pdf",sz:"0.6MB",t:"exam",tn:"历年试卷"},
+    {s:"os",sn:"操作系统",c:"#059669",n:"操作系统上古试卷合集.pdf",p:"files/os/操作系统_上古试卷合集.pdf",sz:"1.8MB",t:"exam",tn:"历年试卷"},
+    {s:"os",sn:"操作系统",c:"#059669",n:"操作系统模拟试卷.pdf",p:"files/os/操作系统试卷（模拟？）.pdf",sz:"0.8MB",t:"exam",tn:"历年试卷"},
+    {s:"probability",sn:"概率论",c:"#2563eb",n:"概率论复习PPT.pdf",p:"files/probability/25-2概率论复习PPt.pdf",sz:"2.6MB",t:"review",tn:"复习资料"},
+    {s:"probability",sn:"概率论",c:"#2563eb",n:"概率论与数理统计真题.pdf",p:"files/probability/概率论与数理统计真题.pdf",sz:"1.2MB",t:"exam",tn:"历年试卷"},
+    {s:"probability",sn:"概率论",c:"#2563eb",n:"概率论复习课2026.pdf",p:"files/probability/概率论复习课2026.pdf",sz:"2.6MB",t:"review",tn:"复习资料"},
+    {s:"probability",sn:"概率论",c:"#2563eb",n:"概率论复习资料.pdf",p:"files/probability/概率论复习资料.pdf",sz:"0.5MB",t:"review",tn:"复习资料"},
+    {s:"probability",sn:"概率论",c:"#2563eb",n:"概率论答案.pdf",p:"files/probability/概率论答案.PDF",sz:"2.5MB",t:"answer",tn:"参考答案"},
+    {s:"probability",sn:"概率论",c:"#2563eb",n:"概率论试题集.pdf",p:"files/probability/概率论试题集.pdf",sz:"1.4MB",t:"exam",tn:"历年试卷"},
+    {s:"probability",sn:"概率论",c:"#2563eb",n:"概率论默写题（含答案）.pdf",p:"files/probability/概率论默写题（含答案）.pdf",sz:"0.1MB",t:"answer",tn:"参考答案"},
+    {s:"probability",sn:"概率论",c:"#2563eb",n:"概统模拟试卷.pdf",p:"files/probability/概统模拟试卷.pdf",sz:"12.9MB",t:"exam",tn:"历年试卷"}
+  ];
+  function renderFiles(files){
+    var c=document.getElementById('fileCount');
+    var l=document.getElementById('fileList');
+    c.textContent='共 '+files.length+' 个文件';
+    l.innerHTML=files.map(function(f){
+      return '<div class="file-card" data-s="'+f.s+'" data-t="'+f.t+'">'
+        +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
+        +'<div style="width:36px;height:36px;border-radius:8px;background:'+f.c+'20;color:'+f.c+';display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">&#128196;</div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-weight:600;font-size:.85rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+f.n+'">'+f.n+'</div>'
+        +'<div style="font-size:.72rem;color:var(--text3);margin-top:1px">'
+        +'<span style="display:inline-block;padding:1px 6px;border-radius:4px;background:'+f.c+'15;color:'+f.c+';font-weight:600">'+f.sn+'</span> '
+        +'<span style="display:inline-block;padding:1px 6px;border-radius:4px;background:rgba(128,128,128,.1);color:var(--text3)">'+f.tn+'</span> '
+        +f.sz+'</div></div></div>'
+        +'<div style="display:flex;gap:4px;flex-shrink:0;margin-left:8px">'
+        +'<a href="'+f.p+'" target="_blank" class="dl-btn" style="background:var(--card2);border:1px solid var(--border);color:var(--text2)">预览</a>'
+        +'<a href="'+f.p+'" download class="dl-btn" style="background:var(--accent);color:#fff;border:1px solid var(--accent)">下载</a>'
+        +'</div></div>';
+    }).join('');
+  }
+  function filterFiles(key,val){
+    document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
+    var btn=document.querySelector('[data-f="'+val+'"]');if(btn)btn.classList.add('active');
+    if(key==='all'){renderFiles(FILES);return;}
+    renderFiles(FILES.filter(function(f){return f[key===\'subject\'?\'s\':\'t\']===val;}));
+  }
+  renderFiles(FILES);
+  </script>
+  <style>
+  .filter-btn{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.78rem;cursor:pointer;transition:all .2s;font-weight:500}
+  .filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .file-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;transition:border-color .2s}
+  .file-card:hover{border-color:var(--accent)}
+  .dl-btn{padding:4px 10px;border-radius:6px;font-size:.72rem;text-decoration:none;transition:opacity .2s;font-weight:500}
+  .dl-btn:hover{opacity:.8}
+  @media(max-width:640px){#fileList{grid-template-columns:1fr!important}.file-card{flex-direction:column;align-items:flex-start;gap:8px}.file-card>div:last-child{margin-left:46px!important}}
+  </style>
 
   <div class="footer">
     <span id="busuanzi_container_site_pv">&#128065; 本站总访问量 <span id="busuanzi_value_site_pv" style="color:var(--accent);">...</span> 次</span>
