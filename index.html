@@ -244,6 +244,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button onclick="setFilter('t','exam')" class="filter-btn" data-g="t" data-v="exam">历年试卷</button>
         <button onclick="setFilter('t','review')" class="filter-btn" data-g="t" data-v="review">复习资料</button>
         <button onclick="setFilter('t','answer')" class="filter-btn" data-g="t" data-v="answer">参考答案</button>
+        <button onclick="setFilter('t','textbook')" class="filter-btn" data-g="t" data-v="textbook">电子课本</button>
       </div>
     </div>
     <div id="fileCount" style="font-size:.8rem;color:var(--text3);margin-bottom:10px;"></div>
@@ -272,13 +273,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     {s:"probability",sn:"概率论",c:"#2563eb",n:"概率论答案.pdf",p:"files/probability/概率论答案.PDF",sz:"2.5MB",t:"answer",tn:"参考答案"},
     {s:"probability",sn:"概率论",c:"#2563eb",n:"概率论试题集.pdf",p:"files/probability/概率论试题集.pdf",sz:"1.4MB",t:"exam",tn:"历年试卷"},
     {s:"probability",sn:"概率论",c:"#2563eb",n:"概率论默写题（含答案）.pdf",p:"files/probability/概率论默写题（含答案）.pdf",sz:"0.1MB",t:"answer",tn:"参考答案"},
-    {s:"probability",sn:"概率论",c:"#2563eb",n:"概统模拟试卷.pdf",p:"files/probability/概统模拟试卷.pdf",sz:"12.9MB",t:"exam",tn:"历年试卷"}
+    {s:"probability",sn:"概率论",c:"#2563eb",n:"概统模拟试卷.pdf",p:"files/probability/概统模拟试卷.pdf",sz:"12.9MB",t:"exam",tn:"历年试卷"},
+    {s:"os",sn:"操作系统",c:"#059669",n:"现代操作系统（慕课版）电子课本.pdf",p:"courses/os/现代操作系统（慕课版）电子课本.pdf",sz:"16MB",t:"textbook",tn:"电子课本"},
+    {s:"dsp",sn:"数字信号",c:"#6c63ff",n:"数字信号处理 第3版 电子课本.pdf",p:"courses/dsp/数字信号处理 第3版 电子课本.pdf",sz:"56MB",t:"textbook",tn:"电子课本"},
+    {s:"marxism",sn:"马克思",c:"#e63946",n:"马克思主义基本原理(2023)电子课本.pdf",p:"courses/marxism/马克思主义基本原理(2023年版)电子课本.pdf",sz:"21MB",t:"textbook",tn:"电子课本"}
   ];
   function renderFiles(files){
     var c=document.getElementById('fileCount');
     var l=document.getElementById('fileList');
     c.textContent='共 '+files.length+' 个文件';
     l.innerHTML=files.map(function(f){
+      var isTextbook = f.t==='textbook';
+      var previewOnclick = isTextbook
+        ? 'onclick="confirmTextbook(\''+f.p+'\',\'preview\');return false;"'
+        : 'onclick="gateAccess(\''+f.p+'\',\'preview\');return false;"';
+      var dlOnclick = isTextbook
+        ? 'onclick="confirmTextbook(\''+f.p+'\',\'download\');return false;"'
+        : 'onclick="gateAccess(\''+f.p+'\',\'download\');return false;"';
       return '<div class="file-card" data-s="'+f.s+'" data-t="'+f.t+'">'
         +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
         +'<div style="width:36px;height:36px;border-radius:8px;background:'+f.c+'20;color:'+f.c+';display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">&#128196;</div>'
@@ -289,8 +300,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         +'<span style="display:inline-block;padding:1px 6px;border-radius:4px;background:rgba(128,128,128,.1);color:var(--text3)">'+f.tn+'</span> '
         +f.sz+'</div></div></div>'
         +'<div style="display:flex;gap:4px;flex-shrink:0;margin-left:8px">'
-        +'<a href="'+f.p+'" target="_blank" class="dl-btn" style="background:var(--card2);border:1px solid var(--border);color:var(--text2)">预览</a>'
-        +'<a href="'+f.p+'" download class="dl-btn" style="background:var(--accent);color:#fff;border:1px solid var(--accent)">下载</a>'
+        +'<a href="'+f.p+'" target="_blank" class="dl-btn" style="background:var(--card2);border:1px solid var(--border);color:var(--text2)" '+previewOnclick+'>预览</a>'
+        +'<a href="'+f.p+'" download class="dl-btn" style="background:var(--accent);color:#fff;border:1px solid var(--accent)" '+dlOnclick+'>下载</a>'
         +'</div></div>';
     }).join('');
   }
@@ -309,6 +320,68 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     renderFiles(res);
   }
   renderFiles(FILES);
+
+  // === 免责声明弹窗（电子课本专用）===
+  function confirmTextbook(path, action){
+    document.getElementById('tbPath').value = path;
+    document.getElementById('tbAction').value = action;
+    document.getElementById('textbookModal').style.display = 'flex';
+  }
+  function proceedTextbook(){
+    var path = document.getElementById('tbPath').value;
+    var action = document.getElementById('tbAction').value;
+    document.getElementById('textbookModal').style.display = 'none';
+    gateAccess(path, action);
+  }
+
+  // === Cloudflare Turnstile 验证门控 ===
+  var VERIFY_KEY = 'cf_verified_until';
+  var VERIFY_DURATION = 30 * 60 * 1000; // 30 minutes
+
+  function isVerified(){
+    var until = parseInt(localStorage.getItem(VERIFY_KEY) || '0');
+    return Date.now() < until;
+  }
+  function markVerified(){
+    localStorage.setItem(VERIFY_KEY, String(Date.now() + VERIFY_DURATION));
+    document.getElementById('turnstileModal').style.display = 'none';
+    // Execute the pending action
+    if(window._pendingAccess){
+      var p = window._pendingAccess.path;
+      var a = window._pendingAccess.action;
+      window._pendingAccess = null;
+      executeAccess(p, a);
+    }
+  }
+
+  function gateAccess(path, action){
+    if(isVerified()){
+      executeAccess(path, action);
+    } else {
+      window._pendingAccess = {path: path, action: action};
+      document.getElementById('turnstileModal').style.display = 'flex';
+      // Render Turnstile widget
+      if(window.turnstile){
+        turnstile.render('#turnstileWidget', {
+          sitekey: '0x4AAAAAAAiMhB2v3w5-73v_',
+          callback: function(){ markVerified(); }
+        });
+      }
+    }
+  }
+
+  function executeAccess(path, action){
+    if(action === 'preview'){
+      window.open(path, '_blank');
+    } else {
+      var a = document.createElement('a');
+      a.href = path;
+      a.download = '';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  }
   </script>
   <style>
   .filter-btn{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.78rem;cursor:pointer;transition:all .2s;font-weight:500}
@@ -438,6 +511,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!-- 电子课本免责声明弹窗 -->
+<div id="textbookModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1004;justify-content:center;align-items:center;">
+  <div style="background:var(--card);border-radius:16px;padding:28px;max-width:440px;width:92vw;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.5);">
+    <h3 style="font-size:1.1rem;color:var(--text);margin-bottom:10px;">&#9888;&#65039; 使用须知</h3>
+    <p style="font-size:.88rem;color:var(--text2);line-height:1.8;margin-bottom:16px;">
+      该电子课本仅供<strong>个人学习交流使用</strong>，不得用于商业用途。版权归原作者及出版社所有。如有侵权，请联系删除。
+    </p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button onclick="document.getElementById('textbookModal').style.display='none'" style="padding:8px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.88rem;cursor:pointer;">取消</button>
+      <button onclick="proceedTextbook()" style="padding:8px 20px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:.88rem;font-weight:600;cursor:pointer;">我已知悉，继续</button>
+    </div>
+    <input type="hidden" id="tbPath"><input type="hidden" id="tbAction">
+  </div>
+</div>
+
+<!-- Cloudflare Turnstile 验证弹窗 -->
+<div id="turnstileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1004;justify-content:center;align-items:center;">
+  <div style="background:var(--card);border-radius:16px;padding:28px;max-width:380px;width:92vw;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.5);text-align:center;">
+    <h3 style="font-size:1.05rem;color:var(--text);margin-bottom:8px;">&#128274; 安全验证</h3>
+    <p style="font-size:.82rem;color:var(--text2);margin-bottom:16px;">请完成验证后继续操作（30 分钟内无需重复验证）</p>
+    <div id="turnstileWidget" style="display:flex;justify-content:center;margin-bottom:12px;"></div>
+    <button onclick="document.getElementById('turnstileModal').style.display='none';window._pendingAccess=null;" style="font-size:.8rem;color:var(--text3);background:none;border:none;cursor:pointer;">取消</button>
+  </div>
+</div>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <!-- 新用户引导 -->
 <div class="guide-overlay" id="guideOverlay">
