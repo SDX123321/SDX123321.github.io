@@ -272,7 +272,7 @@ h1 {
     document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
     var btn=document.querySelector('[data-f="'+val+'"]');if(btn)btn.classList.add('active');
     if(key==='all'){renderFiles(FILES);return;}
-    renderFiles(FILES.filter(function(f){return f[key===\'subject\'?\'s\':\'t\']===val;}));
+    renderFiles(FILES.filter(function(f){return f[key==='subject'?'s':'t']===val;}));
   }
   renderFiles(FILES);
   </script>
