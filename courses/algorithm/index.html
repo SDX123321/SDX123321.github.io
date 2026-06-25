@@ -377,6 +377,46 @@ tr:hover td { background:#f8fafc; }
             <p>例：T(n) = 2T(n/2) + n → a=2, b=2, f(n)=n, n<sup>log<sub>2</sub>2</sup>=n，属于情况2，T(n)=&theta;(n log n)</p>
           </div></div>
 
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>真题精选 · 算法概述 + 递归分治</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <h4>选择题要点</h4>
+            <ul>
+              <li>算法可以有 <strong>1个或多个</strong> 输出（不是0个）</li>
+              <li>操作系统程序 <strong>不是</strong> 算法（程序≠算法）</li>
+              <li>动态规划通常用 <strong>数学归纳法</strong> 证明正确性</li>
+              <li><strong>N皇后问题</strong> 不能用贪心算法解决</li>
+              <li>分支限界法按 <strong>活结点表选择次序</strong> 分为 FIFO/LIFO/LC 三类</li>
+            </ul>
+            <h4>填空题要点</h4>
+            <ul>
+              <li>回溯法 = <strong>深度优先</strong> + 剪枝函数；分支限界法 = <strong>广度优先</strong></li>
+              <li>FIFO 分支限界法的活结点表是 <strong>队列</strong>；LIFO 是 <strong>堆栈</strong>；LC 是 <strong>优先队列</strong></li>
+              <li>具有 <strong>最优子结构性质</strong> 是可用动态规划或贪心法求解的关键特征</li>
+              <li>两路归并排序最坏时间复杂度 <strong>O(n log n)</strong></li>
+              <li>边数较少时用 <strong>Kruskal</strong> 算法效率更高</li>
+            </ul>
+            <h4>简答题：动态规划 vs 贪心法</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>相同点：</strong></p>
+                <ul>
+                  <li>都求解最优化问题</li>
+                  <li>都要求问题具有最优子结构性质</li>
+                </ul>
+                <p><strong>不同点：</strong></p>
+                <ul>
+                  <li><strong>求解方式：</strong>DP 自底向上；贪心自顶向下迭代</li>
+                  <li><strong>子问题依赖：</strong>DP 依赖所有子问题解；贪心不依赖子问题解，仅做局部最优选择</li>
+                </ul>
+              </div>
+              <div class="col-text">
+                <p><strong>时间复杂度分析：</strong></p>
+                <p>嵌套循环：for i=1..n, for j=1..i, for k=1..j → 执行次数 n(n+1)(n+2)/6 → <strong>O(n³)</strong></p>
+                <p>while i&lt;n: i=2*i → 执行次数 <strong>⌊log n⌋</strong> → <strong>O(log n)</strong></p>
+              </div>
+            </div>
+          </div></div>
+
           <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第2章 经典代码 · 双栏对照</h3><span class="expand-icon">&#9654;</span></div>
           <div class="card-body">
 
@@ -646,6 +686,31 @@ tr:hover td { background:#f8fafc; }
         dist[j]=dist[u]+g[u][j];
   }
 }</pre></div>
+            </div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>真题精选 · 贪心 + DP 综合（背包问题）</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <h4>背包问题三问（n=4, M=32, w=[6,9,10,15], p=[8,1,2,5]）</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>(1) 分数背包（贪心）：</strong></p>
+                <p>按单位价值 p/w 排序：4/3, 1/9, 1/5, 1/3</p>
+                <p>贪心装入：物品0全装(6,8)→物品3全装(15,5)→物品2全装(10,2)→物品1装1/9(1,1/9)</p>
+                <p>最大收益 = 8+5+2+1/9 = <strong>136/9</strong></p>
+                <p><strong>(2) 0-1 背包（DP）：</strong></p>
+                <p>用动态规划表逐步计算，最优解 (1,0,1,1)，最大收益 = 8+2+5 = <strong>15</strong></p>
+              </div>
+              <div class="col-text">
+                <p><strong>(3) 图着色（回溯）：</strong></p>
+                <p>4件物品装入3个背包，冲突图约束：相邻物品不同背包</p>
+                <p>显式约束：xᵢ ∈ {a,b,c}</p>
+                <p>隐式约束：若 (vᵢ,vⱼ) ∈ E，则 xᵢ ≠ xⱼ</p>
+                <p>所有可行解：<br>
+                (a,b,c,b), (a,c,b,c),<br>
+                (b,a,c,a), (b,c,a,c),<br>
+                (c,a,b,a), (c,b,a,b)</p>
+              </div>
             </div>
           </div></div>
 

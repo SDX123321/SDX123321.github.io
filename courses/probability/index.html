@@ -1409,6 +1409,57 @@ body {
         </div>
       </div>
 
+      <div class="kb" style="border-left-color: #ef4444;">
+        <h3 style="color:#b91c1c;">&#9998; 真题例题精讲（模拟卷原题+完整解答）</h3>
+
+        <div class="example">
+          <strong>【全概率+贝叶斯（工人培训）】</strong>某厂 80% 工人参加培训，培训后完成定额概率 0.86，未培训完成概率 0.35。(1) 求新工人完成定额概率；(2) 已完成定额，求参加过培训的概率。
+          <br><br>
+          <strong>解：</strong>设 A=完成定额，B=参加过培训。<br>
+          (1) 全概率：P(A) = P(B)P(A|B) + P(B̄)P(A|B̄) = 0.8×0.86 + 0.2×0.35 = <strong>0.758</strong><br>
+          (2) 贝叶斯：P(B|A) = P(B)P(A|B)/P(A) = 0.8×0.86/0.758 = <strong>0.9077</strong>
+        </div>
+
+        <div class="example">
+          <strong>【二维均匀分布+边缘密度+独立性】</strong>(X,Y) 在圆域 x²+y²≤r² 内均匀分布。求 (1) f(x,y)；(2) 边缘密度并判断独立性；(3) E(XY)。
+          <br><br>
+          <strong>解：</strong>
+          (1) f(x,y) = 1/(πr²)，x²+y²≤r²<br>
+          (2) f_X(x) = ∫_{-√(r²-x²)}^{√(r²-x²)} 1/(πr²) dy = 2√(r²-x²)/(πr²)，|x|≤r<br>
+          f(x,y) ≠ f_X(x)·f_Y(y)，X 与 Y <strong>不独立</strong><br>
+          (3) 由对称性，E(XY) = ∫∫ xy·f(x,y) dxdy = <strong>0</strong>
+        </div>
+
+        <div class="example">
+          <strong>【协方差矩阵+方差计算】</strong>协方差矩阵为 [[4,-3],[-3,9]]，X₁=2X-Y，X₂=X-2Y。求 D(X₁), D(X₂), Cov(X₁,X₂), ρ。
+          <br><br>
+          <strong>解：</strong>D(X)=4, D(Y)=9, Cov(X,Y)=-3<br>
+          D(X₁)=D(2X-Y)=4D(X)+D(Y)-4Cov(X,Y)=16+9+12=<strong>37</strong><br>
+          D(X₂)=D(X-2Y)=D(X)+4D(Y)-4Cov(X,Y)=4+36+12=<strong>52</strong><br>
+          Cov(X₁,X₂)=Cov(2X-Y,X-2Y)=2D(X)-5Cov(X,Y)+2D(Y)=8+15+18=<strong>41</strong><br>
+          ρ = 41/√(37×52) = <strong>41/√1924</strong>
+        </div>
+
+        <div class="example">
+          <strong>【中心极限定理（舍入误差）】</strong>1200 个加数的舍入误差 Xi~U(-0.5,0.5) 独立。求 (1) E(X), D(X)；(2) P(|ΣXi| < 10)。
+          <br><br>
+          <strong>解：</strong>(1) E(Xi)=0, D(Xi)=1/12<br>
+          E(ΣXi)=0, D(ΣXi)=1200/12=100, σ=10<br>
+          (2) 由 CLT：ΣXi ~近似 N(0, 100)<br>
+          P(|ΣXi|<10) = P(-10<ΣXi<10) = Φ(10/10)-Φ(-10/10) = Φ(1)-Φ(-1) = 2Φ(1)-1 = <strong>2×0.8413-1 = 0.6826</strong>
+        </div>
+
+        <div class="example">
+          <strong>【矩估计+MLE】</strong>总体分布律 P(X=1)=θ², P(X=2)=2θ(1-θ), P(X=3)=(1-θ)²，样本值 1,1,2,3,1,2。求 θ 的矩估计和 MLE。
+          <br><br>
+          <strong>矩估计：</strong>E(X)=1·θ²+2·2θ(1-θ)+3·(1-θ)² = 3-2θ<br>
+          令 3-2θ = x̄ = (1+1+2+3+1+2)/6 = 5/3 → <strong>θ̂ = 2/3</strong><br><br>
+          <strong>MLE：</strong>L(θ)=θ⁴·[2θ(1-θ)]²·(1-θ)⁴ = 4θ⁶(1-θ)⁶<br>
+          lnL = ln4 + 6lnθ + 6ln(1-θ)<br>
+          d/dθ = 6/θ - 6/(1-θ) = 0 → <strong>θ̂ = 1/2</strong>
+        </div>
+      </div>
+
     </div>
   </div>
 
