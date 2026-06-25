@@ -331,7 +331,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="keypoint warn"><strong>特例：</strong>快速排序使用<strong>平均时间复杂度</strong>进行分析(实验课讲过)！</div>
             <p><strong>渐进复杂度排序：</strong></p>
             <p style="font-family:monospace;padding:12px;background:#f1f5f9;border-radius:8px;text-align:center;font-size:15px">
-              O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n&sup2;) &lt; O(n&sup3;) &lt; O(2&sup;n) &lt; O(n!) &lt; O(n&sup;n)
+              O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n&sup2;) &lt; O(n&sup3;) &lt; O(2<sup>n</sup>) &lt; O(n!) &lt; O(n<sup>n</sup>)
             </p>
             <div class="keypoint"><strong>重要：</strong>本书中 log n 默认以 <strong>2为底</strong>，不是10也不是e！(与通信中的信噪比不同)</div>
             <p><strong>渐进表达式求法：</strong></p>
@@ -340,7 +340,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <li>只保留最高阶项</li>
               <li>去除高阶项系数</li>
             </ol>
-            <p>例：3n&sup2;+10n → O(n&sup2;)，n&sup2;/100+2&sup;n → O(2&sup;n)，10log3&sup;n = 10n&middot;log3 → O(n)</p>
+            <p>例：3n&sup2;+10n → O(n&sup2;)，n&sup2;/100+2<sup>n</sup> → O(2<sup>n</sup>)，10log3<sup>n</sup> = 10n&middot;log3 → O(n)</p>
             <p><strong>空间复杂度：</strong>递归算法空间复杂度 = 每层辅助空间 &times; 递归深度</p>
           </div></div>
 
