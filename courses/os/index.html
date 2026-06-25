@@ -244,6 +244,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 </div>
 
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>微内核 & SPOOLing 练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1（简答）</h4>
+<p>简述微内核结构的四个优势。</p>
+<div class="highlight">
+<strong>答：</strong><br>
+① 代码量少，内核更简洁<br>
+② 充分模块化，更换模块不影响其他模块<br>
+③ 未使用的模块不运行，减少内存需求<br>
+④ 增强可移植性，移植时只需修改微内核部分
+</div>
+<h4>题目2（简答）</h4>
+<p>SPOOLing 技术的核心作用是什么？以打印机为例说明。</p>
+<div class="highlight">
+<strong>答：</strong>SPOOLing（假脱机）利用磁盘作为缓冲，将<strong>独占设备</strong>改造为<strong>共享设备</strong>。<br>
+打印机例子：多个进程"同时"提交打印请求 → 数据先存入输出井 → SPOOLing 输出进程依次送往打印机。对用户而言，打印机好像可以共享。
+</div>
+</div></div>
+
 <!-- ==================== CH2 ==================== -->
 <h2 id="ch2"><span class="icon">⚙️</span> 第二章 处理器管理</h2>
 
@@ -379,6 +398,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 </div>
 
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>调度算法练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1</h4>
+<p>4个作业：A(到达0, 运行3)、B(到达1, 运行6)、C(到达3, 运行2)、D(到达5, 运行4)。分别用 FCFS 和 SJF 求平均周转时间。</p>
+<div class="highlight">
+<strong>FCFS：</strong>顺序 A→B→C→D<br>
+A完成=3, B完成=9, C完成=11, D完成=15<br>
+周转：A=3, B=8, C=8, D=10 → 平均 = (3+8+8+10)/4 = <strong>7.25</strong><br><br>
+<strong>SJF（1时刻后选最短）：</strong>A→C→D→B<br>
+A完成=3, C完成=5, D完成=9, B完成=15<br>
+周转：A=3, C=2, D=4, B=14 → 平均 = (3+2+4+14)/4 = <strong>5.75</strong>
+</div>
+<h4>题目2</h4>
+<p>3个作业：P1(到达0, 运行24)、P2(到达0, 运行3)、P3(到达0, 运行3)。用 HRRN 求调度顺序。（提示：先 FCFS 选 P1，完成后计算响应比）</p>
+<div class="highlight">
+<strong>解：</strong>时刻0：三个都到达，FCFS先选P1。<br>
+P1完成时刻=24。此时计算响应比：<br>
+P2：H = 1 + 21/3 = <strong>8</strong>；P3：H = 1 + 21/3 = <strong>8</strong><br>
+两者响应比相同，任选其一（如P2），再选P3。<br>
+顺序：<strong>P1→P2→P3</strong>，平均周转 = (24+26+27)/3 = 25.67
+</div>
+</div></div>
+
 <h3 id="ch2-sync">2.3 同步与互斥</h3>
 
 <div class="card">
@@ -413,6 +455,26 @@ V 操作的顺序无所谓。
 </ul>
 </div>
 
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>PV 操作练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1：读者-写者问题</h4>
+<p>多个读者可同时读，写者独占。用 PV 操作实现。</p>
+<div class="highlight">
+<code>semaphore rw=1, mutex=1; int readcount=0;</code><br><br>
+<strong>读者：</strong>P(mutex) → readcount++ → 若 readcount==1 则 P(rw) → V(mutex) → 读 → P(mutex) → readcount-- → 若 readcount==0 则 V(rw) → V(mutex)<br><br>
+<strong>写者：</strong>P(rw) → 写 → V(rw)
+</div>
+<h4>题目2：前驱关系</h4>
+<p>S1→S2, S1→S3, S2→S4, S3→S4。用 PV 操作实现。</p>
+<div class="highlight">
+<code>semaphore a=0, b=0, c=0;</code><br>
+S1; V(a); V(b);<br>
+P(a); S2; V(c);<br>
+P(b); S3; V(c);  <em>// 注意 S3 也发 c</em><br>
+P(c); P(c); S4;  <em>// 要等两次 c</em>
+</div>
+</div></div>
+
 <h3 id="ch2-deadlock">2.4 死锁</h3>
 
 <div class="card">
@@ -424,6 +486,26 @@ V 操作的顺序无所谓。
 <div class="highlight"><strong>循环等待</strong>：进程间形成等待环路</div>
 </div>
 </div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>死锁与预防练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1（简答）</h4>
+<p>说明死锁的四个必要条件及对应的预防策略。</p>
+<div class="highlight">
+<strong>答：</strong><br>
+① 互斥使用 → 一般无法破坏（资源本质属性）<br>
+② 不可抢占 → 允许系统剥夺进程已占有的资源<br>
+③ 请求与保持 → <strong>静态分配</strong>：一次性申请所有资源<br>
+④ 循环等待 → <strong>有序分配法</strong>：按编号递增顺序申请资源
+</div>
+<h4>题目2（判断）</h4>
+<p>系统有资源 A(10)、B(5)。当前分配：P1占A3+B2，P2占A3+B1。此时 Available=(4,2)。P1请求A1+B0，能否分配？</p>
+<div class="highlight">
+<strong>解：</strong>分配后 Available = (3,2)。<br>
+P1 还需 Max-Alloc = 需进一步确认 Max 才能判断安全性。<br>
+若仅判断资源够不够：Available(3,2) ≥ 请求(1,0)，可以尝试分配，再用银行家算法检查安全性。
+</div>
+</div></div>
 
 <div class="card">
 <div class="card-title">三种解决策略</div>
@@ -504,6 +586,30 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 </div>
 </div>
 
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>银行家算法练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目</h4>
+<p>系统有资源 (10,5,7)。5个进程的 Allocation 和 Max 如下：</p>
+<table>
+<tr><th></th><th>Allocation</th><th>Max</th><th>Need</th></tr>
+<tr><td>P0</td><td>(0,1,0)</td><td>(7,5,3)</td><td>(7,4,3)</td></tr>
+<tr><td>P1</td><td>(2,0,0)</td><td>(3,2,2)</td><td>(1,2,2)</td></tr>
+<tr><td>P2</td><td>(3,0,2)</td><td>(9,0,2)</td><td>(6,0,0)</td></tr>
+<tr><td>P3</td><td>(2,1,1)</td><td>(2,2,2)</td><td>(0,1,1)</td></tr>
+<tr><td>P4</td><td>(0,0,2)</td><td>(4,3,3)</td><td>(4,3,1)</td></tr>
+</table>
+<p>Available = (10,5,7) - (7,2,5) = (3,3,2)。求安全序列。</p>
+<div class="highlight">
+<strong>解：</strong>Need≤Available 的有 P1(1,2,2)和 P3(0,1,1)。<br>
+选 P1：Available = (3,3,2)+(2,0,0) = (5,3,2)<br>
+选 P3：Available = (5,3,2)+(2,1,1) = (7,4,3)<br>
+选 P4：Available = (7,4,3)+(0,0,2) = (7,4,5)<br>
+选 P2：Available = (7,4,5)+(3,0,2) = (10,4,7)<br>
+选 P0：Available = (10,4,7)+(0,1,0) = (10,5,7)<br>
+<strong>安全序列：P1→P3→P4→P2→P0</strong>
+</div>
+</div></div>
+
 <!-- ==================== CH3 ==================== -->
 <h2 id="ch3"><span class="icon">💾</span> 第三章 存储管理</h2>
 
@@ -544,6 +650,26 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 &bull; 若未越界 → 物理地址 = 段始址 + 段内偏移
 </div>
 </div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>分页地址转换练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1</h4>
+<p>页面大小 4KB，逻辑地址 0x00003A5F。页表：页号0→块号6，页号1→块号3，页号2→块号11，页号3→块号8。求物理地址。</p>
+<div class="highlight">
+<strong>解：</strong>4KB = 2<sup>12</sup>B，低12位为页内偏移。<br>
+0x00003A5F = 0011 1010 0101 1111<br>
+页号 = 3（高4位），偏移 = 0xA5F（低12位）<br>
+查页表：页号3 → 块号8<br>
+物理地址 = 8 × 4096 + 0xA5F = 0x8A5F = <strong>35423</strong>
+</div>
+<h4>题目2</h4>
+<p>页面大小 1KB，逻辑地址 2500。求页号和页内偏移。</p>
+<div class="highlight">
+<strong>解：</strong>1KB = 1024B<br>
+页号 = 2500 / 1024 = <strong>2</strong>（整数部分）<br>
+偏移 = 2500 mod 1024 = <strong>452</strong>
+</div>
+</div></div>
 
 <div class="card">
 <div class="card-title">分页 vs 分段 vs 段页式</div>
@@ -586,6 +712,17 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 </div>
 <div id="pageResult" class="visual-result"></div>
 </div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>页面置换练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目</h4>
+<p>页面引用串：7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1。分配 3 个物理块。分别用 FIFO 和 LRU 求缺页次数。</p>
+<div class="highlight">
+<strong>FIFO 缺页次数 = 15 次</strong>（注意可能出现 Belady 异常）<br>
+<strong>LRU 缺页次数 = 12 次</strong><br><br>
+关键区别：FIFO 只看进入时间，LRU 看最近使用时间。LRU 性能通常优于 FIFO。
+</div>
+</div></div>
 
 <div class="card">
 <div class="card-title">教材例题详解：页框数=3，访问序列 4,3,2,1,4,3,5,4,3,2,1,5</div>
@@ -702,6 +839,20 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 </div>
 </div>
 
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>磁盘调度练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目</h4>
+<p>当前磁头在 53 号磁道，请求队列：98, 183, 37, 122, 14, 124, 65, 67。分别用 FCFS、SSTF、SCAN（向磁道号增大方向）求总移动磁道数。</p>
+<div class="highlight">
+<strong>FCFS：</strong>53→98→183→37→122→14→124→65→67<br>
+移动：45+85+146+85+108+110+41+2 = <strong>622</strong><br><br>
+<strong>SSTF：</strong>53→65→67→37→14→98→122→124→183<br>
+移动：12+2+30+23+84+24+2+59 = <strong>236</strong><br><br>
+<strong>SCAN（向大号）：</strong>53→65→67→98→122→124→183→37→14<br>
+移动：12+2+31+24+2+59+146+23 = <strong>299</strong>
+</div>
+</div></div>
+
 <!-- ==================== CH5 ==================== -->
 <h2 id="ch5"><span class="icon">📁</span> 第五章 文件系统</h2>
 
@@ -758,6 +909,27 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 <div class="card-title">文件安全</div>
 <p>文件安全涉及访问控制、加密、备份恢复等机制，确保文件的<strong>机密性、完整性和可用性</strong>。</p>
 </div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>索引文件 & 位示图练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1：索引文件最大长度</h4>
+<p>磁盘块大小 1KB，盘块号占 4 字节。采用三级索引结构（10个直接索引 + 1个一级间接 + 1个二级间接 + 1个三级间接）。求文件最大长度。</p>
+<div class="highlight">
+<strong>解：</strong>每块可放 1024/4 = <strong>256</strong> 个索引项<br>
+直接索引：10 × 1KB = 10KB<br>
+一级间接：256 × 1KB = 256KB<br>
+二级间接：256 × 256 × 1KB = 65536KB ≈ 64MB<br>
+三级间接：256 × 256 × 256 × 1KB ≈ <strong>16GB</strong><br>
+最大文件 ≈ 10KB + 256KB + 64MB + 16GB ≈ <strong>16GB+</strong>
+</div>
+<h4>题目2：位示图法</h4>
+<p>字长 32 位，求物理块号 b=100 对应的行号和列号；反之，第 5 行第 10 列对应哪个块号？</p>
+<div class="highlight">
+<strong>解：</strong><br>
+块号 100：行 i = 100 ÷ 32 = <strong>3</strong>，列 j = 100 mod 32 = <strong>4</strong><br>
+第5行第10列：b = 5 × 32 + 10 = <strong>170</strong>
+</div>
+</div></div>
 
 <!-- ==================== EXAM ==================== -->
 <h2 id="exam"><span class="icon">📝</span> 考试题型</h2>
