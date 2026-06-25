@@ -298,9 +298,24 @@ body {
 .sidebar-overlay.show { display: block; }
 .exam-mark { display:inline-block; background:rgba(239,68,68,0.12); color:#ef4444; padding:2px 8px; border-radius:4px; font-size:0.75rem; font-weight:700; margin-left:6px; vertical-align:middle; border:1px solid rgba(239,68,68,0.25); }
 .exam-star { color:#ef4444; font-weight:700; }
+.sg-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1003;justify-content:center;align-items:center}
+.sg-box{background:var(--card,#1e293b);border-radius:16px;padding:28px 32px;max-width:400px;width:90vw;border:1px solid var(--border,#334155);box-shadow:0 20px 60px rgba(0,0,0,.5);text-align:center}
+.sg-box h3{font-size:1.1rem;margin-bottom:8px;color:var(--text,#e2e8f0)}
+.sg-box p{font-size:.85rem;color:var(--text2,#94a3b8);margin-bottom:6px;line-height:1.7}
+.sg-box button{margin-top:16px;padding:8px 24px;border-radius:8px;border:none;background:var(--accent,#60a5fa);color:#fff;font-size:.88rem;font-weight:600;cursor:pointer}
 </style>
 </head>
 <body>
+<div class="sg-overlay" id="subGuide">
+  <div class="sg-box">
+    <h3>&#128075; 欢迎！</h3>
+    <p>&#9789; 右上角切换<strong>深浅色模式</strong></p>
+    <p>&#9776; 手机端左上角展开<strong>导航菜单</strong></p>
+    <p>&#128172; 底部栏点击<strong>反馈</strong>提交建议</p>
+    <p>&#8592; 侧边栏顶部可<strong>返回课程主页</strong></p>
+    <button onclick="document.getElementById('subGuide').style.display='none';localStorage.setItem('sg_done_prob','1')">知道了</button>
+  </div>
+</div>
 <button class="mobile-menu-btn" onclick="toggleSidebar()" id="menuBtn">&#9776;</button>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">&#9789;</button>
@@ -1691,6 +1706,7 @@ function toggleSidebar(){
   s.classList.toggle('open');
   o.classList.toggle('show');
 }
+if(!localStorage.getItem('sg_done_prob'))document.getElementById('subGuide').style.display='flex';
 </script>
 </body>
 </html>

@@ -140,9 +140,24 @@ code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.9em;co
 .light nav .tag{background:rgba(220,38,38,.1);color:#dc2626}
 .theme-btn{position:fixed;top:12px;right:16px;z-index:200;width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.3)}.theme-btn:hover{transform:scale(1.1);border-color:var(--accent)}
 .mobile-menu-btn{display:none;position:fixed;top:10px;left:10px;z-index:200;width:38px;height:38px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:1.2rem;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.sg-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1003;justify-content:center;align-items:center}
+.sg-box{background:var(--card,#1e293b);border-radius:16px;padding:28px 32px;max-width:400px;width:90vw;border:1px solid var(--border,#334155);box-shadow:0 20px 60px rgba(0,0,0,.5);text-align:center}
+.sg-box h3{font-size:1.1rem;margin-bottom:8px;color:var(--text,#e2e8f0)}
+.sg-box p{font-size:.85rem;color:var(--text2,#94a3b8);margin-bottom:6px;line-height:1.7}
+.sg-box button{margin-top:16px;padding:8px 24px;border-radius:8px;border:none;background:var(--accent,#60a5fa);color:#fff;font-size:.88rem;font-weight:600;cursor:pointer}
 </style>
 </head>
 <body>
+<div class="sg-overlay" id="subGuide">
+  <div class="sg-box">
+    <h3>&#128075; 欢迎！</h3>
+    <p>&#9789; 右上角切换<strong>深浅色模式</strong></p>
+    <p>&#9776; 手机端左上角展开<strong>导航菜单</strong></p>
+    <p>&#128172; 底部栏点击<strong>反馈</strong>提交建议</p>
+    <p>&#8592; 侧边栏顶部可<strong>返回课程主页</strong></p>
+    <button onclick="document.getElementById('subGuide').style.display='none';localStorage.setItem('sg_done_os','1')">知道了</button>
+  </div>
+</div>
 <button class="mobile-menu-btn" onclick="toggleSidebar()" id="menuBtn">☰</button>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">&#9790;</button>
@@ -1223,6 +1238,7 @@ function applyTheme(dark){document.body.classList.toggle('light',!dark);document
 function toggleTheme(){applyTheme(document.body.classList.contains('light'));}
 (function(){var t=localStorage.getItem('theme');if(t==='light')applyTheme(false);else applyTheme(true);})();
 function toggleSidebar(){var s=document.getElementById('sidebar');var o=document.getElementById('sidebarOverlay');s.classList.toggle('open');o.classList.toggle('show');}
+if(!localStorage.getItem('sg_done_os'))document.getElementById('subGuide').style.display='flex';
 </script>
 </body>
 </html>

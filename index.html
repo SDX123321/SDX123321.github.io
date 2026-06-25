@@ -207,18 +207,23 @@ h1 {
   <!-- 资料下载 -->
   <div style="margin-bottom:40px;">
     <h2 style="font-size:1.15rem;color:var(--text);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#128196; 资料下载</h2>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;" id="filterBar">
-      <button onclick="filterFiles('all','all')" class="filter-btn active" data-f="all">全部</button>
-      <span style="color:var(--text3);font-size:.8rem;line-height:28px;margin:0 4px;">|</span>
-      <button onclick="filterFiles('subject','probability')" class="filter-btn" data-f="probability">概率论</button>
-      <button onclick="filterFiles('subject','os')" class="filter-btn" data-f="os">操作系统</button>
-      <button onclick="filterFiles('subject','algorithm')" class="filter-btn" data-f="algorithm">算法</button>
-      <button onclick="filterFiles('subject','dsp')" class="filter-btn" data-f="dsp">数字信号</button>
-      <button onclick="filterFiles('subject','marxism')" class="filter-btn" data-f="marxism">马克思</button>
-      <span style="color:var(--text3);font-size:.8rem;line-height:28px;margin:0 4px;">|</span>
-      <button onclick="filterFiles('type','exam')" class="filter-btn" data-f="exam">历年试卷</button>
-      <button onclick="filterFiles('type','review')" class="filter-btn" data-f="review">复习资料</button>
-      <button onclick="filterFiles('type','answer')" class="filter-btn" data-f="answer">参考答案</button>
+    <div id="filterBar" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+        <span style="font-size:.78rem;color:var(--text3);font-weight:600;">学科：</span>
+        <button onclick="setFilter('s','')" class="filter-btn active" data-g="s" data-v="">全部</button>
+        <button onclick="setFilter('s','probability')" class="filter-btn" data-g="s" data-v="probability">概率论</button>
+        <button onclick="setFilter('s','os')" class="filter-btn" data-g="s" data-v="os">操作系统</button>
+        <button onclick="setFilter('s','algorithm')" class="filter-btn" data-g="s" data-v="algorithm">算法</button>
+        <button onclick="setFilter('s','dsp')" class="filter-btn" data-g="s" data-v="dsp">数字信号</button>
+        <button onclick="setFilter('s','marxism')" class="filter-btn" data-g="s" data-v="marxism">马克思</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+        <span style="font-size:.78rem;color:var(--text3);font-weight:600;">类型：</span>
+        <button onclick="setFilter('t','')" class="filter-btn active" data-g="t" data-v="">全部</button>
+        <button onclick="setFilter('t','exam')" class="filter-btn" data-g="t" data-v="exam">历年试卷</button>
+        <button onclick="setFilter('t','review')" class="filter-btn" data-g="t" data-v="review">复习资料</button>
+        <button onclick="setFilter('t','answer')" class="filter-btn" data-g="t" data-v="answer">参考答案</button>
+      </div>
     </div>
     <div id="fileCount" style="font-size:.8rem;color:var(--text3);margin-bottom:10px;"></div>
     <div id="fileList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;"></div>
@@ -252,9 +257,7 @@ h1 {
     var c=document.getElementById('fileCount');
     var l=document.getElementById('fileList');
     c.textContent='共 '+files.length+' 个文件';
-    var dlCounts=JSON.parse(localStorage.getItem('dl_counts')||'{}');
     l.innerHTML=files.map(function(f){
-      var cnt=dlCounts[f.p]||0;
       return '<div class="file-card" data-s="'+f.s+'" data-t="'+f.t+'">'
         +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
         +'<div style="width:36px;height:36px;border-radius:8px;background:'+f.c+'20;color:'+f.c+';display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">&#128196;</div>'
@@ -263,27 +266,28 @@ h1 {
         +'<div style="font-size:.72rem;color:var(--text3);margin-top:1px">'
         +'<span style="display:inline-block;padding:1px 6px;border-radius:4px;background:'+f.c+'15;color:'+f.c+';font-weight:600">'+f.sn+'</span> '
         +'<span style="display:inline-block;padding:1px 6px;border-radius:4px;background:rgba(128,128,128,.1);color:var(--text3)">'+f.tn+'</span> '
-        +'<span style="color:var(--text3);opacity:.7"> &#128065;'+cnt+'</span> '
         +f.sz+'</div></div></div>'
         +'<div style="display:flex;gap:4px;flex-shrink:0;margin-left:8px">'
         +'<a href="'+f.p+'" target="_blank" class="dl-btn" style="background:var(--card2);border:1px solid var(--border);color:var(--text2)">预览</a>'
-        +'<a href="'+f.p+'" download onclick="trackDl(this.href)" class="dl-btn" style="background:var(--accent);color:#fff;border:1px solid var(--accent)">下载</a>'
+        +'<a href="'+f.p+'" download class="dl-btn" style="background:var(--accent);color:#fff;border:1px solid var(--accent)">下载</a>'
         +'</div></div>';
     }).join('');
   }
-  function filterFiles(key,val){
-    document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
-    var btn=document.querySelector('[data-f="'+val+'"]');if(btn)btn.classList.add('active');
-    if(key==='all'){renderFiles(FILES);return;}
-    renderFiles(FILES.filter(function(f){return f[key==='subject'?'s':'t']===val;}));
+  var activeFilters={s:'',t:''};
+  function setFilter(group,val){
+    activeFilters[group]=val;
+    document.querySelectorAll('[data-g="'+group+'"]').forEach(function(b){
+      b.classList.toggle('active',b.dataset.v===val);
+    });
+    applyFilters();
+  }
+  function applyFilters(){
+    var res=FILES.filter(function(f){
+      return(!activeFilters.s||f.s===activeFilters.s)&&(!activeFilters.t||f.t===activeFilters.t);
+    });
+    renderFiles(res);
   }
   renderFiles(FILES);
-  function trackDl(href){
-    var key=href.replace(window.location.origin+'/','');
-    var c=JSON.parse(localStorage.getItem('dl_counts')||'{}');
-    c[key]=(c[key]||0)+1;
-    localStorage.setItem('dl_counts',JSON.stringify(c));
-  }
   </script>
   <style>
   .filter-btn{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.78rem;cursor:pointer;transition:all .2s;font-weight:500}
@@ -294,6 +298,25 @@ h1 {
   .dl-btn{padding:4px 10px;border-radius:6px;font-size:.72rem;text-decoration:none;transition:opacity .2s;font-weight:500}
   .dl-btn:hover{opacity:.8}
   @media(max-width:640px){#fileList{grid-template-columns:1fr!important}.file-card{flex-direction:column;align-items:flex-start;gap:8px}.file-card>div:last-child{margin-left:46px!important}}
+/* Onboarding guide */
+.guide-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1002;justify-content:center;align-items:center}
+.guide-box{background:var(--card);border-radius:16px;padding:32px;max-width:480px;width:92vw;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.5);animation:splashIn .3s ease}
+.guide-box h3{font-size:1.15rem;color:var(--text);margin-bottom:6px}
+.guide-box p{font-size:.88rem;color:var(--text2);margin-bottom:16px}
+.guide-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.guide-step{display:flex;gap:12px;align-items:flex-start}
+.guide-step .num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;flex-shrink:0}
+.guide-step .txt{font-size:.85rem;color:var(--text)}
+.guide-step .txt strong{color:var(--text)}
+.guide-dots{display:flex;justify-content:center;gap:8px;margin:16px 0}
+.guide-dot{width:8px;height:8px;border-radius:50%;background:var(--border)}
+.guide-dot.active{background:var(--accent)}
+.guide-btns{display:flex;gap:10px;justify-content:flex-end}
+.guide-btns button{padding:8px 20px;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s}
+.guide-skip{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.guide-skip:hover{border-color:var(--accent);color:var(--accent)}
+.guide-next{background:var(--accent);color:#fff;border:none}
+.guide-next:hover{opacity:.85}
   </style>
 
   <!-- 改进建议与评论 -->
@@ -389,6 +412,21 @@ h1 {
 </div>
 
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!-- 新用户引导 -->
+<div class="guide-overlay" id="guideOverlay">
+  <div class="guide-box">
+    <h3 id="guideTitle"></h3>
+    <p id="guideDesc"></p>
+    <div class="guide-steps" id="guideSteps"></div>
+    <div class="guide-dots" id="guideDots"></div>
+    <div class="guide-btns">
+      <button class="guide-skip" onclick="closeGuide()">跳过</button>
+      <button class="guide-next" id="guideNext" onclick="nextGuideStep()">下一步</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // === 主题切换 ===
 function applyTheme(dark){
@@ -431,8 +469,55 @@ document.addEventListener('keydown',function(e){
     document.getElementById('rewardModal').style.display='none';
     document.getElementById('splashModal').style.display='none';
     closeChangelog();
+    closeGuide();
   }
 });
+
+// === 新用户引导 ===
+var guideData=[
+  {title:'欢迎使用期末复习笔记',desc:'这是一个为期末考试准备的互动复习网站',steps:[
+    {icon:'&#128218;',text:'<strong>7门课程</strong>复习页面，涵盖概率论、操作系统、算法等'},
+    {icon:'&#128196;',text:'<strong>22份资料</strong>可按学科+类型组合筛选下载'},
+    {icon:'&#128172;',text:'每页底部有<strong>反馈入口</strong>，欢迎提出建议'}
+  ]},
+  {title:'课程页面功能',desc:'每个课程页面都有丰富的互动功能',steps:[
+    {icon:'&#9789;',text:'右上角<strong>太阳/月亮按钮</strong>切换深浅色模式'},
+    {icon:'&#9776;',text:'手机端左上角<strong>汉堡菜单</strong>展开导航'},
+    {icon:'&#9998;',text:'概率论页面知识点标注了<span style="color:#ef4444;font-weight:700">必考</span>标记'}
+  ]},
+  {title:'资料下载技巧',desc:'在主页下方的资料下载区域',steps:[
+    {icon:'&#128270;',text:'可以<strong>同时选择学科和类型</strong>，如"概率论 + 历年试卷"'},
+    {icon:'&#128194;',text:'每个文件有<strong>预览</strong>（浏览器打开）和<strong>下载</strong>两个按钮'},
+    {icon:'&#11088;',text:'觉得有帮助？点个 <strong>Star</strong> 鼓励一下！'}
+  ]}
+];
+var guideStep=0;
+function showGuide(){
+  var d=guideData[guideStep];
+  document.getElementById('guideTitle').textContent=d.title;
+  document.getElementById('guideDesc').textContent=d.desc;
+  var stepsHtml=d.steps.map(function(s,i){
+    return'<div class="guide-step"><div class="num">'+(i+1)+'</div><div class="txt">'+s.text+'</div></div>';
+  }).join('');
+  document.getElementById('guideSteps').innerHTML=stepsHtml;
+  var dotsHtml=guideData.map(function(_,i){
+    return'<div class="guide-dot'+(i===guideStep?' active':'')+'"></div>';
+  }).join('');
+  document.getElementById('guideDots').innerHTML=dotsHtml;
+  document.getElementById('guideNext').textContent=guideStep===guideData.length-1?'开始使用':'下一步';
+  document.getElementById('guideOverlay').style.display='flex';
+}
+function nextGuideStep(){
+  if(guideStep<guideData.length-1){guideStep++;showGuide();}
+  else closeGuide();
+}
+function closeGuide(){
+  document.getElementById('guideOverlay').style.display='none';
+  localStorage.setItem('guide_done','1');
+}
+(function(){
+  if(!localStorage.getItem('guide_done'))showGuide();
+})();
 </script>
 </body>
 </html>
