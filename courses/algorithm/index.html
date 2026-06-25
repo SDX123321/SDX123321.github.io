@@ -1280,6 +1280,8 @@ function init() {
   updateProgress();
   setupNav();
   showSection('home');
+  document.querySelectorAll('.card').forEach(c => c.classList.add('open'));
+  document.querySelectorAll('.chapter').forEach(c => c.classList.add('open'));
 }
 
 function renderQuizzes() {
@@ -1360,9 +1362,9 @@ function showSection(id) {
   const sec = document.getElementById(id);
   if (sec) {
     sec.classList.remove('hidden');
-    // Auto-expand the chapter inside this section
     const ch = sec.querySelector('.chapter');
     if (ch) ch.classList.add('open');
+    sec.querySelectorAll('.card').forEach(c => c.classList.add('open'));
     visited[id] = true;
     localStorage.setItem('algo_visited', JSON.stringify(visited));
     updateProgress();
