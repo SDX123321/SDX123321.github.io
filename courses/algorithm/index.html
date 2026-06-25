@@ -348,8 +348,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="card-body">
             <table>
               <tr><th>符号</th><th>含义</th><th>定义</th></tr>
-              <tr><td><strong>O (低阶)</strong></td><td>f的阶不高于g</td><td>&exist;C,n&sub0;，&forall;n&gt;n&sub0;，f(n)&le;Cg(n)</td></tr>
-              <tr><td><strong>&Omega; (高阶)</strong></td><td>f的阶不低于g</td><td>&exist;C,n&sub0;，&forall;n&gt;n&sub0;，f(n)&ge;Cg(n)</td></tr>
+              <tr><td><strong>O (低阶)</strong></td><td>f的阶不高于g</td><td>&exist;C,n<sub>0</sub>，&forall;n&gt;n<sub>0</sub>，f(n)&le;Cg(n)</td></tr>
+              <tr><td><strong>&Omega; (高阶)</strong></td><td>f的阶不低于g</td><td>&exist;C,n<sub>0</sub>，&forall;n&gt;n<sub>0</sub>，f(n)&ge;Cg(n)</td></tr>
               <tr><td><strong>&theta; (等阶)</strong></td><td>f与g同阶</td><td>f=O(g) 且 f=&Omega;(g)</td></tr>
             </table>
             <p><strong>证明方法：</strong>反证法、极限法</p>
@@ -642,14 +642,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.2 矩阵连乘问题</h3><span class="expand-icon">&#9654;</span></div>
           <div class="card-body">
-            <p>给定n个矩阵 &#123;A&sub1;,A&sub2;,...,A&subn;&#125;，其中A&subi;的维度为 p&sub(i-1); &times; p&subi;，求最优连乘顺序使乘法次数最少。</p>
+            <p>给定n个矩阵 &#123;A<sub>1</sub>,A<sub>2</sub>,...,A<sub>n</sub>&#125;，其中A<sub>i</sub>的维度为 p<sub>(i-1)</sub> &times; p<sub>i</sub>，求最优连乘顺序使乘法次数最少。</p>
             <div class="keypoint"><strong>关键：</strong>矩阵连乘满足<strong>结合律</strong>但不满足<strong>交换律</strong></div>
-            <p><strong>状态定义：</strong>m[i][j] 表示 A&subi;...A&subj; 连乘的最少乘法次数</p>
+            <p><strong>状态定义：</strong>m[i][j] 表示 A<sub>i</sub>...A<sub>j</sub> 连乘的最少乘法次数</p>
             <p><strong>状态转移方程：</strong></p>
 <pre>m[i][j] = {
   <span class="num">0</span>                              , i = j
   min{m[i][k] + m[k+1][j]         , i &le; k &lt; j
-      + p&sub(i-1);&middot;p&subk;&middot;p&subj;}
+      + p<sub>(i-1)</sub>&middot;p<sub>k</sub>&middot;p<sub>j</sub>}
 }</pre>
             <p><strong>求解顺序：</strong>自底向上，先算1个矩阵(为0)，再算2个矩阵连乘，逐步扩大到n个</p>
             <div class="keypoint warn"><strong>复习课强调：</strong>给若干个矩阵(如3个2&times;2维矩阵)，要会算最小计算次数和最优结合顺序！</div>
@@ -658,12 +658,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.3 最长公共子序列(LCS)</h3><span class="expand-icon">&#9654;</span></div>
           <div class="card-body">
             <p><strong>子序列：</strong>不要求连续，但保持相对顺序。<strong>子串：</strong>要求连续。</p>
-            <p><strong>状态定义：</strong>c[i][j] 表示 X&subi; 和 Y&subj; 的LCS长度</p>
+            <p><strong>状态定义：</strong>c[i][j] 表示 X<sub>i</sub> 和 Y<sub>j</sub> 的LCS长度</p>
             <p><strong>状态转移方程：</strong></p>
 <pre>c[i][j] = {
   <span class="num">0</span>                              , i=0 或 j=0
-  c[i-1][j-1] + <span class="num">1</span>               , x&subi; = y&subj;
-  max(c[i-1][j], c[i][j-1])      , x&subi; &ne; y&subj;
+  c[i-1][j-1] + <span class="num">1</span>               , x<sub>i</sub> = y<sub>j</sub>
+  max(c[i-1][j], c[i][j-1])      , x<sub>i</sub> &ne; y<sub>j</sub>
 }</pre>
             <div class="keypoint"><strong>应用场景：</strong>版本对比(标红差异)、论文查重(主位宾结构比对)、DNA序列比对</div>
           </div></div>
@@ -745,7 +745,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </ul>
             <p><strong>迭代过程：</strong></p>
             <ol>
-              <li>初始化：S=&#123;v&sub0;&#125;，distance[i]=cost[v&sub0;][i]</li>
+              <li>初始化：S=&#123;v<sub>0</sub>&#125;，distance[i]=cost[v<sub>0</sub>][i]</li>
               <li>从V-S中选distance最小的顶点w加入S</li>
               <li>更新：distance[j] = min(distance[j], distance[w]+cost[w][j])</li>
               <li>重复直到S包含所有顶点</li>
