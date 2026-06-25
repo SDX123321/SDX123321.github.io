@@ -1,0 +1,49 @@
+name: Auto Update Changelog
+
+on:
+  push:
+    branches: [ main ]
+
+# Prevent infinite loop: skip if the commit was made by this action
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip-changelog]')"
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: Get commit info
+        id: commit
+        run: |
+          HASH="${GITHUB_SHA:0:7}"
+          MSG="${{ github.event.head_commit.message }}"
+          # Take first line only, escape HTML special chars
+          MSG_ONELINE=$(echo "$MSG" | head -1 | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')
+          echo "hash=$HASH" >> "$GITHUB_OUTPUT"
+          echo "msg=$MSG_ONELINE" >> "$GITHUB_OUTPUT"
+
+      - name: Update changelog in index.html
+        run: |
+          HASH="${{ steps.commit.outputs.hash }}"
+          MSG="${{ steps.commit.outputs.msg }}"
+          NEW_ENTRY="    <div class=\"cl-item\"><span class=\"cl-hash\">${HASH}</span><span class=\"cl-msg\">${MSG}</span></div>"
+
+          # Insert after the first cl-item line (newest entry at top)
+          # Use sed to insert after the <h3>更新日志</h3> line or after the opening of the changelog
+          sed -i "/<h3>.*更新日志<\/h3>/a\\
+          ${NEW_ENTRY}" index.html
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Update changelog [skip-changelog]"
+          git push
