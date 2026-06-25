@@ -296,6 +296,8 @@ body {
   z-index: 99;
 }
 .sidebar-overlay.show { display: block; }
+.exam-mark { display:inline-block; background:rgba(239,68,68,0.12); color:#ef4444; padding:2px 8px; border-radius:4px; font-size:0.75rem; font-weight:700; margin-left:6px; vertical-align:middle; border:1px solid rgba(239,68,68,0.25); }
+.exam-star { color:#ef4444; font-weight:700; }
 </style>
 </head>
 <body>
@@ -390,7 +392,7 @@ body {
     <div class="section-body">
 
       <div class="kb">
-        <h3><span class="num">1</span>事件间的关系与运算</h3>
+        <h3><span class="num">1</span>事件间的关系与运算 <span class="exam-mark">必考基础</span></h3>
         <ul>
           <li><strong>包含：</strong>\(A \subset B\) 表示 A 发生必导致 B 发生</li>
           <li><strong>相等：</strong>\(A = B \Leftrightarrow A \subset B \text{ 且 } B \subset A\)</li>
@@ -419,7 +421,7 @@ body {
       </div>
 
       <div class="kb">
-        <h3><span class="num">3</span>条件概率</h3>
+        <h3><span class="num">3</span>条件概率 <span class="exam-mark">必考</span></h3>
         <div class="formula">
           \(P(B|A) = \dfrac{P(AB)}{P(A)}, \quad P(A) > 0\)
         </div>
@@ -430,7 +432,7 @@ body {
       </div>
 
       <div class="kb">
-        <h3><span class="num">4</span>全概率公式与贝叶斯公式</h3>
+        <h3><span class="num">4</span>全概率公式与贝叶斯公式 <span class="exam-mark">大题必考</span></h3>
         <p>设 \(A_1, A_2, \ldots, A_n\) 为 \(\Omega\) 的一个完备事件组（划分），即 \(A_i\) 两两互斥且 \(\bigcup_{i=1}^n A_i = \Omega\)。</p>
         <div class="formula">
           <strong>全概率公式：</strong>\(P(B) = \sum_{i=1}^{n} P(A_i)\, P(B|A_i)\)
@@ -551,7 +553,7 @@ body {
       </div>
 
       <div class="kb">
-        <h3><span class="num">3</span>随机变量函数的分布</h3>
+        <h3><span class="num">3</span>随机变量函数的分布 <span class="exam-mark">大题必考</span></h3>
         <p><strong>离散型：</strong>直接列 \(Y = g(X)\) 的取值与概率。</p>
         <p><strong>连续型——分布函数法：</strong></p>
         <ul>
@@ -760,7 +762,7 @@ body {
       </div>
 
       <div class="kb">
-        <h3><span class="num">3</span>协方差与相关系数</h3>
+        <h3><span class="num">3</span>协方差与相关系数 <span class="exam-mark">必考</span></h3>
         <div class="formula">
           <strong>协方差：</strong>\(\text{Cov}(X,Y) = E[(X - EX)(Y - EY)] = E(XY) - E(X)E(Y)\)
         </div>
@@ -859,7 +861,7 @@ body {
     <div class="section-body">
 
       <div class="kb">
-        <h3><span class="num">1</span>切比雪夫不等式</h3>
+        <h3><span class="num">1</span>切比雪夫不等式 <span class="exam-mark">填空必考</span></h3>
         <div class="formula">
           设 \(E(X)\) 和 \(D(X)\) 存在，则对任意 \(\varepsilon > 0\)：
           \(P\{|X - E(X)| \ge \varepsilon\} \le \dfrac{D(X)}{\varepsilon^2}\)
@@ -881,7 +883,7 @@ body {
       </div>
 
       <div class="kb">
-        <h3><span class="num">3</span>中心极限定理</h3>
+        <h3><span class="num">3</span>中心极限定理 <span class="exam-mark">应用必考</span></h3>
         <div class="formula">
           <strong>独立同分布 CLT（林德伯格-列维）：</strong><br>
           设 \(X_i\) iid，\(E(X_i) = \mu\)，\(D(X_i) = \sigma^2 > 0\)，则当 \(n\) 充分大时：
@@ -1055,7 +1057,7 @@ body {
     <div class="section-body">
 
       <div class="kb">
-        <h3><span class="num">1</span>矩估计</h3>
+        <h3><span class="num">1</span>矩估计 <span class="exam-mark">大题必考</span></h3>
         <p><strong>基本思想：</strong>用样本矩 \(A_k = \frac{1}{n}\sum X_i^k\) 替换总体矩 \(E(X^k)\)，解出参数。</p>
         <p><strong>步骤：</strong></p>
         <ul>
@@ -1068,7 +1070,7 @@ body {
       </div>
 
       <div class="kb">
-        <h3><span class="num">2</span>最大似然估计 (MLE)</h3>
+        <h3><span class="num">2</span>最大似然估计 (MLE) <span class="exam-mark">大题必考</span></h3>
         <p><strong>基本思想：</strong>选取使样本出现概率最大的参数值。</p>
         <p><strong>步骤：</strong></p>
         <ul>
@@ -1093,7 +1095,7 @@ body {
       </div>
 
       <div class="kb">
-        <h3><span class="num">4</span>置信区间</h3>
+        <h3><span class="num">4</span>置信区间 <span class="exam-mark">大题必考</span></h3>
         <p>置信水平 \(1-\alpha\) 下的置信区间表示参数有 \((1-\alpha)\times 100\%\) 的概率落在此区间内。</p>
         <table>
           <tr><th>条件</th><th>参数</th><th>枢轴量</th><th>置信区间</th></tr>
@@ -1209,7 +1211,7 @@ body {
       </div>
 
       <div class="kb">
-        <h3><span class="num">2</span>正态总体参数的假设检验</h3>
+        <h3><span class="num">2</span>正态总体参数的假设检验 <span class="exam-mark">必考</span></h3>
         <table>
           <tr><th>检验</th><th>条件</th><th>统计量</th><th>双侧拒绝域</th></tr>
           <tr>
@@ -1402,7 +1404,7 @@ body {
           <tr><th>估计参数</th><th>条件</th><th>枢轴量</th><th>双侧置信区间</th></tr>
           <tr><td>μ</td><td>σ² 已知</td><td>\(Z = \frac{\bar{X}-\mu}{\sigma/\sqrt{n}}\)</td><td>\(\bar{X} \pm z_{\alpha/2}\frac{\sigma}{\sqrt{n}}\)</td></tr>
           <tr><td>μ</td><td>σ² 未知</td><td>\(T = \frac{\bar{X}-\mu}{S/\sqrt{n}}\)</td><td>\(\bar{X} \pm t_{\alpha/2}(n-1)\frac{S}{\sqrt{n}}\)</td></tr>
-          <tr><td>σ²</td><td>μ 已知</td><td>\(\chi^2 = \sum\frac{(X_i-\mu)^2}{\sigma^2}\)</td><td>\([\frac{\sum(X_i-\mu)^2}{\chi^2_{\alpha/2}(n)}, \frac{\sum(X_i-\mu)^2}{\chi^2_{1-\alpha/2}(n)}]\)</td></tr>
+          <tr><td>σ²</td><td>μ 已知</td><td>\(\chi^2 = \sum_{i=1}^{n}\frac{(X_i-\mu)^2}{\sigma^2}\)</td><td>\([\frac{\sum_{i=1}^{n}(X_i-\mu)^2}{\chi^2_{\alpha/2}(n)}, \frac{\sum_{i=1}^{n}(X_i-\mu)^2}{\chi^2_{1-\alpha/2}(n)}]\)</td></tr>
           <tr><td>σ²</td><td>μ 未知</td><td>\(\chi^2 = \frac{(n-1)S^2}{\sigma^2}\)</td><td>\([\frac{(n-1)S^2}{\chi^2_{\alpha/2}(n-1)}, \frac{(n-1)S^2}{\chi^2_{1-\alpha/2}(n-1)}]\)</td></tr>
         </table>
       </div>
@@ -1410,11 +1412,11 @@ body {
       <div class="kb">
         <h3>假设检验完整表</h3>
         <table>
-          <tr><th>H₀</th><th>条件</th><th>统计量</th><th>双侧拒绝域</th><th>单侧拒绝域</th></tr>
-          <tr><td>μ=μ₀</td><td>σ² 已知</td><td>Z</td><td>|Z|>z<sub>α/2</sub></td><td>Z>z<sub>α</sub> 或 Z<-z<sub>α</sub></td></tr>
-          <tr><td>μ=μ₀</td><td>σ² 未知</td><td>T</td><td>|T|>t<sub>α/2</sub>(n-1)</td><td>T>t<sub>α</sub>(n-1) 或 T<-t<sub>α</sub>(n-1)</td></tr>
-          <tr><td>σ²=σ₀²</td><td>μ 已知</td><td>χ²</td><td>χ²>χ²<sub>α/2</sub>(n) 或 χ²<χ²<sub>1-α/2</sub>(n)</td><td>χ²>χ²<sub>α</sub>(n) 或 χ²<χ²<sub>1-α</sub>(n)</td></tr>
-          <tr><td>σ²=σ₀²</td><td>μ 未知</td><td>χ²</td><td>χ²>χ²<sub>α/2</sub>(n-1) 或 χ²<χ²<sub>1-α/2</sub>(n-1)</td><td>χ²>χ²<sub>α</sub>(n-1) 或 χ²<χ²<sub>1-α</sub>(n-1)</td></tr>
+          <tr><th>\(H_0\)</th><th>条件</th><th>统计量</th><th>双侧拒绝域</th><th>单侧拒绝域</th></tr>
+          <tr><td>\(\mu=\mu_0\)</td><td>\(\sigma^2\) 已知</td><td>Z</td><td>\(|Z|>z_{\alpha/2}\)</td><td>\(Z>z_{\alpha}\) 或 \(Z<-z_{\alpha}\)</td></tr>
+          <tr><td>\(\mu=\mu_0\)</td><td>\(\sigma^2\) 未知</td><td>T</td><td>\(|T|>t_{\alpha/2}(n-1)\)</td><td>\(T>t_{\alpha}(n-1)\) 或 \(T<-t_{\alpha}(n-1)\)</td></tr>
+          <tr><td>\(\sigma^2=\sigma_0^2\)</td><td>\(\mu\) 已知</td><td>\(\chi^2\)</td><td>\(\chi^2>\chi^2_{\alpha/2}(n)\) 或 \(\chi^2<\chi^2_{1-\alpha/2}(n)\)</td><td>\(\chi^2>\chi^2_{\alpha}(n)\) 或 \(\chi^2<\chi^2_{1-\alpha}(n)\)</td></tr>
+          <tr><td>\(\sigma^2=\sigma_0^2\)</td><td>\(\mu\) 未知</td><td>\(\chi^2\)</td><td>\(\chi^2>\chi^2_{\alpha/2}(n-1)\) 或 \(\chi^2<\chi^2_{1-\alpha/2}(n-1)\)</td><td>\(\chi^2>\chi^2_{\alpha}(n-1)\) 或 \(\chi^2<\chi^2_{1-\alpha}(n-1)\)</td></tr>
         </table>
         <div class="note">
           <strong>记忆技巧：</strong>双侧用 α/2，单侧用 α。Z 检验用正态分位数，T 检验用 t 分布分位数，χ² 检验用卡方分位数。
