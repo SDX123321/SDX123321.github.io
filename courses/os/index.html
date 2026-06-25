@@ -441,6 +441,43 @@ V 操作的顺序无所谓。
 </ul>
 </div>
 
+<div class="card" style="border-color:var(--green)">
+<div class="card-title">★ 真题：2024-2025 A卷 综合题详解 <span class="badge badge-important">必看</span></div>
+
+<h4>1. PV 操作（生产者-消费者 3 进程）</h4>
+<div class="warning">
+<strong>题目：</strong>PA 读数据到缓冲 B1，PB 从 B1 取数据处理后放 B2，PC 从 B2 取数据打印。用 PV 操作实现。
+</div>
+<div class="highlight">
+<strong>标准答案（含评分）：</strong><br>
+<code>semaphore empty1=1, full1=0, empty2=1, full2=0;</code><br><br>
+<strong>PA：</strong>read → P(empty1) → 放入B1 → V(full1) → 循环<br>
+<strong>PB：</strong>P(full1) → 取B1 → V(empty1) → 处理 → P(empty2) → 放入B2 → V(full2) → 循环<br>
+<strong>PC：</strong>P(full2) → 取B2 → V(empty2) → 打印 → 循环<br><br>
+<strong>评分标准：</strong>信号量定义 2 分，PA 2 分，PB 4 分，PC 2 分
+</div>
+
+<h4>2. FIFO / LRU 页面置换</h4>
+<div class="highlight">
+<strong>页面序列和具体计算过程见原卷。</strong>关键结论：<br>
+FIFO 缺页次数 = <strong>10 次</strong>（注意 Belady 异常可能）<br>
+LRU 缺页次数 = <strong>9 次</strong>
+</div>
+
+<h4>3. 磁盘调度算法</h4>
+<div class="highlight">
+<strong>请求序列 + 初始位置计算：</strong><br>
+SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
+电梯算法（SCAN）：总移动 <strong>200 道</strong>（比 SSTF 更优）
+</div>
+
+<h4>4. 银行家算法</h4>
+<div class="highlight">
+<strong>完整安全序列：P1 → P0 → P3 → P4 → P2</strong><br>
+请求判断：系统可用 (2,3,2)，P0 请求 (1,2,3) → <strong>不能满足</strong>（第3项 2&lt;3）
+</div>
+</div>
+
 <!-- ==================== CH3 ==================== -->
 <h2 id="ch3"><span class="icon">💾</span> 第三章 存储管理</h2>
 

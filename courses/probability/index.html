@@ -321,6 +321,7 @@ body {
     <div class="nav-group-title">附录</div>
     <a href="#distributions" data-keywords="常用分布 公式 期望 方差">常用分布速查表</a>
     <a href="#formulas" data-keywords="公式 总结">核心公式汇总</a>
+    <a href="#formula-sheet" data-keywords="默写题 公式 答案 速查">默写题公式速查</a>
     <a href="#tips" data-keywords="易错 陷阱 注意 考试">易错点与考试提示</a>
   </div>
 </nav>
@@ -1348,6 +1349,66 @@ body {
           <tr><td>\(X \sim \chi^2(n_1)\)，\(Y \sim \chi^2(n_2)\)，独立</td><td>\(X + Y \sim \chi^2(n_1 + n_2)\)</td></tr>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- 默写题公式速查 -->
+  <div id="formula-sheet" class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h2>默写题公式速查（149题含答案）</h2>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="section-body">
+
+      <div class="kb">
+        <h3>多维随机变量函数分布</h3>
+        <div class="formula">Z = X+Y：\(f_Z(z) = \int_{-\infty}^{+\infty} f(x, z-x)\,dx\)</div>
+        <div class="formula">X,Y 独立时：\(f_Z(z) = \int_{-\infty}^{+\infty} f_X(x) f_Y(z-x)\,dx\)（卷积公式）</div>
+        <div class="formula">\(Z = \max\{X,Y\}\)：\(F_Z(z) = F_X(z) \cdot F_Y(z)\)</div>
+        <div class="formula">\(Z = \min\{X,Y\}\)：\(F_Z(z) = 1 - [1-F_X(z)][1-F_Y(z)]\)</div>
+      </div>
+
+      <div class="kb">
+        <h3>数字特征公式汇总</h3>
+        <div class="formula">\(E(XY) = E(X)E(Y)\)（独立或不相关时）</div>
+        <div class="formula">\(\text{Cov}(X,X) = D(X)\)，\(\text{Cov}(aX, bY) = ab\,\text{Cov}(X,Y)\)</div>
+        <div class="formula">\(\text{Cov}(X+Y, Z) = \text{Cov}(X,Z) + \text{Cov}(Y,Z)\)</div>
+        <div class="formula">协方差矩阵：\(\begin{pmatrix} D(X) & \text{Cov}(X,Y) \\ \text{Cov}(Y,X) & D(Y) \end{pmatrix}\)</div>
+      </div>
+
+      <div class="kb">
+        <h3>抽样分布完整公式</h3>
+        <div class="formula">\(D(S^2) = \frac{2\sigma^4}{n-1}\)</div>
+        <div class="formula">\(t(n)^2 = F(1, n)\)，\(\frac{1}{F} \sim F(n_2, n_1)\)</div>
+        <div class="formula">\(\sum_{i=1}^n \frac{(X_i - \mu)^2}{\sigma^2} \sim \chi^2(n)\)（μ 已知）</div>
+        <div class="formula">\(\frac{(n-1)S^2}{\sigma^2} \sim \chi^2(n-1)\)（μ 未知）</div>
+      </div>
+
+      <div class="kb">
+        <h3>置信区间完整表（4种情况）</h3>
+        <table>
+          <tr><th>估计参数</th><th>条件</th><th>枢轴量</th><th>双侧置信区间</th></tr>
+          <tr><td>μ</td><td>σ² 已知</td><td>\(Z = \frac{\bar{X}-\mu}{\sigma/\sqrt{n}}\)</td><td>\(\bar{X} \pm z_{\alpha/2}\frac{\sigma}{\sqrt{n}}\)</td></tr>
+          <tr><td>μ</td><td>σ² 未知</td><td>\(T = \frac{\bar{X}-\mu}{S/\sqrt{n}}\)</td><td>\(\bar{X} \pm t_{\alpha/2}(n-1)\frac{S}{\sqrt{n}}\)</td></tr>
+          <tr><td>σ²</td><td>μ 已知</td><td>\(\chi^2 = \sum\frac{(X_i-\mu)^2}{\sigma^2}\)</td><td>\([\frac{\sum(X_i-\mu)^2}{\chi^2_{\alpha/2}(n)}, \frac{\sum(X_i-\mu)^2}{\chi^2_{1-\alpha/2}(n)}]\)</td></tr>
+          <tr><td>σ²</td><td>μ 未知</td><td>\(\chi^2 = \frac{(n-1)S^2}{\sigma^2}\)</td><td>\([\frac{(n-1)S^2}{\chi^2_{\alpha/2}(n-1)}, \frac{(n-1)S^2}{\chi^2_{1-\alpha/2}(n-1)}]\)</td></tr>
+        </table>
+      </div>
+
+      <div class="kb">
+        <h3>假设检验完整表</h3>
+        <table>
+          <tr><th>H₀</th><th>条件</th><th>统计量</th><th>双侧拒绝域</th><th>单侧拒绝域</th></tr>
+          <tr><td>μ=μ₀</td><td>σ² 已知</td><td>Z</td><td>|Z|>z<sub>α/2</sub></td><td>Z>z<sub>α</sub> 或 Z<-z<sub>α</sub></td></tr>
+          <tr><td>μ=μ₀</td><td>σ² 未知</td><td>T</td><td>|T|>t<sub>α/2</sub>(n-1)</td><td>T>t<sub>α</sub>(n-1) 或 T<-t<sub>α</sub>(n-1)</td></tr>
+          <tr><td>σ²=σ₀²</td><td>μ 已知</td><td>χ²</td><td>χ²>χ²<sub>α/2</sub>(n) 或 χ²<χ²<sub>1-α/2</sub>(n)</td><td>χ²>χ²<sub>α</sub>(n) 或 χ²<χ²<sub>1-α</sub>(n)</td></tr>
+          <tr><td>σ²=σ₀²</td><td>μ 未知</td><td>χ²</td><td>χ²>χ²<sub>α/2</sub>(n-1) 或 χ²<χ²<sub>1-α/2</sub>(n-1)</td><td>χ²>χ²<sub>α</sub>(n-1) 或 χ²<χ²<sub>1-α</sub>(n-1)</td></tr>
+        </table>
+        <div class="note">
+          <strong>记忆技巧：</strong>双侧用 α/2，单侧用 α。Z 检验用正态分位数，T 检验用 t 分布分位数，χ² 检验用卡方分位数。
+        </div>
+      </div>
+
     </div>
   </div>
 
