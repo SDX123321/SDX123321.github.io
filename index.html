@@ -286,10 +286,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var isTextbook = f.t==='textbook';
       var previewOnclick = isTextbook
         ? 'onclick="confirmTextbook(\''+f.p+'\',\'preview\');return false;"'
-        : 'onclick="gateAccess(\''+f.p+'\',\'preview\');return false;"';
+        : 'onclick="executeAccess(\''+f.p+'\',\'preview\');return false;"';
       var dlOnclick = isTextbook
         ? 'onclick="confirmTextbook(\''+f.p+'\',\'download\');return false;"'
-        : 'onclick="gateAccess(\''+f.p+'\',\'download\');return false;"';
+        : 'onclick="executeAccess(\''+f.p+'\',\'download\');return false;"';
       return '<div class="file-card" data-s="'+f.s+'" data-t="'+f.t+'">'
         +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
         +'<div style="width:36px;height:36px;border-radius:8px;background:'+f.c+'20;color:'+f.c+';display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">&#128196;</div>'
@@ -331,43 +331,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var path = document.getElementById('tbPath').value;
     var action = document.getElementById('tbAction').value;
     document.getElementById('textbookModal').style.display = 'none';
-    gateAccess(path, action);
-  }
-
-  // === Cloudflare Turnstile 验证门控 ===
-  var VERIFY_KEY = 'cf_verified_until';
-  var VERIFY_DURATION = 30 * 60 * 1000; // 30 minutes
-
-  function isVerified(){
-    var until = parseInt(localStorage.getItem(VERIFY_KEY) || '0');
-    return Date.now() < until;
-  }
-  function markVerified(){
-    localStorage.setItem(VERIFY_KEY, String(Date.now() + VERIFY_DURATION));
-    document.getElementById('turnstileModal').style.display = 'none';
-    // Execute the pending action
-    if(window._pendingAccess){
-      var p = window._pendingAccess.path;
-      var a = window._pendingAccess.action;
-      window._pendingAccess = null;
-      executeAccess(p, a);
-    }
-  }
-
-  function gateAccess(path, action){
-    if(isVerified()){
-      executeAccess(path, action);
-    } else {
-      window._pendingAccess = {path: path, action: action};
-      document.getElementById('turnstileModal').style.display = 'flex';
-      // Render Turnstile widget
-      if(window.turnstile){
-        turnstile.render('#turnstileWidget', {
-          sitekey: '0x4AAAAAAAiMhB2v3w5-73v_',
-          callback: function(){ markVerified(); }
-        });
-      }
-    }
+    executeAccess(path, action);
   }
 
   function executeAccess(path, action){
@@ -526,17 +490,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <input type="hidden" id="tbPath"><input type="hidden" id="tbAction">
   </div>
 </div>
-
-<!-- Cloudflare Turnstile 验证弹窗 -->
-<div id="turnstileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1004;justify-content:center;align-items:center;">
-  <div style="background:var(--card);border-radius:16px;padding:28px;max-width:380px;width:92vw;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.5);text-align:center;">
-    <h3 style="font-size:1.05rem;color:var(--text);margin-bottom:8px;">&#128274; 安全验证</h3>
-    <p style="font-size:.82rem;color:var(--text2);margin-bottom:16px;">请完成验证后继续操作（30 分钟内无需重复验证）</p>
-    <div id="turnstileWidget" style="display:flex;justify-content:center;margin-bottom:12px;"></div>
-    <button onclick="document.getElementById('turnstileModal').style.display='none';window._pendingAccess=null;" style="font-size:.8rem;color:var(--text3);background:none;border:none;cursor:pointer;">取消</button>
-  </div>
-</div>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <!-- 新用户引导 -->
 <div class="guide-overlay" id="guideOverlay">
