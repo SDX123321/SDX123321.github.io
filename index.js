@@ -66,9 +66,16 @@ var FILES=[
     c.textContent='共 '+files.length+' 个文件';
     l.innerHTML=files.map(function(f){
       var isTextbook = f.t==='textbook';
-      var previewOnclick = isTextbook
-        ? 'onclick="confirmTextbook(\''+f.p+'\',\'preview\');return false;"'
-        : 'onclick="executeAccess(\''+f.p+'\',\'preview\');return false;"';
+      var ext = f.p.split('.').pop().toLowerCase().split('?')[0];
+      var isPreviewable = (ext==='pptx'||ext==='ppt'||ext==='docx'||ext==='doc');
+      var previewOnclick;
+      if(isTextbook){
+        previewOnclick = 'onclick="confirmTextbook(\''+f.p+'\',\'preview\');return false;"';
+      } else if(isPreviewable){
+        previewOnclick = 'onclick="previewFile(\''+f.p+'\',\''+f.n.replace(/'/g,"\\'")+'\');return false;"';
+      } else {
+        previewOnclick = 'onclick="executeAccess(\''+f.p+'\',\'preview\');return false;"';
+      }
       var dlOnclick = isTextbook
         ? 'onclick="confirmTextbook(\''+f.p+'\',\'download\');return false;"'
         : 'onclick="executeAccess(\''+f.p+'\',\'download\');return false;"';
