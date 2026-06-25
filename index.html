@@ -165,6 +165,16 @@ h1 {
     </ul>
   </div>
 
+  <!-- 更新日志入口 -->
+  <div onclick="document.getElementById('clOverlay').style.display='flex'" style="display:flex;align-items:center;gap:12px;padding:14px 20px;margin-bottom:24px;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+    <span style="font-size:1.4rem;">&#128221;</span>
+    <div style="flex:1;">
+      <div style="font-weight:600;font-size:.92rem;color:var(--text);">更新日志</div>
+      <div style="font-size:.78rem;color:var(--text3);margin-top:2px;">最新：去除下载计数、学科+类型组合筛选、新用户引导</div>
+    </div>
+    <span style="color:var(--text3);font-size:.85rem;">查看全部 &#8250;</span>
+  </div>
+
   <div class="cards">
     <a class="card" href="courses/probability/">
       <div class="icon icon-blue">&#128202;</div>
@@ -372,15 +382,20 @@ h1 {
 <div class="cl-overlay" id="clOverlay">
   <div class="cl-box">
     <h3>&#128221; 更新日志</h3>
-    <div class="cl-item"><span class="cl-hash">f1bd3e1</span><span class="cl-msg">修正 FFT 流图标签（DFT &rarr; FFT）</span></div>
-    <div class="cl-item"><span class="cl-hash">new</span><span class="cl-msg">新增高等数学复习（基于三节复习课录音）</span></div>
-    <div class="cl-item"><span class="cl-hash">eb1950a</span><span class="cl-msg">修复 DSP 页面 404 链接</span></div>
-    <div class="cl-item"><span class="cl-hash">199fd30</span><span class="cl-msg">新增数字信号处理课程（含 FFT 蝶形运算图解）</span></div>
-    <div class="cl-item"><span class="cl-hash">782114c</span><span class="cl-msg">赞赏码改为弹窗放大展示，仅微信</span></div>
+    <div class="cl-item"><span class="cl-hash">4d73884</span><span class="cl-msg">去除下载计数、学科+类型组合筛选、新用户引导</span></div>
+    <div class="cl-item"><span class="cl-hash">e106548</span><span class="cl-msg">附件下载计数、改进建议评论入口、课程反馈链接</span></div>
+    <div class="cl-item"><span class="cl-hash">99fb8a9</span><span class="cl-msg">修复公式渲染、概率论考点标注（必考/大题必考）</span></div>
+    <div class="cl-item"><span class="cl-hash">7d9d5ad</span><span class="cl-msg">修复全站深浅色模式切换显示异常</span></div>
+    <div class="cl-item"><span class="cl-hash">581649a</span><span class="cl-msg">OCR 提取扫描试卷真题融入概率论与算法页面</span></div>
+    <div class="cl-item"><span class="cl-hash">601ec45</span><span class="cl-msg">概率论默写题公式速查、操作系统 A 卷真题详解</span></div>
+    <div class="cl-item"><span class="cl-hash">b026948</span><span class="cl-msg">全站自适应布局（手机/平板/电脑三档响应式）</span></div>
+    <div class="cl-item"><span class="cl-hash">35a774a</span><span class="cl-msg">算法页面双栏代码示例（快排/归并/Dijkstra/N皇后等）</span></div>
+    <div class="cl-item"><span class="cl-hash">f1bd3e1</span><span class="cl-msg">修正 DSP FFT 流图标签（DFT &rarr; FFT）</span></div>
+    <div class="cl-item"><span class="cl-hash">199fd30</span><span class="cl-msg">新增数字信号处理课程（含蝶形运算图解）</span></div>
     <div class="cl-item"><span class="cl-hash">14fddbf</span><span class="cl-msg">新增马克思主义基本原理互动复习</span></div>
     <div class="cl-item"><span class="cl-hash">0c0866b</span><span class="cl-msg">操作系统页面补充飞书文档内容</span></div>
     <div class="cl-item"><span class="cl-hash">10c7d4c</span><span class="cl-msg">全站添加不蒜子访问量统计</span></div>
-    <div class="cl-item"><span class="cl-hash">feab9ee</span><span class="cl-msg">新增算法设计与分析、资料来源说明、返回导航</span></div>
+    <div class="cl-item"><span class="cl-hash">feab9ee</span><span class="cl-msg">新增算法设计与分析、资料来源说明</span></div>
     <div class="cl-item"><span class="cl-hash">3e21cbb</span><span class="cl-msg">首次发布：概率论 + 操作系统复习页面</span></div>
     <button class="cl-btn" onclick="closeChangelog()">知道了</button>
   </div>
