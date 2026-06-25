@@ -11,6 +11,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>算法设计与分析 - 期末复习</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <style>
 :root {
   --primary: #4f46e5;
@@ -1280,7 +1283,10 @@ function init() {
   updateProgress();
   setupNav();
   showSection('home');
-  document.querySelectorAll('.card').forEach(c => c.classList.add('open'));
+  // Expand all cards except quiz cards
+  document.querySelectorAll('.card').forEach(c => {
+    if(!c.querySelector('.quiz-container')) c.classList.add('open');
+  });
   document.querySelectorAll('.chapter').forEach(c => c.classList.add('open'));
 }
 
@@ -1364,12 +1370,21 @@ function showSection(id) {
     sec.classList.remove('hidden');
     const ch = sec.querySelector('.chapter');
     if (ch) ch.classList.add('open');
-    sec.querySelectorAll('.card').forEach(c => c.classList.add('open'));
+    // Expand all cards except quiz cards
+    sec.querySelectorAll('.card').forEach(c => {
+      if(!c.querySelector('.quiz-container')) c.classList.add('open');
+    });
     visited[id] = true;
     localStorage.setItem('algo_visited', JSON.stringify(visited));
     updateProgress();
+    // Scroll to section after a brief delay for DOM update
+    setTimeout(() => {
+      const topBar = document.querySelector('.top-bar');
+      const offset = topBar ? topBar.offsetHeight + 16 : 16;
+      const rect = sec.getBoundingClientRect();
+      window.scrollBy(0, rect.top - offset);
+    }, 50);
   }
-  window.scrollTo(0, 0);
 }
 
 function toggleChapter(header) {
@@ -1419,6 +1434,10 @@ function applyTheme(dark){document.body.classList.toggle('dark',dark);document.g
 function toggleTheme(){applyTheme(!document.body.classList.contains('dark'));}
 (function(){var t=localStorage.getItem('theme');if(t==='dark')applyTheme(true);else applyTheme(false);})();
 if(!localStorage.getItem('sg_done_algo'))document.getElementById('subGuide').style.display='flex';
+// KaTeX auto-render
+function renderKatex(){if(typeof renderMathInElement==='function'){renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true},{left:'$$',right:'$$',display:true}],throwOnError:false});}}
+document.addEventListener('DOMContentLoaded',renderKatex);
+window.addEventListener('load',renderKatex);
 </script>
 
 <!-- 访问统计 -->
