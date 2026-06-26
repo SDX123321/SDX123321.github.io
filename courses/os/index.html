@@ -37,10 +37,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <a href="../../" style="color:#74b9ff;font-size:.85em;border-bottom:1px solid var(--border);margin-bottom:6px;padding-bottom:12px;">&#8592; 返回课程主页</a>
 <a href="#ch1" onclick="scrollToSection('ch1')">第一章 概述</a>
 <a href="#ch2" onclick="scrollToSection('ch2')">第二章 处理器管理</a>
-<a href="#ch2-proc" class="sub" onclick="scrollToSection('ch2-proc')">2.1 进程</a>
+<a href="#ch2-proc" class="sub" onclick="scrollToSection('ch2-proc')">2.1 进程 <span class="tag tag-L">重点</span></a>
 <a href="#ch2-sched" class="sub" onclick="scrollToSection('ch2-sched')">2.2 调度算法 <span class="tag tag-L">重点</span></a>
-<a href="#ch2-sync" class="sub" onclick="scrollToSection('ch2-sync')">2.3 同步与互斥</a>
-<a href="#ch2-deadlock" class="sub" onclick="scrollToSection('ch2-deadlock')">2.4 死锁</a>
+<a href="#ch2-sync" class="sub" onclick="scrollToSection('ch2-sync')">2.3 同步与互斥 <span class="tag tag-L">重点</span></a>
+<a href="#ch2-deadlock" class="sub" onclick="scrollToSection('ch2-deadlock')">2.4 死锁 <span class="tag tag-L">重点</span></a>
 <a href="#ch3" onclick="scrollToSection('ch3')">第三章 存储管理</a>
 <a href="#ch3-page" class="sub" onclick="scrollToSection('ch3-page')">3.1 分页存储</a>
 <a href="#ch3-replace" class="sub" onclick="scrollToSection('ch3-replace')">3.2 页面置换算法 <span class="tag tag-L">重点</span></a>
@@ -287,11 +287,11 @@ P2：H = 1 + 21/3 = <strong>8</strong>；P3：H = 1 + 21/3 = <strong>8</strong><
 <div class="grid-2">
 <div>
 <h4>P 操作（申请资源）</h4>
-<ul><li>信号量 S 减 1</li><li>若 S < 0，进程阻塞进入等待队列</li></ul>
+<ul><li>信号量 S <strong>减 1</strong></li><li>若 S < 0，进程阻塞进入等待队列</li></ul>
 </div>
 <div>
 <h4>V 操作（释放资源）</h4>
-<ul><li>信号量 S 加 1</li><li>若 S ≤ 0，唤醒一个等待进程</li></ul>
+<ul><li>信号量 S <strong>加 1</strong></li><li>若 S ≤ 0，唤醒一个等待进程</li></ul>
 </div>
 </div>
 </div>
@@ -319,14 +319,14 @@ V 操作的顺序无所谓。
 <h4>题目1：读者-写者问题</h4>
 <p>多个读者可同时读，写者独占。用 PV 操作实现。</p>
 <div class="highlight">
-<code>semaphore rw=1, mutex=1; int readcount=0;</code><br><br>
+semaphore rw=1, mutex=1; int readcount=0;<br><br>
 <strong>读者：</strong>P(mutex) → readcount++ → 若 readcount==1 则 P(rw) → V(mutex) → 读 → P(mutex) → readcount-- → 若 readcount==0 则 V(rw) → V(mutex)<br><br>
 <strong>写者：</strong>P(rw) → 写 → V(rw)
 </div>
 <h4>题目2：前驱关系</h4>
 <p>S1→S2, S1→S3, S2→S4, S3→S4。用 PV 操作实现。</p>
 <div class="highlight">
-<code>semaphore a=0, b=0, c=0;</code><br>
+semaphore a=0, b=0, c=0;<br>
 S1; V(a); V(b);<br>
 P(a); S2; V(c);<br>
 P(b); S3; V(c);  <em>// 注意 S3 也发 c</em><br>
@@ -488,7 +488,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 
 <div class="card">
 <div class="card-title">分页地址计算方法 <span class="badge badge-important">重点</span></div>
-<p>若页面大小为 \(4KB = 2^{12}B\)，则逻辑地址的<strong>低 12 位为页内偏移</strong>，高位为页号。</p>
+<p>若页面大小为 4KB = 2<sup>12</sup>B，则逻辑地址的<strong>低 12 位为页内偏移</strong>，高位为页号。</p>
 <div class="highlight">
 <strong>例（课本101页，老师强调）：</strong>16K 页面，逻辑地址 0AC5H 和 1AC5H<br>
 页面大小 16K = 2<sup>14</sup>B → 低 14 位为偏移，高位为页号。<br>
@@ -642,7 +642,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 <div class="formula">访问时间 = 寻道时间 + 旋转延迟 + 数据传输时间</div>
 <ul>
 <li><strong>寻道时间</strong> T<sub>s</sub> = m × n + s（移动n条磁道）</li>
-<li><strong>旋转延迟</strong>：平均为旋转半周的时间（如5400r/min → 平均5.55ms）</li>
+<li><strong>旋转延迟</strong>：平均为旋转<strong>半周</strong>的时间（如5400r/min → 平均5.55ms）</li>
 <li><strong>数据传输</strong>：通常最短</li>
 </ul>
 <div class="key-point">影响性能最大的因素是<strong>寻道时间</strong>，因此优化磁盘调度算法主要目标是减少磁头移动距离。</div>
