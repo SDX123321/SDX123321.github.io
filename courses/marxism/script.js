@@ -258,7 +258,7 @@ function renderBrowse(){
       const isOpen2=S.openCards.has(id);
       const status=S.known[kp.q]===true?'known':S.known[kp.q]===false?'unknown':'';
       const tHtml=kp.t.map(t=>`<span class="tag tag-${t}">${t}</span>`).join('');
-      h+=`<div class="qa ${isOpen2?'open':''} ${status}">
+      h+=`<div class="qa ${isOpen2?'open':''} ${status}" id="qa-${id}">
         <div class="qa-q" onclick="toggleCard('${id}')">
           <div class="qi">Q</div><div class="qt">${kp.q}</div><div class="ti">▼</div>
         </div><div class="qa-a"><div class="qa-a-inner">${kp.a}</div>
@@ -272,14 +272,40 @@ function renderBrowse(){
   h+='</div>';
   document.getElementById('content').innerHTML=h;
 }
-function toggleSec(i){S.openSec.has(i)?S.openSec.delete(i):S.openSec.add(i);renderBrowse()}
-function toggleCard(id){S.openCards.has(id)?S.openCards.delete(id):S.openCards.add(id);renderBrowse()}
+function toggleSec(i){
+  S.openSec.has(i)?S.openSec.delete(i):S.openSec.add(i);
+  var secs=document.querySelectorAll('.section');
+  if(secs[i]){
+    var head=secs[i].querySelector('.sec-head');
+    var list=secs[i].querySelector('.qa-list');
+    if(head&&list){
+      var isOpen=S.openSec.has(i);
+      head.classList.toggle('open',isOpen);
+      list.style.display=isOpen?'flex':'none';
+    }
+  }
+  localStorage.setItem('mk',JSON.stringify(S.known));
+}
+function toggleCard(id){
+  S.openCards.has(id)?S.openCards.delete(id):S.openCards.add(id);
+  var el=document.getElementById('qa-'+id);
+  if(el) el.classList.toggle('open',S.openCards.has(id));
+  localStorage.setItem('mk',JSON.stringify(S.known));
+}
 function esc(q){return q.replace(/'/g,"\\'").replace(/"/g,'&quot;')}
 function markKnown(q,v){
   q=q.replace(/\\'/g,"'").replace(/&quot;/g,'"');
   if(S.known[q]===v) delete S.known[q]; else S.known[q]=v;
   localStorage.setItem('mk',JSON.stringify(S.known));
-  if(S.chapter) renderBrowse();
+  // Update card class directly without full re-render
+  document.querySelectorAll('.qa').forEach(function(card){
+    var qt=card.querySelector('.qt');
+    if(!qt) return;
+    var qText=qt.textContent;
+    var status=S.known[qText]===true?'known':S.known[qText]===false?'unknown':'';
+    card.classList.remove('known','unknown');
+    if(status) card.classList.add(status);
+  });
 }
 
 // ==================== FLASHCARD ====================
