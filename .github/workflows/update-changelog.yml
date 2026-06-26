@@ -34,10 +34,12 @@ jobs:
           MSG="${{ steps.commit.outputs.msg }}"
           NEW_ENTRY="    <div class=\"cl-item\"><span class=\"cl-hash\">${HASH}</span><span class=\"cl-msg\">${MSG}</span></div>"
 
-          # Insert after the first cl-item line (newest entry at top)
-          # Use sed to insert after the <h3>更新日志</h3> line or after the opening of the changelog
+          # Insert new changelog entry after the <h3>更新日志</h3> line
           sed -i "/<h3>.*更新日志<\/h3>/a\\
           ${NEW_ENTRY}" index.html
+
+          # Update the "最新：..." summary text on the main page
+          sed -i "s|最新：.*</div>|最新：${MSG}</div>|" index.html
 
       - name: Commit and push
         run: |
