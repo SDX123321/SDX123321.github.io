@@ -21,6 +21,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <h1>期末复习</h1>
   <p class="subtitle">2025-2026 学年第二学期 &middot; 知识点总结与例题精讲</p>
 
+  <!-- 考试安排查询 -->
+  <div id="examSection" class="exam-section">
+    <div id="examInput" class="exam-input-wrap">
+      <div class="exam-input-title">&#128197; 查询考试安排</div>
+      <div class="exam-input-row">
+        <input type="text" id="examClassInput" placeholder="输入班级 ID（如 B220207）"
+          autocomplete="off" spellcheck="false">
+        <button onclick="ExamQuery.search()">查询</button>
+      </div>
+      <div class="exam-input-hint">输入班级 ID 即可查看该班所有考试时间、教室和教师信息</div>
+    </div>
+    <div id="examResult" class="exam-result" style="display:none;"></div>
+  </div>
+
   <!-- 全站搜索 -->
   <div style="max-width:560px;margin:0 auto 28px;position:relative;">
     <input type="text" id="globalSearch" placeholder="搜索知识点、资料名称..." oninput="onSearch(this.value)"
@@ -297,6 +311,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="search.js"></script>
 <script src="remember.js"></script>
 <script src="preview.js"></script>
+<script src="files/exam-schedule-data.js"></script>
+<script src="exam.js"></script>
 <script src="index.js"></script>
 <script src="theme.js"></script>
 </body>
