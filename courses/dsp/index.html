@@ -1148,14 +1148,56 @@ $z_i^*$（共轭）、$1/z_i$（倒数）、$1/z_i^*$（共轭倒数）<br>
 <tr><td>并联型</td><td>极点可控，零点不可控</td><td style="color:var(--green)">最快（并行）</td><td style="color:var(--green)">最小</td></tr>
 </table>
 </div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">★ 四种 IIR 结构信号流图示例（点击展开）</h4>
+<div class="collapsible-content">
+<div class="keypoint" style="font-size:15px">
+<strong>统一示例：</strong>$H(z) = \dfrac{1 + 2.5z^{-1} + z^{-2}}{1 - 0.75z^{-1} + 0.125z^{-2}}$<br>
+<span style="font-size:13px;color:var(--text-dim)">
+分子分解：$(1+z^{-1})(1+z^{-1})$，分母分解：$(1-0.25z^{-1})(1-0.5z^{-1})$
+</span>
 </div>
 
-<!-- FIR 结构 -->
+<h4 style="color:var(--accent2)">① 直接 I 型</h4>
+<div id="iir-direct1" class="card" style="text-align:center;padding:16px"></div>
+<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">两条延迟链：上面分子（前馈 $\color{var(--green)}{b_i}$），下面分母（反馈 $\color{var(--red)}{a_i}$）。共 4 个延迟单元。</p>
+
+<h4 style="color:var(--accent2)">② 直接 II 型（正准型）</h4>
+<div id="iir-direct2" class="card" style="text-align:center;padding:16px"></div>
+<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">合并为<strong>一条</strong>共享延迟链。左反馈、右前馈。只需 2 个延迟单元（最节省）。</p>
+
+<h4 style="color:var(--accent2)">③ 级联型</h4>
+<div id="iir-cascade" class="card" style="text-align:center;padding:16px"></div>
+<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">$H(z) = H_1(z) \cdot H_2(z)$，每个基本节用正准型。零极点可<strong>单独调整</strong>。</p>
+
+<h4 style="color:var(--accent2)">④ 并联型</h4>
+<div id="iir-parallel" class="card" style="text-align:center;padding:16px"></div>
+<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">$H(z) = 24 + \frac{-15}{1-0.25z^{-1}} + \frac{96z^{-1}}{(1-0.25z^{-1})^2}$。各节<strong>并行运算</strong>，速度最快。</p>
+</div>
+</div>
 <h3 id="ch6-struct-fir" class="collapsible" onclick="toggleCollapse(this)">FIR 滤波器的网络结构 <span class="badge badge-important">必考画图</span></h3>
 <div class="collapsible-content">
 
 <div class="warning">
 <strong>重要辨析：</strong>FIR 滤波器<strong>不全是</strong>非递归结构！频率采样型结构<strong>有反馈</strong>，是递归结构。
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">★ FIR 结构信号流图示例（点击展开）</h4>
+<div class="collapsible-content">
+<div class="keypoint" style="font-size:15px">
+<strong>统一示例：</strong>$h(n) = \{1, 2, 3, 2, 1\}$（偶对称，$N=5$，第1类线性相位）<br>
+<span style="font-size:13px;color:var(--text-dim)">
+$H(z) = 1 + 2z^{-1} + 3z^{-2} + 2z^{-3} + z^{-4}$
+</span>
+</div>
+
+<h4 style="color:var(--accent2)">① 横截型（直接型）</h4>
+<div id="fir-trans" class="card" style="text-align:center;padding:16px"></div>
+<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">5 个抽头、5 个乘法器、4 个延迟单元。结构简单直接。</p>
+
+<h4 style="color:var(--accent2)">② 线性相位型 <span class="badge badge-important">重点</span></h4>
+<div id="fir-linphase" class="card" style="text-align:center;padding:16px"></div>
+<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">利用 $h(n)$ 偶对称性，$h(0)=h(4), h(1)=h(3)$，对称项先相加再乘系数 → <strong>只需 3 个乘法器</strong>！</p>
 </div>
 
 <div class="card" style="border-color:var(--accent)">
