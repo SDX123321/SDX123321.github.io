@@ -21,6 +21,7 @@
   --border: #2a2e42;
   --shadow: 0 2px 8px rgba(0,0,0,.25);
   --shadow-lg: 0 8px 24px rgba(0,0,0,.35);
+  --card-shadow: 0 2px 8px rgba(0,0,0,.25);
 
   /* — 强调色（蓝紫主调） — */
   --accent:  #6c8aff;
@@ -32,6 +33,7 @@
   --success: #34d399;
   --success-bg: rgba(52,211,153,.12);
   --warning: #fbbf24;
+  --warn: #fbbf24;
   --warning-bg: rgba(251,191,36,.12);
   --danger:  #f87171;
   --danger-bg: rgba(248,113,113,.12);
@@ -56,6 +58,7 @@
   --border: #d8dbe4;
   --shadow: 0 2px 8px rgba(0,0,0,.08);
   --shadow-lg: 0 8px 24px rgba(0,0,0,.12);
+  --card-shadow: 0 2px 8px rgba(0,0,0,.08);
 
   --accent:  #4f6ce8;
   --accent2: #7c3aed;
@@ -65,6 +68,7 @@
   --success: #059669;
   --success-bg: rgba(5,150,105,.08);
   --warning: #d97706;
+  --warn: #d97706;
   --warning-bg: rgba(217,119,6,.08);
   --danger:  #dc2626;
   --danger-bg: rgba(220,38,38,.08);
