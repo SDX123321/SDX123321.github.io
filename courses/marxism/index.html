@@ -19,7 +19,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MVBWBRG6"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-<div class="sg-overlay" id="subGuide">
+
+<!-- 首次访问更新提示 -->
+<div class="sg-overlay" id="updateGuide" style="display:none">
+  <div class="sg-box" style="max-width:480px">
+    <h3>&#128221; 内容更新</h3>
+    <p>基于<strong>课堂录音</strong>、<strong>上课记录</strong>和<strong>教材</strong>，全面更新了复习内容：</p>
+    <ul style="text-align:left;font-size:.88rem;line-height:2;margin:12px 0">
+      <li>新增 <strong>52 个知识点</strong>，覆盖全部 7 章 + 导论</li>
+      <li>每个知识点标注 <strong>可能题型</strong>（选择/简答/论述/辨析）</li>
+      <li>新增 <strong>闪卡模式</strong>，翻转卡片测试记忆</li>
+      <li>新增 <strong>20 道选择题</strong>自测练习</li>
+      <li>新增 <strong>复习统计面板</strong>，追踪掌握进度</li>
+      <li>高频考点 <strong>红色「重点」标签</strong>标注</li>
+    </ul>
+    <button onclick="document.getElementById('updateGuide').style.display='none';localStorage.setItem('marx_update_v2','1')">开始复习</button>
+  </div>
+</div>
+
+<!-- 新用户引导 -->
+<div class="sg-overlay" id="subGuide" style="display:none">
   <div class="sg-box">
     <h3>&#128075; 欢迎！</h3>
     <p>&#9789; 右上角切换<strong>深浅色模式</strong></p>
@@ -35,7 +54,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <h1>马克思主义基本原理</h1>
-      <p>期末复习互动指南</p>
+      <p>期末知识点 · 互动复习</p>
     </div>
     <a href="../../" style="display:flex;align-items:center;gap:8px;padding:10px 20px;color:var(--accent);font-size:13px;text-decoration:none;border-bottom:1px solid var(--bg3);">← 返回课程主页</a>
     <nav id="nav"></nav>
@@ -46,7 +65,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button class="menu-btn" id="menuBtn">☰</button>
       <div class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="搜索知识点...">
+        <input type="text" id="searchInput" placeholder="搜索知识点…">
       </div>
       <div class="topbar-actions">
         <button class="icon-btn" id="darkBtn" title="深色模式">🌙</button>
@@ -79,4 +98,3 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="../../theme.js"></script>
 </body>
 </html>
-
