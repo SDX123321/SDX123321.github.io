@@ -316,3 +316,8 @@ function closeGuide(){
 (function(){
   if(!localStorage.getItem('guide_done'))showGuide();
 })();
+
+// === Version selector modal ===
+function showVersionModal(){
+  document.getElementById('versionModal').style.display='flex';
+}
