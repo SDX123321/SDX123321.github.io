@@ -8,6 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>期末复习</title>
 <link rel="stylesheet" href="index.css">
+<script src="https://cdn.jsdelivr.net/npm/pptxjs@1.21.1/dist/pptxjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
 </head>
 <body>
@@ -57,7 +58,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <span id="totalStudyTime" style="font-size:1.1rem;color:var(--accent);font-weight:700;margin-left:8px;">--</span>
   </div>
 
-  <div class="main-grid">
   <div class="cards">
     <a class="card" href="courses/probability/">
       <div class="icon icon-blue">&#128202;</div>
@@ -125,7 +125,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div id="fileCount" style="font-size:.8rem;color:var(--text3);margin-bottom:10px;"></div>
     <div id="fileList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;max-height:480px;overflow-y:auto;padding-right:4px;"></div>
   </div>
-  </div>
 
   <!-- 全站搜索 -->
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
@@ -182,9 +181,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="cl-overlay" id="clOverlay">
   <div class="cl-box">
     <h3>&#128221; 更新日志</h3>
-    <div class="cl-item"><span class="cl-hash">d4a2ceb</span><span class="cl-msg">Revert homepage layout to 178e22f</span></div>
-    <div class="cl-item"><span class="cl-hash">ed88def</span><span class="cl-msg">Desktop: two-column layout for courses + downloads; mobile stays stacked</span></div>
-    <div class="cl-item"><span class="cl-hash">d9204b5</span><span class="cl-msg">Add PPTX/DOCX in-browser preview with PPTX.js + mammoth.js</span></div>
     <div class="cl-item"><span class="cl-hash">4aea641</span><span class="cl-msg">Add 35 courseware files + type filters (slides/homework/lab) + scroll list</span></div>
     <div class="cl-item"><span class="cl-hash">a3285dc</span><span class="cl-msg">Unified dark/light theme system for all 7 pages (theme.css + theme.js)</span></div>
     <div class="cl-item"><span class="cl-hash">4d73884</span><span class="cl-msg">去除下载计数、学科+类型组合筛选、新用户引导</span></div>
