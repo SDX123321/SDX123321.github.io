@@ -403,4 +403,3 @@ function showSearch(q){
 }
 
 init();
-</script>
