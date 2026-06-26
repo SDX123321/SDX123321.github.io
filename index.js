@@ -58,7 +58,10 @@ var FILES=[
     {s:"probability",sn:"概率论",c:"#2563eb",n:"第四章课后作业.pdf",p:"files/probability/第四章课后作业.pdf",sz:"0.1MB",t:"homework",tn:"作业"},
     {s:"os",sn:"操作系统",c:"#059669",n:"现代操作系统（慕课版）电子课本.pdf",p:"courses/os/现代操作系统（慕课版）电子课本.pdf",sz:"16MB",t:"textbook",tn:"电子课本"},
     {s:"dsp",sn:"数字信号",c:"#6c63ff",n:"数字信号处理 第3版 电子课本.pdf",p:"courses/dsp/数字信号处理 第3版 电子课本.pdf",sz:"56MB",t:"textbook",tn:"电子课本"},
-    {s:"marxism",sn:"马克思",c:"#e63946",n:"马克思主义基本原理(2023)电子课本.pdf",p:"courses/marxism/马克思主义基本原理(2023年版)电子课本.pdf",sz:"21MB",t:"textbook",tn:"电子课本"}
+    {s:"marxism",sn:"马克思",c:"#e63946",n:"马克思主义基本原理(2023)电子课本.pdf",p:"courses/marxism/马克思主义基本原理(2023年版)电子课本.pdf",sz:"21MB",t:"textbook",tn:"电子课本"},
+    {s:"marxism",sn:"马克思",c:"#e63946",n:"2025《毛概》期末复习提纲.pdf",p:"files/marxism/2025《毛概》期末复习提纲.pdf",sz:"0.2MB",t:"review",tn:"复习资料"},
+    {s:"signals",sn:"信号与系统",c:"#0891b2",n:"往年卷子.zip",p:"files/signals/往年卷子.zip",sz:"4.8MB",t:"exam",tn:"历年试卷"},
+    {s:"physics2",sn:"大学物理下",c:"#b45309",n:"真题等2个文件.zip",p:"files/physics2/真题等2个文件.zip",sz:"19.2MB",t:"exam",tn:"历年试卷"}
   ];
   function renderFiles(files){
     var c=document.getElementById('fileCount');
