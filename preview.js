@@ -36,43 +36,14 @@
     return path.split('.').pop().toLowerCase().split('?')[0];
   }
 
-  // === PPTX Preview ===
+  // === PPTX Preview (via Google Docs Viewer) ===
   function previewPPTX(path, title){
     showPreviewModal(title);
     var container = document.getElementById('previewContent');
-    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">正在加载 PPTX...</div>';
-
-    fetch(path)
-      .then(function(r){ return r.arrayBuffer(); })
-      .then(function(buffer){
-        // Use PPTX.js if available
-        if(typeof PPTXJS !== 'undefined'){
-          container.innerHTML = '';
-          PPTXJS.render(buffer, {
-            container: container,
-            slideWidth: 800,
-            slideHeight: 600
-          }).then(function(result){
-            // Style the rendered slides
-            var slides = container.querySelectorAll('.slide, [class*="slide"]');
-            slides.forEach(function(s){
-              s.style.margin = '16px auto';
-              s.style.boxShadow = '0 4px 16px rgba(0,0,0,.2)';
-              s.style.borderRadius = '8px';
-              s.style.maxWidth = '100%';
-            });
-          }).catch(function(err){
-            container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">PPTX 渲染失败: ' + err.message + '</div>';
-          });
-        } else {
-          // Fallback: show raw content info
-          container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">PPTX.js 未加载，无法预览。<br><br>'
-            + '<a href="' + path + '" download style="padding:8px 20px;background:var(--accent,#60a5fa);color:#fff;border-radius:8px;text-decoration:none;">下载文件</a></div>';
-        }
-      })
-      .catch(function(err){
-        container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">加载失败: ' + err.message + '</div>';
-      });
+    // Build absolute URL for Google Docs Viewer
+    var absUrl = window.location.origin + '/' + path;
+    var viewerUrl = 'https://docs.google.com/gview?url=' + encodeURIComponent(absUrl) + '&embedded=true';
+    container.innerHTML = '<iframe src="' + viewerUrl + '" style="width:100%;height:70vh;border:none;border-radius:8px;" frameborder="0"></iframe>';
   }
 
   // === DOCX Preview ===
@@ -101,11 +72,16 @@
               });
             })
             .catch(function(err){
-              container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">DOCX 渲染失败: ' + err.message + '</div>';
+              // Fallback to Google Docs Viewer
+              var absUrl = window.location.origin + '/' + path;
+              var viewerUrl = 'https://docs.google.com/gview?url=' + encodeURIComponent(absUrl) + '&embedded=true';
+              container.innerHTML = '<iframe src="' + viewerUrl + '" style="width:100%;height:70vh;border:none;border-radius:8px;" frameborder="0"></iframe>';
             });
         } else {
-          container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">mammoth.js 未加载，无法预览。<br><br>'
-            + '<a href="' + path + '" download style="padding:8px 20px;background:var(--accent,#60a5fa);color:#fff;border-radius:8px;text-decoration:none;">下载文件</a></div>';
+          // Fallback to Google Docs Viewer
+          var absUrl = window.location.origin + '/' + path;
+          var viewerUrl = 'https://docs.google.com/gview?url=' + encodeURIComponent(absUrl) + '&embedded=true';
+          container.innerHTML = '<iframe src="' + viewerUrl + '" style="width:100%;height:70vh;border:none;border-radius:8px;" frameborder="0"></iframe>';
         }
       })
       .catch(function(err){
