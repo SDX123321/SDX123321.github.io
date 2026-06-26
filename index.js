@@ -60,8 +60,16 @@ var FILES=[
     {s:"dsp",sn:"数字信号",c:"#6c63ff",n:"数字信号处理 第3版 电子课本.pdf",p:"courses/dsp/数字信号处理 第3版 电子课本.pdf",sz:"56MB",t:"textbook",tn:"电子课本"},
     {s:"marxism",sn:"马克思",c:"#e63946",n:"马克思主义基本原理(2023)电子课本.pdf",p:"courses/marxism/马克思主义基本原理(2023年版)电子课本.pdf",sz:"21MB",t:"textbook",tn:"电子课本"},
     {s:"marxism",sn:"马克思",c:"#e63946",n:"2025《毛概》期末复习提纲.pdf",p:"files/marxism/2025《毛概》期末复习提纲.pdf",sz:"0.2MB",t:"review",tn:"复习资料"},
-    {s:"signals",sn:"信号与系统",c:"#0891b2",n:"往年卷子.zip",p:"files/signals/往年卷子.zip",sz:"4.8MB",t:"exam",tn:"历年试卷"},
-    {s:"physics2",sn:"大学物理下",c:"#b45309",n:"真题等2个文件.zip",p:"files/physics2/真题等2个文件.zip",sz:"19.2MB",t:"exam",tn:"历年试卷"}
+    {s:"signals",sn:"信号与系统",c:"#0891b2",n:"2017信号与系统B期末试卷(A).pdf",p:"files/signals/2017信号与系统B期末试卷(A).pdf",sz:"0.9MB",t:"exam",tn:"历年试卷"},
+    {s:"signals",sn:"信号与系统",c:"#0891b2",n:"2018信号与系统B期末试卷(A).pdf",p:"files/signals/2018信号与系统B期末试卷(A).pdf",sz:"0.6MB",t:"exam",tn:"历年试卷"},
+    {s:"signals",sn:"信号与系统",c:"#0891b2",n:"信号与系统B2024-2025.pdf",p:"files/signals/信号与系统B2024-2025.pdf",sz:"2.7MB",t:"exam",tn:"历年试卷"},
+    {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理下2024-2025.pdf",p:"files/physics2/大学物理下2024-2025.pdf",sz:"2.2MB",t:"exam",tn:"历年试卷"},
+    {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理期末试卷A_2014-2015-1.pdf",p:"files/physics2/大学物理期末试卷A_2014-2015-1.pdf",sz:"1.0MB",t:"exam",tn:"历年试卷"},
+    {s:"physics2",sn:"大学物理下",c:"#b45309",n:"小卖部资料_2023-2024-1更新.pdf",p:"files/physics2/小卖部资料_2023-2024-1更新.pdf",sz:"10.5MB",t:"exam",tn:"历年试卷"},
+    {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷1.pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷1.pdf",sz:"0.2MB",t:"exam",tn:"历年试卷"},
+    {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷1(参考答案).pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷1(参考答案).pdf",sz:"2.6MB",t:"answer",tn:"参考答案"},
+    {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷2.pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷2.pdf",sz:"0.3MB",t:"exam",tn:"历年试卷"},
+    {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷2(参考答案).pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷2(参考答案).pdf",sz:"3.3MB",t:"answer",tn:"参考答案"}
   ];
   function renderFiles(files){
     var c=document.getElementById('fileCount');
