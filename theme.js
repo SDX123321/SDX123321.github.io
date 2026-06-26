@@ -32,8 +32,10 @@
     var btn = document.createElement('button');
     btn.className = 'theme-toggle';
     btn.setAttribute('title', '切换深浅色模式');
+    btn.setAttribute('aria-label', '切换深浅色模式');
+    btn.setAttribute('type', 'button');
     btn.addEventListener('click', toggleTheme);
-    document.body.appendChild(btn);
+    (document.body || document.documentElement).appendChild(btn);
     // Set initial icon
     btn.textContent = saved === 'light' ? '☀' : '☽';
   }
