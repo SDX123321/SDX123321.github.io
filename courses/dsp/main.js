@@ -1,3 +1,27 @@
+// Chapter word count & reading time
+(function addChapterMeta() {
+  const sections = document.querySelectorAll('.main h2[id]');
+  sections.forEach(h2 => {
+    // Collect all content until next h2
+    let textLen = 0;
+    let el = h2.nextElementSibling;
+    while (el && el.tagName !== 'H2') {
+      if (el.classList && el.classList.contains('section-divider')) break;
+      const txt = el.textContent || '';
+      textLen += txt.length;
+      el = el.nextElementSibling;
+    }
+    // Chinese reading speed: ~300 chars/min for technical content with formulas
+    const chars = textLen;
+    const readMin = Math.max(1, Math.round(chars / 300));
+    const meta = document.createElement('div');
+    meta.className = 'chapter-meta';
+    meta.style.cssText = 'display:flex;gap:12px;margin:4px 0 12px;font-size:12px;color:var(--text-dim);flex-wrap:wrap;';
+    meta.innerHTML = `<span>📝 约 ${chars.toLocaleString()} 字</span><span>⏱ 阅读约 ${readMin} 分钟</span>`;
+    h2.insertAdjacentElement('afterend', meta);
+  });
+})();
+
 // Toggle collapsible sections
 function toggleCollapse(el) {
   el.classList.toggle('open');
@@ -34,28 +58,72 @@ function checkQuiz(btn) {
 function navClick(el) {
   document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
   el.classList.add('active');
+  // Smooth scroll to target
+  const targetId = el.getAttribute('href');
+  if (targetId && targetId.startsWith('#')) {
+    const target = document.getElementById(targetId.slice(1));
+    if (target) {
+      const y = target.getBoundingClientRect().top + window.pageYOffset - 70;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }
   // Close mobile nav
   if (window.innerWidth <= 768) {
     document.querySelector('.nav').classList.remove('open');
   }
 }
 
-// Scroll progress
-window.addEventListener('scroll', () => {
-  const h = document.documentElement;
-  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
-  document.getElementById('progress').style.width = pct + '%';
+// Scroll progress + improved scroll spy
+(function() {
+  const navLinks = document.querySelectorAll('.nav a[href^="#"]');
+  const sectionIds = [];
+  navLinks.forEach(a => {
+    const id = a.getAttribute('href').slice(1);
+    if (id) sectionIds.push(id);
+  });
 
-  // Update active nav link
-  const sections = document.querySelectorAll('[id]');
-  let current = '';
-  sections.forEach(s => {
-    if (s.getBoundingClientRect().top <= 120) current = s.id;
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const h = document.documentElement;
+      const scrollTop = h.scrollTop || document.body.scrollTop;
+      const pct = (scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('progress').style.width = pct + '%';
+
+      // Scroll spy: find current section
+      const offset = 80; // fixed header offset
+      let currentId = sectionIds[0] || '';
+      for (let i = 0; i < sectionIds.length; i++) {
+        const el = document.getElementById(sectionIds[i]);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= offset + 10) {
+          currentId = sectionIds[i];
+        }
+      }
+      // If near bottom, highlight last section
+      if (scrollTop + h.clientHeight >= h.scrollHeight - 50) {
+        currentId = sectionIds[sectionIds.length - 1];
+      }
+
+      navLinks.forEach(a => {
+        const isActive = a.getAttribute('href') === '#' + currentId;
+        a.classList.toggle('active', isActive);
+        // Auto-scroll nav to keep active link visible
+        if (isActive) {
+          const nav = document.querySelector('.nav');
+          const linkTop = a.offsetTop - nav.offsetTop;
+          if (linkTop < nav.scrollTop || linkTop > nav.scrollTop + nav.clientHeight - 40) {
+            a.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          }
+        }
+      });
+      ticking = false;
+    });
   });
-  document.querySelectorAll('.nav a').forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
-  });
-});
+})();
 
 // Save quiz progress to localStorage
 function saveProgress() {
