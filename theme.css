@@ -1,80 +1,133 @@
 /* ========================================
-   统一主题变量 — 全站共享
-   用法：<link rel="stylesheet" href="path/to/theme.css">
-   默认深色，.light 类切换到浅色
+   Unified Theme System — Single source of truth
+   Loaded by ALL pages. Default: dark. .light → light.
+   Per-course accent: class on <html> → accent-algorithm, accent-dsp, etc.
    ======================================== */
 
 :root {
-  /* — 背景 — */
-  --bg:    #0c0e1a;
-  --bg2:   #151829;
-  --bg3:   #1e2235;
-  --card:  #191d30;
-  --card2: #22263a;
+  /* — Surfaces — */
+  --bg:       #0d1117;
+  --bg2:      #161b22;
+  --bg3:      #21262d;
+  --card:     #161b22;
+  --card2:    #1c2128;
 
-  /* — 文字 — */
-  --text:  #e8eaf0;
-  --text2: #9ba1b8;
-  --text3: #6b7194;
+  /* — Text — */
+  --text:     #e6edf3;
+  --text2:    #8b949e;
+  --text3:    #6e7681;
 
-  /* — 边框/阴影 — */
-  --border: #2a2e42;
-  --shadow: 0 2px 8px rgba(0,0,0,.25);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,.35);
-  --card-shadow: 0 2px 8px rgba(0,0,0,.25);
+  /* — Borders & Shadows — */
+  --border:   #30363d;
+  --shadow:       0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
+  --shadow-lg:    0 8px 24px rgba(0,0,0,.4);
+  --card-shadow:  0 2px 8px rgba(0,0,0,.3);
 
-  /* — 强调色（蓝紫主调） — */
-  --accent:  #6c8aff;
-  --accent2: #a78bfa;
-  --accent-bg: rgba(108,138,255,.1);
-  --accent-bg2: rgba(108,138,255,.18);
+  /* — Accent (blue default, overridden per course) — */
+  --accent:       #58a6ff;
+  --accent2:      #bc8cff;
+  --accent-bg:    rgba(88,166,255,.10);
+  --accent-bg2:   rgba(88,166,255,.16);
 
-  /* — 语义色 — */
-  --success: #34d399;
-  --success-bg: rgba(52,211,153,.12);
-  --warning: #fbbf24;
-  --warn: #fbbf24;
-  --warning-bg: rgba(251,191,36,.12);
-  --danger:  #f87171;
-  --danger-bg: rgba(248,113,113,.12);
+  /* — Semantic — */
+  --success:      #3fb950;
+  --success-bg:   rgba(63,185,80,.12);
+  --warning:      #d29922;
+  --warn:         #d29922;
+  --warning-bg:   rgba(210,153,34,.12);
+  --danger:       #f85149;
+  --danger-bg:    rgba(248,81,73,.12);
 
-  /* — 圆角/过渡 — */
-  --radius: 12px;
-  --transition: .25s ease;
+  /* — Layout / Motion — */
+  --radius:       10px;
+  --radius-lg:    14px;
+  --transition:   .22s ease;
 }
 
-/* ===== 浅色主题 ===== */
+/* ===== Light Theme ===== */
 .light {
-  --bg:    #f4f6fa;
-  --bg2:   #ffffff;
-  --bg3:   #e8ebf0;
-  --card:  #ffffff;
-  --card2: #f0f2f7;
+  --bg:       #f6f8fa;
+  --bg2:      #ffffff;
+  --bg3:      #eaeef2;
+  --card:     #ffffff;
+  --card2:    #f6f8fa;
 
-  --text:  #1a1d2e;
-  --text2: #5a6078;
-  --text3: #8a90a4;
+  --text:     #1f2328;
+  --text2:    #656d76;
+  --text3:    #8b949e;
 
-  --border: #d8dbe4;
-  --shadow: 0 2px 8px rgba(0,0,0,.08);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,.12);
-  --card-shadow: 0 2px 8px rgba(0,0,0,.08);
+  --border:   #d0d7de;
+  --shadow:       0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg:    0 8px 24px rgba(0,0,0,.10);
+  --card-shadow:  0 2px 8px rgba(0,0,0,.06);
 
-  --accent:  #4f6ce8;
-  --accent2: #7c3aed;
-  --accent-bg: rgba(79,108,232,.08);
-  --accent-bg2: rgba(79,108,232,.14);
+  --accent:       #0969da;
+  --accent2:      #8250df;
+  --accent-bg:    rgba(9,105,218,.07);
+  --accent-bg2:   rgba(9,105,218,.12);
 
-  --success: #059669;
-  --success-bg: rgba(5,150,105,.08);
-  --warning: #d97706;
-  --warn: #d97706;
-  --warning-bg: rgba(217,119,6,.08);
-  --danger:  #dc2626;
-  --danger-bg: rgba(220,38,38,.08);
+  --success:      #1a7f37;
+  --success-bg:   rgba(26,127,55,.08);
+  --warning:      #9a6700;
+  --warn:         #9a6700;
+  --warning-bg:   rgba(154,103,0,.08);
+  --danger:       #cf222e;
+  --danger-bg:    rgba(207,34,46,.08);
 }
 
-/* ===== 主题切换按钮 ===== */
+/* ===== Per-Course Accent Overrides ===== */
+/* Algorithm: indigo */
+.accent-algorithm { --accent: #818cf8; --accent2: #a5b4fc; --accent-bg: rgba(129,140,248,.10); --accent-bg2: rgba(129,140,248,.16); }
+.light.accent-algorithm { --accent: #4f46e5; --accent2: #6366f1; --accent-bg: rgba(79,70,229,.07); --accent-bg2: rgba(79,70,229,.12); }
+
+/* DSP: cyan */
+.accent-dsp { --accent: #00d2ff; --accent2: #6c63ff; --accent-bg: rgba(0,210,255,.10); --accent-bg2: rgba(0,210,255,.16); }
+.light.accent-dsp { --accent: #0284c7; --accent2: #4f46e5; --accent-bg: rgba(2,132,199,.07); --accent-bg2: rgba(2,132,199,.12); }
+
+/* Marxism: red */
+.accent-marxism { --accent: #f87171; --accent2: #fb923c; --accent-bg: rgba(248,113,113,.10); --accent-bg2: rgba(248,113,113,.16); }
+.light.accent-marxism { --accent: #dc2626; --accent2: #ea580c; --accent-bg: rgba(220,38,38,.07); --accent-bg2: rgba(220,38,38,.12); }
+
+/* OS: purple */
+.accent-os { --accent: #a78bfa; --accent2: #c084fc; --accent-bg: rgba(167,139,250,.10); --accent-bg2: rgba(167,139,250,.16); }
+.light.accent-os { --accent: #7c3aed; --accent2: #8b5cf6; --accent-bg: rgba(124,58,237,.07); --accent-bg2: rgba(124,58,237,.12); }
+
+/* Calculus: orange */
+.accent-calculus { --accent: #fb923c; --accent2: #f97316; --accent-bg: rgba(251,146,60,.10); --accent-bg2: rgba(251,146,60,.16); }
+.light.accent-calculus { --accent: #ea580c; --accent2: #c2410c; --accent-bg: rgba(234,88,12,.07); --accent-bg2: rgba(234,88,12,.12); }
+
+/* Probability: blue */
+.accent-probability { --accent: #60a5fa; --accent2: #818cf8; --accent-bg: rgba(96,165,250,.10); --accent-bg2: rgba(96,165,250,.16); }
+.light.accent-probability { --accent: #2563eb; --accent2: #4f46e5; --accent-bg: rgba(37,99,235,.07); --accent-bg2: rgba(37,99,235,.12); }
+
+
+/* ========================================
+   Shared Component Styles
+   ======================================== */
+
+/* Body */
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background var(--transition), color var(--transition);
+}
+
+/* Tables */
+table { border-color: var(--border); }
+th { background: var(--accent-bg2); color: var(--accent); font-weight: 600; }
+td { border-color: var(--border); }
+tr:nth-child(even) { background: var(--accent-bg); }
+
+/* Code */
+pre, code { background: var(--bg3); color: var(--text); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--text3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text2); }
+
+/* Theme Toggle Button */
 .theme-toggle {
   position: fixed; top: 14px; right: 14px; z-index: 9999;
   width: 40px; height: 40px; border-radius: 50%;
@@ -82,26 +135,15 @@
   color: var(--text); font-size: 1.15rem; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   box-shadow: var(--shadow);
-  transition: transform .2s, border-color .2s;
+  transition: transform .2s, border-color .2s, background var(--transition);
 }
 .theme-toggle:hover { transform: scale(1.1); border-color: var(--accent); }
 
-/* ===== 基础排版 ===== */
-body {
-  background: var(--bg);
-  color: var(--text);
-  transition: background var(--transition), color var(--transition);
-}
+/* Selection */
+::selection { background: var(--accent-bg2); color: var(--text); }
 
-/* 表格主题适配 */
-table { border-color: var(--border); }
-th { background: var(--accent); color: #fff; }
-td { border-color: var(--border); }
+/* Links */
+a { color: var(--accent); transition: color var(--transition); }
 
-/* 代码块 */
-pre, code { background: var(--bg3); color: var(--text); }
-
-/* 滚动条 */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--text3); border-radius: 3px; }
+/* Focus ring */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }

@@ -1,16 +1,10 @@
+/* Variables from theme.css — local aliases */
 :root {
-  --primary: #2563eb;
-  --primary-light: #dbeafe;
-  --primary-dark: #1e40af;
-  --accent: #f59e0b;
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --text: #1e293b;
-  --text-light: #64748b;
-  --border: #e2e8f0;
-  --success: #10b981;
-  --danger: #ef4444;
-  --purple: #8b5cf6;
+  --primary: var(--accent);
+  --primary-light: var(--accent-bg);
+  --primary-dark: var(--accent2);
+  --text-light: var(--text2);
+  --purple: var(--accent2);
   --sidebar-w: 260px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -253,26 +247,40 @@ body {
 .cb-item input[type="checkbox"] { margin-top: 5px; accent-color: var(--primary); }
 .cb-item label { cursor: pointer; }
 .light {} /* no-op, page is light by default */
-.dark { --primary: #60a5fa; --primary-light: #93c5fd; --primary-dark: #93c5fd; --bg: #0f172a; --card: #1e293b; --text: #e2e8f0; --text-light: #94a3b8; --border: #334155; --accent: #fbbf24; }
-.dark .sidebar { background: linear-gradient(180deg, #0f172a 0%, #020617 100%); }
-.dark .section { background: var(--card); border-color: var(--border); }
-.dark .section-header:hover { background: #1e293b; }
-.dark .kb { background: #1e293b; }
-.dark .kb .formula { background: #0f172a; border-color: var(--border); }
-.dark .kb .example { background: rgba(16,185,129,0.1); border-color: #065f46; }
-.dark .kb .note { background: rgba(245,158,11,0.15); color: #fbbf24; }
-.dark .kb tr:nth-child(even) { background: rgba(255,255,255,0.03); }
-.dark .kb th { background: #1e40af; }
-.dark .ref-card { background: #1e293b; border-color: var(--border); }
-.dark .section-header { background: var(--card); border-color: var(--border); }
-.dark .part-title { background: linear-gradient(135deg, #1e40af, #581c87); }
-.dark .exam-info { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.25); }
-.dark .back-top { background: var(--primary); }
-.dark .footer { border-top-color: var(--border); color: var(--text-light); }
-.dark .star-box { background: #1e293b; border-color: var(--border); }
-.dark .cl-box { background: #1e293b; border-color: var(--border); }
-.dark .splash-box { background: #1e293b; border-color: var(--border); }
-.dark ::selection { background: var(--primary); color: #fff; }
+/* Dark is default via theme.css — convert .dark overrides to use theme variables */
+.sidebar { background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%); }
+.section { background: var(--card); border-color: var(--border); }
+.section-header:hover { background: var(--bg3); }
+.kb { background: var(--bg2); }
+.kb .formula { background: var(--bg); border-color: var(--border); }
+.kb .example { background: var(--success-bg); border-color: rgba(63,185,80,.3); }
+.kb .note { background: var(--warning-bg); color: var(--warning); }
+.kb tr:nth-child(even) { background: var(--accent-bg); }
+.kb th { background: var(--accent); }
+.ref-card { background: var(--bg2); border-color: var(--border); }
+.section-header { background: var(--card); border-color: var(--border); }
+.part-title { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.exam-info { background: var(--warning-bg); border-color: rgba(210,153,34,.25); }
+.back-top { background: var(--accent); }
+.footer { border-top-color: var(--border); color: var(--text2); }
+.star-box { background: var(--bg2); border-color: var(--border); }
+.cl-box { background: var(--bg2); border-color: var(--border); }
+.splash-box { background: var(--bg2); border-color: var(--border); }
+::selection { background: var(--accent); color: #fff; }
+
+/* Light mode overrides */
+.light .sidebar { background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); }
+.light .section-header:hover { background: var(--bg3); }
+.light .kb { background: var(--card); }
+.light .kb .formula { background: var(--bg3); border-color: var(--border); }
+.light .kb .example { background: var(--success-bg); border-color: rgba(26,127,55,.2); }
+.light .kb .note { background: var(--warning-bg); color: var(--warning); }
+.light .kb tr:nth-child(even) { background: var(--accent-bg); }
+.light .kb th { background: var(--accent); }
+.light .ref-card { background: var(--card); border-color: var(--border); }
+.light .section-header { background: var(--card); border-color: var(--border); }
+.light .part-title { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.light .exam-info { background: var(--warning-bg); border-color: rgba(154,103,0,.25); }
 .mobile-menu-btn {
   display: none; position: fixed; top: 10px; left: 10px; z-index: 200;
   width: 38px; height: 38px; border-radius: 8px; border: none;
