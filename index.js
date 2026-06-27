@@ -59,7 +59,7 @@ var FILES=[
     {s:"os",sn:"操作系统",c:"#059669",n:"现代操作系统（慕课版）电子课本.pdf",p:"courses/os/现代操作系统（慕课版）电子课本.pdf",sz:"16MB",t:"textbook",tn:"电子课本"},
     {s:"dsp",sn:"数字信号",c:"#6c63ff",n:"数字信号处理 第3版 电子课本.pdf",p:"courses/dsp/数字信号处理 第3版 电子课本.pdf",sz:"56MB",t:"textbook",tn:"电子课本"},
     {s:"marxism",sn:"马克思",c:"#e63946",n:"马克思主义基本原理(2023)电子课本.pdf",p:"courses/marxism/马克思主义基本原理(2023年版)电子课本.pdf",sz:"21MB",t:"textbook",tn:"电子课本"},
-    {s:"marxism",sn:"马克思",c:"#e63946",n:"2025《毛概》期末复习提纲.pdf",p:"files/marxism/2025《毛概》期末复习提纲.pdf",sz:"0.2MB",t:"review",tn:"复习资料"},
+    {s:"maogai",sn:"毛概",c:"#dc2626",n:"2025《毛概》期末复习提纲.pdf",p:"files/maogai/2025《毛概》期末复习提纲.pdf",sz:"0.2MB",t:"review",tn:"复习资料"},
     {s:"signals",sn:"信号与系统",c:"#0891b2",n:"2017信号与系统B期末试卷(A).pdf",p:"files/signals/2017信号与系统B期末试卷(A).pdf",sz:"0.9MB",t:"exam",tn:"历年试卷"},
     {s:"signals",sn:"信号与系统",c:"#0891b2",n:"2018信号与系统B期末试卷(A).pdf",p:"files/signals/2018信号与系统B期末试卷(A).pdf",sz:"0.6MB",t:"exam",tn:"历年试卷"},
     {s:"signals",sn:"信号与系统",c:"#0891b2",n:"信号与系统B2024-2025.pdf",p:"files/signals/信号与系统B2024-2025.pdf",sz:"2.7MB",t:"exam",tn:"历年试卷"},
