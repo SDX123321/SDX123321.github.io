@@ -12,6 +12,8 @@
   --danger: #ef4444;
   --purple: #8b5cf6;
   --sidebar-w: 260px;
+  --formula-bg: #0f172a;
+  --green: #10b981;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior: smooth; font-size: 15px; }
@@ -20,6 +22,7 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.7;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 /* Sidebar */
 .sidebar {
@@ -269,7 +272,7 @@ body {
 .quiz-correct { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
 .quiz-wrong { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
 
-.light { --primary: #2563eb; --primary-light: #dbeafe; --primary-dark: #1e40af; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --text-light: #64748b; --border: #e2e8f0; --accent: #f59e0b; }
+.light { --primary: #2563eb; --primary-light: #dbeafe; --primary-dark: #1e40af; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --text-light: #64748b; --border: #e2e8f0; --accent: #f59e0b; --success: #059669; --danger: #dc2626; --purple: #7c3aed; --formula-bg: #f8fafc; --green: #059669; }
 .light .sidebar { background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); }
 .light .section-header:hover { background: #f1f5f9; }
 .light .kb { background: #f8fafc; }
