@@ -138,6 +138,27 @@ tr:hover td { background:#f8fafc; }
 .two-col .col-code { background:var(--bg-code); border-radius:10px; padding:16px 18px; overflow-x:auto; }
 .two-col .col-code pre { margin:0; font-size:13px; line-height:1.6; color:#e2e8f0; white-space:pre; font-family:'Fira Code','Consolas',monospace; }
 .two-col .col-code .kw{color:#c792ea} .two-col .col-code .fn{color:#82aaff} .two-col .col-code .cm{color:#546e7a} .two-col .col-code .str{color:#c3e88d} .two-col .col-code .num{color:#f78c6c}
+/* Complexity badges */
+.complexity { display:inline-flex; flex-wrap:wrap; gap:6px; margin:8px 0; font-size:13px; line-height:1.6; }
+.complexity .cx-time, .complexity .cx-space { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:6px; font-weight:500; font-family:'JetBrains Mono','Fira Code',Consolas,monospace; }
+.complexity .cx-time { background:#dbeafe; color:#1e40af; border:1px solid #93c5fd; }
+.complexity .cx-space { background:#dcfce7; color:#166534; border:1px solid #86efac; }
+.complexity .cx-label { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif; font-weight:600; margin-right:2px; }
+.dark .complexity .cx-time { background:#1e3a5f; color:#93c5fd; border-color:#3b82f6; }
+.dark .complexity .cx-space { background:#14532d; color:#86efac; border-color:#22c55e; }
+.light .complexity .cx-time { background:#dbeafe; color:#1e40af; border-color:#93c5fd; }
+.light .complexity .cx-space { background:#dcfce7; color:#166534; border-color:#86efac; }
+
+.algo-diagram {
+  display: block;
+  margin: 16px auto;
+  max-width: 100%;
+  height: auto;
+  background: var(--formula-bg, #f1f5f9);
+  border-radius: 8px;
+  padding: 12px;
+}
+
 .supplement-section { background:var(--bg-card); border:2px solid var(--primary); border-radius:14px; padding:28px 32px; margin:24px 0; }
 .supplement-section h2 { color:var(--primary); margin:0 0 8px; font-size:1.3em; border:none; padding:0; }
 .supplement-section > p { color:var(--text-secondary); margin-bottom:20px; font-size:14px; }

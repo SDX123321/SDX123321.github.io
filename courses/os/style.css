@@ -119,6 +119,12 @@ tr:hover{background:rgba(108,92,231,.1)}
 .badge-important{background:rgba(255,107,107,.15);color:var(--red)}
 .badge-info{background:rgba(116,185,255,.15);color:var(--blue)}
 
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:20px 0}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
+.stat-num{font-size:32px;font-weight:800;color:var(--accent)}
+.stat-label{font-size:13px;color:var(--text2);margin-top:4px}
+
 ul,ol{padding-left:24px;margin:8px 0}
 li{margin:4px 0}
 code{background:var(--card2);padding:2px 6px;border-radius:4px;font-size:.9em;color:var(--orange)}

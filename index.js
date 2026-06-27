@@ -69,7 +69,10 @@ var FILES=[
     {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷1.pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷1.pdf",sz:"0.2MB",t:"exam",tn:"历年试卷"},
     {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷1(参考答案).pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷1(参考答案).pdf",sz:"2.6MB",t:"answer",tn:"参考答案"},
     {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷2.pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷2.pdf",sz:"0.3MB",t:"exam",tn:"历年试卷"},
-    {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷2(参考答案).pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷2(参考答案).pdf",sz:"3.3MB",t:"answer",tn:"参考答案"}
+    {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷2(参考答案).pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷2(参考答案).pdf",sz:"3.3MB",t:"answer",tn:"参考答案"},
+    {s:"culture",sn:"文化概论",c:"#d97706",n:"文化概论.zip",p:"files/culture/文化概论.zip",sz:"3.1MB",t:"review",tn:"复习资料"},
+    {s:"history",sn:"近代史",c:"#059669",n:"近代史纲要.pdf",p:"files/history/近代史纲要.pdf",sz:"21.9MB",t:"textbook",tn:"电子课本"},
+    {s:"history",sn:"近代史",c:"#059669",n:"期末复习资料.zip",p:"files/history/期末复习资料.zip",sz:"55.6MB",t:"review",tn:"复习资料"}
   ];
   function renderFiles(files){
     var c=document.getElementById('fileCount');

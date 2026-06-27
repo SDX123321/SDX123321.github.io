@@ -84,3 +84,8 @@ ul,ol{padding-left:22px;margin:6px 0}li{margin:3px 0}
 .sg-box h3{font-size:1.1rem;margin-bottom:8px;color:var(--text,#e2e8f0)}
 .sg-box p{font-size:.85rem;color:var(--text2,#94a3b8);margin-bottom:6px;line-height:1.7}
 .sg-box button{margin-top:16px;padding:8px 24px;border-radius:8px;border:none;background:var(--accent,#60a5fa);color:#fff;font-size:.88rem;font-weight:600;cursor:pointer}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:20px 0}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
+.stat-num{font-size:32px;font-weight:800;color:var(--accent)}
+.stat-label{font-size:13px;color:var(--text-dim);margin-top:4px}
