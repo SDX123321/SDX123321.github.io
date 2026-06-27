@@ -70,9 +70,24 @@ var FILES=[
     {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷1(参考答案).pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷1(参考答案).pdf",sz:"2.6MB",t:"answer",tn:"参考答案"},
     {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷2.pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷2.pdf",sz:"0.3MB",t:"exam",tn:"历年试卷"},
     {s:"physics2",sn:"大学物理下",c:"#b45309",n:"大学物理(下)期末考试模拟试卷2(参考答案).pdf",p:"files/physics2/大学物理(下)期末考试模拟试卷2(参考答案).pdf",sz:"3.3MB",t:"answer",tn:"参考答案"},
-    {s:"culture",sn:"文化概论",c:"#d97706",n:"文化概论.zip",p:"files/culture/文化概论.zip",sz:"3.1MB",t:"review",tn:"复习资料"},
+    {s:"culture",sn:"文化概论",c:"#d97706",n:"2023-2024文概复习大纲2.pdf",p:"files/culture/文化概论/2023-2024文概复习大纲2.pdf",sz:"0.4MB",t:"review",tn:"复习资料"},
+    {s:"culture",sn:"文化概论",c:"#d97706",n:"2023~2024中国文化概论期末卷答案.pdf",p:"files/culture/文化概论/2023~2024中国文化概论期末卷答案.pdf",sz:"0.4MB",t:"answer",tn:"参考答案"},
+    {s:"culture",sn:"文化概论",c:"#d97706",n:"20~21中国文化概论期末复习.pdf",p:"files/culture/文化概论/20~21中国文化概论期末复习.pdf",sz:"0.7MB",t:"exam",tn:"历年试卷"},
+    {s:"culture",sn:"文化概论",c:"#d97706",n:"23-24文概复习纲要1.pdf",p:"files/culture/文化概论/23-24文概复习纲要1.pdf",sz:"0.8MB",t:"review",tn:"复习资料"},
+    {s:"culture",sn:"文化概论",c:"#d97706",n:"中国文化概论.pdf",p:"files/culture/文化概论/中国文化概论.pdf",sz:"0.4MB",t:"review",tn:"复习资料"},
+    {s:"culture",sn:"文化概论",c:"#d97706",n:"文化概论复习大纲整合版.docx",p:"files/culture/文化概论/文化概论复习大纲整合版.docx",sz:"0.0MB",t:"review",tn:"复习资料"},
+    {s:"culture",sn:"文化概论",c:"#d97706",n:"文化概论复习大纲整合版.pdf",p:"files/culture/文化概论/文化概论复习大纲整合版.pdf",sz:"0.5MB",t:"review",tn:"复习资料"},
     {s:"history",sn:"近代史",c:"#059669",n:"近代史纲要.pdf",p:"files/history/近代史纲要.pdf",sz:"21.9MB",t:"textbook",tn:"电子课本"},
-    {s:"history",sn:"近代史",c:"#059669",n:"期末复习资料.zip",p:"files/history/期末复习资料.zip",sz:"55.6MB",t:"review",tn:"复习资料"}
+    {s:"history",sn:"近代史",c:"#059669",n:"上课总结的知识点.docx",p:"files/history/期末复习资料/上课总结的知识点.docx",sz:"0.0MB",t:"review",tn:"复习资料"},
+    {s:"history",sn:"近代史",c:"#059669",n:"中国近代史纲要选择题重点(1).docx",p:"files/history/期末复习资料/中国近代史纲要选择题重点(1).docx",sz:"0.0MB",t:"review",tn:"复习资料"},
+    {s:"history",sn:"近代史",c:"#059669",n:"中国近代史纲要重点(1).docx",p:"files/history/期末复习资料/中国近代史纲要重点(1).docx",sz:"0.0MB",t:"review",tn:"复习资料"},
+    {s:"history",sn:"近代史",c:"#059669",n:"南邮近代史纲要题库（完整标明）(1).pdf",p:"files/history/期末复习资料/南邮近代史纲要题库（完整标明）(1).pdf",sz:"42.4MB",t:"exam",tn:"历年试卷"},
+    {s:"history",sn:"近代史",c:"#059669",n:"近代史主观题答案最终修正1(1).pdf",p:"files/history/期末复习资料/近代史主观题答案最终修正1(1).pdf",sz:"0.2MB",t:"answer",tn:"参考答案"},
+    {s:"history",sn:"近代史",c:"#059669",n:"近代史复习笔记(1).pdf",p:"files/history/期末复习资料/近代史复习笔记(1).pdf",sz:"0.5MB",t:"review",tn:"复习资料"},
+    {s:"history",sn:"近代史",c:"#059669",n:"近代史往年期末考试题 (1)(1).pdf",p:"files/history/期末复习资料/近代史往年期末考试题 (1)(1).pdf",sz:"13.1MB",t:"exam",tn:"历年试卷"},
+    {s:"history",sn:"近代史",c:"#059669",n:"近代史期末重点(1).docx",p:"files/history/期末复习资料/近代史期末重点(1).docx",sz:"0.0MB",t:"review",tn:"复习资料"},
+    {s:"history",sn:"近代史",c:"#059669",n:"近代史期末题库(1).doc",p:"files/history/期末复习资料/近代史期末题库(1).doc",sz:"0.1MB",t:"exam",tn:"历年试卷"},
+    {s:"history",sn:"近代史",c:"#059669",n:"题型.docx",p:"files/history/期末复习资料/题型.docx",sz:"0.0MB",t:"review",tn:"复习资料"}
   ];
   function renderFiles(files){
     var c=document.getElementById('fileCount');
