@@ -1,0 +1,1106 @@
+<h1 id="ch1">操作系统期末复习</h1>
+<p class="subtitle">基于《现代操作系统（慕课版）》教材，标注 <span class="badge badge-important">重点</span> 的章节需重点掌握计算题</p>
+
+<div class="stats">
+  <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">章节</div></div>
+  <div class="stat-card"><div class="stat-num">8+</div><div class="stat-label">核心公式</div></div>
+  <div class="stat-card"><div class="stat-num">13+</div><div class="stat-label">典型例题</div></div>
+  <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">互动模拟器</div></div>
+</div>
+
+<h2><span class="icon">📋</span> 第一章 概述</h2>
+
+<div class="grid-2">
+<div class="card">
+<div class="card-title">四个设计目标</div>
+<ul>
+<li><strong>方便性</strong> — 方便用户使用计算机</li>
+<li><strong>有效性</strong> — 提高系统资源利用率</li>
+<li><strong>可扩充性</strong> — 适应硬件和网络发展</li>
+<li><strong>开放性</strong> — 遵循标准，兼容互联</li>
+</ul>
+</div>
+<div class="card">
+<div class="card-title">四个基本特征</div>
+<ul>
+<li><strong>并发性</strong> — 多程序交替执行</li>
+<li><strong>共享性</strong> — 资源被多进程共用</li>
+<li><strong>虚拟性</strong> — 一个物理→多个逻辑</li>
+<li><strong>不确定性</strong> — 程序执行结果不可再现</li>
+</ul>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">四种操作系统结构</div>
+<table>
+<tr><th>结构</th><th>特点</th><th>优缺点</th></tr>
+<tr><td>整体式</td><td>模块组合</td><td>效率高，但模块间耦合度大</td></tr>
+<tr><td>层次式</td><td>分层调用</td><td>结构清晰，层间接口严格</td></tr>
+<tr><td>C/S（客户-服务器）</td><td>请求-响应</td><td>灵活分布式，但通信开销大</td></tr>
+<tr><td>微内核</td><td>最小内核+用户态服务</td><td>安全可靠，可扩展性强</td></tr>
+</table>
+</div>
+
+<div class="key-point">
+<div class="card-title">微内核的四大优势</div>
+<ol>
+<li>代码量少，内核更简洁</li>
+<li>充分模块化，更换模块不影响其他模块</li>
+<li>未使用的模块不必运行，大幅减少内存需求</li>
+<li>增强可移植性，修改代码量非常少</li>
+</ol>
+<div class="highlight" style="margin-top:12px">
+<strong>实例：</strong>华为鸿蒙 OS 采用的就是微内核结构，体现了高度模块化和可扩展性的优势。
+</div>
+</div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>微内核 & SPOOLing 练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1（简答）</h4>
+<p>简述微内核结构的四个优势。</p>
+<div class="highlight">
+<strong>答：</strong><br>
+① 代码量少，内核更简洁<br>
+② 充分模块化，更换模块不影响其他模块<br>
+③ 未使用的模块不运行，减少内存需求<br>
+④ 增强可移植性，移植时只需修改微内核部分
+</div>
+<h4>题目2（简答）</h4>
+<p>SPOOLing 技术的核心作用是什么？以打印机为例说明。</p>
+<div class="highlight">
+<strong>答：</strong>SPOOLing（假脱机）利用磁盘作为缓冲，将<strong>独占设备</strong>改造为<strong>共享设备</strong>。<br>
+打印机例子：多个进程"同时"提交打印请求 → 数据先存入输出井 → SPOOLing 输出进程依次送往打印机。对用户而言，打印机好像可以共享。
+</div>
+</div></div>
+
+
+<h2 id="ch2"><span class="icon">⚙️</span> 第二章 处理器管理</h2>
+
+<h3 id="ch2-proc">2.1 进程</h3>
+
+<div class="card">
+<div class="card-title">进程定义</div>
+<p>进程是具有独立功能的程序关于某个数据集合上的一次运行活动，是系统进行<strong>资源分配、调度和保护</strong>的独立单位。</p>
+</div>
+
+<div class="card">
+<div class="card-title">进程三态模型</div>
+<div class="state-diagram">
+<div>
+<div class="state-node state-ready" id="s-ready">就绪态</div>
+<div class="state-label">等待CPU</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;align-items:center;gap:4px">
+<span class="state-arrow">→</span>
+<span style="font-size:.8em;color:var(--green)">① 调度程序选中</span>
+<span class="state-arrow">→</span>
+</div>
+<div style="display:flex;align-items:center;gap:4px">
+<span class="state-arrow">←</span>
+<span style="font-size:.8em;color:var(--orange)">② 时间片用完 / 被抢占</span>
+<span class="state-arrow">←</span>
+</div>
+</div>
+<div>
+<div class="state-node state-running" id="s-running">运行态</div>
+<div class="state-label">占用CPU</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;align-items:center;gap:4px">
+<span class="state-arrow">↓</span>
+<span style="font-size:.8em;color:var(--red)">③ 申请资源未到 / I/O</span>
+<span class="state-arrow">↓</span>
+</div>
+<div style="display:flex;align-items:center;gap:4px">
+<span class="state-arrow">↑</span>
+<span style="font-size:.8em;color:var(--blue)">④ 资源到达 / 事件发生</span>
+<span class="state-arrow">↑</span>
+</div>
+</div>
+<div>
+<div class="state-node state-waiting" id="s-waiting">等待态</div>
+<div class="state-label">等待资源/事件</div>
+</div>
+</div>
+
+<div class="warning">
+<strong>不能实现的转换（老师重点强调）：</strong><br>
+① <strong>等待态 → 运行态</strong>（不可能）：等待事件发生后只能进入就绪队列排队，不能直接抢占 CPU。<br>
+② <strong>就绪态 → 等待态</strong>（不可能）：就绪状态尚未拿到 CPU，不会发生需要等待的事件。<br><br>
+<strong>七状态模型：</strong>引入"挂起"状态，当内存不够时将进程换出到外存，用于<strong>平衡系统负载</strong>，对应<strong>中级调度</strong>。加上挂起后共有 7 种状态。
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">Linux 进程创建原语 fork()</div>
+<ul>
+<li>返回 <code>-1</code>：创建失败</li>
+<li>返回 <code>0</code>：子进程中（父进程PID）</li>
+<li>返回 <code>子进程PID</code>：父进程中</li>
+</ul>
+</div>
+
+<h3 id="ch2-sched">2.2 处理器调度 <span class="badge badge-important">重点</span></h3>
+
+<div class="card">
+<div class="card-title">三级调度体系</div>
+<table>
+<tr><th>调度级别</th><th>别名</th><th>功能</th><th>频率</th></tr>
+<tr><td>高级调度</td><td>作业调度 / 长程调度</td><td>从外存选择作业进入内存</td><td>最低</td></tr>
+<tr><td>中级调度</td><td>平衡负载 / 中程调度</td><td>内存↔外存交换</td><td>中等</td></tr>
+<tr><td>低级调度</td><td>进程调度 / 短程调度</td><td>从就绪队列选进程到CPU</td><td>最高</td></tr>
+</table>
+</div>
+
+<div class="card">
+<div class="card-title">周转时间与带权周转时间</div>
+<div class="formula">周转时间 T<sub>i</sub> = 完成时间 E<sub>i</sub> − 到达时间 S<sub>i</sub></div>
+<div class="formula">平均周转时间 T = (1/n) × Σ T<sub>i</sub></div>
+<div class="formula">带权周转时间 W<sub>i</sub> = T<sub>i</sub> / r<sub>i</sub>（r<sub>i</sub> 为实际运行时间）</div>
+<div class="formula">平均带权周转时间 W = (1/n) × Σ W<sub>i</sub></div>
+</div>
+
+
+<div class="interactive-section">
+<div class="card-title">调度算法互动计算器 <span class="badge badge-important">重点</span></div>
+<p style="color:var(--text2);font-size:.9em;margin-bottom:12px">输入任务信息，自动计算 FCFS、SJF、HRRN 三种算法的调度结果</p>
+
+<div id="schedInput">
+<table id="schedTable">
+<tr><th>任务名</th><th>到达时间</th><th>运行时间</th><th>操作</th></tr>
+<tr><td><input value="JOB1" size="6"></td><td><input type="number" value="0" min="0" size="4"></td><td><input type="number" value="120" min="1" size="4"></td><td><button class="btn-secondary btn" onclick="this.closest('tr').remove()">删</button></td></tr>
+<tr><td><input value="JOB2" size="6"></td><td><input type="number" value="50" min="0" size="4"></td><td><input type="number" value="50" min="1" size="4"></td><td><button class="btn-secondary btn" onclick="this.closest('tr').remove()">删</button></td></tr>
+<tr><td><input value="JOB3" size="6"></td><td><input type="number" value="60" min="0" size="4"></td><td><input type="number" value="10" min="1" size="4"></td><td><button class="btn-secondary btn" onclick="this.closest('tr').remove()">删</button></td></tr>
+<tr><td><input value="JOB4" size="6"></td><td><input type="number" value="110" min="0" size="4"></td><td><input type="number" value="20" min="1" size="4"></td><td><button class="btn-secondary btn" onclick="this.closest('tr').remove()">删</button></td></tr>
+</table>
+<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn" onclick="addSchedRow()">+ 添加任务</button>
+<button class="btn" onclick="loadSchedExample()">载入教材例题</button>
+<button class="btn" onclick="calcScheduling()">计算调度结果</button>
+</div>
+</div>
+
+<div id="schedResult" class="visual-result"></div>
+</div>
+
+<div class="card">
+<div class="card-title">教材例题详解：单道环境调度</div>
+<p>4个任务：JOB1(8:00, 120min)、JOB2(8:50, 50min)、JOB3(9:00, 10min)、JOB4(9:50, 20min)</p>
+
+<h4>FCFS 先来先服务</h4>
+<p>执行顺序：JOB1→JOB2→JOB3→JOB4，平均周转时间 <strong>112.5min</strong>，平均带权周转时间 <strong>4.975</strong></p>
+
+<h4>SJF 最短作业优先</h4>
+<p>JOB1完成后，从已到达的JOB2/JOB3/JOB4中选最短的。执行顺序：JOB1→JOB3→JOB4→JOB2，平均周转时间 <strong>95min</strong>，平均带权周转时间 <strong>3.25</strong></p>
+
+<h4>HRRN 最高响应比优先</h4>
+<p>响应比 H = 1 + 等待时间/运行时间。10:00时计算响应比：JOB2=2.4, JOB3=7, JOB4=1.5 → 选JOB3; 10:10再算：JOB2=2.6, JOB4=2 → 选JOB2</p>
+<p>平均周转时间 <strong>97.5min</strong>，平均带权周转时间 <strong>3.525</strong></p>
+
+<div class="key-point">
+<strong>结论：</strong>FCFS性能最差，SJF性能最优（平均周转时间最短），HRRN介于两者之间但兼顾公平性。
+</div>
+
+<div class="warning" style="margin-top:16px">
+<strong>计算题易错点（老师重点提醒）：</strong><br>
+计算平均周转时间和带权周转时间时，<strong>一定要看清题目条件</strong>：是"随到随调度"还是"等所有作业全部到达后再开始调度"。两种方式结果完全不同！（参见课本75页课后题的陷阱）
+</div>
+</div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>调度算法练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1</h4>
+<p>4个作业：A(到达0, 运行3)、B(到达1, 运行6)、C(到达3, 运行2)、D(到达5, 运行4)。分别用 FCFS 和 SJF 求平均周转时间。</p>
+<div class="highlight">
+<strong>FCFS：</strong>顺序 A→B→C→D<br>
+A完成=3, B完成=9, C完成=11, D完成=15<br>
+周转：A=3, B=8, C=8, D=10 → 平均 = (3+8+8+10)/4 = <strong>7.25</strong><br><br>
+<strong>SJF（1时刻后选最短）：</strong>A→C→D→B<br>
+A完成=3, C完成=5, D完成=9, B完成=15<br>
+周转：A=3, C=2, D=4, B=14 → 平均 = (3+2+4+14)/4 = <strong>5.75</strong>
+</div>
+<h4>题目2</h4>
+<p>3个作业：P1(到达0, 运行24)、P2(到达0, 运行3)、P3(到达0, 运行3)。用 HRRN 求调度顺序。（提示：先 FCFS 选 P1，完成后计算响应比）</p>
+<div class="highlight">
+<strong>解：</strong>时刻0：三个都到达，FCFS先选P1。<br>
+P1完成时刻=24。此时计算响应比：<br>
+P2：H = 1 + 21/3 = <strong>8</strong>；P3：H = 1 + 21/3 = <strong>8</strong><br>
+两者响应比相同，任选其一（如P2），再选P3。<br>
+顺序：<strong>P1→P2→P3</strong>，平均周转 = (24+26+27)/3 = 25.67
+</div>
+</div></div>
+
+<h3 id="ch2-sync">2.3 同步与互斥</h3>
+
+<div class="card">
+<div class="card-title">PV 操作</div>
+<div class="grid-2">
+<div>
+<h4>P 操作（申请资源）</h4>
+<ul><li>信号量 S <strong>减 1</strong></li><li>若 S < 0，进程阻塞进入等待队列</li></ul>
+</div>
+<div>
+<h4>V 操作（释放资源）</h4>
+<ul><li>信号量 S <strong>加 1</strong></li><li>若 S ≤ 0，唤醒一个等待进程</li></ul>
+</div>
+</div>
+</div>
+
+<div class="warning" style="margin-top:16px">
+<strong>生产者-消费者问题纠错（老师课上重点分析）：</strong><br>
+当一个进程既要申请<strong>同步信号量</strong>（如 empty/full），又要申请<strong>互斥信号量</strong>（mutex）时：<br>
+<strong>必须先 P 同步信号量，再 P 互斥信号量！</strong><br>
+如果先 P 互斥再 P 同步，当缓冲区满/空时会造成<strong>死锁</strong>。<br>
+V 操作的顺序无所谓。
+</div>
+
+<div class="card" style="margin-top:16px">
+<div class="card-title">前驱图问题（PV 操作应用）</div>
+<p>用 PV 操作控制进程执行的先后次序：</p>
+<ul>
+<li><strong>前驱进程</strong>执行完后执行 <strong>V 操作</strong>（发信号）</li>
+<li><strong>后继进程</strong>执行前执行 <strong>P 操作</strong>（等信号）</li>
+<li>每条前驱边对应一个信号量，初值为 0</li>
+</ul>
+</div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>PV 操作练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1：读者-写者问题</h4>
+<p>多个读者可同时读，写者独占。用 PV 操作实现。</p>
+<div class="highlight">
+semaphore rw=1, mutex=1; int readcount=0;<br><br>
+<strong>读者：</strong>P(mutex) → readcount++ → 若 readcount==1 则 P(rw) → V(mutex) → 读 → P(mutex) → readcount-- → 若 readcount==0 则 V(rw) → V(mutex)<br><br>
+<strong>写者：</strong>P(rw) → 写 → V(rw)
+</div>
+<h4>题目2：前驱关系</h4>
+<p>S1→S2, S1→S3, S2→S4, S3→S4。用 PV 操作实现。</p>
+<div class="highlight">
+semaphore a=0, b=0, c=0;<br>
+S1; V(a); V(b);<br>
+P(a); S2; V(c);<br>
+P(b); S3; V(c);  <em>// 注意 S3 也发 c</em><br>
+P(c); P(c); S4;  <em>// 要等两次 c</em>
+</div>
+</div></div>
+
+<h3 id="ch2-deadlock">2.4 死锁</h3>
+
+<div class="card">
+<div class="card-title">死锁四个必要条件</div>
+<div class="grid-2">
+<div class="highlight"><strong>互斥使用</strong>：资源独占，一次只能一个进程使用</div>
+<div class="highlight"><strong>不可抢占</strong>：资源只能由占有方自愿释放</div>
+<div class="highlight"><strong>请求和保持</strong>：申请新资源时保持已有资源</div>
+<div class="highlight"><strong>循环等待</strong>：进程间形成等待环路</div>
+</div>
+</div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>死锁与预防练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1（简答）</h4>
+<p>说明死锁的四个必要条件及对应的预防策略。</p>
+<div class="highlight">
+<strong>答：</strong><br>
+① 互斥使用 → 一般无法破坏（资源本质属性）<br>
+② 不可抢占 → 允许系统剥夺进程已占有的资源<br>
+③ 请求与保持 → <strong>静态分配</strong>：一次性申请所有资源<br>
+④ 循环等待 → <strong>有序分配法</strong>：按编号递增顺序申请资源
+</div>
+<h4>题目2（判断）</h4>
+<p>系统有资源 A(10)、B(5)。当前分配：P1占A3+B2，P2占A3+B1。此时 Available=(4,2)。P1请求A1+B0，能否分配？</p>
+<div class="highlight">
+<strong>解：</strong>分配后 Available = (3,2)。<br>
+P1 还需 Max-Alloc = 需进一步确认 Max 才能判断安全性。<br>
+若仅判断资源够不够：Available(3,2) ≥ 请求(1,0)，可以尝试分配，再用银行家算法检查安全性。
+</div>
+</div></div>
+
+<div class="card">
+<div class="card-title">三种解决策略</div>
+<table>
+<tr><th>策略</th><th>方法</th><th>破坏条件</th></tr>
+<tr><td>预防</td><td>可抢占资源</td><td>破坏"不可抢占"</td></tr>
+<tr><td>预防</td><td>一次性申请所有资源</td><td>破坏"请求和保持"</td></tr>
+<tr><td>预防</td><td>资源有序分配法（按编号递增申请）</td><td>破坏"循环等待"</td></tr>
+<tr><td>避免</td><td>银行家算法</td><td>动态检查安全状态</td></tr>
+<tr><td>检测+解除</td><td>资源分配图检测 + 资源剥夺/撤销</td><td>允许死锁发生后处理</td></tr>
+</table>
+</div>
+
+
+<div class="interactive-section">
+<div class="card-title">银行家算法互动计算器</div>
+<p style="color:var(--text2);font-size:.9em;margin-bottom:12px">输入资源分配表，检查某个资源请求是否安全</p>
+
+<div id="bankerInput">
+<div class="input-group">
+<div><label>资源类型数</label><input type="number" id="bkResCount" value="1" min="1" max="10" size="3" onchange="buildBankerTable()"></div>
+<div><label>进程数</label><input type="number" id="bkProcCount" value="3" min="1" max="10" size="3" onchange="buildBankerTable()"></div>
+<div><label>请求进程名</label><input id="bkReqProc" value="P0" size="5"></div>
+<button class="btn" onclick="loadBankerExample()">载入教材例题</button>
+</div>
+<div id="bankerTables"></div>
+<div class="input-group" id="bankerReqGroup"></div>
+<div style="margin-top:12px">
+<button class="btn" onclick="runBanker()">检查安全性</button>
+</div>
+</div>
+<div id="bankerResult" class="visual-result"></div>
+</div>
+
+<div class="card">
+<div class="card-title">教材例题：银行家算法详解</div>
+<p><strong>单种资源：</strong>系统有150个内存单元，P1(已有25,最大70)、P2(已有40,最大60)、P3(已有45,最大60)</p>
+<ul>
+<li><strong>情况1</strong>：P4请求25个单元 → 分配后剩余15，安全序列 P3→P1→P2→P4 ✅ 安全</li>
+<li><strong>情况2</strong>：P4请求35个单元 → 分配后剩余5，任何进程都无法满足 ❌ 不安全，拒绝</li>
+</ul>
+</div>
+
+<div class="card" style="border-color:var(--green)">
+<div class="card-title">★ 真题：2024-2025 A卷 综合题详解 <span class="badge badge-important">必看</span></div>
+
+<h4>1. PV 操作（生产者-消费者 3 进程）</h4>
+<div class="warning">
+<strong>题目：</strong>PA 读数据到缓冲 B1，PB 从 B1 取数据处理后放 B2，PC 从 B2 取数据打印。用 PV 操作实现。
+</div>
+<div class="highlight">
+<strong>标准答案（含评分）：</strong><br>
+<code>semaphore empty1=1, full1=0, empty2=1, full2=0;</code><br><br>
+<strong>PA：</strong>read → P(empty1) → 放入B1 → V(full1) → 循环<br>
+<strong>PB：</strong>P(full1) → 取B1 → V(empty1) → 处理 → P(empty2) → 放入B2 → V(full2) → 循环<br>
+<strong>PC：</strong>P(full2) → 取B2 → V(empty2) → 打印 → 循环<br><br>
+<strong>评分标准：</strong>信号量定义 2 分，PA 2 分，PB 4 分，PC 2 分
+</div>
+
+<h4>2. FIFO / LRU 页面置换</h4>
+<div class="highlight">
+<strong>页面序列和具体计算过程见原卷。</strong>关键结论：<br>
+FIFO 缺页次数 = <strong>10 次</strong>（注意 Belady 异常可能）<br>
+LRU 缺页次数 = <strong>9 次</strong>
+</div>
+
+<h4>3. 磁盘调度算法</h4>
+<div class="highlight">
+<strong>请求序列 + 初始位置计算：</strong><br>
+SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
+电梯算法（SCAN）：总移动 <strong>200 道</strong>（比 SSTF 更优）
+</div>
+
+<h4>4. 银行家算法</h4>
+<div class="highlight">
+<strong>完整安全序列：P1 → P0 → P3 → P4 → P2</strong><br>
+请求判断：系统可用 (2,3,2)，P0 请求 (1,2,3) → <strong>不能满足</strong>（第3项 2&lt;3）
+</div>
+</div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>银行家算法练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目</h4>
+<p>系统有资源 (10,5,7)。5个进程的 Allocation 和 Max 如下：</p>
+<table>
+<tr><th></th><th>Allocation</th><th>Max</th><th>Need</th></tr>
+<tr><td>P0</td><td>(0,1,0)</td><td>(7,5,3)</td><td>(7,4,3)</td></tr>
+<tr><td>P1</td><td>(2,0,0)</td><td>(3,2,2)</td><td>(1,2,2)</td></tr>
+<tr><td>P2</td><td>(3,0,2)</td><td>(9,0,2)</td><td>(6,0,0)</td></tr>
+<tr><td>P3</td><td>(2,1,1)</td><td>(2,2,2)</td><td>(0,1,1)</td></tr>
+<tr><td>P4</td><td>(0,0,2)</td><td>(4,3,3)</td><td>(4,3,1)</td></tr>
+</table>
+<p>Available = (10,5,7) - (7,2,5) = (3,3,2)。求安全序列。</p>
+<div class="highlight">
+<strong>解：</strong>Need≤Available 的有 P1(1,2,2)和 P3(0,1,1)。<br>
+选 P1：Available = (3,3,2)+(2,0,0) = (5,3,2)<br>
+选 P3：Available = (5,3,2)+(2,1,1) = (7,4,3)<br>
+选 P4：Available = (7,4,3)+(0,0,2) = (7,4,5)<br>
+选 P2：Available = (7,4,5)+(3,0,2) = (10,4,7)<br>
+选 P0：Available = (10,4,7)+(0,1,0) = (10,5,7)<br>
+<strong>安全序列：P1→P3→P4→P2→P0</strong>
+</div>
+</div></div>
+
+
+<h2 id="ch3"><span class="icon">💾</span> 第三章 存储管理</h2>
+
+<h3 id="ch3-page">3.1 分页存储管理</h3>
+
+<div class="card">
+<div class="card-title">地址转换流程</div>
+<ol>
+<li>根据请求表获取进程页表起始地址和长度</li>
+<li>读入页表控制寄存器</li>
+<li>提取逻辑页号，与页表长度比较（越界检查）</li>
+<li>查页表得到物理页框号</li>
+<li>物理地址 = 页框号 + 页内地址（拼接）</li>
+</ol>
+<div class="highlight">引入快表（TLB）后：先查快表，命中则直接得页框号（1次访存）；未命中再查页表（2次访存）</div>
+</div>
+
+<div class="card">
+<div class="card-title">分页地址计算方法 <span class="badge badge-important">重点</span></div>
+<p>若页面大小为 4KB = 2<sup>12</sup>B，则逻辑地址的<strong>低 12 位为页内偏移</strong>，高位为页号。</p>
+<div class="highlight">
+<strong>例（课本101页，老师强调）：</strong>16K 页面，逻辑地址 0AC5H 和 1AC5H<br>
+页面大小 16K = 2<sup>14</sup>B → 低 14 位为偏移，高位为页号。<br>
+0AC5H = 00 0010 1011 0001 01 → 页号 = 0，偏移 = 0AC5H<br>
+1AC5H = 00 0110 1011 0001 01 → 页号 = 1，偏移 = 0AC5H<br>
+查页表：页号 0 → 物理块号 X，物理地址 = X 拼接 0AC5H<br>
+<strong>注意十六进制拆分时不要算错位数！</strong>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">分段地址转换与越界检查</div>
+<p>逻辑地址 = (段号, 段内偏移)。查段表得段始址和段长。</p>
+<div class="warning">
+<strong>必做步骤：越界检查！</strong><br>
+必须先比较：<strong>段内偏移 &lt; 段长</strong>？<br>
+&bull; 若越界 → 产生越界中断<br>
+&bull; 若未越界 → 物理地址 = 段始址 + 段内偏移
+</div>
+</div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>分页地址转换练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1</h4>
+<p>页面大小 4KB，逻辑地址 0x00003A5F。页表：页号0→块号6，页号1→块号3，页号2→块号11，页号3→块号8。求物理地址。</p>
+<div class="highlight">
+<strong>解：</strong>4KB = 2<sup>12</sup>B，低12位为页内偏移。<br>
+0x00003A5F = 0011 1010 0101 1111<br>
+页号 = 3（高4位），偏移 = 0xA5F（低12位）<br>
+查页表：页号3 → 块号8<br>
+物理地址 = 8 × 4096 + 0xA5F = 0x8A5F = <strong>35423</strong>
+</div>
+<h4>题目2</h4>
+<p>页面大小 1KB，逻辑地址 2500。求页号和页内偏移。</p>
+<div class="highlight">
+<strong>解：</strong>1KB = 1024B<br>
+页号 = 2500 / 1024 = <strong>2</strong>（整数部分）<br>
+偏移 = 2500 mod 1024 = <strong>452</strong>
+</div>
+</div></div>
+
+<div class="card">
+<div class="card-title">分页 vs 分段 vs 段页式</div>
+<table>
+<tr><th>特性</th><th>分页</th><th>分段</th><th>段页式</th></tr>
+<tr><td>划分依据</td><td>固定大小</td><td>逻辑结构</td><td>先按逻辑分段，再按页划分</td></tr>
+<tr><td>地址映射</td><td>页号→页框号</td><td>段起始+段内偏移</td><td>段号→页表→页框号</td></tr>
+<tr><td>碎片问题</td><td>内部碎片</td><td>外部碎片</td><td>内部碎片（较小）</td></tr>
+<tr><td>共享/动态链接</td><td>不方便</td><td>方便</td><td>较方便</td></tr>
+</table>
+</div>
+
+<h3 id="ch3-replace">3.2 页面置换算法 <span class="badge badge-important">重点</span></h3>
+
+<div class="card">
+<div class="card-title">缺页中断率</div>
+<div class="formula">R = F / (S + F) &nbsp;&nbsp; （F=缺页次数, S=成功访问次数）</div>
+<p>R 越小越好，表示大部分页面已在内存中。</p>
+</div>
+
+<div class="key-point">
+<strong>三种算法对比：</strong>
+<ul>
+<li><strong>OPT</strong>：替换将来最长时间不使用的页面（理论最优，实际无法实现）</li>
+<li><strong>FIFO</strong>：替换驻留时间最长的页面。⚠️ 可能出现 <strong>Belady 异常</strong>（增加页框数反而缺页率上升）</li>
+<li><strong>LRU</strong>：替换最近最久未访问的页面。基于局部性原理，性能接近OPT</li>
+</ul>
+</div>
+
+
+<div class="interactive-section">
+<div class="card-title">页面置换算法互动模拟器 <span class="badge badge-important">重点</span></div>
+<p style="color:var(--text2);font-size:.9em;margin-bottom:12px">输入页框数和访问序列，对比 OPT / FIFO / LRU 三种算法的缺页情况</p>
+
+<div class="input-group">
+<div><label>分配页框数</label><input type="number" id="pgFrames" value="3" min="1" max="10" size="3"></div>
+<div><label>页面访问序列（逗号分隔）</label><input id="pgSeq" value="4,3,2,1,4,3,5,4,3,2,1,5" size="30"></div>
+<button class="btn" onclick="runPageReplace()">模拟置换</button>
+<button class="btn" onclick="loadPageExample()">载入教材例题</button>
+</div>
+<div id="pageResult" class="visual-result"></div>
+</div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>页面置换练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目</h4>
+<p>页面引用串：7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1。分配 3 个物理块。分别用 FIFO 和 LRU 求缺页次数。</p>
+<div class="highlight">
+<strong>FIFO 缺页次数 = 15 次</strong>（注意可能出现 Belady 异常）<br>
+<strong>LRU 缺页次数 = 12 次</strong><br><br>
+关键区别：FIFO 只看进入时间，LRU 看最近使用时间。LRU 性能通常优于 FIFO。
+</div>
+</div></div>
+
+<div class="card">
+<div class="card-title">教材例题详解：页框数=3，访问序列 4,3,2,1,4,3,5,4,3,2,1,5</div>
+
+<h4>OPT 理想置换</h4>
+<p>4,3,2 入内存 → 访问1时，2最晚被再访问，替换2 → 访问4,3命中 → 访问5时，1最晚被再访问，替换1 → ...</p>
+<p>缺页次数：<strong>7次</strong>，缺页率：7/12 ≈ 58.3%</p>
+
+<h4>FIFO 先进先出</h4>
+<p>4,3,2 入内存 → 访问1时，4最先进入，替换4 → 访问4时缺页（颠簸！），替换3 → ...</p>
+<p>缺页次数：<strong>9次</strong>，缺页率：9/12 = 75%</p>
+
+<h4>LRU 最近最少用</h4>
+<p>4,3,2 入内存 → 访问1时，4最久未访问，替换4 → 访问4时缺页，替换3 → 访问2时，5最久未访问（与FIFO不同！）</p>
+<p>缺页次数：<strong>10次</strong>，缺页率：10/12 ≈ 83.3%</p>
+
+<div class="warning">
+<strong>注意 FIFO 的 Belady 异常：</strong>当页框数从3增加到4时，FIFO的缺页次数可能反而增加！这是FIFO特有的反直觉现象。用上方模拟器将页框数改为4试试。
+</div>
+</div>
+
+
+<h2 id="ch4"><span class="icon">💿</span> 第四章 设备管理</h2>
+
+<div class="card">
+<div class="card-title">I/O 控制方式</div>
+<table>
+<tr><th>方式</th><th>特点</th><th>CPU介入</th></tr>
+<tr><td>询问方式</td><td>CPU不断轮询设备状态</td><td>最多</td></tr>
+<tr><td>中断方式</td><td>设备就绪后中断通知CPU</td><td>较多</td></tr>
+<tr><td>DMA方式</td><td>直接内存访问，以数据块为单位</td><td>较少</td></tr>
+<tr><td>通道方式</td><td>专用I/O处理器</td><td>最少</td></tr>
+</table>
+</div>
+
+<div class="card">
+<div class="card-title">缓冲技术的目的</div>
+<ul>
+<li>改善CPU和I/O设备之间速度不匹配的问题</li>
+<li>提高CPU和I/O设备的并行性</li>
+<li>减少I/O中断次数</li>
+</ul>
+</div>
+
+<div class="card">
+<div class="card-title">SPOOLing 技术（假脱机技术）</div>
+<p><strong>核心作用：</strong>利用磁盘作为缓冲，将<strong>独占设备</strong>（如打印机）改造为<strong>共享设备</strong>（虚拟设备）。</p>
+<div class="highlight">
+<strong>组成：</strong>输入井 / 输出井、输入缓冲区 / 输出缓冲区、输入进程 / 输出进程。<br>
+<strong>典型应用：</strong>打印机池——多个进程"同时"提交打印请求，实际由 SPOOLing 系统排队依次输出。
+</div>
+</div>
+
+<h3 id="ch4-disk">4.1 磁盘调度算法</h3>
+
+<div class="card">
+<div class="card-title">磁盘数据访问时间</div>
+<div class="formula">访问时间 = 寻道时间 + 旋转延迟 + 数据传输时间</div>
+<ul>
+<li><strong>寻道时间</strong> T<sub>s</sub> = m × n + s（移动n条磁道）</li>
+<li><strong>旋转延迟</strong>：平均为旋转<strong>半周</strong>的时间（如5400r/min → 平均5.55ms）</li>
+<li><strong>数据传输</strong>：通常最短</li>
+</ul>
+<div class="key-point">影响性能最大的因素是<strong>寻道时间</strong>，因此优化磁盘调度算法主要目标是减少磁头移动距离。</div>
+</div>
+
+
+<div class="interactive-section">
+<div class="card-title">磁盘调度算法互动模拟器</div>
+<p style="color:var(--text2);font-size:.9em;margin-bottom:12px">输入磁盘参数和请求队列，对比各算法的磁头移动路径</p>
+
+<div class="input-group">
+<div><label>柱面数</label><input type="number" id="dkTotal" value="200" min="10" size="4"></div>
+<div><label>当前磁头位置</label><input type="number" id="dkCurrent" value="143" min="0" size="4"></div>
+<div><label>请求队列（逗号分隔）</label><input id="dkQueue" value="86,147,91,177,94,150,102,175,130" size="28"></div>
+</div>
+<div class="input-group">
+<div><label>磁头移动方向（SCAN类）</label>
+<select id="dkDir"><option value="up">向大号方向</option><option value="down">向小号方向</option></select></div>
+<button class="btn" onclick="runDiskSched()">计算调度</button>
+<button class="btn" onclick="loadDiskExample()">载入教材例题</button>
+</div>
+<div id="diskResult" class="visual-result"></div>
+</div>
+
+<div class="card">
+<div class="card-title">教材例题：200柱面，当前143号，请求序列 86,147,91,177,94,150,102,175,130</div>
+
+<h4>FCFS 先来先服务</h4>
+<p>路径：143→86→147→91→177→94→150→102→175→130</p>
+
+<h4>SSTF 最短查找时间优先</h4>
+<p>路径：143→147→150→130→102→94→91→86→175→177</p>
+<div class="warning">可能产生饥饿：远端磁道请求可能被无限期推迟</div>
+
+<h4>电梯调度（LOOK）</h4>
+<p>路径：143→147→150→175→177→130→102→94→91→86</p>
+
+<h4>扫描算法（SCAN）</h4>
+<p>路径：143→147→150→175→177→<strong>199</strong>→130→102→94→91→86</p>
+
+<h4>单向扫描（C-SCAN）</h4>
+<p>路径：143→147→150→175→177→<strong>199→0</strong>→86→91→94→102→130</p>
+
+<div class="key-point">
+<strong>各算法对比：</strong>
+<ul>
+<li>FCFS：简单公平，但效率低</li>
+<li>SSTF：效率高但可能饥饿</li>
+<li>电梯调度/SCAN：兼顾效率和公平</li>
+<li>单向扫描：适合均匀分布的请求</li>
+<li>分步扫描：解决磁臂粘着问题</li>
+</ul>
+</div>
+</div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>磁盘调度练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目</h4>
+<p>当前磁头在 53 号磁道，请求队列：98, 183, 37, 122, 14, 124, 65, 67。分别用 FCFS、SSTF、SCAN（向磁道号增大方向）求总移动磁道数。</p>
+<div class="highlight">
+<strong>FCFS：</strong>53→98→183→37→122→14→124→65→67<br>
+移动：45+85+146+85+108+110+41+2 = <strong>622</strong><br><br>
+<strong>SSTF：</strong>53→65→67→37→14→98→122→124→183<br>
+移动：12+2+30+23+84+24+2+59 = <strong>236</strong><br><br>
+<strong>SCAN（向大号）：</strong>53→65→67→98→122→124→183→37→14<br>
+移动：12+2+31+24+2+59+146+23 = <strong>299</strong>
+</div>
+</div></div>
+
+
+<h2 id="ch5"><span class="icon">📁</span> 第五章 文件系统</h2>
+
+<div class="grid-2">
+<div class="card">
+<div class="card-title">逻辑结构</div>
+<ul>
+<li><strong>流式文件</strong>：无结构的字节序列</li>
+<li><strong>记录式文件</strong>：由一组记录组成</li>
+</ul>
+</div>
+<div class="card">
+<div class="card-title">物理结构</div>
+<ul>
+<li><strong>顺序结构</strong>：连续存放，访问快但有外部碎片，不利于动态增长</li>
+<li><strong>链接结构</strong>：链表方式，无碎片易扩展，但<strong>只能顺序访问</strong>，可靠性差</li>
+<li><strong>索引结构</strong>：通过索引表定位，支持随机访问，无碎片，但索引表占额外空间</li>
+</ul>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">索引文件最大长度计算 <span class="badge badge-important">经典大题</span></div>
+<div class="highlight">
+<strong>计算套路：</strong>已知磁盘块大小（如 1KB）和盘块号占用字节数（如 4B），算出一个索引块能放的索引项数（1024/4 = 256 项）。<br><br>
+总文件大小 = (直接索引块数 + 一级间接索引项数 + 二级间接索引项数 + ...) &times; 块大小<br><br>
+<strong>例：</strong>13 个索引项，前 10 个直接索引，第 11 个一级间接（256 项），第 12 个二级间接（256&times;256 项），第 13 个三级间接。<br>
+最大文件 = (10 + 256 + 256&sup2; + 256&sup3;) &times; 1KB
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">空闲存储空间管理</div>
+<div class="grid-2">
+<div>
+<h4>位示图法（必考计算）</h4>
+<p>已知字长 \(n\)，第 \(i\) 行第 \(j\) 列：</p>
+<div class="formula">物理块号 b = i &times; n + j</div>
+<p>反之，已知块号 \(b\)：</p>
+<div class="formula">行号 i = b &divide; n&emsp;列号 j = b mod n</div>
+</div>
+<div>
+<h4>成组链接法（Unix/Linux 采用）</h4>
+<ul>
+<li>理解<strong>超级块</strong>的作用（栈顶指针）</li>
+<li><strong>分配</strong>：取栈顶块号；若栈空则读下一组到内存</li>
+<li><strong>回收</strong>：压入栈顶；若栈满则将当前栈写入回收块，新块作栈顶</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">文件安全</div>
+<p>文件安全涉及访问控制、加密、备份恢复等机制，确保文件的<strong>机密性、完整性和可用性</strong>。</p>
+</div>
+
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>索引文件 & 位示图练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card-body">
+<h4>题目1：索引文件最大长度</h4>
+<p>磁盘块大小 1KB，盘块号占 4 字节。采用三级索引结构（10个直接索引 + 1个一级间接 + 1个二级间接 + 1个三级间接）。求文件最大长度。</p>
+<div class="highlight">
+<strong>解：</strong>每块可放 1024/4 = <strong>256</strong> 个索引项<br>
+直接索引：10 × 1KB = 10KB<br>
+一级间接：256 × 1KB = 256KB<br>
+二级间接：256 × 256 × 1KB = 65536KB ≈ 64MB<br>
+三级间接：256 × 256 × 256 × 1KB ≈ <strong>16GB</strong><br>
+最大文件 ≈ 10KB + 256KB + 64MB + 16GB ≈ <strong>16GB+</strong>
+</div>
+<h4>题目2：位示图法</h4>
+<p>字长 32 位，求物理块号 b=100 对应的行号和列号；反之，第 5 行第 10 列对应哪个块号？</p>
+<div class="highlight">
+<strong>解：</strong><br>
+块号 100：行 i = 100 ÷ 32 = <strong>3</strong>，列 j = 100 mod 32 = <strong>4</strong><br>
+第5行第10列：b = 5 × 32 + 10 = <strong>170</strong>
+</div>
+</div></div>
+
+
+<h2 id="exam"><span class="icon">📝</span> 考试题型</h2>
+
+<div class="card">
+<div class="card-title">考试结构</div>
+<table>
+<tr><th>题型</th><th>题量</th><th>分值</th><th>占比</th></tr>
+<tr><td>选择题</td><td>10题</td><td>每题2分</td><td>20%</td></tr>
+<tr><td>填空题</td><td>10题</td><td>每题1分</td><td>10%</td></tr>
+<tr><td>简答题</td><td>5题</td><td>每题6分</td><td>30%</td></tr>
+<tr><td>应用题</td><td>4题</td><td>每题10分</td><td>40%</td></tr>
+</table>
+
+<div class="key-point" style="margin-top:16px">
+<strong>重点备考方向：</strong>
+<ul>
+<li>调度算法计算（FCFS / SJF / HRRN）<span class="badge badge-important">应用题</span></li>
+<li>PV 操作（生产者-消费者、前驱图）<span class="badge badge-important">应用题</span></li>
+<li>页面置换算法计算（OPT / FIFO / LRU）<span class="badge badge-important">应用题</span></li>
+<li>银行家算法（安全序列判断）<span class="badge badge-important">应用题</span></li>
+<li>磁盘调度算法（FCFS / SSTF / SCAN / C-SCAN）— 给定请求序列计算总移动磁道数<span class="badge badge-important">应用题</span></li>
+<li>分页地址计算（十六进制地址转换）<span class="badge badge-important">应用题</span></li>
+<li>索引文件最大长度计算<span class="badge badge-important">应用题</span></li>
+<li>位示图法块号计算<span class="badge badge-info">填空</span></li>
+<li>死锁四条件及预防策略<span class="badge badge-info">简答</span></li>
+<li>微内核优势、SPOOLing 技术<span class="badge badge-info">简答</span></li>
+</ul>
+</div>
+</div>
+
+<div style="text-align:center;padding:40px;color:var(--text2);font-size:.9em">
+祝考试顺利！
+</div>
+
+
+<h2 id="quiz"><span class="icon">&#9999;&#65039;</span> 自测练习</h2>
+<p style="color:var(--text2);margin-bottom:16px">共 20 题，涵盖操作系统全部 5 章内容。选择答案后点击"检查答案"查看结果。</p>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">1. 以下哪项不属于操作系统的设计目标？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q1" value="0"> A. 并发性</label>
+    <label><input type="radio" name="q1" value="1"> B. 方便性</label>
+    <label><input type="radio" name="q1" value="2"> C. 可扩充性</label>
+    <label><input type="radio" name="q1" value="3"> D. 开放性</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">2. 微内核结构的优势不包括以下哪项？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q2" value="0"> A. 内核代码量少，更简洁</label>
+    <label><input type="radio" name="q2" value="1"> B. 模块化程度高，可扩展性强</label>
+    <label><input type="radio" name="q2" value="2"> C. 所有模块在内核态运行，效率最高</label>
+    <label><input type="radio" name="q2" value="3"> D. 增强可移植性，修改代码量少</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">3. 在进程三态模型中，以下哪种状态转换是不可能的？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q3" value="0"> A. 运行态 → 就绪态</label>
+    <label><input type="radio" name="q3" value="1"> B. 就绪态 → 等待态</label>
+    <label><input type="radio" name="q3" value="2"> C. 运行态 → 等待态</label>
+    <label><input type="radio" name="q3" value="3"> D. 等待态 → 就绪态</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">4. 三个作业 A(到达0, 运行3)、B(到达1, 运行6)、C(到达3, 运行2)。使用 SJF（最短作业优先）调度，C 的周转时间是多少？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q4" value="0"> A. 2</label>
+    <label><input type="radio" name="q4" value="1"> B. 3</label>
+    <label><input type="radio" name="q4" value="2"> C. 4</label>
+    <label><input type="radio" name="q4" value="3"> D. 5</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">5. 在生产者-消费者问题的 PV 操作实现中，如果一个进程既要申请同步信号量又要申请互斥信号量，正确的 P 操作顺序是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q5" value="0"> A. 先 P 互斥信号量，再 P 同步信号量</label>
+    <label><input type="radio" name="q5" value="1"> B. 先 P 同步信号量，再 P 互斥信号量</label>
+    <label><input type="radio" name="q5" value="2"> C. 顺序无所谓，结果相同</label>
+    <label><input type="radio" name="q5" value="3"> D. 只需 P 互斥信号量即可</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">6. 死锁产生的四个必要条件中，"资源有序分配法"破坏的是哪个条件？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q6" value="0"> A. 互斥使用</label>
+    <label><input type="radio" name="q6" value="1"> B. 不可抢占</label>
+    <label><input type="radio" name="q6" value="2"> C. 请求和保持</label>
+    <label><input type="radio" name="q6" value="3"> D. 循环等待</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">7. 系统有 3 种资源 R1(10)、R2(5)、R3(7)。当前 Available=(3,3,2)。某进程 Need=(1,2,2) 且 Allocation=(2,0,0)。该进程执行完毕后 Available 变为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q7" value="0"> A. (5,3,2)</label>
+    <label><input type="radio" name="q7" value="1"> B. (4,5,4)</label>
+    <label><input type="radio" name="q7" value="2"> C. (3,3,4)</label>
+    <label><input type="radio" name="q7" value="3"> D. (5,5,2)</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">8. HRRN（最高响应比优先）算法中，某作业已等待 10 分钟，运行时间为 5 分钟，其响应比为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q8" value="0"> A. 1.5</label>
+    <label><input type="radio" name="q8" value="1"> B. 2.0</label>
+    <label><input type="radio" name="q8" value="2"> C. 3.0</label>
+    <label><input type="radio" name="q8" value="3"> D. 10.0</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">9. 页面大小为 4KB，逻辑地址 0x00001A5F 的页号和页内偏移分别是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q9" value="0"> A. 页号=0，偏移=0x1A5F</label>
+    <label><input type="radio" name="q9" value="1"> B. 页号=1，偏移=0x0A5F</label>
+    <label><input type="radio" name="q9" value="2"> C. 页号=1，偏移=0x1A5F</label>
+    <label><input type="radio" name="q9" value="3"> D. 页号=2，偏移=0x0A5F</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">10. 引入快表（TLB）后，若 TLB 命中，访问一个逻辑地址需要几次访存？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q10" value="0"> A. 3 次</label>
+    <label><input type="radio" name="q10" value="1"> B. 2 次</label>
+    <label><input type="radio" name="q10" value="2"> C. 0 次</label>
+    <label><input type="radio" name="q10" value="3"> D. 1 次</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">11. 分页存储管理中，页表的作用是什么？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q11" value="0"> A. 实现页号到物理块号的映射</label>
+    <label><input type="radio" name="q11" value="1"> B. 存储进程的程序代码</label>
+    <label><input type="radio" name="q11" value="2"> C. 记录进程的运行状态</label>
+    <label><input type="radio" name="q11" value="3"> D. 管理进程的创建与撤销</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">12. 在页面置换算法中，哪种算法可能出现 Belady 异常（增加页框数反而缺页率上升）？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q12" value="0"> A. OPT</label>
+    <label><input type="radio" name="q12" value="1"> B. LRU</label>
+    <label><input type="radio" name="q12" value="2"> C. FIFO</label>
+    <label><input type="radio" name="q12" value="3"> D. 以上三种都会</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">13. 页面访问序列为 1,2,3,4,1,2,5,1,2,3,4,5，分配 3 个页框。使用 LRU 算法，访问第 4 个页面（页号4）时，哪个页面被替换？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q13" value="0"> A. 页号1</label>
+    <label><input type="radio" name="q13" value="1"> B. 页号2</label>
+    <label><input type="radio" name="q13" value="2"> C. 页号5</label>
+    <label><input type="radio" name="q13" value="3"> D. 页号3</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">14. 段页式存储管理中，逻辑地址到物理地址的转换过程是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q14" value="0"> A. 逻辑地址 → 查页表 → 得物理块号 → 拼接偏移</label>
+    <label><input type="radio" name="q14" value="1"> B. 逻辑地址 → 段号查段表得页表始址 → 页号查页表得物理块号 → 拼接偏移</label>
+    <label><input type="radio" name="q14" value="2"> C. 逻辑地址 → 段始址 + 段内偏移</label>
+    <label><input type="radio" name="q14" value="3"> D. 逻辑地址 → 查快表 → 直接得物理地址</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">15. 分段存储管理中，逻辑地址为 (段号, 段内偏移)，若段内偏移大于段长，会发生什么？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q15" value="0"> A. 产生越界中断</label>
+    <label><input type="radio" name="q15" value="1"> B. 自动扩展段长</label>
+    <label><input type="radio" name="q15" value="2"> C. 取模后继续访问</label>
+    <label><input type="radio" name="q15" value="3"> D. 访问物理地址 0</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">16. 以下 I/O 控制方式中，CPU 介入最少的是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q16" value="0"> A. 询问方式（轮询）</label>
+    <label><input type="radio" name="q16" value="1"> B. 中断方式</label>
+    <label><input type="radio" name="q16" value="2"> C. DMA 方式</label>
+    <label><input type="radio" name="q16" value="3"> D. 通道方式</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">17. 磁盘调度算法中，SSTF（最短查找时间优先）的主要缺点是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q17" value="0"> A. 效率最低</label>
+    <label><input type="radio" name="q17" value="1"> B. 可能产生饥饿</label>
+    <label><input type="radio" name="q17" value="2"> C. 需要预知请求序列</label>
+    <label><input type="radio" name="q17" value="3"> D. 磁头必须到达磁盘两端</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">18. 以下哪种文件物理结构不支持随机访问？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q18" value="0"> A. 顺序结构</label>
+    <label><input type="radio" name="q18" value="1"> B. 索引结构</label>
+    <label><input type="radio" name="q18" value="2"> C. 链接结构</label>
+    <label><input type="radio" name="q18" value="3"> D. 以上都支持</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">19. 磁盘块大小为 1KB，盘块号占 4 字节。一个一级间接索引块最多可以指向多少个物理块？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q19" value="0"> A. 1024</label>
+    <label><input type="radio" name="q19" value="1"> B. 256</label>
+    <label><input type="radio" name="q19" value="2"> C. 64</label>
+    <label><input type="radio" name="q19" value="3"> D. 4</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">20. 文件安全管理中，为防止未授权用户访问文件，应采取的主要措施是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q20" value="0"> A. 访问控制（设置权限）</label>
+    <label><input type="radio" name="q20" value="1"> B. 增加缓冲区大小</label>
+    <label><input type="radio" name="q20" value="2"> C. 使用索引分配方式</label>
+    <label><input type="radio" name="q20" value="3"> D. 提高磁盘转速</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+
+<div class="quiz-container" data-correct="0" data-type="judge">
+  <div class="quiz-q">判断题 21. 在进程三态模型中，就绪态可以直接转换为等待态。</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="j21" value="1"> 正确 &#10003;</label>
+    <label><input type="radio" name="j21" value="0"> 错误 &#10007;</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0" data-type="judge">
+  <div class="quiz-q">判断题 22. 在生产者-消费者问题中，若先执行 P(mutex) 再执行 P(empty)，当缓冲区满时可能导致死锁。</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="j22" value="1"> 正确 &#10003;</label>
+    <label><input type="radio" name="j22" value="0"> 错误 &#10007;</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1" data-type="judge">
+  <div class="quiz-q">判断题 23. FIFO 页面置换算法可能出现 Belady 异常，即增加页框数反而导致缺页率上升。</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="j23" value="1"> 正确 &#10003;</label>
+    <label><input type="radio" name="j23" value="0"> 错误 &#10007;</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+
+<div class="quiz-container" data-type="fill">
+  <div class="quiz-q">填空题 24. 死锁产生的四个必要条件是：互斥使用、_____ 、请求和保持、_____ 。</div>
+  <div style="margin:8px 0"><input type="text" class="fill-input" placeholder="填写答案" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);width:200px">
+  <button class="quiz-btn" onclick="checkFill(this)">检查</button></div>
+  <div class="quiz-result"></div>
+  <div class="fill-answer" style="display:none;color:var(--green)">参考答案: 不可抢占、循环等待</div>
+</div>
+
+<div class="quiz-container" data-type="fill">
+  <div class="quiz-q">填空题 25. 页面大小为 4KB，逻辑地址 0x00002B3F 的页号为 _____ ，页内偏移为 _____ 。</div>
+  <div style="margin:8px 0"><input type="text" class="fill-input" placeholder="填写答案" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);width:200px">
+  <button class="quiz-btn" onclick="checkFill(this)">检查</button></div>
+  <div class="quiz-result"></div>
+  <div class="fill-answer" style="display:none;color:var(--green)">参考答案: 页号 = 2，偏移 = 0xB3F（4KB = 2^12，低12位为偏移，高位为页号）</div>
+</div>
+
+<div class="quiz-container" data-type="fill">
+  <div class="quiz-q">填空题 26. 磁盘块大小为 1KB，盘块号占 4 字节，则一个一级间接索引块最多可指向 _____ 个物理块。</div>
+  <div style="margin:8px 0"><input type="text" class="fill-input" placeholder="填写答案" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);width:200px">
+  <button class="quiz-btn" onclick="checkFill(this)">检查</button></div>
+  <div class="quiz-result"></div>
+  <div class="fill-answer" style="display:none;color:var(--green)">参考答案: 256（1024 / 4 = 256 个索引项）</div>
+</div>
+
+
+<div class="quiz-container" data-type="essay">
+  <div class="quiz-q">简答题 27. 简述微内核结构的四个优势。</div>
+  <textarea class="essay-input" placeholder="在此作答..." style="width:100%;min-height:80px;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:.9rem;resize:vertical"></textarea>
+  <button class="quiz-btn" onclick="toggleAnswer(this)" style="margin-top:8px">查看参考答案</button>
+  <div class="essay-answer" style="display:none;margin-top:12px;padding:16px;background:var(--formula-bg);border-radius:8px;border:1px solid var(--border)">
+    ① 代码量少，内核更简洁，安全性更高。<br>
+    ② 充分模块化，更换某个模块不影响其他模块。<br>
+    ③ 未使用的模块不必运行，大幅减少内存需求。<br>
+    ④ 增强可移植性，移植时只需修改微内核部分代码。
+  </div>
+</div>
+
+<div class="quiz-container" data-type="essay">
+  <div class="quiz-q">简答题 28. 说明 SPOOLing 技术的核心思想，并以打印机为例说明其工作原理。</div>
+  <textarea class="essay-input" placeholder="在此作答..." style="width:100%;min-height:80px;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:.9rem;resize:vertical"></textarea>
+  <button class="quiz-btn" onclick="toggleAnswer(this)" style="margin-top:8px">查看参考答案</button>
+  <div class="essay-answer" style="display:none;margin-top:12px;padding:16px;background:var(--formula-bg);border-radius:8px;border:1px solid var(--border)">
+    <strong>核心思想：</strong>SPOOLing（假脱机技术）利用磁盘作为缓冲，将独占设备改造为共享设备（虚拟设备）。<br><br>
+    <strong>以打印机为例：</strong><br>
+    ① 多个进程"同时"提交打印请求；<br>
+    ② 输出数据先暂存在磁盘的输出井中；<br>
+    ③ SPOOLing 输出进程依次从输出井取出数据送往打印机；<br>
+    ④ 对用户而言，打印机好像可以共享使用，实现了虚拟化。
+  </div>
+</div>
+
+</main>

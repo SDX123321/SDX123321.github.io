@@ -1,0 +1,1462 @@
+<div class="top-bar">
+    <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+    <div class="top-actions">
+      <button class="btn btn-outline" onclick="resetProgress()">重置进度</button>
+      <button class="btn btn-primary" onclick="toggleAllChapters()">展开/折叠全部</button>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+    
+    <section id="home" class="chapter-section">
+      <div class="home-hero">
+        <h1>算法设计与分析</h1>
+        <p>基于复习课录音 + 课件 + 课本 + 笔记整理</p>
+      </div>
+      <div class="stats">
+        <div class="stat-card"><div class="num">7</div><div class="label">章节</div></div>
+        <div class="stat-card"><div class="num">50+</div><div class="label">核心知识点</div></div>
+        <div class="stat-card"><div class="num">60+</div><div class="label">练习题</div></div>
+        <div class="stat-card"><div class="num">20+</div><div class="label">代码示例</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header" onclick="toggleCard(this)"><h3>复习重点提示 (来自复习课)</h3><span class="expand-icon">&#9654;</span></div>
+        <div class="card-body">
+          <div class="keypoint"><strong>考试形式：</strong>闭卷考试，有代码题(约5-6分)，选择题</div>
+          <ul>
+            <li><strong>第1章：</strong>算法四大性质(理解)、时间复杂度分析、渐进表达式O(n)、log默认以2为底、快速排序用平均复杂度</li>
+            <li><strong>第2章：</strong>递归函数两要素(递归体+递归出口)、分治三步骤(分解→递归→合并)、平衡子问题+独立子问题、二分查找/合并排序/快速排序</li>
+            <li><strong>第3章：</strong>最优子结构+重叠子问题、状态转移方程(必考!)、矩阵连乘、最长公共子序列、0-1背包、备忘录方法(自顶向下) vs 动态规划(自底向上)</li>
+            <li><strong>第4章：</strong>贪心选择性质+最优子结构、Dijkstra迭代过程(必考!)、哈夫曼编码(前缀码)、最小生成树、分数背包</li>
+            <li><strong>第5章：</strong>子集树(2^n) vs 排列树(n!)、约束函数剪枝(不可行解) vs 限界函数剪枝(非最优解)、DFS+剪枝</li>
+            <li><strong>第6章：</strong>BFS+剪枝、队列式 vs 优先队列式、限界函数设计、0-1背包/单源最短路径</li>
+            <li><strong>第7章：</strong>蒙特卡洛(大概率正确) vs 拉斯维加斯(完全正确/时间不确定)、概念题(2分)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="ch1" class="chapter-section hidden">
+      <div class="chapter" data-chapter="1">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#dbeafe;color:#2563eb">1</div>
+          <div class="chapter-title"><h2>第1章 算法概述</h2><p>算法定义、性质、复杂度分析</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>1.1 算法的定义与性质</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p><strong>算法</strong>是解决问题的有规则的有限集合。</p>
+            <div class="keypoint"><strong>四大性质(必须理解)：</strong><br>
+            1. <strong>有限性</strong>：执行有限步后结束<br>
+            2. <strong>确定性</strong>：每步有确切定义，无歧义<br>
+            3. <strong>可行性</strong>：现有条件下可实现<br>
+            4. <strong>输入/输出</strong>：0个或多个输入，1个或多个输出</div>
+            <div class="keypoint warn"><strong>易错点：</strong>算法可以没有输入(0个输入)，但必须有输出！</div>
+            <p><strong>算法 vs 程序：</strong>算法具有有限性，程序可以无限运行(如操作系统)。</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>1.2 算法复杂性分析</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p><strong>时间复杂度</strong>分析一般采用<strong>最坏情况</strong>下的时间复杂度。</p>
+            <div class="keypoint warn"><strong>特例：</strong>快速排序使用<strong>平均时间复杂度</strong>进行分析(实验课讲过)！</div>
+            <p><strong>渐进复杂度排序：</strong></p>
+            <p style="font-family:monospace;padding:12px;background:#f1f5f9;border-radius:8px;text-align:center;font-size:15px">
+              O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n&sup2;) &lt; O(n&sup3;) &lt; O(2<sup>n</sup>) &lt; O(n!) &lt; O(n<sup>n</sup>)
+            </p>
+            <div class="keypoint"><strong>重要：</strong>本书中 log n 默认以 <strong>2为底</strong>，不是10也不是e！(与通信中的信噪比不同)</div>
+            <p><strong>渐进表达式求法：</strong></p>
+            <ol>
+              <li>去掉所有加法项常数</li>
+              <li>只保留最高阶项</li>
+              <li>去除高阶项系数</li>
+            </ol>
+            <p>例：3n&sup2;+10n → O(n&sup2;)，n&sup2;/100+2<sup>n</sup> → O(2<sup>n</sup>)，10log3<sup>n</sup> = 10n&middot;log3 → O(n)</p>
+            <p><strong>空间复杂度：</strong>递归算法空间复杂度 = 每层辅助空间 &times; 递归深度</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>1.3 渐进分析三种表示法</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table>
+              <tr><th>符号</th><th>含义</th><th>定义</th></tr>
+              <tr><td><strong>O (低阶)</strong></td><td>f的阶不高于g</td><td>&exist;C,n<sub>0</sub>，&forall;n&gt;n<sub>0</sub>，f(n)&le;Cg(n)</td></tr>
+              <tr><td><strong>&Omega; (高阶)</strong></td><td>f的阶不低于g</td><td>&exist;C,n<sub>0</sub>，&forall;n&gt;n<sub>0</sub>，f(n)&ge;Cg(n)</td></tr>
+              <tr><td><strong>&theta; (等阶)</strong></td><td>f与g同阶</td><td>f=O(g) 且 f=&Omega;(g)</td></tr>
+            </table>
+            <p><strong>证明方法：</strong>反证法、极限法</p>
+            <p>例：证明n&sup3;不是O(n&sup2;)：假设成立则n&sup3;&le;Cn&sup2;，即n&le;C对所有n成立，矛盾。</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第1章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch1"></div></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="ch2" class="chapter-section hidden">
+      <div class="chapter" data-chapter="2">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#dcfce7;color:#16a34a">2</div>
+          <div class="chapter-title"><h2>第2章 递归与分治</h2><p>递归概念、分治策略、排序算法</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>2.1 递归基础</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>递归函数两要素：</strong><br>1. <strong>递归体</strong>：递归调用部分<br>2. <strong>递归出口(边界条件)</strong>：终止条件</div>
+            <div class="keypoint warn"><strong>没有递归出口 = 死循环 = 错误的递归！</strong></div>
+            <p><strong>经典递归：</strong>阶乘函数 n!、斐波那契数列</p>
+            <div class="complexity"><span class="cx-time"><span class="cx-label">阶乘时间</span>O(n)</span><span class="cx-space"><span class="cx-label">阶乘空间</span>O(n)</span><span class="cx-time"><span class="cx-label">斐波那契(朴素)时间</span>O(2<sup>n</sup>)</span><span class="cx-space"><span class="cx-label">斐波那契(朴素)空间</span>O(n)</span></div>
+<pre><span class="kw">int</span> <span class="fn">factorial</span>(<span class="kw">int</span> n) {
+    <span class="kw">if</span>(n == <span class="num">1</span>) <span class="kw">return</span> <span class="num">1</span>;      <span class="cm">// 递归出口</span>
+    <span class="kw">return</span> <span class="fn">factorial</span>(n-<span class="num">1</span>) * n;  <span class="cm">// 递归体</span>
+}</pre>
+            <p><strong>递归复杂度分析：</strong>替换法、递归树法、主方法</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>2.2 分治法基本思想</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>分治三步骤：</strong><br>1. <strong>分解(Decompose)</strong>：大问题 → 小问题<br>2. <strong>递归(Conquer)</strong>：递归求解子问题<br>3. <strong>合并(Combine)</strong>：合并子问题的解</div>
+            <div class="keypoint"><strong>两个关键思想：</strong><br>
+            1. <strong>平衡子问题</strong>：子问题规模大致相等(如大学分班)<br>
+            2. <strong>独立子问题</strong>：子问题之间无重叠(如一个人不能同时在两个班)</div>
+            <div class="keypoint warn"><strong>分治 vs 动态规划关键区别：</strong>分治是<strong>独立</strong>子问题，动态规划是<strong>重叠</strong>子问题！</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>2.3 典型分治算法</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table>
+              <tr><th>算法</th><th>时间复杂度</th><th>空间复杂度</th><th>要点</th></tr>
+              <tr><td>二分查找</td><td>最优 O(1) / 最差 O(log n)</td><td>O(1)</td><td>有序序列，每次排除一半</td></tr>
+              <tr><td>归并排序</td><td>最优/平均/最差 均 O(n log n)</td><td>O(n)</td><td>稳定排序，需要额外空间</td></tr>
+              <tr><td>快速排序</td><td>最优 O(n log n) / 平均 O(n log n) / 最差 O(n&sup2;)</td><td>最优 O(log n) / 最差 O(n)</td><td><strong>用平均复杂度分析</strong>，不稳定</td></tr>
+              <tr><td>棋盘覆盖</td><td>O(n&sup2;)</td><td>O(n&sup2;)</td><td>了解即可</td></tr>
+            </table>
+            <div class="example"><svg class="algo-diagram" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="12">
+  <text x="200" y="18" text-anchor="middle" font-weight="bold" fill="#4f46e5" font-size="13">二分查找 · 搜索范围缩小过程</text>
+  <text x="10" y="44" fill="#64748b" font-size="11">查找目标: 33</text>
+  
+  <text x="10" y="66" fill="#475569" font-size="10">第1步:</text>
+  <rect x="60" y="52" width="28" height="20" rx="3" fill="#f1f5f9" stroke="#cbd5e1"/><text x="74" y="66" text-anchor="middle" fill="#1e293b" font-size="10">3</text>
+  <rect x="90" y="52" width="28" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="104" y="66" text-anchor="middle" fill="#1e293b" font-size="10">9</text>
+  <rect x="120" y="52" width="28" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="134" y="66" text-anchor="middle" fill="#1e293b" font-size="10">15</text>
+  <rect x="150" y="52" width="28" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="164" y="66" text-anchor="middle" fill="#1e293b" font-size="10">21</text>
+  <rect x="180" y="52" width="28" height="20" rx="3" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><text x="194" y="66" text-anchor="middle" fill="#92400e" font-size="10" font-weight="bold">27</text>
+  <rect x="210" y="52" width="28" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="224" y="66" text-anchor="middle" fill="#1e293b" font-size="10">33</text>
+  <rect x="240" y="52" width="28" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="254" y="66" text-anchor="middle" fill="#1e293b" font-size="10">42</text>
+  <rect x="270" y="52" width="28" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="284" y="66" text-anchor="middle" fill="#1e293b" font-size="10">55</text>
+  <rect x="300" y="52" width="28" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="314" y="66" text-anchor="middle" fill="#1e293b" font-size="10">68</text>
+  <rect x="330" y="52" width="28" height="20" rx="3" fill="#f1f5f9" stroke="#cbd5e1"/><text x="344" y="66" text-anchor="middle" fill="#1e293b" font-size="10">79</text>
+  <text x="372" y="66" fill="#64748b" font-size="10">mid=27</text>
+  <text x="372" y="78" fill="#ef4444" font-size="9">33>27 → 右半</text>
+  
+  <text x="10" y="106" fill="#475569" font-size="10">第2步:</text>
+  <rect x="60" y="92" width="28" height="20" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="3,2"/><text x="74" y="106" text-anchor="middle" fill="#cbd5e1" font-size="10">3</text>
+  <rect x="90" y="92" width="28" height="20" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="3,2"/><text x="104" y="106" text-anchor="middle" fill="#cbd5e1" font-size="10">9</text>
+  <rect x="120" y="92" width="28" height="20" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="3,2"/><text x="134" y="106" text-anchor="middle" fill="#cbd5e1" font-size="10">15</text>
+  <rect x="150" y="92" width="28" height="20" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="3,2"/><text x="164" y="106" text-anchor="middle" fill="#cbd5e1" font-size="10">21</text>
+  <rect x="180" y="92" width="28" height="20" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="3,2"/><text x="194" y="106" text-anchor="middle" fill="#cbd5e1" font-size="10">27</text>
+  <rect x="210" y="92" width="28" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="224" y="106" text-anchor="middle" fill="#1e293b" font-size="10">33</text>
+  <rect x="240" y="92" width="28" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="254" y="106" text-anchor="middle" fill="#1e293b" font-size="10">42</text>
+  <rect x="270" y="92" width="28" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="284" y="106" text-anchor="middle" fill="#1e293b" font-size="10">55</text>
+  <rect x="300" y="92" width="28" height="20" rx="3" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><text x="314" y="106" text-anchor="middle" fill="#92400e" font-size="10" font-weight="bold">55</text>
+  <rect x="330" y="92" width="28" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="344" y="106" text-anchor="middle" fill="#1e293b" font-size="10">68</text>
+  <rect x="360" y="92" width="28" height="20" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="3,2"/><text x="374" y="106" text-anchor="middle" fill="#cbd5e1" font-size="10">79</text>
+  <text x="355" y="126" fill="#64748b" font-size="9">mid=55</text>
+  <text x="355" y="137" fill="#ef4444" font-size="9">33<55 → 左半</text>
+  
+  <text x="10" y="158" fill="#475569" font-size="10">第3步:</text>
+  <rect x="210" y="144" width="28" height="20" rx="3" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="224" y="158" text-anchor="middle" fill="#14532d" font-size="10" font-weight="bold">33</text>
+  <rect x="240" y="144" width="28" height="20" rx="3" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="3,2"/><text x="254" y="158" text-anchor="middle" fill="#cbd5e1" font-size="10">42</text>
+  <text x="280" y="158" fill="#16a34a" font-size="10" font-weight="bold">mid=33 &#10003; 找到!</text>
+  
+  <rect x="60" y="170" width="12" height="8" rx="2" fill="#fef3c7"/><text x="76" y="178" fill="#64748b" font-size="9">当前中点</text>
+  <rect x="130" y="170" width="12" height="8" rx="2" fill="#dbeafe"/><text x="146" y="178" fill="#64748b" font-size="9">搜索范围</text>
+  <rect x="216" y="170" width="12" height="8" rx="2" fill="#dcfce7"/><text x="232" y="178" fill="#64748b" font-size="9">找到目标</text>
+  <rect x="300" y="170" width="12" height="8" rx="2" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="2,1"/><text x="316" y="178" fill="#64748b" font-size="9">已排除</text>
+</svg></div>
+              <div class="example"><svg class="algo-diagram" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="12">
+  <text x="200" y="18" text-anchor="middle" font-weight="bold" fill="#4f46e5" font-size="13">归并排序 · 分治过程</text>
+  
+  <rect x="100" y="30" width="200" height="28" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="200" y="49" text-anchor="middle" fill="#1e3a5f" font-size="11">[38, 27, 43, 3, 9, 82, 10]</text>
+  
+  <line x1="170" y1="58" x2="120" y2="78" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="230" y1="58" x2="280" y2="78" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="200" y="72" text-anchor="middle" fill="#ef4444" font-size="10">分解</text>
+  
+  <rect x="40" y="82" width="160" height="24" rx="4" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="120" y="98" text-anchor="middle" fill="#14532d" font-size="11">[38, 27, 43, 3]</text>
+  <rect x="200" y="82" width="160" height="24" rx="4" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="280" y="98" text-anchor="middle" fill="#14532d" font-size="11">[9, 82, 10]</text>
+  
+  <line x1="100" y1="106" x2="70" y2="124" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="140" y1="106" x2="170" y2="124" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="260" y1="106" x2="235" y2="124" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="300" y1="106" x2="330" y2="124" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  
+  <rect x="15" y="128" width="110" height="22" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
+  <text x="70" y="143" text-anchor="middle" fill="#92400e" font-size="10">[38, 27]</text>
+  <rect x="130" y="128" width="80" height="22" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
+  <text x="170" y="143" text-anchor="middle" fill="#92400e" font-size="10">[43, 3]</text>
+  <rect x="215" y="128" width="80" height="22" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
+  <text x="255" y="143" text-anchor="middle" fill="#92400e" font-size="10">[9, 82]</text>
+  <rect x="300" y="128" width="50" height="22" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
+  <text x="325" y="143" text-anchor="middle" fill="#92400e" font-size="10">[10]</text>
+  
+  <line x1="50" y1="150" x2="40" y2="164" stroke="#64748b" stroke-width="1" marker-end="url(#arr)"/>
+  <line x1="90" y1="150" x2="100" y2="164" stroke="#64748b" stroke-width="1" marker-end="url(#arr)"/>
+  <line x1="150" y1="150" x2="145" y2="164" stroke="#64748b" stroke-width="1" marker-end="url(#arr)"/>
+  <line x1="190" y1="150" x2="195" y2="164" stroke="#64748b" stroke-width="1" marker-end="url(#arr)"/>
+  <line x1="235" y1="150" x2="235" y2="164" stroke="#64748b" stroke-width="1" marker-end="url(#arr)"/>
+  <line x1="275" y1="150" x2="280" y2="164" stroke="#64748b" stroke-width="1" marker-end="url(#arr)"/>
+  <rect x="20" y="168" width="36" height="20" rx="3" fill="#f3e8ff" stroke="#7c3aed"/>
+  <text x="38" y="182" text-anchor="middle" fill="#5b21b6" font-size="10">38</text>
+  <rect x="80" y="168" width="36" height="20" rx="3" fill="#f3e8ff" stroke="#7c3aed"/>
+  <text x="98" y="182" text-anchor="middle" fill="#5b21b6" font-size="10">27</text>
+  <rect x="128" y="168" width="36" height="20" rx="3" fill="#f3e8ff" stroke="#7c3aed"/>
+  <text x="146" y="182" text-anchor="middle" fill="#5b21b6" font-size="10">43</text>
+  <rect x="178" y="168" width="36" height="20" rx="3" fill="#f3e8ff" stroke="#7c3aed"/>
+  <text x="196" y="182" text-anchor="middle" fill="#5b21b6" font-size="10">3</text>
+  <rect x="218" y="168" width="36" height="20" rx="3" fill="#f3e8ff" stroke="#7c3aed"/>
+  <text x="236" y="182" text-anchor="middle" fill="#5b21b6" font-size="10">9</text>
+  <rect x="262" y="168" width="36" height="20" rx="3" fill="#f3e8ff" stroke="#7c3aed"/>
+  <text x="280" y="182" text-anchor="middle" fill="#5b21b6" font-size="10">82</text>
+  <rect x="306" y="168" width="36" height="20" rx="3" fill="#f3e8ff" stroke="#7c3aed"/>
+  <text x="324" y="182" text-anchor="middle" fill="#5b21b6" font-size="10">10</text>
+  
+  <text x="200" y="202" text-anchor="middle" fill="#16a34a" font-size="10">↑ 合并 ↑</text>
+  <line x1="40" y1="188" x2="70" y2="210" stroke="#16a34a" stroke-width="1.2" marker-end="url(#arrG)"/>
+  <line x1="100" y1="188" x2="90" y2="210" stroke="#16a34a" stroke-width="1.2" marker-end="url(#arrG)"/>
+  <line x1="145" y1="188" x2="170" y2="210" stroke="#16a34a" stroke-width="1.2" marker-end="url(#arrG)"/>
+  <line x1="196" y1="188" x2="190" y2="210" stroke="#16a34a" stroke-width="1.2" marker-end="url(#arrG)"/>
+  <rect x="30" y="214" width="120" height="22" rx="4" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="90" y="229" text-anchor="middle" fill="#14532d" font-size="10">[27, 38] [3, 43]</text>
+  <rect x="200" y="214" width="120" height="22" rx="4" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="260" y="229" text-anchor="middle" fill="#14532d" font-size="10">[9, 82] [10]</text>
+  
+  <line x1="90" y1="236" x2="140" y2="248" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrG)"/>
+  <line x1="260" y1="236" x2="260" y2="248" stroke="#16a34a" stroke-width="1.5" marker-end="url(#arrG)"/>
+  <rect x="60" y="252" width="280" height="24" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="200" y="268" text-anchor="middle" fill="#1e3a5f" font-size="11" font-weight="bold">[3, 9, 10, 27, 38, 43, 82]</text>
+  
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#64748b"/></marker>
+    <marker id="arrG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#16a34a"/></marker>
+  </defs>
+</svg></div>
+<pre><span class="cm">// 归并排序</span>
+<span class="kw">void</span> <span class="fn">mergeSort</span>(<span class="kw">int</span> a[], <span class="kw">int</span> left, <span class="kw">int</span> right) {
+    <span class="kw">if</span>(left < right) {
+        <span class="kw">int</span> mid = (left + right) >> <span class="num">1</span>;
+        <span class="fn">mergeSort</span>(a, left, mid);
+        <span class="fn">mergeSort</span>(a, mid+<span class="num">1</span>, right);
+        <span class="fn">merge</span>(a, left, mid, right);  <span class="cm">// 合并</span>
+    }
+}</pre>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>2.4 主方法(Master Theorem)</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p>对形如 T(n) = aT(n/b) + f(n) 的递归方程：</p>
+            <table>
+              <tr><th>情况</th><th>条件</th><th>结果</th></tr>
+              <tr><td>1</td><td>f(n) = O(n<sup>log<sub>b</sub>a-&epsilon;</sup>)</td><td>T(n) = &theta;(n<sup>log<sub>b</sub>a</sup>)</td></tr>
+              <tr><td>2</td><td>f(n) = &theta;(n<sup>log<sub>b</sub>a</sup>)</td><td>T(n) = &theta;(n<sup>log<sub>b</sub>a</sup> log n)</td></tr>
+              <tr><td>3</td><td>f(n) = &Omega;(n<sup>log<sub>b</sub>a+&epsilon;</sup>)</td><td>T(n) = &theta;(f(n))</td></tr>
+            </table>
+            <p>例：T(n) = 2T(n/2) + n → a=2, b=2, f(n)=n, n<sup>log<sub>2</sub>2</sup>=n，属于情况2，T(n)=&theta;(n log n)</p>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>真题精选 · 算法概述 + 递归分治</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <h4>选择题要点</h4>
+            <ul>
+              <li>算法可以有 <strong>1个或多个</strong> 输出（不是0个）</li>
+              <li>操作系统程序 <strong>不是</strong> 算法（程序≠算法）</li>
+              <li>动态规划通常用 <strong>数学归纳法</strong> 证明正确性</li>
+              <li><strong>N皇后问题</strong> 不能用贪心算法解决</li>
+              <li>分支限界法按 <strong>活结点表选择次序</strong> 分为 FIFO/LIFO/LC 三类</li>
+            </ul>
+            <h4>填空题要点</h4>
+            <ul>
+              <li>回溯法 = <strong>深度优先</strong> + 剪枝函数；分支限界法 = <strong>广度优先</strong></li>
+              <li>FIFO 分支限界法的活结点表是 <strong>队列</strong>；LIFO 是 <strong>堆栈</strong>；LC 是 <strong>优先队列</strong></li>
+              <li>具有 <strong>最优子结构性质</strong> 是可用动态规划或贪心法求解的关键特征</li>
+              <li>两路归并排序最坏时间复杂度 <strong>O(n log n)</strong></li>
+              <li>边数较少时用 <strong>Kruskal</strong> 算法效率更高</li>
+            </ul>
+            <h4>简答题：动态规划 vs 贪心法</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>相同点：</strong></p>
+                <ul>
+                  <li>都求解最优化问题</li>
+                  <li>都要求问题具有最优子结构性质</li>
+                </ul>
+                <p><strong>不同点：</strong></p>
+                <ul>
+                  <li><strong>求解方式：</strong>DP 自底向上；贪心自顶向下迭代</li>
+                  <li><strong>子问题依赖：</strong>DP 依赖所有子问题解；贪心不依赖子问题解，仅做局部最优选择</li>
+                </ul>
+              </div>
+              <div class="col-text">
+                <p><strong>时间复杂度分析：</strong></p>
+                <p>嵌套循环：for i=1..n, for j=1..i, for k=1..j → 执行次数 n(n+1)(n+2)/6 → <strong>O(n³)</strong></p>
+                <p>while i&lt;n: i=2*i → 执行次数 <strong>⌊log n⌋</strong> → <strong>O(log n)</strong></p>
+              </div>
+            </div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>数学归纳法证明 DP 正确性（3 个例子）</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>证明套路：</strong>归纳基础（n=1 最小子问题正确）→ 归纳假设（假设规模 &lt; n 的子问题最优）→ 归纳步骤（利用最优子结构性质，证明规模 n 的解也最优）</div>
+
+            <h4>例1：矩阵连乘（Matrix Chain Multiplication）</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>状态转移方程：</strong></p>
+                <p>\(m[i][j] = \min_{i \le k < j}\{m[i][k] + m[k+1][j] + p_{i-1}p_k p_j\}\)</p>
+                <p><strong>归纳证明：</strong></p>
+                <p><strong>基础：</strong>\(m[i][i] = 0\)（单个矩阵无需乘法，显然最优）</p>
+                <p><strong>假设：</strong>对所有链长 &lt; \(j-i+1\) 的子问题，\(m\) 值已是最优</p>
+                <p><strong>步骤：</strong>链长 \(j-i+1\) 的最优解必在某处 \(k\) 断开。由假设，\(m[i][k]\) 和 \(m[k+1][j]\) 均已最优，枚举所有 \(k\) 取最小即得全局最优。</p>
+              </div>
+              <div class="col-code"><pre><span class="cm">// 自底向上填表</span>
+<span class="kw">for</span>(<span class="kw">int</span> len=<span class="num">2</span>; len&lt;=n; len++)    <span class="cm">// 链长从小到大</span>
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>; i&lt;=n-len+<span class="num">1</span>; i++){
+    <span class="kw">int</span> j = i+len-<span class="num">1</span>;
+    m[i][j] = INF;
+    <span class="kw">for</span>(<span class="kw">int</span> k=i; k&lt;j; k++){     <span class="cm">// 枚举断点</span>
+      <span class="kw">int</span> cost=m[i][k]+m[k+<span class="num">1</span>][j]
+             +p[i-<span class="num">1</span>]*p[k]*p[j];
+      m[i][j]=min(m[i][j],cost);
+    }
+  }</pre></div>
+            </div>
+
+            <h4>例2：0-1 背包（0-1 Knapsack）</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>状态转移方程：</strong></p>
+                <p>\(dp[i][w] = \max(dp[i-1][w],\; dp[i-1][w-w_i] + v_i)\)</p>
+                <p><strong>归纳证明：</strong></p>
+                <p><strong>基础：</strong>\(dp[0][w] = 0\)（无物品，价值为 0）</p>
+                <p><strong>假设：</strong>\(dp[i-1][w]\) 对所有 \(w\) 是前 \(i-1\) 件物品的最优解</p>
+                <p><strong>步骤：</strong>第 \(i\) 件物品只有「选」或「不选」两种。选：价值 \(dp[i-1][w-w_i]+v_i\)；不选：价值 \(dp[i-1][w]\)。取较大者即为前 \(i\) 件的最优解。</p>
+              </div>
+              <div class="col-code"><pre><span class="cm">// dp[i][w]: 前i件物品,容量w的最大价值</span>
+<span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>; i&lt;=n; i++)
+  <span class="kw">for</span>(<span class="kw">int</span> w=<span class="num">0</span>; w&lt;=W; w++){
+    dp[i][w] = dp[i-<span class="num">1</span>][w];   <span class="cm">// 不选</span>
+    <span class="kw">if</span>(w &gt;= wt[i])           <span class="cm">// 能装下</span>
+      dp[i][w]=max(dp[i][w],
+        dp[i-<span class="num">1</span>][w-wt[i]]+val[i]);
+    <span class="cm">// 选: 价值更大则更新</span>
+  }</pre></div>
+            </div>
+
+            <h4>例3：最长公共子序列（LCS）</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>状态转移方程：</strong></p>
+                <p>\(c[i][j] = \begin{cases} c[i-1][j-1]+1 & x_i = y_j \\ \max(c[i-1][j], c[i][j-1]) & x_i \ne y_j \end{cases}\)</p>
+                <p><strong>归纳证明：</strong></p>
+                <p><strong>基础：</strong>\(c[0][j] = c[i][0] = 0\)（空序列 LCS 长度为 0）</p>
+                <p><strong>假设：</strong>\(c[i'][j']\) 对所有 \(i'&lt;i\) 或 \(j'&lt;j\) 已是最优</p>
+                <p><strong>步骤：</strong>若 \(x_i = y_j\)，LCS 必包含此字符，长度 = 子问题 +1。若不等，LCS 要么不含 \(x_i\) 要么不含 \(y_j\)，取两者较大。</p>
+              </div>
+              <div class="col-code"><pre><span class="cm">// c[i][j]: X前i个与Y前j个的LCS长度</span>
+<span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>; i&lt;=m; i++)
+  <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">1</span>; j&lt;=n; j++){
+    <span class="kw">if</span>(X[i]==Y[j])
+      c[i][j]=c[i-<span class="num">1</span>][j-<span class="num">1</span>]+<span class="num">1</span>;
+    <span class="kw">else</span>
+      c[i][j]=max(c[i-<span class="num">1</span>][j],
+                  c[i][j-<span class="num">1</span>]);
+  }
+<span class="cm">// c[m][n] 即为 LCS 长度</span></pre></div>
+            </div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第2章 经典代码 · 双栏对照</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+
+            <h4>快速排序</h4>
+            <div class="example"><svg class="algo-diagram" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="12">
+  <text x="200" y="18" text-anchor="middle" font-weight="bold" fill="#4f46e5" font-size="13">快速排序 · 分区过程</text>
+  
+  <text x="10" y="46" fill="#475569" font-size="10">原数组:</text>
+  <rect x="60" y="34" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="76" y="49" text-anchor="middle" fill="#1e3a5f" font-size="11">6</text>
+  <rect x="94" y="34" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="110" y="49" text-anchor="middle" fill="#1e3a5f" font-size="11">2</text>
+  <rect x="128" y="34" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="144" y="49" text-anchor="middle" fill="#1e3a5f" font-size="11">8</text>
+  <rect x="162" y="34" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="178" y="49" text-anchor="middle" fill="#1e3a5f" font-size="11">5</text>
+  <rect x="196" y="34" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="212" y="49" text-anchor="middle" fill="#1e3a5f" font-size="11">3</text>
+  <rect x="230" y="34" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="246" y="49" text-anchor="middle" fill="#1e3a5f" font-size="11">1</text>
+  <rect x="264" y="34" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="280" y="49" text-anchor="middle" fill="#1e3a5f" font-size="11">9</text>
+  
+  <text x="10" y="76" fill="#475569" font-size="10">选基准:</text>
+  <rect x="60" y="62" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="76" y="77" text-anchor="middle" fill="#1e3a5f" font-size="11">6</text>
+  <rect x="94" y="62" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="110" y="77" text-anchor="middle" fill="#1e3a5f" font-size="11">2</text>
+  <rect x="128" y="62" width="32" height="22" rx="3" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><text x="144" y="77" text-anchor="middle" fill="#92400e" font-size="11" font-weight="bold">8</text>
+  <rect x="162" y="62" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="178" y="77" text-anchor="middle" fill="#1e3a5f" font-size="11">5</text>
+  <rect x="196" y="62" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="212" y="77" text-anchor="middle" fill="#1e3a5f" font-size="11">3</text>
+  <rect x="230" y="62" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="246" y="77" text-anchor="middle" fill="#1e3a5f" font-size="11">1</text>
+  <rect x="264" y="62" width="32" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/><text x="280" y="77" text-anchor="middle" fill="#1e3a5f" font-size="11">9</text>
+  <text x="310" y="77" fill="#f59e0b" font-size="10" font-weight="bold">pivot=8</text>
+  
+  <text x="10" y="106" fill="#475569" font-size="10">分区后:</text>
+  <rect x="60" y="92" width="32" height="22" rx="3" fill="#dcfce7" stroke="#16a34a"/><text x="76" y="107" text-anchor="middle" fill="#14532d" font-size="11">6</text>
+  <rect x="94" y="92" width="32" height="22" rx="3" fill="#dcfce7" stroke="#16a34a"/><text x="110" y="107" text-anchor="middle" fill="#14532d" font-size="11">2</text>
+  <rect x="128" y="92" width="32" height="22" rx="3" fill="#dcfce7" stroke="#16a34a"/><text x="144" y="107" text-anchor="middle" fill="#14532d" font-size="11">5</text>
+  <rect x="162" y="92" width="32" height="22" rx="3" fill="#dcfce7" stroke="#16a34a"/><text x="178" y="107" text-anchor="middle" fill="#14532d" font-size="11">3</text>
+  <rect x="196" y="92" width="32" height="22" rx="3" fill="#dcfce7" stroke="#16a34a"/><text x="212" y="107" text-anchor="middle" fill="#14532d" font-size="11">1</text>
+  <rect x="230" y="92" width="32" height="22" rx="3" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><text x="246" y="107" text-anchor="middle" fill="#92400e" font-size="11" font-weight="bold">8</text>
+  <rect x="264" y="92" width="32" height="22" rx="3" fill="#fce7f3" stroke="#db2777"/><text x="280" y="107" text-anchor="middle" fill="#831843" font-size="11">9</text>
+  
+  <line x1="135" y1="84" x2="135" y2="100" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="135" y="126" text-anchor="middle" fill="#16a34a" font-size="9">&lt;8</text>
+  <text x="246" y="126" text-anchor="middle" fill="#f59e0b" font-size="9">=8</text>
+  <text x="280" y="126" text-anchor="middle" fill="#db2777" font-size="9">&gt;8</text>
+  
+  <text x="10" y="155" fill="#475569" font-size="10">递归:</text>
+  <rect x="50" y="140" width="170" height="24" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-dasharray="4,2"/>
+  <text x="135" y="156" text-anchor="middle" fill="#14532d" font-size="10">递归左: [6,2,5,3,1]</text>
+  <rect x="230" y="140" width="80" height="24" rx="4" fill="#fce7f3" stroke="#db2777" stroke-dasharray="4,2"/>
+  <text x="270" y="156" text-anchor="middle" fill="#831843" font-size="10">递归右: [9]</text>
+  
+  <rect x="50" y="176" width="260" height="22" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="180" y="191" text-anchor="middle" fill="#1e3a5f" font-size="11" font-weight="bold">[1, 2, 3, 5, 6, 8, 9]</text>
+  <text x="320" y="191" fill="#16a34a" font-size="10" font-weight="bold">排序完成</text>
+  <defs>
+    <marker id="arr2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#64748b"/></marker>
+  </defs>
+</svg></div>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>分治策略：</strong>选基准 x，双指针分区，递归排序左右两半。</p>
+                <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>最优 O(n log n) / 平均 O(n log n) / 最差 O(n&sup2;)</span><span class="cx-space"><span class="cx-label">空间</span>O(log n)</span></div>
+                <p><strong>关键：</strong>基准选中间可避免最坏情况；i,j 从两端扫描。</p>
+              </div>
+              <div class="col-code"><pre><span class="kw">void</span> <span class="fn">quick_sort</span>(<span class="kw">int</span> q[], <span class="kw">int</span> l, <span class="kw">int</span> r) {
+  <span class="kw">if</span>(l >= r) <span class="kw">return</span>;          <span class="cm">// 递归出口</span>
+  <span class="kw">int</span> i=l-<span class="num">1</span>, j=r+<span class="num">1</span>;
+  <span class="kw">int</span> x = q[l+r >><span class="num">1</span>];         <span class="cm">// 取中间为基准</span>
+  <span class="kw">while</span>(i &lt; j) {
+    <span class="kw">do</span> i++; <span class="kw">while</span>(q[i] &lt; x);  <span class="cm">// 左找≥x</span>
+    <span class="kw">do</span> j--; <span class="kw">while</span>(q[j] &gt; x);  <span class="cm">// 右找≤x</span>
+    <span class="kw">if</span>(i &lt; j) swap(q[i],q[j]);
+  }
+  <span class="fn">quick_sort</span>(q, l, j);         <span class="cm">// 递归左半</span>
+  <span class="fn">quick_sort</span>(q, j+<span class="num">1</span>, r);      <span class="cm">// 递归右半</span>
+}</pre></div>
+            </div>
+
+            <h4>归并排序</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>分治策略：</strong>一分为二，递归排序后 merge 合并。</p>
+                <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>最优/平均/最差 O(n log n)</span><span class="cx-space"><span class="cx-label">空间</span>O(n)</span></div>
+                <p><strong>稳定排序</strong>，需要额外 O(n) 空间。</p>
+                <p><strong>merge：</strong>双指针取较小者放入临时数组，再拷回。</p>
+              </div>
+              <div class="col-code"><pre><span class="kw">void</span> <span class="fn">merge</span>(<span class="kw">int</span> a[],<span class="kw">int</span> l,<span class="kw">int</span> m,<span class="kw">int</span> r){
+  <span class="kw">int</span> *t=(<span class="kw">int</span>*)malloc((r-l+<span class="num">1</span>)*<span class="kw">sizeof</span>(<span class="kw">int</span>));
+  <span class="kw">int</span> i=l, j=m+<span class="num">1</span>, k=<span class="num">0</span>;
+  <span class="kw">while</span>(i&lt;=m && j&lt;=r)        <span class="cm">// 双指针归并</span>
+    t[k++] = a[i]&lt;=a[j] ? a[i++] : a[j++];
+  <span class="kw">while</span>(i&lt;=m) t[k++]=a[i++]; <span class="cm">// 左剩余</span>
+  <span class="kw">while</span>(j&lt;=r) t[k++]=a[j++]; <span class="cm">// 右剩余</span>
+  <span class="kw">for</span>(k=<span class="num">0</span>,i=l;i&lt;=r;k++,i++) a[i]=t[k];
+  free(t);
+}</pre></div>
+            </div>
+
+            <h4>集合全排列</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>递归+回溯：</strong>依次将每个元素交换到首位，递归求剩余全排列。</p>
+                <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>O(n &middot; n!)</span><span class="cx-space"><span class="cx-label">空间</span>O(n)</span></div>
+                <p><strong>注意：</strong>递归返回后必须交换回来（回溯）。</p>
+              </div>
+              <div class="col-code"><pre><span class="kw">void</span> <span class="fn">Perm</span>(<span class="kw">int</span> a[],<span class="kw">int</span> k,<span class="kw">int</span> m){
+  <span class="kw">if</span>(k==m){                   <span class="cm">// 递归出口：输出</span>
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;=m;i++)
+      cout&lt;&lt;a[i]&lt;&lt;<span class="str">" "</span>;
+  } <span class="kw">else</span> {
+    <span class="kw">for</span>(<span class="kw">int</span> j=k;j&lt;=m;j++){
+      swap(a[k], a[j]);       <span class="cm">// 选第j个放首位</span>
+      <span class="fn">Perm</span>(a, k+<span class="num">1</span>, m);       <span class="cm">// 递归剩余</span>
+      swap(a[k], a[j]);       <span class="cm">// 回溯恢复</span>
+    }
+  }
+}</pre></div>
+            </div>
+          </div></div>
+
+          <div class="card" style="border-left:3px solid #f59e0b"><div class="card-header" onclick="toggleCard(this)"><h3>LeetCode / 洛谷 · 分治相关练习</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+          <table>
+          <tr><th>题号</th><th>题目</th><th>算法</th><th>链接</th></tr>
+          <tr><td>704</td><td>二分查找</td><td>二分</td><td><a href="https://leetcode.cn/problems/binary-search/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>53</td><td>最大子数组和</td><td>分治</td><td><a href="https://leetcode.cn/problems/maximum-subarray/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>912</td><td>排序数组</td><td>快排/归并</td><td><a href="https://leetcode.cn/problems/sort-an-array/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>215</td><td>数组中第K大元素</td><td>快速选择</td><td><a href="https://leetcode.cn/problems/kth-largest-element-in-an-array/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>23</td><td>合并K个升序链表</td><td>分治/堆</td><td><a href="https://leetcode.cn/problems/merge-k-sorted-lists/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>P1706</td><td>全排列问题</td><td>递归</td><td><a href="https://www.luogu.com.cn/problem/P1706" target="_blank">洛谷</a></td></tr>
+          </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第2章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch2"></div></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="ch3" class="chapter-section hidden">
+      <div class="chapter" data-chapter="3">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#fef3c7;color:#d97706">3</div>
+          <div class="chapter-title"><h2>第3章 动态规划</h2><p>最优子结构、状态转移方程、经典问题</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.1 两个基本要素</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>动态规划两大基本要素：</strong><br>
+            1. <strong>最优子结构性质</strong>：问题最优解包含子问题最优解<br>
+            2. <strong>重叠子问题性质</strong>：子问题被反复计算</div>
+            <div class="keypoint"><strong>动态规划的核心：</strong><br>
+            &bull; <strong>状态定义</strong>：明确 dp[i] 代表什么<br>
+            &bull; <strong>状态转移方程</strong>：当前状态与上一状态的关系(类似递归方程)<br>
+            &bull; <strong>转移顺序</strong>：<strong>自底向上</strong>，从最小规模子问题开始</div>
+            <div class="keypoint warn"><strong>复习课重点：</strong>状态转移方程一定要会推导！给你几个矩阵/序列，要能写出方程并算出最优解。</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.2 矩阵连乘问题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p>给定n个矩阵 &#123;A<sub>1</sub>,A<sub>2</sub>,...,A<sub>n</sub>&#125;，其中A<sub>i</sub>的维度为 p<sub>(i-1)</sub> &times; p<sub>i</sub>，求最优连乘顺序使乘法次数最少。</p>
+            <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>O(n&sup3;)</span><span class="cx-space"><span class="cx-label">空间</span>O(n&sup2;)</span></div>
+            <div class="keypoint"><strong>关键：</strong>矩阵连乘满足<strong>结合律</strong>但不满足<strong>交换律</strong></div>
+            <p><strong>状态定义：</strong>m[i][j] 表示 A<sub>i</sub>...A<sub>j</sub> 连乘的最少乘法次数</p>
+            <p><strong>状态转移方程：</strong></p>
+<pre>m[i][j] = {
+  <span class="num">0</span>                              , i = j
+  min{m[i][k] + m[k+1][j]         , i &le; k &lt; j
+      + p<sub>(i-1)</sub>&middot;p<sub>k</sub>&middot;p<sub>j</sub>}
+}</pre>
+            <p><strong>求解顺序：</strong>自底向上，先算1个矩阵(为0)，再算2个矩阵连乘，逐步扩大到n个</p>
+            <div class="keypoint warn"><strong>复习课强调：</strong>给若干个矩阵(如3个2&times;2维矩阵)，要会算最小计算次数和最优结合顺序！</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.3 最长公共子序列(LCS)</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p><strong>子序列：</strong>不要求连续，但保持相对顺序。<strong>子串：</strong>要求连续。</p>
+            <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>O(mn)</span><span class="cx-space"><span class="cx-label">空间</span>O(mn)</span></div>
+            <p><strong>状态定义：</strong>c[i][j] 表示 X<sub>i</sub> 和 Y<sub>j</sub> 的LCS长度</p>
+            <p><strong>状态转移方程：</strong></p>
+<pre>c[i][j] = {
+  <span class="num">0</span>                              , i=0 或 j=0
+  c[i-1][j-1] + <span class="num">1</span>               , x<sub>i</sub> = y<sub>j</sub>
+  max(c[i-1][j], c[i][j-1])      , x<sub>i</sub> &ne; y<sub>j</sub>
+}</pre>
+            <div class="keypoint"><strong>应用场景：</strong>版本对比(标红差异)、论文查重(主位宾结构比对)、DNA序列比对</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.4 动态规划 vs 备忘录方法</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table>
+              <tr><th>对比项</th><th>动态规划</th><th>备忘录方法</th></tr>
+              <tr><td>求解方向</td><td><strong>自底向上</strong></td><td><strong>自顶向下</strong></td></tr>
+              <tr><td>实现方式</td><td>迭代(填表)</td><td>递归 + 缓存</td></tr>
+              <tr><td>子问题求解</td><td>求解所有子问题</td><td>只求解需要的子问题</td></tr>
+              <tr><td>算法复杂度</td><td>相同</td><td>相同</td></tr>
+            </table>
+            <div class="keypoint warn"><strong>复习课提醒：</strong>AI可能说动态规划不一定是自底向上，那是因为它包含了备忘录方法。课本定义：<strong>动态规划 = 自底向上</strong>，备忘录方法是另一种形式。</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>3.5 0-1背包(动态规划)</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p><strong>状态定义：</strong>dp[i][p] 表示前i个物品在背包容量为p时的最大价值</p>
+            <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>O(nW)</span><span class="cx-space"><span class="cx-label">空间</span>O(nW)</span></div>
+            <p><strong>状态转移方程：</strong></p>
+<pre>dp[i][p] = max(
+  dp[i-1][p],                  <span class="cm">// 不选第i个</span>
+  dp[i-1][p-w[i]] + v[i]       <span class="cm">// 选第i个(需p&ge;w[i])</span>
+)</pre>
+            <div class="keypoint"><strong>0-1背包用动态规划(非贪心)，分数背包用贪心算法！</strong></div>
+            <div class="example"><svg class="algo-diagram" viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="11">
+  <text x="200" y="16" text-anchor="middle" font-weight="bold" fill="#4f46e5" font-size="13">0-1 背包 · DP 表格填充</text>
+  <text x="10" y="34" fill="#64748b" font-size="10">物品: w=[2,3,4,5] v=[3,4,5,6] 容量W=8</text>
+  
+  <rect x="60" y="40" width="40" height="18" rx="2" fill="#f1f5f9" stroke="#cbd5e1"/><text x="80" y="53" text-anchor="middle" fill="#475569" font-size="9" font-weight="bold">i\w</text>
+  <rect x="100" y="40" width="28" height="18" rx="2" fill="#f1f5f9" stroke="#cbd5e1"/><text x="114" y="53" text-anchor="middle" fill="#475569" font-size="9">0</text>
+  <rect x="128" y="40" width="28" height="18" rx="2" fill="#f1f5f9" stroke="#cbd5e1"/><text x="142" y="53" text-anchor="middle" fill="#475569" font-size="9">1</text>
+  <rect x="156" y="40" width="28" height="18" rx="2" fill="#f1f5f9" stroke="#cbd5e1"/><text x="170" y="53" text-anchor="middle" fill="#475569" font-size="9">2</text>
+  <rect x="184" y="40" width="28" height="18" rx="2" fill="#f1f5f9" stroke="#cbd5e1"/><text x="198" y="53" text-anchor="middle" fill="#475569" font-size="9">3</text>
+  <rect x="212" y="40" width="28" height="18" rx="2" fill="#f1f5f9" stroke="#cbd5e1"/><text x="226" y="53" text-anchor="middle" fill="#475569" font-size="9">4</text>
+  <rect x="240" y="40" width="28" height="18" rx="2" fill="#f1f5f9" stroke="#cbd5e1"/><text x="254" y="53" text-anchor="middle" fill="#475569" font-size="9">5</text>
+  <rect x="268" y="40" width="28" height="18" rx="2" fill="#f1f5f9" stroke="#cbd5e1"/><text x="282" y="53" text-anchor="middle" fill="#475569" font-size="9">6</text>
+  <rect x="296" y="40" width="28" height="18" rx="2" fill="#f1f5f9" stroke="#cbd5e1"/><text x="310" y="53" text-anchor="middle" fill="#475569" font-size="9">7</text>
+  <rect x="324" y="40" width="28" height="18" rx="2" fill="#f1f5f9" stroke="#cbd5e1"/><text x="338" y="53" text-anchor="middle" fill="#475569" font-size="9">8</text>
+  
+  <rect x="60" y="58" width="40" height="18" rx="2" fill="#f1f5f9" stroke="#cbd5e1"/><text x="80" y="71" text-anchor="middle" fill="#475569" font-size="9">0</text>
+  <rect x="100" y="58" width="236" height="18" rx="2" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="114" y="71" text-anchor="middle" fill="#94a3b8" font-size="9">0</text><text x="142" y="71" text-anchor="middle" fill="#94a3b8" font-size="9">0</text>
+  <text x="170" y="71" text-anchor="middle" fill="#94a3b8" font-size="9">0</text><text x="198" y="71" text-anchor="middle" fill="#94a3b8" font-size="9">0</text>
+  <text x="226" y="71" text-anchor="middle" fill="#94a3b8" font-size="9">0</text><text x="254" y="71" text-anchor="middle" fill="#94a3b8" font-size="9">0</text>
+  <text x="282" y="71" text-anchor="middle" fill="#94a3b8" font-size="9">0</text><text x="310" y="71" text-anchor="middle" fill="#94a3b8" font-size="9">0</text>
+  <text x="338" y="71" text-anchor="middle" fill="#94a3b8" font-size="9">0</text>
+  
+  <rect x="60" y="76" width="40" height="18" rx="2" fill="#dbeafe" stroke="#2563eb"/><text x="80" y="89" text-anchor="middle" fill="#1e3a5f" font-size="9">1(2,3)</text>
+  <text x="114" y="89" text-anchor="middle" fill="#64748b" font-size="9">0</text><text x="142" y="89" text-anchor="middle" fill="#64748b" font-size="9">0</text>
+  <rect x="156" y="76" width="28" height="18" rx="2" fill="#dcfce7" stroke="#16a34a"/><text x="170" y="89" text-anchor="middle" fill="#14532d" font-size="9" font-weight="bold">3</text>
+  <rect x="184" y="76" width="28" height="18" rx="2" fill="#dcfce7" stroke="#16a34a"/><text x="198" y="89" text-anchor="middle" fill="#14532d" font-size="9" font-weight="bold">3</text>
+  <text x="226" y="89" text-anchor="middle" fill="#64748b" font-size="9">3</text><text x="254" y="89" text-anchor="middle" fill="#64748b" font-size="9">3</text>
+  <text x="282" y="89" text-anchor="middle" fill="#64748b" font-size="9">3</text><text x="310" y="89" text-anchor="middle" fill="#64748b" font-size="9">3</text>
+  <text x="338" y="89" text-anchor="middle" fill="#64748b" font-size="9">3</text>
+  
+  <rect x="60" y="94" width="40" height="18" rx="2" fill="#dbeafe" stroke="#2563eb"/><text x="80" y="107" text-anchor="middle" fill="#1e3a5f" font-size="9">2(3,4)</text>
+  <text x="114" y="107" text-anchor="middle" fill="#64748b" font-size="9">0</text><text x="142" y="107" text-anchor="middle" fill="#64748b" font-size="9">0</text>
+  <text x="170" y="107" text-anchor="middle" fill="#64748b" font-size="9">3</text>
+  <rect x="184" y="94" width="28" height="18" rx="2" fill="#dcfce7" stroke="#16a34a"/><text x="198" y="107" text-anchor="middle" fill="#14532d" font-size="9" font-weight="bold">4</text>
+  <text x="226" y="107" text-anchor="middle" fill="#64748b" font-size="9">4</text>
+  <rect x="240" y="94" width="28" height="18" rx="2" fill="#dcfce7" stroke="#16a34a"/><text x="254" y="107" text-anchor="middle" fill="#14532d" font-size="9" font-weight="bold">7</text>
+  <text x="282" y="107" text-anchor="middle" fill="#64748b" font-size="9">7</text><text x="310" y="107" text-anchor="middle" fill="#64748b" font-size="9">7</text>
+  <text x="338" y="107" text-anchor="middle" fill="#64748b" font-size="9">7</text>
+  
+  <rect x="60" y="112" width="40" height="18" rx="2" fill="#dbeafe" stroke="#2563eb"/><text x="80" y="125" text-anchor="middle" fill="#1e3a5f" font-size="9">3(4,5)</text>
+  <text x="114" y="125" text-anchor="middle" fill="#64748b" font-size="9">0</text><text x="142" y="125" text-anchor="middle" fill="#64748b" font-size="9">0</text>
+  <text x="170" y="125" text-anchor="middle" fill="#64748b" font-size="9">3</text><text x="198" y="125" text-anchor="middle" fill="#64748b" font-size="9">4</text>
+  <rect x="212" y="112" width="28" height="18" rx="2" fill="#dcfce7" stroke="#16a34a"/><text x="226" y="125" text-anchor="middle" fill="#14532d" font-size="9" font-weight="bold">5</text>
+  <text x="254" y="125" text-anchor="middle" fill="#64748b" font-size="9">7</text>
+  <rect x="268" y="112" width="28" height="18" rx="2" fill="#dcfce7" stroke="#16a34a"/><text x="282" y="125" text-anchor="middle" fill="#14532d" font-size="9" font-weight="bold">8</text>
+  <text x="310" y="125" text-anchor="middle" fill="#64748b" font-size="9">9</text>
+  <rect x="324" y="112" width="28" height="18" rx="2" fill="#dcfce7" stroke="#16a34a"/><text x="338" y="125" text-anchor="middle" fill="#14532d" font-size="9" font-weight="bold">12</text>
+  
+  <rect x="60" y="130" width="40" height="18" rx="2" fill="#dbeafe" stroke="#2563eb"/><text x="80" y="143" text-anchor="middle" fill="#1e3a5f" font-size="9">4(5,6)</text>
+  <text x="114" y="143" text-anchor="middle" fill="#64748b" font-size="9">0</text><text x="142" y="143" text-anchor="middle" fill="#64748b" font-size="9">0</text>
+  <text x="170" y="143" text-anchor="middle" fill="#64748b" font-size="9">3</text><text x="198" y="143" text-anchor="middle" fill="#64748b" font-size="9">4</text>
+  <text x="226" y="143" text-anchor="middle" fill="#64748b" font-size="9">5</text><text x="254" y="143" text-anchor="middle" fill="#64748b" font-size="9">7</text>
+  <text x="282" y="143" text-anchor="middle" fill="#64748b" font-size="9">8</text><text x="310" y="143" text-anchor="middle" fill="#64748b" font-size="9">9</text>
+  <rect x="324" y="130" width="28" height="18" rx="3" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><text x="338" y="143" text-anchor="middle" fill="#92400e" font-size="9" font-weight="bold">12</text>
+  
+  <text x="360" y="143" fill="#f59e0b" font-size="9" font-weight="bold">最优解</text>
+  
+  <text x="10" y="168" fill="#475569" font-size="10">转移方程: dp[i][w] = max(dp[i-1][w], dp[i-1][w-wt[i]] + val[i])</text>
+  
+  <text x="10" y="190" fill="#475569" font-size="10" font-weight="bold">最优选择回溯:</text>
+  <rect x="130" y="178" width="40" height="20" rx="4" fill="#dcfce7" stroke="#16a34a"/><text x="150" y="192" text-anchor="middle" fill="#14532d" font-size="9">物品1</text>
+  <text x="175" y="192" fill="#64748b" font-size="9">w=2,v=3</text>
+  <rect x="220" y="178" width="40" height="20" rx="4" fill="#dcfce7" stroke="#16a34a"/><text x="240" y="192" text-anchor="middle" fill="#14532d" font-size="9">物品3</text>
+  <text x="265" y="192" fill="#64748b" font-size="9">w=4,v=5</text>
+  <rect x="310" y="178" width="40" height="20" rx="4" fill="#dcfce7" stroke="#16a34a"/><text x="330" y="192" text-anchor="middle" fill="#14532d" font-size="9">物品4</text>
+  <text x="355" y="192" fill="#64748b" font-size="9">w=5,v=6</text>
+  <text x="130" y="212" fill="#16a34a" font-size="10" font-weight="bold">总重量: 2+4+5=11... 不超过8的最优: 物品2+3 = 4+5=9</text>
+  <text x="130" y="222" fill="#16a34a" font-size="10" font-weight="bold">或物品1+2 = 3+4=7, 容量8内最大价值=12(物品2+4)</text>
+</svg></div>
+          </div></div>
+
+          <div class="card" style="border-left:3px solid #f59e0b"><div class="card-header" onclick="toggleCard(this)"><h3>LeetCode / 洛谷 · 动态规划练习</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+          <table>
+          <tr><th>题号</th><th>题目</th><th>类型</th><th>链接</th></tr>
+          <tr><td>322</td><td>零钱兑换</td><td>完全背包</td><td><a href="https://leetcode.cn/problems/coin-change/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>416</td><td>分割等和子集</td><td>0-1背包</td><td><a href="https://leetcode.cn/problems/partition-equal-subset-sum/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>1143</td><td>最长公共子序列</td><td>LCS</td><td><a href="https://leetcode.cn/problems/longest-common-subsequence/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>300</td><td>最长递增子序列</td><td>LIS</td><td><a href="https://leetcode.cn/problems/longest-increasing-subsequence/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>72</td><td>编辑距离</td><td>字符串DP</td><td><a href="https://leetcode.cn/problems/edit-distance/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>62</td><td>不同路径</td><td>网格DP</td><td><a href="https://leetcode.cn/problems/unique-paths/" target="_blank">LeetCode</a></td></tr>
+          </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第3章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch3"></div></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="ch4" class="chapter-section hidden">
+      <div class="chapter" data-chapter="4">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#fce7f3;color:#db2777">4</div>
+          <div class="chapter-title"><h2>第4章 贪心算法</h2><p>贪心选择性质、Dijkstra、哈夫曼编码</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>4.1 贪心算法基本要素</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>贪心算法两大性质：</strong><br>
+            1. <strong>贪心选择性质</strong>：通过一系列局部最优选择达到全局最优<br>
+            2. <strong>最优子结构性质</strong>：最优解包含子问题最优解(与动态规划相同)</div>
+            <table>
+              <tr><th>对比</th><th>相同点</th><th>不同点</th></tr>
+              <tr><td>动态规划</td><td>最优子结构</td><td>重叠子问题</td></tr>
+              <tr><td>贪心算法</td><td>最优子结构</td><td>贪心选择性质</td></tr>
+            </table>
+            <div class="keypoint warn"><strong>多段图最短路径：</strong>能用动态规划，<strong>不能</strong>用贪心算法！(复习课重点)</div>
+            <div class="keypoint"><strong>贪心不保证最优解，但通常接近最优解。</strong>在分支限界法中，贪心算法用于求下界。</div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>4.2 Dijkstra单源最短路径</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>复习课重点：Dijkstra迭代过程必考！</strong>不仅要知道结果，还要写出过程。</div>
+            <div class="highlight"><strong>推荐教程：</strong><a href="https://www.zhihu.com/tardis/zm/art/40338107?source_id=1003" target="_blank">Dijkstra 算法详解（知乎）</a> — 图解 + 代码实现，适合考前快速复习。</div>
+            <p><strong>算法思想：</strong>从原点出发，每次选择距原点最近的未确定顶点加入S集合，更新distance数组。</p>
+            <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>O(V&sup2;) / 堆优化 O((V+E) log V)</span><span class="cx-space"><span class="cx-label">空间</span>O(V)</span></div>
+            <p><strong>核心概念：</strong></p>
+            <ul>
+              <li><strong>S集合</strong>：已确定最短路径的顶点集合</li>
+              <li><strong>特殊路径</strong>：从源到u且只经过S中顶点的路径</li>
+              <li><strong>贪心选择</strong>：从V-S中选距离最小的顶点加入S</li>
+            </ul>
+            <p><strong>迭代过程：</strong></p>
+            <ol>
+              <li>初始化：S=&#123;v<sub>0</sub>&#125;，distance[i]=cost[v<sub>0</sub>][i]</li>
+              <li>从V-S中选distance最小的顶点w加入S</li>
+              <li>更新：distance[j] = min(distance[j], distance[w]+cost[w][j])</li>
+              <li>重复直到S包含所有顶点</li>
+            </ol>
+            <div class="example"><svg class="algo-diagram" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="11">
+  <text x="200" y="18" text-anchor="middle" font-weight="bold" fill="#4f46e5" font-size="13">Dijkstra 单源最短路径</text>
+  
+  <circle cx="60" cy="60" r="20" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="60" y="64" text-anchor="middle" fill="#1e3a5f" font-size="11" font-weight="bold">v0</text>
+  <circle cx="200" cy="40" r="20" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="200" y="44" text-anchor="middle" fill="#14532d" font-size="11" font-weight="bold">v1</text>
+  <circle cx="180" cy="140" r="20" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="180" y="144" text-anchor="middle" fill="#14532d" font-size="11" font-weight="bold">v2</text>
+  <circle cx="320" cy="60" r="20" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  <text x="320" y="64" text-anchor="middle" fill="#92400e" font-size="11" font-weight="bold">v3</text>
+  <circle cx="310" cy="160" r="20" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+  <text x="310" y="164" text-anchor="middle" fill="#831843" font-size="11" font-weight="bold">v4</text>
+  
+  <line x1="78" y1="50" x2="182" y2="42" stroke="#2563eb" stroke-width="3" marker-end="url(#arrB)"/>
+  <text x="128" y="36" text-anchor="middle" fill="#2563eb" font-size="10" font-weight="bold">10</text>
+  <line x1="78" y1="68" x2="162" y2="132" stroke="#64748b" stroke-width="1.5"/>
+  <text x="108" y="104" text-anchor="middle" fill="#64748b" font-size="10">30</text>
+  <line x1="78" y1="62" x2="302" y2="60" stroke="#64748b" stroke-width="1.5"/>
+  <text x="188" y="54" text-anchor="middle" fill="#64748b" font-size="10">50</text>
+  <line x1="218" y1="44" x2="302" y2="56" stroke="#f59e0b" stroke-width="3" marker-end="url(#arrO)"/>
+  <text x="262" y="42" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">25</text>
+  <line x1="186" y1="48" x2="198" y2="136" stroke="#16a34a" stroke-width="3" marker-end="url(#arrG)"/>
+  <text x="202" y="96" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="bold">15</text>
+  <line x1="196" y1="144" x2="294" y2="156" stroke="#16a34a" stroke-width="3" marker-end="url(#arrG)"/>
+  <text x="248" y="158" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="bold">20</text>
+  <line x1="336" y1="72" x2="318" y2="142" stroke="#db2777" stroke-width="3" marker-end="url(#arrP)"/>
+  <text x="340" y="110" text-anchor="middle" fill="#db2777" font-size="10" font-weight="bold">10</text>
+  
+  <text x="20" y="200" fill="#475569" font-size="11" font-weight="bold">迭代过程:</text>
+  <rect x="20" y="208" width="360" height="18" rx="3" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="30" y="221" fill="#1e3a5f" font-size="9">初始: S={v0}, dist=[0,10,30,50,∞]</text>
+  <rect x="20" y="228" width="360" height="18" rx="3" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="30" y="241" fill="#14532d" font-size="9">第1轮: 加v1(10), 更新: v2←25, v3←35</text>
+  <rect x="20" y="248" width="360" height="18" rx="3" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="30" y="261" fill="#14532d" font-size="9">第2轮: 加v2(25), 更新: v4←45</text>
+  <rect x="20" y="268" width="360" height="18" rx="3" fill="#fef3c7" stroke="#f59e0b"/>
+  <text x="30" y="281" fill="#92400e" font-size="9">第3轮: 加v3(35), 更新: v4←45  第4轮: 加v4(45)</text>
+  
+  <line x1="56" y1="78" x2="56" y2="90" stroke="none"/>
+  <text x="200" y="196" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="bold">最短路径: v0→v1(10) → v2(25) → v4(45)</text>
+  <defs>
+    <marker id="arrB" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#2563eb"/></marker>
+    <marker id="arrG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#16a34a"/></marker>
+    <marker id="arrO" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker>
+    <marker id="arrP" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#db2777"/></marker>
+  </defs>
+</svg></div>
+<pre><span class="kw">void</span> <span class="fn">Dijkstra</span>(<span class="kw">int</span> cost[][], <span class="kw">int</span> n, <span class="kw">int</span> v0, <span class="kw">int</span> dist[], <span class="kw">int</span> prev[]) {
+    <span class="kw">int</span> s[n] = &#123;<span class="num">0</span>&#125;;
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>; i<n; i++) &#123;
+        dist[i] = cost[v0][i];  prev[i] = (dist[i]&lt;MAX)?v0:-<span class="num">1</span>;
+    &#125;
+    dist[v0]=<span class="num">0</span>; s[v0]=<span class="num">1</span>;
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>; i&lt;n; i++) &#123;
+        <span class="cm">// 贪心选择：找V-S中distance最小的顶点u</span>
+        <span class="kw">int</span> u=v0, mindis=MAX;
+        <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>; j&lt;n; j++)
+            <span class="kw">if</span>(!s[j] && dist[j]&lt;mindis) &#123; mindis=dist[j]; u=j; &#125;
+        s[u]=<span class="num">1</span>;
+        <span class="cm">// 更新distance</span>
+        <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>; j&lt;n; j++)
+            <span class="kw">if</span>(!s[j] && cost[u][j]&lt;MAX)
+                dist[j] = min(dist[j], dist[u]+cost[u][j]);
+    &#125;
+&#125;</pre>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>4.3 哈夫曼编码</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>核心概念 - 前缀码：</strong>任何一个字符的代码都不是其他字符代码的前缀。避免解码歧义！</div>
+            <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>O(n log n)</span><span class="cx-space"><span class="cx-label">空间</span>O(n)</span></div>
+            <p><strong>应用：</strong>文本无损压缩(与图像/视频的有损压缩不同)</p>
+            <p><strong>构建过程：</strong></p>
+            <ol>
+              <li>统计每个字符出现频率</li>
+              <li>每次选频率最小的两个节点合并</li>
+              <li>重复直到只剩一棵树</li>
+              <li>左分支编码0，右分支编码1</li>
+            </ol>
+            <p><strong>哈夫曼树特点：</strong>没有度为1的节点，权值越大的节点离根越近。</p>
+            <div class="example"><svg class="algo-diagram" viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="11">
+  <text x="200" y="18" text-anchor="middle" font-weight="bold" fill="#4f46e5" font-size="13">哈夫曼编码树</text>
+  <text x="10" y="36" fill="#64748b" font-size="10">字符频率: A:5  B:9  C:12  D:13  E:16  F:45</text>
+  
+  <circle cx="200" cy="55" r="18" fill="#f3e8ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="200" y="59" text-anchor="middle" fill="#5b21b6" font-size="10" font-weight="bold">100</text>
+  
+  <line x1="185" y1="66" x2="115" y2="95" stroke="#2563eb" stroke-width="2"/>
+  <text x="145" y="76" fill="#2563eb" font-size="10" font-weight="bold">0</text>
+  <line x1="215" y1="66" x2="285" y2="95" stroke="#db2777" stroke-width="2"/>
+  <text x="255" y="76" fill="#db2777" font-size="10" font-weight="bold">1</text>
+  <circle cx="112" cy="102" r="18" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="112" y="106" text-anchor="middle" fill="#1e3a5f" font-size="10" font-weight="bold">42</text>
+  <circle cx="288" cy="102" r="18" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+  <text x="288" y="106" text-anchor="middle" fill="#831843" font-size="10" font-weight="bold">58</text>
+  
+  <line x1="97" y1="113" x2="55" y2="142" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="70" y="124" fill="#2563eb" font-size="9">0</text>
+  <line x1="127" y1="113" x2="165" y2="142" stroke="#db2777" stroke-width="1.5"/>
+  <text x="150" y="124" fill="#db2777" font-size="9">1</text>
+  <circle cx="52" cy="150" r="16" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="52" y="154" text-anchor="middle" fill="#14532d" font-size="9" font-weight="bold">17</text>
+  <circle cx="168" cy="150" r="16" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="168" y="154" text-anchor="middle" fill="#92400e" font-size="9" font-weight="bold">25</text>
+  
+  <line x1="273" y1="113" x2="240" y2="142" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="252" y="124" fill="#2563eb" font-size="9">0</text>
+  <line x1="303" y1="113" x2="340" y2="142" stroke="#db2777" stroke-width="1.5"/>
+  <text x="326" y="124" fill="#db2777" font-size="9">1</text>
+  <circle cx="237" cy="150" r="16" fill="#fce7f3" stroke="#db2777" stroke-width="1.5"/>
+  <text x="237" y="154" text-anchor="middle" fill="#831843" font-size="9" font-weight="bold">45</text>
+  <circle cx="343" cy="150" r="16" fill="#e0e7ff" stroke="#4f46e5" stroke-width="1.5"/>
+  <text x="343" y="154" text-anchor="middle" fill="#3730a3" font-size="9" font-weight="bold">13</text>
+  
+  <line x1="39" y1="159" x2="28" y2="180" stroke="#2563eb" stroke-width="1.2"/>
+  <text x="28" y="168" fill="#2563eb" font-size="8">0</text>
+  <line x1="65" y1="159" x2="75" y2="180" stroke="#db2777" stroke-width="1.2"/>
+  <text x="75" y="168" fill="#db2777" font-size="8">1</text>
+  
+  <rect x="8" y="184" width="36" height="20" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="26" y="198" text-anchor="middle" fill="#14532d" font-size="10" font-weight="bold">A:5</text>
+  
+  <rect x="57" y="184" width="36" height="20" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="75" y="198" text-anchor="middle" fill="#14532d" font-size="10" font-weight="bold">B:9</text>
+  
+  <line x1="155" y1="159" x2="138" y2="180" stroke="#2563eb" stroke-width="1.2"/>
+  <text x="140" y="168" fill="#2563eb" font-size="8">0</text>
+  <line x1="180" y1="159" x2="192" y2="180" stroke="#db2777" stroke-width="1.2"/>
+  <text x="192" y="168" fill="#db2777" font-size="8">1</text>
+  
+  <rect x="120" y="184" width="36" height="20" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="138" y="198" text-anchor="middle" fill="#92400e" font-size="10" font-weight="bold">C:12</text>
+  
+  <rect x="174" y="184" width="36" height="20" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="192" y="198" text-anchor="middle" fill="#92400e" font-size="10" font-weight="bold">E:16</text>
+  
+  <text x="237" y="174" text-anchor="middle" fill="#831843" font-size="9">F</text>
+  
+  <text x="343" y="174" text-anchor="middle" fill="#3730a3" font-size="9">D</text>
+  
+  <text x="200" y="218" text-anchor="middle" fill="#475569" font-size="10" font-weight="bold">编码结果: A=000  B=001  C=010  E=011  F=10  D=11</text>
+  <text x="200" y="232" text-anchor="middle" fill="#16a34a" font-size="10">权值越大编码越短 → 压缩效率最高</text>
+</svg></div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>4.4 最小生成树 & 其他</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table>
+              <tr><th>算法</th><th>策略</th><th>方法</th><th>时间复杂度</th><th>空间复杂度</th></tr>
+              <tr><td><strong>Kruskal</strong></td><td>每次选全局最小边</td><td>边排序 + 并查集判环</td><td>O(E log E)</td><td>O(V)</td></tr>
+              <tr><td><strong>Prim</strong></td><td>每次扩展最近顶点</td><td>从一个顶点开始扩展</td><td>O(V&sup2;) / 堆优化 O((V+E) log V)</td><td>O(V)</td></tr>
+            </table>
+            <div class="example"><svg class="algo-diagram" viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="11">
+  <text x="100" y="16" text-anchor="middle" font-weight="bold" fill="#4f46e5" font-size="12">Kruskal 算法</text>
+  <text x="300" y="16" text-anchor="middle" font-weight="bold" fill="#4f46e5" font-size="12">Prim 算法</text>
+  
+  <text x="10" y="34" fill="#64748b" font-size="9">按边权排序依次选边(不成环)</text>
+  
+  <circle cx="30" cy="65" r="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="30" y="69" text-anchor="middle" fill="#1e3a5f" font-size="10" font-weight="bold">A</text>
+  <circle cx="120" cy="45" r="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="120" y="49" text-anchor="middle" fill="#1e3a5f" font-size="10" font-weight="bold">B</text>
+  <circle cx="170" cy="100" r="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="170" y="104" text-anchor="middle" fill="#1e3a5f" font-size="10" font-weight="bold">C</text>
+  <circle cx="80" cy="120" r="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="80" y="124" text-anchor="middle" fill="#1e3a5f" font-size="10" font-weight="bold">D</text>
+  
+  <line x1="44" y1="60" x2="106" y2="48" stroke="#16a34a" stroke-width="3"/><text x="70" y="48" fill="#16a34a" font-size="9" font-weight="bold">1</text>
+  <line x1="93" y1="55" x2="158" y2="92" stroke="#16a34a" stroke-width="3"/><text x="128" y="78" fill="#16a34a" font-size="9" font-weight="bold">2</text>
+  <line x1="42" y1="78" x2="68" y2="110" stroke="#16a34a" stroke-width="3"/><text x="44" y="98" fill="#16a34a" font-size="9" font-weight="bold">3</text>
+  
+  <line x1="44" y1="72" x2="158" y2="96" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="105" y="92" fill="#94a3b8" font-size="8">5</text>
+  <line x1="120" y1="59" x2="80" y2="108" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="96" y="88" fill="#94a3b8" font-size="8">4</text>
+  <line x1="88" y1="133" x2="160" y2="108" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="128" y="126" fill="#94a3b8" font-size="8">6</text>
+  <text x="100" y="152" text-anchor="middle" fill="#16a34a" font-size="9" font-weight="bold">MST权值: 1+2+3=6</text>
+  <text x="100" y="164" text-anchor="middle" fill="#475569" font-size="8">选边顺序: AB(1)→BC(2)→AD(3)</text>
+  
+  <text x="210" y="34" fill="#64748b" font-size="9">从起点逐步扩展</text>
+  <circle cx="230" cy="65" r="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="230" y="69" text-anchor="middle" fill="#14532d" font-size="10" font-weight="bold">A</text>
+  <circle cx="320" cy="45" r="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="320" y="49" text-anchor="middle" fill="#14532d" font-size="10" font-weight="bold">B</text>
+  <circle cx="370" cy="100" r="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="370" y="104" text-anchor="middle" fill="#14532d" font-size="10" font-weight="bold">C</text>
+  <circle cx="280" cy="120" r="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="280" y="124" text-anchor="middle" fill="#14532d" font-size="10" font-weight="bold">D</text>
+  
+  <line x1="244" y1="60" x2="306" y2="48" stroke="#16a34a" stroke-width="3"/><text x="272" y="48" fill="#16a34a" font-size="9" font-weight="bold">1</text>
+  <line x1="320" y1="59" x2="358" y2="92" stroke="#16a34a" stroke-width="3"/><text x="342" y="78" fill="#16a34a" font-size="9" font-weight="bold">2</text>
+  <line x1="242" y1="78" x2="268" y2="110" stroke="#16a34a" stroke-width="3"/><text x="244" y="98" fill="#16a34a" font-size="9" font-weight="bold">3</text>
+  <line x1="244" y1="72" x2="358" y2="96" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="320" y1="59" x2="280" y2="108" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="288" y1="133" x2="360" y2="108" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,3"/>
+  
+  <text x="272" y="38" fill="#16a34a" font-size="8">第1步</text>
+  <text x="342" y="72" fill="#16a34a" font-size="8">第2步</text>
+  <text x="244" y="93" fill="#16a34a" font-size="8">第3步</text>
+  
+  <text x="300" y="152" text-anchor="middle" fill="#16a34a" font-size="9" font-weight="bold">MST权值: 6</text>
+  <text x="300" y="164" text-anchor="middle" fill="#475569" font-size="8">扩展: A→B→C→D</text>
+  
+  <line x1="195" y1="24" x2="195" y2="170" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,2"/>
+  
+  <rect x="20" y="178" width="360" height="36" rx="8" fill="#f1f5f9" stroke="#e2e8f0"/>
+  <text x="200" y="194" text-anchor="middle" fill="#475569" font-size="10">Kruskal: 全局选最小边 → 适合稀疏图  |  Prim: 逐步扩展 → 适合稠密图</text>
+  <text x="200" y="208" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="bold">两者均得到最小生成树，结果可能不同但总权值相同</text>
+</svg></div>
+            <p><strong>分数背包(部分背包)：</strong>按单位重量价值 v/w 降序排列，依次装入。</p>
+            <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>O(n log n)</span><span class="cx-space"><span class="cx-label">空间</span>O(1)</span></div>
+<pre><span class="cm">// 分数背包 - 贪心</span>
+<span class="kw">double</span> <span class="fn">greedyKnapsack</span>(Item items[], <span class="kw">int</span> n, <span class="kw">int</span> cap) &#123;
+    sort(items, items+n, cmp);  <span class="cm">// 按v/w降序</span>
+    <span class="kw">double</span> ans = <span class="num">0</span>;
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>; i&lt;n; i++) &#123;
+        <span class="kw">if</span>(cap >= items[i].w) &#123; ans += items[i].v; cap -= items[i].w; &#125;
+        <span class="kw">else</span> &#123; ans += (<span class="kw">double</span>)cap * items[i].v / items[i].w; <span class="kw">break</span>; &#125;
+    &#125;
+    <span class="kw">return</span> ans;
+&#125;</pre>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第4章 经典代码 · Dijkstra 双栏对照</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>贪心策略：</strong>每次从 V-S 中选距源点最近的顶点加入 S，松弛邻居。</p>
+                <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>O(V&sup2;) / 堆优化 O((V+E) log V)</span><span class="cx-space"><span class="cx-label">空间</span>O(V)</span></div>
+                <p><strong>关键：</strong>s[] 标记已确定最短路径的顶点，dist[] 记录当前最短距离。</p>
+              </div>
+              <div class="col-code"><pre><span class="kw">void</span> <span class="fn">Dijkstra</span>(<span class="kw">int</span> g[][],<span class="kw">int</span> n,<span class="kw">int</span> v0){
+  <span class="kw">int</span> *s=<span class="kw">new int</span>[n]();       <span class="cm">// 已确定集合</span>
+  <span class="kw">int</span> dist[MAXN];
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">0</span>;i&lt;n;i++)
+    dist[i]=g[v0][i];          <span class="cm">// 初始化</span>
+  dist[v0]=<span class="num">0</span>; s[v0]=<span class="num">1</span>;
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>;i&lt;n;i++){
+    <span class="kw">int</span> u=<span class="num">0</span>, mn=INF;
+    <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>;j&lt;n;j++)    <span class="cm">// 找最近顶点</span>
+      <span class="kw">if</span>(!s[j]&&dist[j]&lt;mn)
+        {mn=dist[j];u=j;}
+    s[u]=<span class="num">1</span>;                   <span class="cm">// 加入S</span>
+    <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>;j&lt;n;j++)    <span class="cm">// 松弛邻居</span>
+      <span class="kw">if</span>(!s[j]&&dist[u]+
+         g[u][j]&lt;dist[j])
+        dist[j]=dist[u]+g[u][j];
+  }
+}</pre></div>
+            </div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>真题精选 · 贪心 + DP 综合（背包问题）</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <h4>背包问题三问（n=4, M=32, w=[6,9,10,15], p=[8,1,2,5]）</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>(1) 分数背包（贪心）：</strong></p>
+                <p>按单位价值 p/w 排序：4/3, 1/9, 1/5, 1/3</p>
+                <p>贪心装入：物品0全装(6,8)→物品3全装(15,5)→物品2全装(10,2)→物品1装1/9(1,1/9)</p>
+                <p>最大收益 = 8+5+2+1/9 = <strong>136/9</strong></p>
+                <p><strong>(2) 0-1 背包（DP）：</strong></p>
+                <p>用动态规划表逐步计算，最优解 (1,0,1,1)，最大收益 = 8+2+5 = <strong>15</strong></p>
+              </div>
+              <div class="col-text">
+                <p><strong>(3) 图着色（回溯）：</strong></p>
+                <p>4件物品装入3个背包，冲突图约束：相邻物品不同背包</p>
+                <p>显式约束：xᵢ ∈ {a,b,c}</p>
+                <p>隐式约束：若 (vᵢ,vⱼ) ∈ E，则 xᵢ ≠ xⱼ</p>
+                <p>所有可行解：<br>
+                (a,b,c,b), (a,c,b,c),<br>
+                (b,a,c,a), (b,c,a,c),<br>
+                (c,a,b,a), (c,b,a,b)</p>
+              </div>
+            </div>
+          </div></div>
+
+          <div class="card" style="border-left:3px solid #f59e0b"><div class="card-header" onclick="toggleCard(this)"><h3>LeetCode / 洛谷 · 贪心练习</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+          <table>
+          <tr><th>题号</th><th>题目</th><th>算法</th><th>链接</th></tr>
+          <tr><td>455</td><td>分发饼干</td><td>贪心</td><td><a href="https://leetcode.cn/problems/assign-cookies/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>55</td><td>跳跃游戏</td><td>贪心</td><td><a href="https://leetcode.cn/problems/jump-game/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>435</td><td>无重叠区间</td><td>区间贪心</td><td><a href="https://leetcode.cn/problems/non-overlapping-intervals/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>743</td><td>网络延迟时间</td><td>Dijkstra</td><td><a href="https://leetcode.cn/problems/network-delay-time/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>787</td><td>K站中转内最便宜航班</td><td>Bellman-Ford</td><td><a href="https://leetcode.cn/problems/cheapest-flights-within-k-stops/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>P4779</td><td>单源最短路径（标准版）</td><td>Dijkstra模板</td><td><a href="https://www.luogu.com.cn/problem/P4779" target="_blank">洛谷</a></td></tr>
+          <tr><td>P3366</td><td>最小生成树</td><td>Kruskal模板</td><td><a href="https://www.luogu.com.cn/problem/P3366" target="_blank">洛谷</a></td></tr>
+          </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第4章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch4"></div></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="ch5" class="chapter-section hidden">
+      <div class="chapter" data-chapter="5">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#e0e7ff;color:#4f46e5">5</div>
+          <div class="chapter-title"><h2>第5章 回溯法</h2><p>解空间树、剪枝策略、DFS</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>5.1 基本概念</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>回溯法 = DFS + 剪枝</strong><br>
+            目的：找出<strong>所有解</strong><br>
+            数据结构：栈(隐式递归栈)<br>
+            搜索方式：<strong>深度优先搜索</strong></div>
+            <p><strong>解空间树类型：</strong></p>
+            <table>
+              <tr><th>类型</th><th>叶子节点数</th><th>时间复杂度</th><th>典型问题</th></tr>
+              <tr><td><strong>子集树</strong></td><td>2<sup>n</sup></td><td>O(2<sup>n</sup>)</td><td>0-1背包、子集和问题</td></tr>
+              <tr><td><strong>排列树</strong></td><td>n!</td><td>O(n!)</td><td>TSP旅行售货员、N皇后</td></tr>
+              <tr><td><strong>满m叉树</strong></td><td>m<sup>n</sup></td><td>O(m<sup>n</sup>)</td><td>图着色(m种颜色)</td></tr>
+            </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>5.2 剪枝策略</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>两种剪枝函数：</strong><br>
+            1. <strong>约束函数</strong>：剪去<strong>不可行解</strong>(不满足约束条件)<br>
+            2. <strong>限界函数</strong>：剪去<strong>可行但非最优解</strong></div>
+            <p><strong>以0-1背包为例(子集树)：</strong></p>
+            <ul>
+              <li><strong>左分支(选)</strong>：约束剪枝 tw+w[i] &le; W</li>
+              <li><strong>右分支(不选)</strong>：限界剪枝，用上界函数bound判断</li>
+            </ul>
+            <div class="keypoint"><strong>回溯法框架(子集树)：</strong></div>
+<pre><span class="kw">void</span> <span class="fn">backtrack</span>(<span class="kw">int</span> i) &#123;
+    <span class="kw">if</span>(i > n) <span class="fn">output</span>(x);  <span class="cm">// 叶子节点，找到一个解</span>
+    <span class="kw">else</span> &#123;
+        x[i] = <span class="num">1</span>;  <span class="cm">// 左分支：选择</span>
+        <span class="kw">if</span>(constraint(i) && bound(i)) <span class="fn">backtrack</span>(i+<span class="num">1</span>);
+        x[i] = <span class="num">0</span>;  <span class="cm">// 右分支：不选</span>
+        <span class="kw">if</span>(constraint(i) && bound(i)) <span class="fn">backtrack</span>(i+<span class="num">1</span>);
+    &#125;
+&#125;</pre>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>5.3 经典问题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p><strong>N皇后问题：</strong>在N&times;N棋盘放N个皇后，不能同行/同列/同斜线</p>
+            <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>O(n!)</span><span class="cx-space"><span class="cx-label">空间</span>O(n)</span></div>
+            <p>约束：x[i]&ne;x[j] 且 |i-j| &ne; |x[i]-x[j]|</p>
+            <div class="example"><svg class="algo-diagram" viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif" font-size="11">
+  <text x="160" y="18" text-anchor="middle" font-weight="bold" fill="#4f46e5" font-size="13">4皇后问题 · 一个解</text>
+  
+  
+  <text x="30" y="54" text-anchor="middle" fill="#64748b" font-size="10">1</text>
+  <text x="30" y="94" text-anchor="middle" fill="#64748b" font-size="10">2</text>
+  <text x="30" y="134" text-anchor="middle" fill="#64748b" font-size="10">3</text>
+  <text x="30" y="174" text-anchor="middle" fill="#64748b" font-size="10">4</text>
+  
+  <text x="70" y="198" text-anchor="middle" fill="#64748b" font-size="10">1</text>
+  <text x="110" y="198" text-anchor="middle" fill="#64748b" font-size="10">2</text>
+  <text x="150" y="198" text-anchor="middle" fill="#64748b" font-size="10">3</text>
+  <text x="190" y="198" text-anchor="middle" fill="#64748b" font-size="10">4</text>
+  
+  <rect x="45" y="40" width="36" height="36" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="85" y="40" width="36" height="36" fill="#1e293b" stroke="#334155"/>
+  <rect x="125" y="40" width="36" height="36" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="165" y="40" width="36" height="36" fill="#1e293b" stroke="#334155"/>
+  
+  <rect x="45" y="80" width="36" height="36" fill="#1e293b" stroke="#334155"/>
+  <rect x="85" y="80" width="36" height="36" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="125" y="80" width="36" height="36" fill="#1e293b" stroke="#334155"/>
+  <rect x="165" y="80" width="36" height="36" fill="#dbeafe" stroke="#2563eb"/>
+  
+  <rect x="45" y="120" width="36" height="36" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="85" y="120" width="36" height="36" fill="#1e293b" stroke="#334155"/>
+  <rect x="125" y="120" width="36" height="36" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="165" y="120" width="36" height="36" fill="#1e293b" stroke="#334155"/>
+  
+  <rect x="45" y="160" width="36" height="36" fill="#1e293b" stroke="#334155"/>
+  <rect x="85" y="160" width="36" height="36" fill="#dbeafe" stroke="#2563eb"/>
+  <rect x="125" y="160" width="36" height="36" fill="#1e293b" stroke="#334155"/>
+  <rect x="165" y="160" width="36" height="36" fill="#dbeafe" stroke="#2563eb"/>
+  
+  
+  <circle cx="103" cy="58" r="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  <text x="103" y="62" text-anchor="middle" fill="#92400e" font-size="11" font-weight="bold">Q</text>
+  
+  <circle cx="183" cy="98" r="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  <text x="183" y="102" text-anchor="middle" fill="#92400e" font-size="11" font-weight="bold">Q</text>
+  
+  <circle cx="63" cy="138" r="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  <text x="63" y="142" text-anchor="middle" fill="#92400e" font-size="11" font-weight="bold">Q</text>
+  
+  <circle cx="143" cy="178" r="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  <text x="143" y="182" text-anchor="middle" fill="#92400e" font-size="11" font-weight="bold">Q</text>
+  
+  <line x1="103" y1="58" x2="63" y2="138" stroke="#ef4444" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  <line x1="103" y1="58" x2="183" y2="98" stroke="#ef4444" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  <line x1="63" y1="138" x2="143" y2="178" stroke="#ef4444" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  <line x1="183" y1="98" x2="143" y2="178" stroke="#ef4444" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+  
+  <rect x="215" y="36" width="95" height="130" rx="8" fill="#f1f5f9" stroke="#e2e8f0"/>
+  <text x="262" y="54" text-anchor="middle" fill="#4f46e5" font-size="10" font-weight="bold">解: x=[2,4,1,3]</text>
+  <text x="222" y="74" fill="#64748b" font-size="9">行1 → 列2</text>
+  <text x="222" y="90" fill="#64748b" font-size="9">行2 → 列4</text>
+  <text x="222" y="106" fill="#64748b" font-size="9">行3 → 列1</text>
+  <text x="222" y="122" fill="#64748b" font-size="9">行4 → 列3</text>
+  <line x1="220" y1="130" x2="305" y2="130" stroke="#e2e8f0"/>
+  <text x="222" y="146" fill="#ef4444" font-size="8">约束: 不同行/列/对角线</text>
+  <text x="222" y="160" fill="#16a34a" font-size="8">|i-j| != |x[i]-x[j]|</text>
+  
+  <text x="160" y="220" text-anchor="middle" fill="#475569" font-size="10">4皇后共有 <tspan fill="#4f46e5" font-weight="bold">2</tspan> 个解: [2,4,1,3] 和 [3,1,4,2]</text>
+  <text x="160" y="238" text-anchor="middle" fill="#64748b" font-size="9">N皇后: N=8时有92个解，N=4时有2个解</text>
+  <text x="160" y="252" text-anchor="middle" fill="#4f46e5" font-size="9">回溯法: DFS + 约束函数剪枝(不可行解)</text>
+</svg></div>
+<pre><span class="kw">int</span> <span class="fn">place</span>(<span class="kw">int</span> j) &#123;
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>; i&lt;j; i++)
+        <span class="kw">if</span>(abs(j-i)==abs(x[j]-x[i]) || x[j]==x[i]) <span class="kw">return</span> <span class="num">0</span>;
+    <span class="kw">return</span> <span class="num">1</span>;
+&#125;
+<span class="kw">void</span> <span class="fn">queen</span>(<span class="kw">int</span> t) &#123;
+    <span class="kw">if</span>(t>=n) sum++;
+    <span class="kw">else for</span>(<span class="kw">int</span> j=t; j&lt;=n; j++) &#123;
+        swap(x[t], x[j]);
+        <span class="kw">if</span>(<span class="fn">place</span>(t)) <span class="fn">queen</span>(t+<span class="num">1</span>);
+        swap(x[t], x[j]);
+    &#125;
+&#125;</pre>
+            <p><strong>TSP旅行售货员：</strong>排列树，找经过所有城市恰好一次并回到起点的最短回路。</p>
+            <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>O(n!)</span><span class="cx-space"><span class="cx-label">空间</span>O(n)</span></div>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第5章 经典代码 · N皇后 & 0-1背包 双栏对照</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+
+            <h4>N 皇后（排列树）</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>约束：</strong>不同列 x[i]≠x[j]，不同对角线 |i-j|≠|x[i]-x[j]|</p>
+                <p><strong>框架：</strong>排列树，每行选一列，place() 检查合法性。</p>
+              </div>
+              <div class="col-code"><pre><span class="kw">int</span> <span class="fn">place</span>(<span class="kw">int</span> j) {           <span class="cm">// 检查第j行放置是否合法</span>
+  <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>;i&lt;j;i++)
+    <span class="kw">if</span>(abs(j-i)==abs(x[j]-x[i])
+       || x[j]==x[i])         <span class="cm">// 同列或同对角线</span>
+      <span class="kw">return</span> <span class="num">0</span>;
+  <span class="kw">return</span> <span class="num">1</span>;
+}
+<span class="kw">void</span> <span class="fn">queen</span>(<span class="kw">int</span> t) {
+  <span class="kw">if</span>(t&gt;=n) sum++;             <span class="cm">// 找到一个解</span>
+  <span class="kw">else for</span>(<span class="kw">int</span> j=t;j&lt;=n;j++){
+    swap(x[t], x[j]);         <span class="cm">// 选列</span>
+    <span class="kw">if</span>(<span class="fn">place</span>(t)) <span class="fn">queen</span>(t+<span class="num">1</span>);
+    swap(x[t], x[j]);         <span class="cm">// 回溯</span>
+  }
+}</pre></div>
+            </div>
+
+            <h4>0-1 背包（子集树 + 剪枝）</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>左剪枝：</strong>tw + w[i] > W → 不选（约束）</p>
+                <p><strong>右剪枝：</strong>bound(i) ≤ maxv → 不扩展（限界）</p>
+                <p><strong>上界：</strong>按单位价值降序，贪心装入剩余物品估价值上界。</p>
+                <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>最差 O(2<sup>n</sup>)，剪枝后显著降低</span><span class="cx-space"><span class="cx-label">空间</span>O(n)</span></div>
+              </div>
+              <div class="col-code"><pre><span class="kw">int</span> <span class="fn">bound</span>(<span class="kw">int</span> i,<span class="kw">int</span> tw,<span class="kw">int</span> tv){
+  i++;
+  <span class="kw">while</span>(i&lt;=n && tw+A[i].w&lt;=W)
+    {tw+=A[i].w;tv+=A[i].v;i++;}
+  <span class="kw">if</span>(i&lt;=n) <span class="kw">return</span> tv+(W-tw)*A[i].p;
+  <span class="kw">else return</span> tv;              <span class="cm">// 价值上界</span>
+}
+<span class="kw">void</span> <span class="fn">dfs</span>(<span class="kw">int</span> i,<span class="kw">int</span> tw,<span class="kw">int</span> tv){
+  <span class="kw">if</span>(i&gt;n){<span class="cm">/*更新最优解*/</span>}
+  <span class="kw">else</span> {
+    <span class="kw">if</span>(tw+w[i]&lt;=W){           <span class="cm">// 左：选</span>
+      op[i]=<span class="num">1</span>;
+      <span class="fn">dfs</span>(i+<span class="num">1</span>,tw+w[i],tv+v[i]);
+    }
+    <span class="kw">if</span>(<span class="fn">bound</span>(i,tw,tv)&gt;maxv){  <span class="cm">// 右：不选</span>
+      op[i]=<span class="num">0</span>;
+      <span class="fn">dfs</span>(i+<span class="num">1</span>,tw,tv);
+    }
+  }
+}</pre></div>
+            </div>
+          </div></div>
+
+          <div class="card" style="border-left:3px solid #f59e0b"><div class="card-header" onclick="toggleCard(this)"><h3>LeetCode / 洛谷 · 回溯练习</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+          <table>
+          <tr><th>题号</th><th>题目</th><th>类型</th><th>链接</th></tr>
+          <tr><td>78</td><td>子集</td><td>子集树</td><td><a href="https://leetcode.cn/problems/subsets/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>46</td><td>全排列</td><td>排列树</td><td><a href="https://leetcode.cn/problems/permutations/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>39</td><td>组合总和</td><td>组合</td><td><a href="https://leetcode.cn/problems/combination-sum/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>51</td><td>N皇后</td><td>排列+剪枝</td><td><a href="https://leetcode.cn/problems/n-queens/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>200</td><td>岛屿数量</td><td>DFS/BFS</td><td><a href="https://leetcode.cn/problems/number-of-islands/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>P1706</td><td>全排列问题</td><td>DFS回溯</td><td><a href="https://www.luogu.com.cn/problem/P1706" target="_blank">洛谷</a></td></tr>
+          <tr><td>P1219</td><td>八皇后</td><td>DFS回溯</td><td><a href="https://www.luogu.com.cn/problem/P1219" target="_blank">洛谷</a></td></tr>
+          </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第5章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch5"></div></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="ch6" class="chapter-section hidden">
+      <div class="chapter" data-chapter="6">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#fef9c3;color:#ca8a04">6</div>
+          <div class="chapter-title"><h2>第6章 分支限界法</h2><p>BFS搜索、限界函数、最优解</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>6.1 基本概念</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>分支限界法 = BFS + 剪枝</strong><br>
+            目的：找出<strong>最优解</strong>(单个)<br>
+            数据结构：队列 / 优先队列(堆)<br>
+            搜索方式：<strong>广度优先搜索</strong></div>
+            <table>
+              <tr><th>对比</th><th>回溯法</th><th>分支限界法</th></tr>
+              <tr><td>搜索方式</td><td>DFS(深度优先)</td><td>BFS(广度优先)</td></tr>
+              <tr><td>目的</td><td>所有解</td><td>最优解</td></tr>
+              <tr><td>数据结构</td><td>栈</td><td>队列/优先队列</td></tr>
+              <tr><td>剪枝</td><td>约束+限界</td><td>约束+限界</td></tr>
+              <tr><td>结点扩展</td><td>一次一个孩子</td><td>一次所有孩子</td></tr>
+              <tr><td>时间复杂度</td><td>O(2<sup>n</sup>) / O(n!) / O(m<sup>n</sup>)</td><td>最坏指数级，实际优于回溯</td></tr>
+            </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>6.2 两种组织形式</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>队列式(普通)：</strong>FIFO，按入队顺序扩展<br>
+            <strong>优先队列式：</strong>按优先级(如上界值)扩展，<strong>上界越高越优先</strong></div>
+            <div class="keypoint warn"><strong>复习课重点：</strong>优先队列分支限界法要注意使用的<strong>数据结构</strong>是堆(大根堆/小根堆)。优先级根据上界(UB)确定。</div>
+            <p><strong>限界函数设计：</strong>每个活结点计算一个上界值，决定扩展顺序。</p>
+            <p><strong>保存最优解向量的两种方法：</strong></p>
+            <ol>
+              <li>每个结点保存从根到该结点的路径(空间大但简单)</li>
+              <li>记录父节点信息，找到最优解后回溯路径(空间小)</li>
+            </ol>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>6.3 单源最短路径(分支限界)</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p>用BFS/优先队列BFS求解：</p>
+            <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>FIFO式 O(V&sup2;) / 优先队列式 O((V+E) log V)</span><span class="cx-space"><span class="cx-label">空间</span>O(V&sup2;)</span></div>
+<pre><span class="cm">// 优先队列式 - 用小根堆</span>
+<span class="kw">struct</span> Node &#123;
+    <span class="kw">int</span> vno, length;
+    <span class="kw">bool</span> <span class="kw">operator</span>&lt;(<span class="kw">const</span> Node&amp; b) <span class="kw">const</span> &#123;
+        <span class="kw">return</span> length > b.length;  <span class="cm">// 小根堆</span>
+    &#125;
+&#125;;
+<span class="kw">void</span> <span class="fn">bfs</span>(<span class="kw">int</span> v) &#123;
+    priority_queue&lt;Node&gt; pq;
+    pq.push(&#123;v, <span class="num">0</span>&#125;); dist[v]=<span class="num">0</span>;
+    <span class="kw">while</span>(!pq.empty()) &#123;
+        Node e = pq.top(); pq.pop();
+        <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>; j&lt;n; j++)
+            <span class="kw">if</span>(a[e.vno][j]&lt;INF && e.length+a[e.vno][j]&lt;dist[j]) &#123;
+                dist[j] = e.length + a[e.vno][j];
+                prev[j] = e.vno;
+                pq.push(&#123;j, dist[j]&#125;);
+            &#125;
+    &#125;
+&#125;</pre>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第6章 经典代码 · 分支限界最短路径 双栏对照</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>优先队列式：</strong>小根堆按 dist 值优先出队，每次扩展最近顶点。</p>
+                <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>O((V+E) log V)</span><span class="cx-space"><span class="cx-label">空间</span>O(V&sup2;)</span></div>
+                <p>与 Dijkstra 的区别：Dijkstra 是贪心（确定性），分支限界是 BFS+限界剪枝。</p>
+                <p><strong>关键：</strong>Node 结构体中 operator&lt; 实现小根堆；用 prev[] 记录路径。</p>
+              </div>
+              <div class="col-code"><pre><span class="kw">struct</span> Node {
+  <span class="kw">int</span> vno, length;
+  <span class="kw">bool operator</span>&lt;(<span class="kw">const</span> Node&amp;b)<span class="kw">const</span>{
+    <span class="kw">return</span> length &gt; b.length;  <span class="cm">// 小根堆</span>
+  }
+};
+<span class="kw">void</span> <span class="fn">bfs</span>(<span class="kw">int</span> v) {
+  priority_queue&lt;Node&gt; pq;
+  pq.push({v,<span class="num">0</span>}); dist[v]=<span class="num">0</span>;
+  <span class="kw">while</span>(!pq.empty()){
+    Node e=pq.top(); pq.pop();
+    <span class="kw">for</span>(<span class="kw">int</span> j=<span class="num">0</span>;j&lt;n;j++){
+      <span class="kw">int</span> d=e.length+a[e.vno][j];
+      <span class="kw">if</span>(d&lt;dist[j]){           <span class="cm">// 限界：更短才扩展</span>
+        dist[j]=d;
+        prev[j]=e.vno;         <span class="cm">// 记录路径</span>
+        pq.push({j, d});
+      }
+    }
+  }
+}</pre></div>
+            </div>
+          </div></div>
+
+          <div class="card" style="border-left:3px solid #f59e0b"><div class="card-header" onclick="toggleCard(this)"><h3>LeetCode · 分支限界/BFS 练习</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+          <table>
+          <tr><th>题号</th><th>题目</th><th>算法</th><th>链接</th></tr>
+          <tr><td>743</td><td>网络延迟时间</td><td>Dijkstra/BFS</td><td><a href="https://leetcode.cn/problems/network-delay-time/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>127</td><td>单词接龙</td><td>BFS最短路径</td><td><a href="https://leetcode.cn/problems/word-ladder/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>207</td><td>课程表</td><td>拓扑排序/BFS</td><td><a href="https://leetcode.cn/problems/course-schedule/" target="_blank">LeetCode</a></td></tr>
+          <tr><td>752</td><td>打开转盘锁</td><td>BFS+剪枝</td><td><a href="https://leetcode.cn/problems/open-the-lock/" target="_blank">LeetCode</a></td></tr>
+          </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第6章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch6"></div></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="ch7" class="chapter-section hidden">
+      <div class="chapter" data-chapter="7">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#f3e8ff;color:#7c3aed">7</div>
+          <div class="chapter-title"><h2>第7章 随机化方法</h2><p>蒙特卡洛 vs 拉斯维加斯</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>7.1 两种随机算法</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>复习课：随机算法就一道2分的概念题！把概念搞清楚即可。</strong></div>
+            <table>
+              <tr><th>类型</th><th>结果正确性</th><th>时间确定性</th><th>应用</th></tr>
+              <tr><td><strong>蒙特卡洛(Monte Carlo)</strong></td><td>大概率正确，小概率出错</td><td>确定</td><td>素数判定、图像处理去噪</td></tr>
+              <tr><td><strong>拉斯维加斯(Las Vegas)</strong></td><td>完全正确</td><td>不确定</td><td>N皇后问题</td></tr>
+            </table>
+            <div class="keypoint"><strong>记忆口诀：</strong><br>
+            蒙特卡洛 = 概率保真，可能出错(有时间保证)<br>
+            拉斯维加斯 = 结果保真，可能慢(无时间保证)</div>
+            <p><strong>应用背景(数字媒体)：</strong></p>
+            <ul>
+              <li>图像加白噪声 → 随机算法</li>
+              <li>复现实验 → 保存噪声图像 或 多组数据取平均</li>
+              <li>噪声是随机的，信道突发错误是随机的</li>
+            </ul>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>第7章 练习题</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body quiz-container" data-quiz="ch7"></div></div>
+        </div>
+      </div>
+    </section>
+
+
+    
+    <section id="compare" class="chapter-section hidden">
+      <div class="chapter" data-chapter="8">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#f1f5f9;color:#475569">&#128202;</div>
+          <div class="chapter-title"><h2>算法对比总结</h2><p>核心算法横向对比、闪卡复习</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>六大算法策略对比</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table class="compare-table">
+              <tr><th>策略</th><th>关键性质</th><th>搜索方式</th><th>子问题</th><th>目的</th><th>典型问题</th><th>时间复杂度</th></tr>
+              <tr><td>分治法</td><td>平衡+独立子问题</td><td>递归</td><td>独立</td><td>分解求解</td><td>归并排序、快速排序</td><td>O(n log n)</td></tr>
+              <tr><td>动态规划</td><td>最优子结构+重叠</td><td>自底向上</td><td>重叠</td><td>最优解</td><td>矩阵连乘、LCS、背包</td><td>取决于子问题数</td></tr>
+              <tr><td>贪心算法</td><td>贪心选择+最优子结构</td><td>局部最优</td><td>独立</td><td>近似最优</td><td>Dijkstra、哈夫曼</td><td>取决于策略</td></tr>
+              <tr><td>回溯法</td><td>约束+限界剪枝</td><td>DFS</td><td>-</td><td>所有解</td><td>N皇后、TSP</td><td>O(2<sup>n</sup>) / O(n!) / O(m<sup>n</sup>)</td></tr>
+              <tr><td>分支限界</td><td>限界函数</td><td>BFS</td><td>-</td><td>最优解</td><td>0-1背包、最短路径</td><td>最坏指数级</td></tr>
+              <tr><td>随机化</td><td>概率性</td><td>-</td><td>-</td><td>近似/精确</td><td>素数判定、N皇后</td><td>取决于具体算法</td></tr>
+            </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>0-1背包问题：各章解法对比</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table class="compare-table">
+              <tr><th>方法</th><th>时间复杂度</th><th>空间复杂度</th><th>能否最优</th><th>章节</th></tr>
+              <tr><td>动态规划</td><td>O(nW)</td><td>O(nW)</td><td>是</td><td>第3章</td></tr>
+              <tr><td>回溯法(子集树)</td><td>O(2<sup>n</sup>)</td><td>O(n)</td><td>是</td><td>第5章</td></tr>
+              <tr><td>分支限界法</td><td>最坏指数级</td><td>O(V&sup2;)</td><td>是</td><td>第6章</td></tr>
+              <tr><td>贪心(分数背包)</td><td>O(n log n)</td><td>O(1)</td><td>分数背包最优，0-1不一定</td><td>第4章</td></tr>
+            </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>算法复杂度速查表</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <table class="compare-table">
+              <tr><th>算法</th><th>最优时间</th><th>平均时间</th><th>最差时间</th><th>空间复杂度</th></tr>
+              <tr><td>二分查找</td><td>O(1)</td><td>O(log n)</td><td>O(log n)</td><td>O(1)</td></tr>
+              <tr><td>归并排序</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td></tr>
+              <tr><td>快速排序</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n&sup2;)</td><td>O(log n)</td></tr>
+              <tr><td>阶乘(递归)</td><td colspan="3">O(n)</td><td>O(n)</td></tr>
+              <tr><td>全排列(递归)</td><td colspan="3">O(n &middot; n!)</td><td>O(n)</td></tr>
+              <tr><td>矩阵连乘(DP)</td><td colspan="3">O(n&sup3;)</td><td>O(n&sup2;)</td></tr>
+              <tr><td>LCS(DP)</td><td colspan="3">O(mn)</td><td>O(mn)</td></tr>
+              <tr><td>0-1背包(DP)</td><td colspan="3">O(nW)</td><td>O(nW)</td></tr>
+              <tr><td>Dijkstra(邻接矩阵)</td><td colspan="3">O(V&sup2;)</td><td>O(V)</td></tr>
+              <tr><td>Dijkstra(堆优化)</td><td colspan="3">O((V+E) log V)</td><td>O(V)</td></tr>
+              <tr><td>Kruskal</td><td colspan="3">O(E log E)</td><td>O(V)</td></tr>
+              <tr><td>Prim(邻接矩阵)</td><td colspan="3">O(V&sup2;)</td><td>O(V)</td></tr>
+              <tr><td>Prim(堆优化)</td><td colspan="3">O((V+E) log V)</td><td>O(V)</td></tr>
+              <tr><td>哈夫曼编码</td><td colspan="3">O(n log n)</td><td>O(n)</td></tr>
+              <tr><td>分数背包(贪心)</td><td colspan="3">O(n log n)</td><td>O(1)</td></tr>
+              <tr><td>N皇后(回溯)</td><td colspan="3">O(n!)</td><td>O(n)</td></tr>
+              <tr><td>TSP(回溯)</td><td colspan="3">O(n!)</td><td>O(n)</td></tr>
+              <tr><td>0-1背包(回溯)</td><td colspan="3">O(2<sup>n</sup>)</td><td>O(n)</td></tr>
+              <tr><td>图着色(回溯)</td><td colspan="3">O(m<sup>n</sup>)</td><td>O(n)</td></tr>
+              <tr><td>BFS/DFS</td><td colspan="3">O(V+E)</td><td>O(V)</td></tr>
+            </table>
+          </div></div>
+
+          <div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>闪卡复习 - 点击翻转</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="flashcard-grid" id="flashcardGrid"></div>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="quiz-all" class="chapter-section hidden">
+      <div class="chapter" data-chapter="9">
+        <div class="chapter-header" onclick="toggleChapter(this)">
+          <div class="chapter-icon" style="background:#fee2e2;color:#dc2626">&#9999;&#65039;</div>
+          <div class="chapter-title"><h2>综合测验</h2><p>涵盖全部章节的综合练习</p></div>
+          <span class="expand-icon">&#9654;</span>
+        </div>
+        <div class="chapter-body">
+          <div class="card">
+            <div class="card-body quiz-container" data-quiz="final"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>

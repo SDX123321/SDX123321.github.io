@@ -1,52 +1,52 @@
-import { useParams, Link, Outlet } from 'react-router-dom'
-import { useEffect, useRef } from 'react'
+import { useParams, Link, Outlet, useOutlet } from 'react-router-dom'
+import { useEffect, useRef, lazy, Suspense } from 'react'
 import useScrollMemory from '../../hooks/useScrollMemory'
-import usePageId from '../../hooks/usePageId'
+import { loadBusuanzi } from '../../lib/cdnScripts'
 
 const COURSE_META = {
-  probability: { name: '概率论与数理统计', color: '#2563eb', icon: '📊', chapters: 8 },
-  os:          { name: '操作系统',         color: '#10b981', icon: '💻', chapters: 5 },
-  algorithm:   { name: '算法设计与分析',   color: '#7c3aed', icon: '🔬', chapters: 6 },
-  dsp:         { name: '数字信号处理',     color: '#6c63ff', icon: '📡', chapters: 6 },
-  marxism:     { name: '马克思主义基本原理', color: '#e63946', icon: '📰', chapters: 7 },
-  calculus:    { name: '高等数学（重修）',   color: '#e74c3c', icon: '📈', chapters: 5 },
-  maogai:      { name: '毛泽东思想概论',   color: '#dc2626', icon: '📰', chapters: 1 },
+  probability: { name: '概率论与数理统计', color: '#2563eb', icon: '📊' },
+  os:          { name: '操作系统',         color: '#10b981', icon: '💻' },
+  algorithm:   { name: '算法设计与分析',   color: '#7c3aed', icon: '🔬' },
+  dsp:         { name: '数字信号处理',     color: '#6c63ff', icon: '📡' },
+  marxism:     { name: '马克思主义基本原理', color: '#e63946', icon: '📰' },
+  calculus:    { name: '高等数学（重修）',   color: '#e74c3c', icon: '📈' },
+  maogai:      { name: '毛泽东思想概论',   color: '#dc2626', icon: '📰' },
+}
+
+// Lazy-loaded course page components
+const COURSE_PAGES = {
+  probability: lazy(() => import('./ProbabilityPage')),
+  os:          lazy(() => import('./OsPage')),
+  algorithm:   lazy(() => import('./AlgorithmPage')),
+  dsp:         lazy(() => import('./DspPage')),
+  marxism:     lazy(() => import('./MarxismPage')),
+  calculus:    lazy(() => import('./CalculusPage')),
+  maogai:      lazy(() => import('./MaogaiPage')),
 }
 
 export default function CourseLayout() {
   const { courseId } = useParams()
-  const pageId = usePageId()
   const meta = COURSE_META[courseId]
+  const PageComponent = COURSE_PAGES[courseId]
   const mainRef = useRef(null)
 
-  // Restore scroll position on navigation
   useScrollMemory()
 
-  // Sidebar highlight via IntersectionObserver
+  // Load busuanzi counter
+  useEffect(() => { loadBusuanzi() }, [])
+
+  // Update sidebar title when course changes
   useEffect(() => {
-    if (!mainRef.current) return
-    const ids = mainRef.current.querySelectorAll('[id]')
-    if (!ids.length) return
+    if (!meta) return
+    document.title = `${meta.name} - 期末复习`
+    // Update sidebar title
+    const titleEl = document.querySelector('.sidebar-title')
+    if (titleEl) {
+      titleEl.innerHTML = `${meta.icon} ${meta.name}`
+    }
+  }, [courseId, meta])
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id
-            document.querySelectorAll('.sidebar a').forEach(a => {
-              a.classList.toggle('active', a.getAttribute('href') === '#' + id)
-            })
-          }
-        })
-      },
-      { rootMargin: '-20% 0px -70% 0px' }
-    )
-
-    ids.forEach(el => observer.observe(el))
-    return () => observer.disconnect()
-  }, [courseId])
-
-  if (!meta) {
+  if (!meta || !PageComponent) {
     return (
       <div style={{ textAlign: 'center', padding: '80px 20px', color: 'var(--text)' }}>
         <h1 style={{ fontSize: '2rem', marginBottom: 12 }}>课程未找到</h1>
@@ -76,7 +76,6 @@ export default function CourseLayout() {
       <nav className="sidebar" id="sidebar">
         <div className="sidebar-title">
           {meta.icon} {meta.name}
-          <small>{meta.chapters} 章</small>
         </div>
         <Link
           to="/site/"
@@ -90,19 +89,35 @@ export default function CourseLayout() {
           ← 返回课程主页
         </Link>
         <div className="nav-group">
-          <div className="nav-group-title">内容加载中…</div>
+          <div className="nav-group-title">加载中…</div>
         </div>
       </nav>
 
-      {/* Main content area */}
+      {/* Sidebar overlay (mobile) */}
+      <div
+        className="sidebar-overlay"
+        onClick={() => {
+          document.querySelector('.sidebar')?.classList.remove('open')
+          document.querySelector('.sidebar-overlay')?.classList.remove('show')
+        }}
+      />
+
+      {/* Main content */}
       <main className="main" ref={mainRef}>
-        <Outlet />
+        <Suspense fallback={
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-light)' }}>
+            <p>加载课程内容…</p>
+          </div>
+        }>
+          <PageComponent />
+        </Suspense>
       </main>
 
       {/* Back to top */}
       <div
         className="back-top"
         id="backTop"
+        style={{ display: 'none' }}
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       >
         ↑

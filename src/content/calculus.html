@@ -1,0 +1,302 @@
+<h1>高等数学 期末复习</h1>
+<p style="color:var(--text-dim);margin-bottom:20px">基于三节复习课录音整理 · 重点例题与考试要点</p>
+
+<div class="stats">
+<div class="stat-card"><div class="stat-num">4</div><div class="stat-label">专题</div></div>
+<div class="stat-card"><div class="stat-num">10+</div><div class="stat-label">核心公式</div></div>
+<div class="stat-card"><div class="stat-num">7+</div><div class="stat-label">典型例题</div></div>
+<div class="stat-card"><div class="stat-num">5</div><div class="stat-label">自测题</div></div>
+</div>
+
+<div id="exam-info" class="exam-banner">
+<h3>考试范围与分值分布</h3>
+<div class="exam-grid">
+<div class="exam-item"><strong>常微分方程</strong>：~5 分（选择/填空）</div>
+<div class="exam-item"><strong>多元函数微分</strong>：~20 分（偏导、极值）</div>
+<div class="exam-item"><strong>多元函数积分</strong>：~38 分（重积分+曲线+曲面）</div>
+<div class="exam-item"><strong>复变函数</strong>：~12 分（2 题，送分题）</div>
+</div>
+<div class="warning" style="margin-top:14px">
+<strong>不考内容：</strong>曲线积分/曲面积分中的多个公式、以 2L 为周期的傅里叶级数、复数幂运算、调和函数。<br>
+<strong>必拿分：</strong>复变函数 12 分（套路固定，年年考同样的点）。
+</div>
+</div>
+
+
+<div class="section-divider"></div>
+<h2 id="ode">常微分方程（~5 分）</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">二阶常系数非齐次方程的特解形式 <span class="tag tag-L">必考</span></h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>步骤：</strong>
+<ol>
+<li>写出特征方程：将 $y'', y', y$ 替换为 $r^2, r, 1$，右边=0</li>
+<li>求特征根 $r_1, r_2$</li>
+<li>从右端提取参数 $\lambda$ 和 $\omega$，构造复数 $\lambda \pm i\omega$</li>
+<li>判断 $\lambda \pm i\omega$ 是否为特征根，确定 $k$ 的取值</li>
+<li>写出特解形式</li>
+</ol>
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 例题：$y'' - 2y' + 5y = e^x \cos 2x$ 的特解形式</div>
+<p><strong>Step 1：</strong>特征方程 $r^2 - 2r + 5 = 0$</p>
+<p><strong>Step 2：</strong>$r = 1 \pm 2i$</p>
+<p><strong>Step 3：</strong>$\lambda = 1, \omega = 2$，构造 $\lambda \pm i\omega = 1 \pm 2i$</p>
+<p><strong>Step 4：</strong>$1 \pm 2i$ <strong>恰好是特征根</strong>，所以 $k = 1$</p>
+<p><strong>Step 5：</strong>特解形式：</p>
+<div class="formula">
+$y^* = x^1 e^x [(A\cos 2x + B\sin 2x)]$
+</div>
+<div class="warning">
+<strong>填空题易扣分点（老师反复强调）：</strong><br>
+① <strong>必须有 $\sin$ 项！</strong>即使原题只有 $\cos$，特解中也必须写 $A\cos 2x + B\sin 2x$。缺 $\sin$ 项 → 全扣。<br>
+② <strong>必须有 $x^k$ 因子！</strong>若 $\lambda \pm i\omega$ 是特征根则 $k=1$，不是则 $k=0$。漏 $x$ → 扣一半分。<br>
+③ 填空题规则：错一处扣一半，错两处全扣。
+</div>
+</div>
+</div>
+
+
+<div class="section-divider"></div>
+<h2 id="pde-partial">多元函数微分（~20 分）</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">偏导数计算</h3>
+<div class="collapsible-content show">
+<div class="card">
+<div class="card-title">偏导数定义（分段函数必用）</div>
+<div class="formula">
+$f_x(x_0, y_0) = \lim_{\Delta x \to 0} \frac{f(x_0 + \Delta x, y_0) - f(x_0, y_0)}{\Delta x}$
+</div>
+<p>对分段函数在分段点处，<strong>必须用定义求偏导</strong>，不能直接代公式。</p>
+</div>
+</div>
+
+<h3 id="pde-chain" class="collapsible open" onclick="toggleCollapse(this)">复合函数与抽象函数求导 <span class="tag tag-L">每年必考</span></h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>链式法则画"连线图"：</strong><br>
+以 $z = f(u,v), u = g(x,y), v = h(x,y)$ 为例：<br>
+$\frac{\partial z}{\partial x} = \frac{\partial f}{\partial u}\frac{\partial u}{\partial x} + \frac{\partial f}{\partial v}\frac{\partial v}{\partial x}$<br><br>
+<strong>口诀：连线相乘，分线相加。</strong><br>
+每条从 $z$ 到 $x$ 的路径上各偏导相乘，不同路径的结果相加。
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 例题：$z = f(e^{x^2} + y^2,\; xy)$，求 $z_x, z_{xy}$（抽象函数二阶偏导）</div>
+<p>令 $u = e^{x^2} + y^2$，$v = xy$，则 $z = f(u,v)$</p>
+<h4>一阶偏导：</h4>
+<div class="formula">
+$z_x = f_1 \cdot 2xe^{x^2} + f_2 \cdot y$
+</div>
+<p>其中 $f_1 = \frac{\partial f}{\partial u}$，$f_2 = \frac{\partial f}{\partial v}$（下标表示对第几个位置求偏导）</p>
+
+<h4>二阶偏导 $z_{xy}$（难点）：</h4>
+<p>对 $z_x = f_1 \cdot 2xe^{x^2} + f_2 \cdot y$ 再对 $y$ 求偏导，用<strong>乘法法则 + 链式法则</strong>：</p>
+<div class="formula">
+$z_{xy} = [f_{11} \cdot 2y + f_{12} \cdot x] \cdot 2xe^{x^2} + f_2 + [f_{21} \cdot 2y + f_{22} \cdot x] \cdot y$
+</div>
+<p>若 $f$ 有二阶连续偏导，则 $f_{12} = f_{21}$，可合并。</p>
+<div class="warning">
+<strong>关键易错点：</strong><br>
+① $f_1, f_2$ 仍然是 $u, v$ 的函数，对 $y$ 求导时<strong>仍需链式法则</strong><br>
+② 别忘了乘法法则中的"不求导"项（如 $f_2 \cdot y$ 对 $y$ 求导时 $f_2$ 也要对 $y$ 求导）<br>
+③ 最后用 $f_{12} = f_{21}$ 合并同类项
+</div>
+</div>
+</div>
+
+<h3 id="pde-continuous" class="collapsible" onclick="toggleCollapse(this)">分段函数连续性与偏导存在性讨论</h3>
+<div class="collapsible-content">
+<div class="keypoint">
+<strong>方法：</strong><br>
+① 偏导数：在分段点处<strong>必须用定义</strong>求<br>
+② 连续性：找特殊路径（常用 $y = kx$），若不同 $k$ 极限不同则不连续<br>
+③ <strong>偏导存在 ≠ 连续</strong>（和一元函数不同！）
+</div>
+</div>
+
+<h3 id="pde-dir" class="collapsible" onclick="toggleCollapse(this)">方向导数与梯度</h3>
+<div class="collapsible-content">
+<div class="formula">
+$\frac{\partial u}{\partial l} = \frac{\partial u}{\partial x}\cos\alpha + \frac{\partial u}{\partial y}\cos\beta + \frac{\partial u}{\partial z}\cos\gamma$
+</div>
+<p>其中 $\cos\alpha, \cos\beta, \cos\gamma$ 为方向 $l$ 的<strong>方向余弦</strong>。</p>
+<div class="formula">
+$\text{grad}\, u = \left(\frac{\partial u}{\partial x},\; \frac{\partial u}{\partial y},\; \frac{\partial u}{\partial z}\right)$
+</div>
+<div class="warning">
+<strong>计算不能出错！</strong>偏导数求错或方向余弦求错都会扣分。
+</div>
+</div>
+
+<h3 id="pde-extreme" class="collapsible" onclick="toggleCollapse(this)">二元函数极值与最值</h3>
+<div class="collapsible-content">
+<div class="keypoint">
+<strong>极值判定步骤：</strong>
+<ol>
+<li>求驻点：$f_x = 0, f_y = 0$</li>
+<li>计算 $A = f_{xx}, B = f_{xy}, C = f_{yy}$</li>
+<li>判别 $\Delta = AC - B^2$：
+<ul><li>$\Delta > 0, A > 0$ → 极小值</li>
+<li>$\Delta > 0, A < 0$ → 极大值</li>
+<li>$\Delta < 0$ → 非极值（鞍点）</li>
+<li>$\Delta = 0$ → 需另法判断</li></ul>
+</li>
+</ol>
+</div>
+<div class="card">
+<div class="card-title">有界闭区域上最值求法</div>
+<p>① 求区域内部的驻点函数值<br>② 求边界上的最值（可化为一元函数或用条件极值/拉格朗日乘数法）<br>③ 比较所有候选值，最大/最小者为最值</p>
+</div>
+</div>
+
+
+<div class="section-divider"></div>
+<h2 id="int-multiple">多元函数积分（~38 分）</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">重积分计算</h3>
+<div class="collapsible-content show">
+<div class="keypoint">
+<strong>二重积分：</strong>画积分区域 → 确定积分次序 → 化为累次积分<br>
+<strong>三重积分：</strong>"先一后二"或"先二后一"（投影法/截面法）
+</div>
+<div class="highlight">
+<strong>换元法（重要考点）：</strong><br>
+极坐标换元：$x = r\cos\theta, y = r\sin\theta$，面积元素 $dxdy = r\,drd\theta$<br>
+注意不要忘记 <strong>Jacobi 行列式 $r$</strong>！
+</div>
+</div>
+
+<h3 id="int-green" class="collapsible open" onclick="toggleCollapse(this)">格林公式 <span class="tag tag-L">重点</span></h3>
+<div class="collapsible-content show">
+<div class="formula">
+$\oint_L P\,dx + Q\,dy = \iint_D \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right) dxdy$
+</div>
+<div class="keypoint">
+<strong>使用条件：</strong>$L$ 为正向（逆时针）闭曲线，$P, Q$ 在 $D$ 内有连续偏导数。<br>
+<strong>思路：</strong>曲线积分 → 二重积分（化难为易）。<br>
+若曲线不闭合，可<strong>补线</strong>使其闭合后用格林公式，再减去补上的线积分。
+</div>
+</div>
+
+<h3 id="int-gauss" class="collapsible" onclick="toggleCollapse(this)">高斯公式</h3>
+<div class="collapsible-content">
+<div class="formula">
+$\oiint_\Sigma P\,dydz + Q\,dzdx + R\,dxdy = \iiint_\Omega \left(\frac{\partial P}{\partial x} + \frac{\partial Q}{\partial y} + \frac{\partial R}{\partial z}\right) dxdydz$
+</div>
+<p><strong>思路：</strong>曲面积分 → 三重积分。曲面取<strong>外侧</strong>为正方向。</p>
+</div>
+
+
+<div class="section-divider"></div>
+<h2 id="complex-derive">复变函数（~12 分，必拿分）</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">可导性与解析性判断 <span class="tag tag-L">每年必考</span></h3>
+<div class="collapsible-content show">
+<div class="keypoint">
+<strong>方法：C-R（柯西-黎曼）条件</strong><br>
+设 $f(z) = u(x,y) + iv(x,y)$ 在点 $z_0$ 可导的充要条件：
+<div class="formula">
+$\frac{\partial u}{\partial x} = \frac{\partial v}{\partial y}, \quad \frac{\partial u}{\partial y} = -\frac{\partial v}{\partial x}$
+</div>
+<p>且四个偏导数在该点<strong>连续</strong>。</p>
+<p><strong>解析</strong> = 在某点及该点邻域内处处可导。</p>
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 判断流程</div>
+<ol>
+<li>写出 $u(x,y)$ 和 $v(x,y)$</li>
+<li>求四个偏导数 $u_x, u_y, v_x, v_y$</li>
+<li>验证 C-R 条件是否成立</li>
+<li>若满足且偏导连续 → 可导（/解析）；否则不可导</li>
+</ol>
+</div>
+</div>
+
+<h3 id="complex-integral" class="collapsible open" onclick="toggleCollapse(this)">柯西积分公式 <span class="tag tag-L">每年必考</span></h3>
+<div class="collapsible-content show">
+<div class="formula">
+$f(z_0) = \frac{1}{2\pi i} \oint_C \frac{f(z)}{z - z_0} dz$
+</div>
+<p>其中 $C$ 为正向简单闭曲线，$z_0$ 在 $C$ 内部，$f(z)$ 在 $C$ 内及 $C$ 上解析。</p>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 解题套路（老师强调：年年考同样的点）</div>
+<ol>
+<li>识别被积函数是否为 $\frac{f(z)}{z - z_0}$ 形式</li>
+<li>确认 $f(z)$ 在围道内解析，$z_0$ 在围道内</li>
+<li>直接代入公式：$\oint = 2\pi i \cdot f(z_0)$</li>
+<li>若需先用<strong>复合闭路定理</strong>变形围道，再用柯西积分公式</li>
+</ol>
+<div class="highlight">
+<strong>老师原话：</strong>"复变函数虽然难学，但不难考。考的点每年基本固定，按套路多做题，这 12 分是送分给你一定要拿到。"
+</div>
+</div>
+</div>
+
+
+<div class="section-divider"></div>
+<h2 id="quiz">综合自测</h2>
+
+<div class="quiz-container" data-correct="1">
+<div class="quiz-q">1. $y'' - 2y' + 5y = e^x \cos 2x$ 的特解形式中 $x$ 的幂次 $k$ 是？</div>
+<div class="quiz-options">
+<label><input type="radio" name="q1" value="0"> $k = 0$（$1 \pm 2i$ 不是特征根）</label>
+<label><input type="radio" name="q1" value="1"> $k = 1$（$1 \pm 2i$ 是特征根）</label>
+<label><input type="radio" name="q1" value="2"> $k = 2$</label>
+</div>
+<button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+<div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+<div class="quiz-q">2. 多元函数在某点偏导数存在，能否推出该点连续？</div>
+<div class="quiz-options">
+<label><input type="radio" name="q2" value="0"> 一定连续</label>
+<label><input type="radio" name="q2" value="1"> 取决于偏导是否连续</label>
+<label><input type="radio" name="q2" value="2"> 不一定连续（与一元函数不同）</label>
+</div>
+<button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+<div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+<div class="quiz-q">3. 格林公式的正方向是？</div>
+<div class="quiz-options">
+<label><input type="radio" name="q3" value="0"> 逆时针</label>
+<label><input type="radio" name="q3" value="1"> 顺时针</label>
+<label><input type="radio" name="q3" value="2"> 无方向要求</label>
+</div>
+<button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+<div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+<div class="quiz-q">4. $f(z) = u + iv$ 在点 $z_0$ 可导的充要条件是？</div>
+<div class="quiz-options">
+<label><input type="radio" name="q4" value="0"> $u, v$ 偏导存在</label>
+<label><input type="radio" name="q4" value="1"> C-R 条件成立且偏导连续</label>
+<label><input type="radio" name="q4" value="2"> $f(z)$ 连续</label>
+</div>
+<button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+<div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+<div class="quiz-q">5. 柯西积分公式 $\oint_C \frac{f(z)}{z-z_0}dz = ?$（$z_0$ 在 $C$ 内，$f$ 解析）</div>
+<div class="quiz-options">
+<label><input type="radio" name="q5" value="0"> $f(z_0)$</label>
+<label><input type="radio" name="q5" value="1"> $2\pi f(z_0)$</label>
+<label><input type="radio" name="q5" value="2"> $2\pi i \cdot f(z_0)$</label>
+</div>
+<button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+<div class="quiz-result"></div>
+</div>
+
+<div style="text-align:center;padding:40px 0;color:var(--text-dim);font-size:.9em">祝考试顺利！</div>
+</div>

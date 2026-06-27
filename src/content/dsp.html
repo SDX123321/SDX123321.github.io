@@ -1,0 +1,1477 @@
+<h1>数字信号处理 期末复习</h1>
+<p style="color:var(--text-dim);margin-bottom:24px">基于复习课录音与课程PPT整理 | 互动式复习指南</p>
+
+<div id="exam-info" class="exam-banner">
+  <h3>考试信息</h3>
+  <div class="exam-grid">
+    <div class="exam-item"><strong>成绩构成：</strong>平时 40% + 期末 60%</div>
+    <div class="exam-item"><strong>作业占比：</strong>平时成绩中占 15%</div>
+    <div class="exam-item"><strong>重点章节：</strong>第3、4、5章为考试重点</div>
+    <div class="exam-item"><strong>第1章：</strong>绪论不考，第1章内容考但较少</div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">章节</div></div>
+  <div class="stat-card"><div class="stat-num">30+</div><div class="stat-label">核心公式</div></div>
+  <div class="stat-card"><div class="stat-num">15+</div><div class="stat-label">典型例题</div></div>
+  <div class="stat-card"><div class="stat-num">20+</div><div class="stat-label">自测题</div></div>
+</div>
+
+<div class="section-divider"></div>
+
+
+<h2 id="ch1-signals">第1章 离散时间信号</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">1.1 基本概念与典型序列</h3>
+<div class="collapsible-content show">
+<div class="keypoint">
+离散时间信号 $x(n)$ 是从连续时间信号 $x_a(t)$ 通过<strong>采样</strong>得到的：将连续变量 $t$ 替换为 $nT$（$T$ 为采样间隔/采样周期）。采样频率 $F_s = 1/T$。
+</div>
+
+<h4>六种典型序列</h4>
+<table>
+<tr><th>序列</th><th>定义</th><th>说明</th></tr>
+<tr><td>单位脉冲序列</td><td>$\delta(n) = \begin{cases}1, & n=0\\0, & n\neq 0\end{cases}$</td><td>注意与 $\delta(t)$ 的区别</td></tr>
+<tr><td>单位阶跃序列</td><td>$u(n) = \begin{cases}1, & n\geq 0\\0, & n<0\end{cases}$</td><td></td></tr>
+<tr><td>矩形序列</td><td>$R_N(n) = \begin{cases}1, & 0\leq n\leq N-1\\0, & \text{其他}\end{cases}$</td><td>$N$ 为非零区间长度</td></tr>
+<tr><td>实指数序列</td><td>$x(n) = a^n u(n)$</td><td>$|a|<1$ 收敛，$|a|>1$ 发散</td></tr>
+<tr><td>正弦序列</td><td>$x(n) = A\sin(\omega_0 n + \varphi)$</td><td>$\omega_0$ 为数字角频率</td></tr>
+<tr><td>复指数序列</td><td>$x(n) = e^{(\sigma+j\omega_0)n}$</td><td>实部为余弦，虚部为正弦</td></tr>
+</table>
+</div>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">1.2 重要公式与性质</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">核心公式</span><br>
+数字角频率与模拟角频率的关系：<br>
+$$\boxed{\omega = \Omega T = \frac{2\pi f}{F_s}}$$
+其中 $\omega$ 为数字角频率，$\Omega$ 为模拟角频率，$f$ 为物理频率，$F_s$ 为采样频率。
+</div>
+
+<div class="keypoint">
+数字角频率 $\omega$ 是物理频率 $f$ 对采样频率 $F_s$ 的<strong>归一化值</strong>（相对值），这个公式必须记住！
+</div>
+
+<h4>正弦序列的周期性判断</h4>
+<div class="keypoint">
+当 $\frac{2\pi}{\omega_0} = \frac{N}{i}$（$i$ 为整数）时，正弦序列是周期序列，周期为 $N$。<br>
+- 若 $\frac{2\pi}{\omega_0}$ 为<strong>有理数</strong>：是周期序列<br>
+- 若 $\frac{2\pi}{\omega_0}$ 为<strong>无理数</strong>：不是周期序列
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">例题：判断正弦序列周期性（点击展开）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>判断 $\cos\left(\frac{3\pi}{7}n\right)$ 是否为周期序列。</strong>
+
+<strong>Step 1｜提取数字角频率</strong>
+$$\omega_0 = \frac{3\pi}{7}$$
+
+<strong>Step 2｜计算 $\frac{2\pi}{\omega_0}$</strong>
+$$\frac{2\pi}{\omega_0} = \frac{2\pi}{3\pi/7} = \frac{14}{3}$$
+
+<strong>Step 3｜判断是否为有理数</strong><br>
+$\frac{14}{3}$ 是有理数 → <strong>是周期序列</strong>
+
+<strong>Step 4｜求最小周期</strong><br>
+$\frac{2\pi}{\omega_0} = \frac{N}{i} = \frac{14}{3}$，取 $N=14, i=3$（最简分数）
+$$\boxed{N = 14}$$
+
+<strong>验证：</strong>$\cos\left(\frac{3\pi}{7}(n+14)\right) = \cos\left(\frac{3\pi}{7}n + 6\pi\right) = \cos\left(\frac{3\pi}{7}n\right)$ ✓
+</div>
+</div>
+
+<div class="warning">
+两个周期序列之和的周期 = 各序列周期的<strong>最小公倍数</strong>。
+</div>
+
+<h4>序列的基本运算</h4>
+<table>
+<tr><th>运算</th><th>公式</th></tr>
+<tr><td>偶部</td><td>$x_e(n) = \frac{1}{2}[x(n) + x(-n)]$</td></tr>
+<tr><td>奇部</td><td>$x_o(n) = \frac{1}{2}[x(n) - x(-n)]$</td></tr>
+<tr><td>单位脉冲表示</td><td>任意序列：$x(n) = \sum_{k=-\infty}^{\infty} x(k)\delta(n-k)$</td></tr>
+<tr><td>线性卷积</td><td>$y(n) = x(n)*h(n) = \sum_{k=-\infty}^{\infty} x(k)h(n-k)$</td></tr>
+</table>
+
+<div class="keypoint">
+<strong>线性卷积的不进位乘法</strong>：右端对齐，每列相乘后求和（不进位），输出序列的起止点 = 两个输入序列起止点分别相加。
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+
+<h2 id="ch1-transforms">变换域分析</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">DTFT 离散时间傅里叶变换</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">DTFT 正变换</span><br>
+$$X(e^{j\omega}) = \sum_{n=-\infty}^{\infty} x(n)e^{-j\omega n}$$
+</div>
+
+<div class="formula">
+<span class="formula-tag">IDTFT 反变换</span><br>
+$$x(n) = \frac{1}{2\pi}\int_{-\pi}^{\pi} X(e^{j\omega})e^{j\omega n}d\omega$$
+<div class="warning">这个公式在第5章 FIR 滤波器设计中会用到，用于求理想滤波器的单位脉冲响应！</div>
+</div>
+
+<div class="keypoint">
+DTFT 频谱 $X(e^{j\omega})$ 是以 $2\pi$ 为周期的<strong>连续周期频谱</strong>。存在条件：Z 变换包含单位圆。
+</div>
+
+<h4>DTFT 重要性质</h4>
+<table>
+<tr><th>性质</th><th>时域</th><th>频域</th></tr>
+<tr><td>线性</td><td>$ax_1(n)+bx_2(n)$</td><td>$aX_1(e^{j\omega})+bX_2(e^{j\omega})$</td></tr>
+<tr><td>时移</td><td>$x(n-n_0)$</td><td>$e^{-j\omega n_0}X(e^{j\omega})$</td></tr>
+<tr><td>频移</td><td>$e^{j\omega_0 n}x(n)$</td><td>$X(e^{j(\omega-\omega_0)})$</td></tr>
+<tr><td>共轭</td><td>$x^*(n)$</td><td>$X^*(e^{-j\omega})$</td></tr>
+<tr><td>实偶序列</td><td>$x(n)$ 实偶</td><td>$X(e^{j\omega})$ 实偶</td></tr>
+<tr><td>实奇序列</td><td>$x(n)$ 实奇</td><td>$X(e^{j\omega})$ 虚奇</td></tr>
+<tr><td>实序列</td><td>$x(n)$ 实</td><td>$X(e^{j\omega})$ 共轭偶对称</td></tr>
+</table>
+
+<div class="keypoint">
+<strong>对称性速记：</strong>实偶→频谱实偶，实奇→频谱虚奇，实序列→频谱共轭偶对称。
+</div>
+
+<h4>对称性示意对比图</h4>
+<div style="display:grid;grid-template-columns:1fr;gap:16px;margin:16px 0">
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title" style="text-align:center;font-size:15px">① 实偶序列 → 频谱 <strong>实偶</strong></div>
+<div style="text-align:center">
+<svg width="620" height="200" viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+  
+  <text x="100" y="16" fill="#8892b0" font-size="13" text-anchor="middle">时域 x(n)，实偶对称</text>
+  <line x1="20" y1="90" x2="180" y2="90" stroke="#3a3d50" stroke-width="1"/>
+  <line x1="100" y1="30" x2="100" y2="150" stroke="#3a3d50" stroke-width="1"/>
+  
+  <line x1="40" y1="90" x2="40" y2="115" stroke="#6c63ff" stroke-width="2.5"/><circle cx="40" cy="115" r="3" fill="#6c63ff"/>
+  <line x1="60" y1="90" x2="60" y2="70" stroke="#6c63ff" stroke-width="2.5"/><circle cx="60" cy="70" r="3" fill="#6c63ff"/>
+  <line x1="80" y1="90" x2="80" y2="55" stroke="#6c63ff" stroke-width="2.5"/><circle cx="80" cy="55" r="3" fill="#6c63ff"/>
+  <line x1="100" y1="90" x2="100" y2="45" stroke="#ff6b9d" stroke-width="3"/><circle cx="100" cy="45" r="3.5" fill="#ff6b9d"/>
+  <line x1="120" y1="90" x2="120" y2="55" stroke="#6c63ff" stroke-width="2.5"/><circle cx="120" cy="55" r="3" fill="#6c63ff"/>
+  <line x1="140" y1="90" x2="140" y2="70" stroke="#6c63ff" stroke-width="2.5"/><circle cx="140" cy="70" r="3" fill="#6c63ff"/>
+  <line x1="160" y1="90" x2="160" y2="115" stroke="#6c63ff" stroke-width="2.5"/><circle cx="160" cy="115" r="3" fill="#6c63ff"/>
+  <text x="100" y="165" fill="#64748b" font-size="11" text-anchor="middle">-3 -2 -1  0  1  2  3  →n</text>
+  
+  <text x="230" y="95" fill="#6c63ff" font-size="26" text-anchor="middle" font-weight="bold">⟶</text>
+  <text x="230" y="80" fill="#00d2ff" font-size="11" text-anchor="middle">DTFT</text>
+  
+  <text x="400" y="16" fill="#8892b0" font-size="13" text-anchor="middle">频域 X(e^jω)，纯实数，偶对称</text>
+  <line x1="290" y1="90" x2="520" y2="90" stroke="#3a3d50" stroke-width="1"/>
+  <line x1="405" y1="25" x2="405" y2="155" stroke="#3a3d50" stroke-width="1"/>
+  
+  <path d="M290,90 C310,88 330,75 355,50 Q380,32 405,28 Q430,32 455,50 C480,75 500,88 520,90" fill="none" stroke="#2ecc71" stroke-width="2.5"/>
+  <path d="M290,90 C310,88 330,75 355,50 Q380,32 405,28 Q430,32 455,50 C480,75 500,88 520,90" fill="rgba(46,204,113,0.12)" stroke="none"/>
+  <text x="405" y="22" fill="#2ecc71" font-size="12" text-anchor="middle">实数</text>
+  <text x="405" y="170" fill="#64748b" font-size="11" text-anchor="middle">-π        0        π   →ω</text>
+  <text x="280" y="95" fill="#64748b" font-size="10" text-anchor="end">Re</text>
+  <text x="410" y="28" fill="#2ecc71" font-size="10">Im = 0</text>
+</svg>
+</div>
+<p style="font-size:13px;color:var(--text-dim);text-align:center;margin-top:4px">x(n)关于n=0对称 ↔ X(e^jω)为纯实数且关于ω=0对称（虚部为0）</p>
+</div>
+
+<div class="card" style="border-color:var(--accent3)">
+<div class="card-title" style="text-align:center;font-size:15px">② 实奇序列 → 频谱 <strong>虚奇</strong></div>
+<div style="text-align:center">
+<svg width="620" height="200" viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+  <text x="100" y="16" fill="#8892b0" font-size="13" text-anchor="middle">时域 x(n)，实奇反对称</text>
+  <line x1="20" y1="90" x2="180" y2="90" stroke="#3a3d50" stroke-width="1"/>
+  <line x1="100" y1="30" x2="100" y2="150" stroke="#3a3d50" stroke-width="1"/>
+  <line x1="40" y1="90" x2="40" y2="68" stroke="#ff6b9d" stroke-width="2.5"/><circle cx="40" cy="68" r="3" fill="#ff6b9d"/>
+  <line x1="60" y1="90" x2="60" y2="78" stroke="#ff6b9d" stroke-width="2.5"/><circle cx="60" cy="78" r="3" fill="#ff6b9d"/>
+  <line x1="80" y1="90" x2="80" y2="82" stroke="#ff6b9d" stroke-width="2.5"/><circle cx="80" cy="82" r="3" fill="#ff6b9d"/>
+  <line x1="100" y1="90" x2="100" y2="90" stroke="#ff6b9d" stroke-width="3"/><circle cx="100" cy="90" r="3.5" fill="#ff6b9d"/>
+  <line x1="120" y1="90" x2="120" y2="98" stroke="#ff6b9d" stroke-width="2.5"/><circle cx="120" cy="98" r="3" fill="#ff6b9d"/>
+  <line x1="140" y1="90" x2="140" y2="102" stroke="#ff6b9d" stroke-width="2.5"/><circle cx="140" cy="102" r="3" fill="#ff6b9d"/>
+  <line x1="160" y1="90" x2="160" y2="112" stroke="#ff6b9d" stroke-width="2.5"/><circle cx="160" cy="112" r="3" fill="#ff6b9d"/>
+  <text x="100" y="165" fill="#64748b" font-size="11" text-anchor="middle">-3 -2 -1  0  1  2  3  →n</text>
+  <text x="230" y="95" fill="#ff6b9d" font-size="26" text-anchor="middle" font-weight="bold">⟶</text>
+  <text x="230" y="80" fill="#00d2ff" font-size="11" text-anchor="middle">DTFT</text>
+  <text x="400" y="16" fill="#8892b0" font-size="13" text-anchor="middle">频域 X(e^jω)，纯虚数，奇对称</text>
+  <line x1="290" y1="90" x2="520" y2="90" stroke="#3a3d50" stroke-width="1"/>
+  <line x1="405" y1="25" x2="405" y2="155" stroke="#3a3d50" stroke-width="1"/>
+  
+  <path d="M290,90 C320,85 345,105 365,120 Q385,138 405,145 Q425,55 445,60 C465,72 490,85 520,90" fill="none" stroke="#00d2ff" stroke-width="2.5"/>
+  <text x="355" y="140" fill="#00d2ff" font-size="11" text-anchor="middle">-jIm</text>
+  <text x="455" y="55" fill="#00d2ff" font-size="11" text-anchor="middle">+jIm</text>
+  <text x="405" y="170" fill="#64748b" font-size="11" text-anchor="middle">-π        0        π   →ω</text>
+  <text x="280" y="95" fill="#64748b" font-size="10" text-anchor="end">Im</text>
+  <text x="410" y="30" fill="#2ecc71" font-size="10">Re = 0</text>
+</svg>
+</div>
+<p style="font-size:13px;color:var(--text-dim);text-align:center;margin-top:4px">x(n)关于n=0反对称且x(0)=0 ↔ X(e^jω)为纯虚数且关于ω=0反对称（实部为0）</p>
+</div>
+
+<div class="card" style="border-color:var(--orange)">
+<div class="card-title" style="text-align:center;font-size:15px">③ 一般实序列 → 频谱 <strong>共轭偶对称</strong></div>
+<div style="text-align:center">
+<svg width="620" height="210" viewBox="0 0 620 210" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+  <text x="100" y="16" fill="#8892b0" font-size="13" text-anchor="middle">时域 x(n)，一般实序列</text>
+  <line x1="20" y1="90" x2="180" y2="90" stroke="#3a3d50" stroke-width="1"/>
+  <line x1="100" y1="30" x2="100" y2="150" stroke="#3a3d50" stroke-width="1"/>
+  <line x1="40" y1="90" x2="40" y2="110" stroke="#f39c12" stroke-width="2.5"/><circle cx="40" cy="110" r="3" fill="#f39c12"/>
+  <line x1="60" y1="90" x2="60" y2="65" stroke="#f39c12" stroke-width="2.5"/><circle cx="60" cy="65" r="3" fill="#f39c12"/>
+  <line x1="80" y1="90" x2="80" y2="50" stroke="#f39c12" stroke-width="2.5"/><circle cx="80" cy="50" r="3" fill="#f39c12"/>
+  <line x1="100" y1="90" x2="100" y2="70" stroke="#f39c12" stroke-width="3"/><circle cx="100" cy="70" r="3.5" fill="#f39c12"/>
+  <line x1="120" y1="90" x2="120" y2="105" stroke="#f39c12" stroke-width="2.5"/><circle cx="120" cy="105" r="3" fill="#f39c12"/>
+  <line x1="140" y1="90" x2="140" y2="80" stroke="#f39c12" stroke-width="2.5"/><circle cx="140" cy="80" r="3" fill="#f39c12"/>
+  <line x1="160" y1="90" x2="160" y2="115" stroke="#f39c12" stroke-width="2.5"/><circle cx="160" cy="115" r="3" fill="#f39c12"/>
+  <text x="100" y="165" fill="#64748b" font-size="11" text-anchor="middle">-3 -2 -1  0  1  2  3  →n</text>
+  <text x="230" y="95" fill="#f39c12" font-size="26" text-anchor="middle" font-weight="bold">⟶</text>
+  <text x="230" y="80" fill="#00d2ff" font-size="11" text-anchor="middle">DTFT</text>
+  <text x="400" y="14" fill="#8892b0" font-size="13" text-anchor="middle">频域：|X| 偶对称，∠X 奇对称</text>
+  
+  <line x1="280" y1="42" x2="530" y2="42" stroke="#3a3d50" stroke-width="1"/>
+  <line x1="405" y1="18" x2="405" y2="60" stroke="#3a3d50" stroke-width="1"/>
+  <path d="M280,42 C305,40 330,32 355,25 Q380,18 405,16 Q430,18 455,25 C480,32 505,40 530,42" fill="none" stroke="#2ecc71" stroke-width="2"/>
+  <text x="275" y="30" fill="#64748b" font-size="10" text-anchor="end">|X|</text>
+  <text x="405" y="65" fill="#64748b" font-size="10" text-anchor="middle">-π     0     π</text>
+  <text x="540" y="32" fill="#2ecc71" font-size="10">偶对称</text>
+  
+  <line x1="280" y1="125" x2="530" y2="125" stroke="#3a3d50" stroke-width="1"/>
+  <line x1="405" y1="95" x2="405" y2="155" stroke="#3a3d50" stroke-width="1"/>
+  <path d="M280,100 L340,108 Q370,115 405,125 Q440,135 470,142 L530,150" fill="none" stroke="#e74c3c" stroke-width="2"/>
+  <path d="M280,150 L340,142 Q370,135 405,125 Q440,115 470,108 L530,100" fill="none" stroke="#e74c3c" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="275" y="118" fill="#64748b" font-size="10" text-anchor="end">∠X</text>
+  <text x="405" y="170" fill="#64748b" font-size="10" text-anchor="middle">-π     0     π</text>
+  <text x="540" y="130" fill="#e74c3c" font-size="10">奇对称</text>
+</svg>
+</div>
+<p style="font-size:13px;color:var(--text-dim);text-align:center;margin-top:4px">$X(e^{j\omega}) = X^*(e^{-j\omega})$：幅度谱偶对称，相位谱奇对称 → 幅度信息无损，只需分析 $[0,\pi]$ 即可</p>
+</div>
+
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">例题：求 $x(n) = a^n u(n)$ 的 DTFT（点击展开）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>已知：</strong>$x(n) = a^n u(n)$，$|a|<1$，求 $X(e^{j\omega})$ 和幅度谱。
+
+<strong>Step 1｜写出 DTFT 定义式</strong>
+$$X(e^{j\omega}) = \sum_{n=-\infty}^{\infty} x(n)e^{-j\omega n}$$
+
+<strong>Step 2｜代入序列，确定求和范围</strong><br>
+因为 $u(n) = 0$（$n<0$），所以求和下限从 $-\infty$ 变为 $0$：
+$$X(e^{j\omega}) = \sum_{n=0}^{\infty} a^n e^{-j\omega n} = \sum_{n=0}^{\infty} (ae^{-j\omega})^n$$
+
+<strong>Step 3｜等比级数求和</strong><br>
+这是一个公比为 $r = ae^{-j\omega}$ 的无穷等比级数，当 $|r| = |a| < 1$ 时收敛：
+$$X(e^{j\omega}) = \frac{1}{1 - ae^{-j\omega}}, \quad |a|<1$$
+
+<strong>Step 4｜求幅度谱</strong><br>
+将分母写成实部 + 虚部形式：
+$$1 - ae^{-j\omega} = 1 - a\cos\omega + ja\sin\omega$$
+$$|1 - ae^{-j\omega}|^2 = (1-a\cos\omega)^2 + (a\sin\omega)^2 = 1 - 2a\cos\omega + a^2$$
+$$\boxed{|X(e^{j\omega})| = \frac{1}{\sqrt{1 - 2a\cos\omega + a^2}}}$$
+
+<strong>Step 5｜关键观察</strong><br>
+- 当 $\omega = 0$ 时，$|X| = \frac{1}{|1-a|}$（最大值）<br>
+- 当 $\omega = \pi$ 时，$|X| = \frac{1}{|1+a|}$（最小值）<br>
+- 幅度谱关于 $\omega = 0$ 偶对称（因为 $x(n)$ 是实序列）
+</div>
+</div>
+</div>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">Z 变换</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">Z 变换定义</span><br>
+$$X(z) = \sum_{n=-\infty}^{\infty} x(n)z^{-n}$$
+</div>
+
+<div class="keypoint">
+收敛域 (ROC) 是以原点为边界的<strong>环形区域</strong>。内径可缩到零点（实心圆），外径可扩展到无穷（空心圆）。
+</div>
+
+<h4>常用 Z 变换对（必须记住！）</h4>
+<table>
+<tr><th>序列 $x(n)$</th><th>$X(z)$</th><th>收敛域</th></tr>
+<tr><td>$\delta(n)$</td><td>$1$</td><td>全 z 平面</td></tr>
+<tr><td>$a^n u(n)$（因果等比）</td><td>$\frac{1}{1-az^{-1}}$</td><td>$|z|>|a|$（圆外）</td></tr>
+<tr><td>$-a^n u(-n-1)$（反因果）</td><td>$\frac{1}{1-az^{-1}}$</td><td>$|z|<|a|$（圆内）</td></tr>
+</table>
+
+<div class="warning">
+同一个 Z 变换表达式对应不同收敛域 → 不同的序列！求逆变换时<strong>必须根据收敛域</strong>判断是因果还是反因果序列。
+</div>
+
+<div class="warning">
+<strong>求零极点的常见错误：</strong>当 $H(z)$ 是 $z^{-1}$ 的有理式时，一定要分子分母同乘 $z^M$ 化为<strong>正幂次</strong>多项式再求零极点，否则会遗漏！
+</div>
+
+<h4>零极点分布图</h4>
+<div class="keypoint">
+零点：空心小圆圈 ○，标注值；极点：×，标注值。<br>
+收敛域：以原点为边界的环形区域，用阴影或文字标注。<br>
+因果序列收敛域 = 极点最大模为半径的圆外；包含无穷点。
+</div>
+
+<h4>Z 变换的性质</h4>
+<table>
+<tr><th>性质</th><th>说明</th></tr>
+<tr><td>线性</td><td>$a x_1(n) + b x_2(n) \leftrightarrow aX_1(z)+bX_2(z)$</td></tr>
+<tr><td>卷积</td><td>$x(n)*h(n) \leftrightarrow X(z)\cdot H(z)$</td></tr>
+</table>
+
+<h4>★ 时移（位移性）详解</h4>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">时域视角：序列的移位</div>
+<p style="font-size:14px">对序列 $x(n)$ 进行<strong>时域移位</strong> $n_0$ 个样本：</p>
+<ul style="margin:8px 0 0 20px;font-size:14px">
+<li>$x(n-n_0)$：序列<strong>右移</strong> $n_0$（延迟）</li>
+<li>$x(n+n_0)$：序列<strong>左移</strong> $n_0$（超前）</li>
+</ul>
+<div class="formula">
+<span class="formula-tag">时域移位 → Z 域</span><br>
+$$x(n-n_0) \leftrightarrow z^{-n_0}X(z)$$
+</div>
+<div class="keypoint">
+<strong>物理意义：</strong>时域每延迟一个样本，在 Z 域就多乘一个 $z^{-1}$。<br>
+$z^{-1}$ 就是一个<strong>单位延迟器</strong>。
+</div>
+</div>
+
+<div class="card" style="border-color:var(--accent2)">
+<div class="card-title">频域视角：相位的旋转</div>
+<p style="font-size:14px">在单位圆上取值（$z = e^{j\omega}$），时移性质变为：</p>
+<div class="formula">
+<span class="formula-tag">频域效果（DTFT）</span><br>
+$$x(n-n_0) \leftrightarrow e^{-j\omega n_0} X(e^{j\omega})$$
+</div>
+<div class="keypoint">
+<strong>关键结论：</strong><br>
+- 时域移位<strong>不改变幅度谱</strong>：$|e^{-j\omega n_0} X(e^{j\omega})| = |X(e^{j\omega})|$<br>
+- 时域移位<strong>只改变相位谱</strong>：相位增加 $-\omega n_0$（线性相移）<br>
+- 这就是<strong>线性相位 FIR 滤波器</strong>的理论基础！
+</div>
+</div>
+
+<div class="keypoint">
+<strong>逆 Z 变换</strong>：掌握<strong>部分分式展开法</strong>。两种求待定系数的方法：①遮挡法 ②通分对应系数相等法。根据收敛域选择因果/反因果对应公式。
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+
+<h2 id="ch1-systems">离散时间系统</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">系统特性的判别</h3>
+<div class="collapsible-content show">
+
+<h4>线性时不变（LTI）系统经验判别法</h4>
+<div class="card">
+<div class="card-title">线性判别</div>
+系统差分方程中只能出现：
+<ol style="margin:8px 0 0 20px;font-size:14px">
+<li>$x(n)$、$y(n)$ 及其<strong>一次项</strong>（不能有平方、对数等非线性运算）</li>
+<li>系数不能包含 $n$</li>
+</ol>
+</div>
+
+<div class="card">
+<div class="card-title">时不变判别</div>
+<ol style="margin:8px 0 0 20px;font-size:14px">
+<li>$x(n)$、$y(n)$ 及其移位项前面的系数不能包含 $n$</li>
+<li>$x(n)$、$y(n)$ 前面的系数必须为 1</li>
+</ol>
+</div>
+
+<h4>稳定性与因果性</h4>
+<div class="formula">
+<span class="formula-tag">稳定条件</span><br>
+$$\sum_{n=-\infty}^{\infty} |h(n)| < \infty \quad \text{（绝对可和）}$$
+</div>
+
+<div class="formula">
+<span class="formula-tag">因果条件</span><br>
+$$h(n) = 0, \quad n < 0$$
+即 $h(n)$ 是右边序列。
+</div>
+
+<div class="keypoint">
+<strong>从零极点/收敛域判断：</strong><br>
+- 因果：收敛域包含无穷（圆外）<br>
+- 稳定：收敛域包含单位圆<br>
+- <strong>既因果又稳定：所有极点在单位圆内</strong>
+</div>
+
+<h4>系统级联与并联</h4>
+<table>
+<tr><th>方式</th><th>时域</th><th>Z 域</th><th>频率响应</th></tr>
+<tr><td>串联</td><td>卷积</td><td>相乘</td><td>相乘</td></tr>
+<tr><td>并联</td><td>相加</td><td>相加</td><td>相加</td></tr>
+</table>
+</div>
+
+<div class="section-divider"></div>
+
+
+<h2 id="ch2">第2章 信号的采样与重建</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">采样定理</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">奈奎斯特采样定理</span><br>
+要使带限信号采样后能够不失真还原，采样频率必须满足：<br>
+$$\boxed{F_s \geq 2f_{\max}}$$
+其中 $f_{\max}$ 是信号的最高频率。$2f_{\max}$ 称为<strong>奈奎斯特率</strong>。
+</div>
+
+<h4>数字信号处理系统框图</h4>
+<div class="card">
+<pre style="font-size:13px;line-height:1.6;color:var(--accent2)">
+输入 → [抗混叠滤波器] → [A/D转换器] → [数字信号处理器] → [D/A转换器] → [平滑滤波器] → 输出
+         模拟低通          采样保持           计算机           数字转模拟         去除高频镜像
+         防止混叠           连续→离散          信号处理          离散→连续          平滑输出
+</pre>
+</div>
+
+<div class="keypoint">
+<strong>各部分作用要了解：</strong><br>
+- 抗混叠滤波器：模拟低通，滤除高于 $F_s/2$ 的频率分量<br>
+- A/D：采样 + 量化，连续信号 → 数字信号<br>
+- D/A：数字信号 → 模拟信号<br>
+- 平滑滤波器：去除 D/A 输出中的高频镜像分量
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+
+<h2 id="ch3-dft">第3章 DFT 与 FFT</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">3.1 DFT 离散傅里叶变换</h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+DFS（离散傅里叶级数）<strong>不考</strong>，只需掌握 DFT 和 FFT。
+</div>
+
+<div class="formula">
+<span class="formula-tag">DFT 正变换</span><br>
+$$X(k) = \sum_{n=0}^{N-1} x(n) W_N^{kn}, \quad k=0,1,\ldots,N-1$$
+</div>
+
+<div class="formula">
+<span class="formula-tag">IDFT 反变换</span><br>
+$$x(n) = \frac{1}{N}\sum_{k=0}^{N-1} X(k) W_N^{-kn}, \quad n=0,1,\ldots,N-1$$
+</div>
+
+<div class="formula">
+<span class="formula-tag">旋转因子</span><br>
+$$W_N = e^{-j\frac{2\pi}{N}}, \quad W_N^{kn} = e^{-j\frac{2\pi}{N}kn}$$
+$W_N$ 以 $N$ 为周期。
+</div>
+
+<div class="keypoint">
+DFT 的时域和频域都是<strong>有限长离散序列</strong>，是计算机中使用最多的变换。
+</div>
+
+<h4>矩阵运算法计算 DFT</h4>
+<div class="keypoint">
+$$\mathbf{X} = \mathbf{W} \cdot \mathbf{x}$$
+W 矩阵的构造：<strong>行号从 0 开始，列号从 0 开始</strong>，每个元素 $W_N^{kn}$（行号×列号），下标始终为 $N$。<br>
+<strong>考试时矩阵乘法的步骤不能省略，否则扣分！</strong>
+</div>
+
+<h4>DFT 的对称性</h4>
+<div class="keypoint">
+与 DTFT 的对称性结论一致：<br>
+- 实偶序列 → DFT 频谱实偶<br>
+- 实奇序列 → DFT 频谱虚奇<br>
+- 实序列 → DFT 共轭偶对称<br>
+区别：DTFT 是连续的，DFT 是离散的。
+</div>
+</div>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">3.2 循环卷积</h3>
+<div class="collapsible-content show">
+
+<h4>循环卷积的列表法（必须掌握！）</h4>
+<div class="example">
+<strong>四点循环卷积步骤：</strong>
+<ol style="margin:8px 0 0 20px;font-size:14px">
+<li><strong>补零</strong>：两个序列都补零到长度 $L$（如 4 点）</li>
+<li><strong>折叠</strong>：将 $x_2(m)$ 折叠得到 $x_2(-m)$——位置 0 不变，其余从尾部往前读</li>
+<li><strong>相乘求和</strong>：$x_2(-m)$ 与 $x_1(m)$ 对应项相乘求和，得到第一个值</li>
+<li><strong>循环右移</strong>：将 $x_2(-m)$ 右移一位（尾部移回头部），再与 $x_1(m)$ 对应项相乘求和</li>
+<li>重复步骤 4，得到所有 $L$ 个值</li>
+</ol>
+</div>
+
+<div class="formula">
+<span class="formula-tag">循环卷积与线性卷积的关系</span><br>
+当循环卷积长度 $L \geq N_1 + N_2 - 1$（$N_1, N_2$ 为两序列非零长度）时，<br>
+循环卷积可以完全代替线性卷积。
+</div>
+</div>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">3.3 三大变换之间的关系</h3>
+<div class="collapsible-content show">
+
+<table>
+<tr><th>关系</th><th>公式/描述</th></tr>
+<tr><td>Z 变换 → DTFT</td><td>$X(e^{j\omega}) = X(z)\big|_{z=e^{j\omega}}$<br>单位圆上的 Z 变换即 DTFT</td></tr>
+<tr><td>Z 变换 → DFT</td><td>$X(k) = X(z)\big|_{z=e^{j\frac{2\pi}{N}k}}$<br>DFT 是 Z 变换在单位圆上等间隔取样</td></tr>
+<tr><td>DTFT → DFT</td><td>$X(k) = X(e^{j\omega})\big|_{\omega=\frac{2\pi k}{N}}$<br>DFT 是 DTFT 的等间隔采样</td></tr>
+</table>
+
+<h4>频谱分析中的三个效应</h4>
+<table>
+<tr><th>过程</th><th>效应</th><th>解决方法</th></tr>
+<tr><td>采样</td><td>频谱混叠</td><td>加抗混叠滤波器</td></tr>
+<tr><td>截短</td><td>频谱泄露</td><td>加窗函数</td></tr>
+<tr><td>DFT 观察</td><td>栅栏效应</td><td>增加采样点数</td></tr>
+</table>
+
+<div class="formula">
+<span class="formula-tag">频率分辨率</span><br>
+$$\Delta f = \frac{F_s}{N}$$
+$N$ 为信号的有效长度。
+</div>
+</div>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">3.4 帕塞瓦尔定理</h3>
+<div class="collapsible-content show">
+<div class="keypoint">
+<strong>物理意义</strong>：时域中对序列求能量 = 频域中求序列能量，能量守恒。<br>
+公式不用记，只要知道物理概念即可。
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+
+<h2 id="ch3-fft">FFT 快速傅里叶变换</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">FFT 基本概念与流图</h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+FFT 不是新变换，是 DFT 的<strong>快速算法</strong>。基本思想：利用 $W_N$ 系数的<strong>周期性</strong>和<strong>对称性</strong>，将大点数 DFT 分解为小点数 DFT，减少运算量。
+</div>
+
+<h4>蝶形运算基本单元</h4>
+<div class="card" style="text-align:center">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/butterfly_operation.png" alt="蝶形运算" style="max-width:420px;width:100%;margin:12px 0">
+<p style="font-size:13px;color:var(--text-dim);margin-top:8px">蝶形运算单元：W 系数在输入端下路，上路输出 = 两输入相加，下路输出 = 两输入相减后再乘 W 系数</p>
+</div>
+
+<h4>8 点 FFT 分解过程</h4>
+<p style="font-size:14px;color:var(--text-dim);margin:8px 0">以下展示 N=8 点 FFT 如何通过逐级分解为小点数 FFT 来实现快速计算：</p>
+
+<div class="card" style="text-align:center">
+<p style="font-size:14px;font-weight:600;color:var(--accent2);margin-bottom:8px">图 3.17：两个 4 点 FFT 组成一个 8 点 FFT</p>
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_8pt_freq_split.png" alt="两个4点FFT组成8点FFT" style="max-width:700px;width:100%;margin:8px 0">
+<p style="font-size:13px;color:var(--text-dim)">将 8 点序列按奇偶分成两组 4 点序列，分别做 FFT 后通过蝶形运算合成</p>
+</div>
+
+<div class="card" style="text-align:center">
+<p style="font-size:14px;font-weight:600;color:var(--accent2);margin-bottom:8px">图 3.18：由四个 2 点 FFT 组成 8 点 FFT</p>
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/four_2pt_to_8pt.png" alt="四个2点FFT组成8点FFT" style="max-width:700px;width:100%;margin:8px 0">
+<p style="font-size:13px;color:var(--text-dim)">继续分解，每个 4 点 FFT 再分为两个 2 点 FFT，最终 8 点 FFT = 4 个 2 点 FFT + 蝶形合成</p>
+</div>
+
+<h4>★ 按时间抽取的 N=8 点 FFT 完整流图</h4>
+<div class="card" style="text-align:center;border-color:var(--accent);box-shadow:0 0 20px rgba(108,99,255,0.15)">
+<p style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:8px">图 3.19：按时间抽取的 N=8 点 FFT 运算流图（重点！必须会画）</p>
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_8pt_time_full.png" alt="N=8按时间抽取FFT完整流图" style="max-width:800px;width:100%;margin:8px 0">
+</div>
+
+<div class="keypoint">
+<strong>画流图关键记忆点：</strong>
+<ul style="margin:8px 0 0 20px;font-size:14px">
+<li>8 点 = <strong>3 级</strong>，$N$ 点 = $\log_2 N$ 级</li>
+<li>蝶形基本形状：上路输出 = 相加，下路输出 = 相减（W 系数在下路输入端）</li>
+<li>各级蝶距（间隔）：第1级 = 1，第2级 = 2，第3级 = 4，…，第 $M$ 级 = $N/2$</li>
+<li><strong>输入序列：码位倒序</strong>（0, 4, 2, 6, 1, 5, 3, 7）——二进制位反转</li>
+<li><strong>输出序列：自然顺序</strong>（0, 1, 2, 3, 4, 5, 6, 7）</li>
+<li>第 1 级只有一种 $W_N^0$；中间级上下对称；最后一级 $W$ 系数是等比序列 $W_N^0, W_N^1, \ldots$</li>
+<li>支持<strong>原位计算</strong>：每一级运算结果覆盖原存储器，无需额外空间</li>
+</ul>
+</div>
+
+<h4>N=4 按时间抽取 FFT 流图</h4>
+<div class="card" style="text-align:center">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_4pt_time.png" alt="N=4按时间抽取FFT" style="max-width:500px;width:100%;margin:8px 0">
+<p style="font-size:13px;color:var(--text-dim)">N=4 按时间抽取：2 级运算，输入码位倒序 {0,2,1,3}，输出自然顺序 {0,1,2,3}</p>
+</div>
+
+<h4>蝶形类型随级数变化</h4>
+<div class="card" style="text-align:center">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_8pt_time_full.png" alt="蝶形类型" style="max-width:700px;width:100%;opacity:0.7;margin:8px 0">
+<div style="text-align:left;font-size:13px;margin-top:8px">
+<table>
+<tr><th>级数</th><th>蝶形类型数</th><th>W 系数</th><th>蝶距</th></tr>
+<tr><td>第1级</td><td>1 种</td><td>$W_N^0$</td><td>1</td></tr>
+<tr><td>第2级</td><td>2 种</td><td>$W_N^0, W_N^{N/4}$（上下对称）</td><td>2</td></tr>
+<tr><td>第3级</td><td>4 种</td><td>$W_N^0, W_N^1, W_N^2, W_N^3$（等比）</td><td>4</td></tr>
+</table>
+</div>
+</div>
+
+<h4>序数重排（码位倒序）</h4>
+<div class="card">
+<p style="font-size:14px">输入序列按<strong>二进制码位反转</strong>重排。以 N=8 为例：</p>
+<table>
+<tr><th>自然序号</th><th>二进制</th><th>反转</th><th>倒序号</th></tr>
+<tr><td>0</td><td>000</td><td>000</td><td>0</td></tr>
+<tr><td>1</td><td>001</td><td>100</td><td>4</td></tr>
+<tr><td>2</td><td>010</td><td>010</td><td>2</td></tr>
+<tr><td>3</td><td>011</td><td>110</td><td>6</td></tr>
+<tr><td>4</td><td>100</td><td>001</td><td>1</td></tr>
+<tr><td>5</td><td>101</td><td>101</td><td>5</td></tr>
+<tr><td>6</td><td>110</td><td>011</td><td>3</td></tr>
+<tr><td>7</td><td>111</td><td>111</td><td>7</td></tr>
+</table>
+</div>
+
+<h4>★ 按频率抽取的 N=8 点 FFT 流图</h4>
+<div class="card" style="text-align:center">
+<p style="font-size:14px;font-weight:600;color:var(--accent2);margin-bottom:8px">图 3.23：按频率抽取的 N=8 点 FFT 运算流图</p>
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_8pt_freq_full.png" alt="N=8按频率抽取FFT" style="max-width:800px;width:100%;margin:8px 0">
+<p style="font-size:13px;color:var(--text-dim)">W 系数在输出端下路；输入自然顺序，输出码位倒序；蝶距从大到小（与时间抽取相反）</p>
+</div>
+
+<div class="keypoint">
+<strong>按频率抽取 vs 按时间抽取：</strong>
+<ul style="margin:8px 0 0 20px;font-size:14px">
+<li>按频率抽取流图 = 按时间抽取流图的<strong>转置</strong>（反转信号流方向）</li>
+<li>时间抽取：W 系数在<strong>输入端</strong>下路 | 频率抽取：W 系数在<strong>输出端</strong>下路</li>
+<li>时间抽取：输入码位倒序，输出自然顺序 | 频率抽取：输入自然顺序，输出码位倒序</li>
+<li>两者<strong>运算量完全相同</strong></li>
+</ul>
+</div>
+
+<h4>N=4 时间抽取与频率抽取对比</h4>
+<div class="card" style="text-align:center">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_4pt_compare.png" alt="N=4时间抽取与频率抽取对比" style="max-width:550px;width:100%;margin:8px 0">
+<p style="font-size:13px;color:var(--text-dim)">左：N=4 按频率抽取 | 右：N=4 按时间抽取。注意 W 系数位置和输入输出顺序的区别</p>
+</div>
+
+<div class="warning">
+<strong>考试要求：</strong>能画出 N=4 和 N=8 的按时间抽取/按频率抽取 FFT 流图！步骤不能省略，否则扣分。
+</div>
+
+<div class="formula">
+<span class="formula-tag">FFT 运算量</span><br>
+直接 DFT：复乘 $N^2$，复加 $N(N-1)$<br>
+基2 FFT：复乘 $\frac{N}{2}\log_2 N$，复加 $N\log_2 N$
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">例题：N=256 时 FFT 效率对比（点击展开）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>已知 $N=256$，对比直接 DFT 与 FFT 的运算量。</strong>
+
+<strong>Step 1｜直接 DFT 运算量</strong><br>
+复乘次数：$N^2 = 256^2 = 65536$<br>
+复加次数：$N(N-1) = 256 \times 255 = 65280$
+
+<strong>Step 2｜基2 FFT 运算量</strong><br>
+复乘次数：$\frac{N}{2}\log_2 N = \frac{256}{2} \times \log_2 256 = 128 \times 8 = 1024$<br>
+复加次数：$N\log_2 N = 256 \times 8 = 2048$
+
+<strong>Step 3｜效率对比</strong><br>
+$$\text{复乘效率提升} = \frac{N^2}{\frac{N}{2}\log_2 N} = \frac{2N}{\log_2 N} = \frac{2 \times 256}{8} = \boxed{64 \text{ 倍}}$$
+复加效率提升：$\frac{65280}{2048} \approx 32$ 倍
+
+<strong>总结：</strong>$N$ 越大，FFT 优势越明显。$N=1024$ 时提升约 200 倍。
+</div>
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+
+<h2 id="ch3-apps">FFT 应用</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">快速卷积</h3>
+<div class="collapsible-content show">
+<div class="keypoint">
+<strong>快速卷积四个步骤（必须记住）：</strong>
+<ol style="margin:8px 0 0 20px;font-size:14px">
+<li>对两个序列做 $L$ 点 DFT（$L \geq N_1+N_2-1$）</li>
+<li>频域相乘：$Y(k) = X(k) \cdot H(k)$</li>
+<li>对 $Y(k)$ 做 IDFT</li>
+<li>当 DFT 换成 FFT 时，即为快速卷积</li>
+</ol>
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+
+<h2 id="ch4-analog">第4章 IIR 滤波器设计</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">4.1 模拟滤波器原型（概念题）</h3>
+<div class="collapsible-content show">
+
+<div class="warning">
+模拟滤波器<strong>不考大计算题</strong>，只考概念。
+</div>
+
+<h4>三种模拟滤波器对比</h4>
+<table>
+<tr><th>滤波器</th><th>幅度特性</th><th>阶次</th><th>参数灵敏度</th></tr>
+<tr><td><strong>巴特沃斯</strong></td><td>通带阻带都<strong>单调下降</strong>，通带内最大平坦</td><td>最高</td><td>最低（最不灵敏/最佳）</td></tr>
+<tr><td><strong>切比雪夫</strong></td><td>通带和阻带<strong>一个等波纹一个单调</strong></td><td>中等</td><td>中等</td></tr>
+<tr><td><strong>椭圆</strong></td><td>通带和阻带<strong>都是等波纹</strong></td><td>最低</td><td>最高（最差）</td></tr>
+</table>
+
+<div class="keypoint">
+<strong>记忆口诀：</strong>阶次：椭圆 < 切比雪夫 < 巴特沃斯；灵敏度反过来。<br>
+滤波器阶次越高，过渡带越窄。
+</div>
+</div>
+
+<h3 id="ch4-impulse" class="collapsible open" onclick="toggleCollapse(this)">4.2 脉冲响应不变法</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">映射关系</span><br>
+$$z = e^{sT} \quad \Rightarrow \quad \omega = \Omega T$$
+数字角频率 = 模拟角频率 × 采样间隔（<strong>线性关系</strong>）
+</div>
+
+<div class="keypoint">
+<strong>步骤：</strong>将模拟滤波器 $H_a(s)$ 做部分分式展开，每个极点 $s_i$ 对应 $z$ 域的 $e^{s_i T}$。
+</div>
+
+<div class="card">
+<strong>优点：</strong>频率变换是线性关系<br>
+<strong>缺点：</strong>有频谱混叠效应（模拟频谱的周期延拓导致）<br>
+<strong>适用：</strong>只能设计<strong>低通</strong>和<strong>带通</strong>滤波器，不能设计高通和带阻！
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">★ 例题：脉冲响应不变法设计一阶低通（点击展开详细步骤）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>题目：</strong>已知 $F_s = 1000$ Hz，用脉冲响应不变法设计一个 3dB 截止频率 $f_c = 200$ Hz 的一阶巴特沃斯低通数字滤波器。求 $H(z)$。
+
+<strong>Step 1｜求数字截止频率</strong>
+$$\omega_c = 2\pi \frac{f_c}{F_s} = 2\pi \times \frac{200}{1000} = 0.4\pi$$
+
+<strong>Step 2｜求模拟截止频率（线性映射 $\Omega = \omega / T$）</strong>
+$$\Omega_c = \frac{\omega_c}{T} = \omega_c \cdot F_s = 0.4\pi \times 1000 = 400\pi \approx 1256.64 \text{ rad/s}$$
+
+<strong>Step 3｜写出模拟滤波器传递函数</strong><br>
+一阶巴特沃斯归一化原型：$H_a(p) = \frac{1}{p+1}$<br>
+反归一化（$p \to s/\Omega_c$）：
+$$H_a(s) = \frac{\Omega_c}{s + \Omega_c} = \frac{1256.64}{s + 1256.64}$$
+
+<strong>Step 4｜部分分式展开</strong><br>
+极点：$s_1 = -\Omega_c = -1256.64$，展开结果与 $H_a(s)$ 本身一致（只有一个极点）。
+
+<strong>Step 5｜脉冲响应不变法：极点映射</strong><br>
+规则：每个极点 $s_i$ 映射到 $z$ 域 $e^{s_i T}$，系数乘以 $T$：
+$$H(z) = T \cdot \sum_i \frac{A_i}{1 - e^{s_i T} z^{-1}}$$
+
+<strong>Step 6｜代入数值</strong>
+$$\Omega_c T = 0.4\pi \approx 1.2566$$
+$$e^{-\Omega_c T} = e^{-1.2566} \approx 0.2846$$
+$$T \cdot \Omega_c = 0.001 \times 1256.64 = 1.2566$$
+
+$$\boxed{H(z) = \frac{1.2566}{1 - 0.2846\,z^{-1}}}$$
+
+<strong>Step 7｜验证</strong><br>
+- $z=1$（$\omega=0$）：$H(1) = \frac{1.2566}{0.7154} \approx 1.757$（低频增益大）<br>
+- $z=-1$（$\omega=\pi$）：$H(-1) = \frac{1.2566}{1.2846} \approx 0.978$（高频增益小）<br>
+- 低频 > 高频 ✓，符合低通特性
+</div>
+</div>
+</div>
+
+<h3 id="ch4-bilinear" class="collapsible open" onclick="toggleCollapse(this)">4.3 双线性变换法</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">变换公式（必须记住！）</span><br>
+$$\boxed{s = \frac{2}{T} \cdot \frac{1-z^{-1}}{1+z^{-1}}}$$
+</div>
+
+<div class="formula">
+<span class="formula-tag">频率映射关系</span><br>
+$$\boxed{\Omega = \frac{2}{T}\tan\frac{\omega}{2}}$$
+模拟角频率与数字角频率是<strong>非线性关系</strong>。
+</div>
+
+<div class="card">
+<strong>优点：</strong>无频谱混叠（S 平面到 Z 平面一一对应）<br>
+<strong>缺点：</strong>频率映射是非线性关系（会产生频率畸变）
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">★ 例题：双线性变换法设计二阶低通（点击展开详细步骤）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>题目：</strong>已知 $F_s = 8000$ Hz，用双线性变换法设计一个 3dB 截止频率 $f_c = 1000$ Hz 的二阶巴特沃斯低通数字滤波器。求 $H(z)$。
+
+<strong>Step 1｜求数字截止频率</strong>
+$$\omega_c = 2\pi \frac{f_c}{F_s} = 2\pi \times \frac{1000}{8000} = \frac{\pi}{4}$$
+
+<strong>Step 2｜频率预畸变（双线性变换的核心步骤！）</strong>
+$$\Omega_c = \frac{2}{T}\tan\frac{\omega_c}{2} = \frac{2}{T}\tan\frac{\pi}{8}$$
+这里 $T$ 取任意值（通常最后会约掉），令 $T=1$：
+$$\Omega_c = 2\tan\frac{\pi}{8} = 2(\sqrt{2}-1) \approx 0.8284$$
+
+<strong>Step 3｜二阶巴特沃斯归一化原型</strong>
+$$H_a(p) = \frac{1}{p^2 + \sqrt{2}\,p + 1}$$
+
+<strong>Step 4｜反归一化（$p \to s/\Omega_c$）</strong>
+$$H_a(s) = \frac{\Omega_c^2}{s^2 + \sqrt{2}\,\Omega_c\,s + \Omega_c^2}$$
+其中 $\Omega_c^2 = 4(\sqrt{2}-1)^2 = 12 - 8\sqrt{2} \approx 0.6863$
+
+<strong>Step 5｜双线性变换代入</strong><br>
+将 $s = 2\cdot\frac{1-z^{-1}}{1+z^{-1}}$ 代入 $H_a(s)$：
+
+计算各项：
+$$s^2 = 4\left(\frac{1-z^{-1}}{1+z^{-1}}\right)^2 = \frac{4(1-z^{-1})^2}{(1+z^{-1})^2} = \frac{4 - 8z^{-1} + 4z^{-2}}{(1+z^{-1})^2}$$
+
+$$\sqrt{2}\,\Omega_c \cdot s = \frac{2\sqrt{2}\,\Omega_c(1-z^{-1})}{1+z^{-1}} = \frac{2\sqrt{2}\,\Omega_c(1+z^{-1})(1-z^{-1})}{(1+z^{-1})^2} = \frac{2\sqrt{2}\,\Omega_c(1-z^{-2})}{(1+z^{-1})^2}$$
+
+代入并通分（分母共同为 $(1+z^{-1})^2$）：
+
+<strong>Step 6｜整理分子</strong>
+$$\text{分子} = \Omega_c^2 = 12 - 8\sqrt{2} \approx 0.6863$$
+
+<strong>Step 7｜整理分母</strong><br>
+常数项：$4 + 2\sqrt{2}\,\Omega_c + \Omega_c^2 = 4 + 2\sqrt{2}\cdot 2(\sqrt{2}-1) + (12-8\sqrt{2})$<br>
+$= 4 + (8-4\sqrt{2}) + 12 - 8\sqrt{2} = 24 - 12\sqrt{2} \approx 7.029$
+
+$z^{-1}$ 项系数：$-8 + 0 = -8$
+
+$z^{-2}$ 项系数：$4 - 2\sqrt{2}\,\Omega_c + \Omega_c^2 = 4 - (8-4\sqrt{2}) + 12 - 8\sqrt{2}$<br>
+$= 8 - 4\sqrt{2} \approx 2.343$
+
+$$H(z) = \frac{0.6863}{(7.029 - 8z^{-1} + 2.343z^{-2})(1+z^{-1})^2/(1+z^{-1})^2}$$
+
+化简后：
+$$H(z) = \frac{0.6863(1+z^{-1})^2}{7.029 - 8z^{-1} + 2.343z^{-2}}$$
+
+展开分子：$0.6863 + 1.3726z^{-1} + 0.6863z^{-2}$
+
+<strong>Step 8｜归一化（分母常数项化为 1）</strong><br>
+各项除以 $7.029$：
+
+$$\boxed{H(z) = \frac{0.0976 + 0.1953\,z^{-1} + 0.0976\,z^{-2}}{1 - 1.1382\,z^{-1} + 0.3334\,z^{-2}}}$$
+
+<strong>Step 9｜验证</strong><br>
+- $z=1$（$\omega=0$）：$H(1) = \frac{0.0976 \times 4}{1 - 1.1382 + 0.3334} = \frac{0.3905}{0.1952} \approx 2.0$<br>
+- $z=-1$（$\omega=\pi$）：$H(-1) = \frac{0}{1+1.1382+0.3334} = 0$（二阶巴特沃斯在 $\omega=\pi$ 处有二阶零点）<br>
+- 低频增益大，高频衰减到 0 ✓
+
+<strong>★ 做题提醒：</strong>
+<ol style="margin:8px 0 0 20px;font-size:14px">
+<li>频率预畸变 $\Omega_c = \frac{2}{T}\tan\frac{\omega_c}{2}$ <strong>不能省略</strong>！</li>
+<li>$T$ 通常在代入过程中约掉，考试时可以先不代入具体值</li>
+<li>考试一般考<strong>二阶</strong，即一到两个极点，掌握基本公式即可</li>
+</ol>
+</div>
+</div>
+
+<div class="keypoint">
+<strong>做题技巧：不要急于代入 $T$ 和 $\Omega_c$ 的具体值！</strong>先保留符号，很多项会约掉，计算更简单。考试一般考二阶。
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+
+<h2 id="ch5-features">第5章 FIR 滤波器设计</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">5.1 FIR 滤波器特点</h3>
+<div class="collapsible-content show">
+<div class="keypoint">
+<strong>FIR 的三大特点：</strong>
+<ol style="margin:8px 0 0 20px;font-size:14px">
+<li><strong>永远稳定</strong>：极点全部在原点</li>
+<li><strong>总是因果物理可实现的</strong></li>
+<li>满足一定对称性条件下，可得到<strong>严格的线性相位</strong></li>
+</ol>
+</div>
+
+<div class="warning">
+"FIR 滤波器都具有线性相位" 这句话是<strong>错误的</strong>！必须满足 $h(n)$ 是实序列且满足奇/偶对称条件。
+</div>
+</div>
+
+<h3 id="ch5-linear" class="collapsible open" onclick="toggleCollapse(this)">5.2 线性相位 FIR 滤波器</h3>
+<div class="collapsible-content show">
+
+<h4>四类线性相位 FIR 滤波器</h4>
+<table>
+<tr><th>类型</th><th>对称性</th><th>N</th><th>相位函数</th></tr>
+<tr><td><strong>第1类</strong></td><td>偶对称</td><td>奇数</td><td>$-\omega\frac{N-1}{2}$</td></tr>
+<tr><td><strong>第2类</strong></td><td>偶对称</td><td>偶数</td><td>$-\omega\frac{N-1}{2}$</td></tr>
+<tr><td><strong>第3类</strong></td><td>奇对称</td><td>奇数</td><td>$-\omega\frac{N-1}{2}-\frac{\pi}{2}$</td></tr>
+<tr><td><strong>第4类</strong></td><td>奇对称</td><td>偶数</td><td>$-\omega\frac{N-1}{2}-\frac{\pi}{2}$</td></tr>
+</table>
+
+<div class="keypoint">
+<strong>记忆：</strong>先记第1类（偶对称+奇数），然后按 "偶偶→偶奇→奇奇→奇偶" 依次为 1-2-3-4 类。<br>
+群延迟：$\alpha = \frac{N-1}{2}$，也是 $h(n)$ 的中心对称点。
+</div>
+
+<h4>由 $h(n)$ 求频率响应</h4>
+<div class="keypoint">
+求 $H(z)$、$H(e^{j\omega})$、幅度函数 $H(\omega)$ 的方法：<br>
+① 先提因子 $e^{-j\omega\frac{N-1}{2}}$<br>
+② 对称项两两合并，用欧拉公式消掉实部或虚部<br>
+③ 写成幅度函数 × 相位函数的形式
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">例题：第3类线性相位 FIR 求频响（点击展开）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>已知：</strong>$h(n) = \{1, -2, 0, 2, -1\}$（$N=5$，奇数），求频率响应 $H(e^{j\omega})$、幅度函数 $H(\omega)$ 和相位函数 $\theta(\omega)$。
+
+<strong>Step 1｜验证对称性 → 确定类型</strong><br>
+中心 $\alpha = \frac{N-1}{2} = 2$，检查 $h(n) = -h(N-1-n)$：
+$$h(0)=1,\; h(4)=-1 \implies h(0)=-h(4)\;\checkmark$$
+$$h(1)=-2,\; h(3)=2 \implies h(1)=-h(3)\;\checkmark$$
+$$h(2)=0 \implies \text{中心为零}\;\checkmark$$
+→ 奇对称 + N 为奇数 → <strong>第 3 类线性相位</strong>
+
+<strong>Step 2｜写出 $H(z)$</strong>
+$$H(z) = 1 - 2z^{-1} + 0\cdot z^{-2} + 2z^{-3} - z^{-4}$$
+
+<strong>Step 3｜代入 $z=e^{j\omega}$，以中心 $\alpha=2$ 为基准重新分组</strong>
+$$H(e^{j\omega}) = e^{-j2\omega}\Big[e^{j2\omega} - 2e^{j\omega} + 0 + 2e^{-j\omega} - e^{-j2\omega}\Big]$$
+
+<strong>Step 4｜利用奇对称性 $h(\alpha+k) = -h(\alpha-k)$ 合并</strong><br>
+将关于中心对称的项配对：
+$$\bigl[e^{j2\omega} - e^{-j2\omega}\bigr] + \bigl[-2e^{j\omega} + 2e^{-j\omega}\bigr]$$
+
+由欧拉公式 $e^{jx} - e^{-jx} = 2j\sin x$：
+$$= 2j\sin(2\omega) + 2 \cdot 2j\sin(\omega) = 2j\bigl[\sin(2\omega) + 2\sin(\omega)\bigr]$$
+
+<strong>Step 5｜提取 $j = e^{j\pi/2}$，整理为幅-相形式</strong>
+$$H(e^{j\omega}) = e^{-j2\omega} \cdot 2j\bigl[\sin(2\omega) + 2\sin(\omega)\bigr]$$
+$$= \underbrace{2\bigl[\sin(2\omega) + 2\sin(\omega)\bigr]}_{H(\omega)} \cdot \underbrace{e^{-j(2\omega - \pi/2)}}_{\text{相位因子}}$$
+
+<strong>结论：</strong>
+<ul style="margin:8px 0 0 20px;font-size:14px">
+<li>幅度函数：$H(\omega) = 2\sin(2\omega) + 4\sin(\omega)$（纯实数，可正可负）</li>
+<li>相位函数：$\theta(\omega) = -\omega\dfrac{N-1}{2} - \dfrac{\pi}{2} = -2\omega - \dfrac{\pi}{2}$ ✓（第 3 类特征）</li>
+<li>$\omega=0$（直流）时：$H(0)=0$ → 第 3 类在直流处必为零，<strong>不能做低通</strong></li>
+<li>$\omega=\pi$ 时：$H(\pi)=0$ → 高频处也为零</li>
+</ul>
+
+<div class="keypoint" style="margin-top:12px">
+<strong>通用公式（第 3 类）：</strong><br>
+$N$ 为奇数，$h(n) = -h(N-1-n)$，中心 $h(\alpha)=0$，则：
+$$H(\omega) = 2\sum_{k=1}^{(N-1)/2} h(\alpha + k)\sin(\omega k)$$
+</div>
+</div>
+</div>
+</div>
+
+<h3 id="ch5-zero" class="collapsible open" onclick="toggleCollapse(this)">5.3 零点特性与滤波器类型判断</h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>四零点组：</strong>如果 $z_i$ 是零点，则以下也是零点：<br>
+$z_i^*$（共轭）、$1/z_i$（倒数）、$1/z_i^*$（共轭倒数）<br>
+在实轴或单位圆上可能有重合。
+</div>
+
+<h4>由零点判断滤波器类型</h4>
+<table>
+<tr><th>零点位置</th><th>含义</th><th>滤波器类型</th></tr>
+<tr><td>$z=1$（低频）有零点</td><td>低频阻断 → 高频通过</td><td>高通</td></tr>
+<tr><td>$z=-1$（高频）有零点</td><td>高频阻断 → 低频通过</td><td>低通</td></tr>
+<tr><td>两者都有零点</td><td>高低频都阻断</td><td>带通</td></tr>
+<tr><td>两者都无零点</td><td>高低频都通过</td><td>带阻</td></tr>
+</table>
+</div>
+
+<div class="section-divider"></div>
+
+
+<h2 id="ch6">第6章 数字信号处理系统的实现</h2>
+
+
+<h3 id="ch6-struct-iir" class="collapsible open" onclick="toggleCollapse(this)">IIR 滤波器的网络结构 <span class="badge badge-important">必考</span></h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+流图的三种基本运算单元：<strong>加法器</strong>、<strong>乘法器（标量）</strong>、<strong>延迟器（$z^{-1}$）</strong>。<br>
+画流图时，$z^{-1}$ 项的系数必须为 <strong>1</strong>。若差分方程中某项系数不为 1，需分子分母同除以该系数化为标准形式。
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 直接 I 型结构</div>
+<ul>
+<li>上下各一条延迟链：上面对应<strong>分子</strong>（前馈），下面对应<strong>分母</strong>（反馈）</li>
+<li>延迟单元数 = 分子阶次 + 分母阶次</li>
+<li><strong>箭头方向</strong>：全部向右</li>
+<li>分子系数直接对应；分母系数取<strong>相反数</strong></li>
+</ul>
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 直接 II 型（正准型 / Canonic）结构 <span class="badge badge-important">重点</span></div>
+<ul>
+<li>将直接 I 型的两条延迟链<strong>合并为中间一条</strong></li>
+<li>延迟单元数 = <strong>max(分子阶次, 分母阶次)</strong>（最节省延迟单元）</li>
+<li>左半部分为分母（反馈），右半部分为分子（前馈）</li>
+<li>反馈方向<strong>向左</strong>，前馈方向<strong>向右</strong></li>
+</ul>
+<div class="warning">
+<strong>直接型的缺点：</strong>零极点控制难——每个系数的改变都会影响所有零极点分布。对系数量化敏感，阶次高时影响更大。
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">★ 级联型（串联型）结构</div>
+<ul>
+<li>将 $H(z)$ 分解为一阶/二阶因式相乘：$H(z) = \prod H_k(z)$</li>
+<li>每个基本节用<strong>正准型</strong>结构，串联连接</li>
+<li><strong>优点</strong>：零点和极点可以<strong>单独控制</strong>调整</li>
+<li><strong>注意</strong>：各基本节顺序可调换，结构<strong>不唯一</strong></li>
+</ul>
+</div>
+
+<div class="card">
+<div class="card-title">★ 并联型结构</div>
+<ul>
+<li>将 $H(z)$ 做<strong>部分分式展开</strong>：$H(z) = \sum H_k(z)$</li>
+<li>各基本节<strong>并列</strong>连接，输出相加</li>
+<li><strong>优点</strong>：极点易控制；可<strong>并行运算</strong>，速度快</li>
+<li><strong>缺点</strong>：二阶节的零点不是系统零点，<strong>零点不易控制</strong></li>
+</ul>
+</div>
+
+<div class="keypoint">
+<strong>三种 IIR 结构对比：</strong>
+<table>
+<tr><th>结构</th><th>零极点控制</th><th>运算速度</th><th>量化误差</th></tr>
+<tr><td>直接型</td><td>难（系数间耦合大）</td><td>一般</td><td style="color:var(--red)">最大</td></tr>
+<tr><td>级联型</td><td>零极点均可单独控制</td><td>一般</td><td style="color:var(--orange)">居中</td></tr>
+<tr><td>并联型</td><td>极点可控，零点不可控</td><td style="color:var(--green)">最快（并行）</td><td style="color:var(--green)">最小</td></tr>
+</table>
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">★ 四种 IIR 结构信号流图示例（点击展开）</h4>
+<div class="collapsible-content">
+<div class="keypoint" style="font-size:15px">
+<strong>统一示例：</strong>$H(z) = \dfrac{1 + 2.5z^{-1} + z^{-2}}{1 - 0.75z^{-1} + 0.125z^{-2}}$<br>
+<span style="font-size:13px;color:var(--text-dim)">
+分子分解：$(1+z^{-1})(1+z^{-1})$，分母分解：$(1-0.25z^{-1})(1-0.5z^{-1})$
+</span>
+</div>
+
+<div class="card" style="text-align:center;border-color:var(--accent);box-shadow:0 0 20px rgba(108,99,255,0.15)">
+<p style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:8px">四种 IIR 结构信号流图（直接 I 型 · 直接 II 型 · 级联型 · 并联型）</p>
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/iir_structures.png" alt="四种IIR结构信号流图" style="max-width:100%;margin:8px 0;border-radius:8px">
+</div>
+</div>
+</div>
+<h3 id="ch6-struct-fir" class="collapsible" onclick="toggleCollapse(this)">FIR 滤波器的网络结构 <span class="badge badge-important">必考画图</span></h3>
+<div class="collapsible-content">
+
+<div class="warning">
+<strong>重要辨析：</strong>FIR 滤波器<strong>不全是</strong>非递归结构！频率采样型结构<strong>有反馈</strong>，是递归结构。
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">★ FIR 结构信号流图示例（点击展开）</h4>
+<div class="collapsible-content">
+<div class="keypoint" style="font-size:15px">
+<strong>统一示例：</strong>$h(n) = \{1, 2, 3, 2, 1\}$（偶对称，$N=5$，第1类线性相位）<br>
+<span style="font-size:13px;color:var(--text-dim)">
+$H(z) = 1 + 2z^{-1} + 3z^{-2} + 2z^{-3} + z^{-4}$
+</span>
+</div>
+
+<h4 style="color:var(--accent2)">① 横截型（直接型）</h4>
+<div id="fir-trans" class="card" style="text-align:center;padding:16px"></div>
+<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">5 个抽头、5 个乘法器、4 个延迟单元。结构简单直接。</p>
+
+<h4 style="color:var(--accent2)">② 线性相位型 <span class="badge badge-important">重点</span></h4>
+<div id="fir-linphase" class="card" style="text-align:center;padding:16px"></div>
+<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">利用 $h(n)$ 偶对称性，$h(0)=h(4), h(1)=h(3)$，对称项先相加再乘系数 → <strong>只需 3 个乘法器</strong>！</p>
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 横截型（直接型）结构</div>
+<ul>
+<li>上面一条延迟链，$N$ 长序列需 $N-1$ 个延迟单元</li>
+<li>每个抽头乘以对应系数 $h(0), h(1), \ldots, h(N-1)$</li>
+<li>所有乘法器输出相加得 $y(n)$</li>
+</ul>
+</div>
+
+<div class="card">
+<div class="card-title">级联型结构</div>
+<p>将 $H(z)$ 分解为二阶因式相乘，每个二阶节用直接型画出，串联连接。</p>
+</div>
+
+<div class="card" style="border-color:var(--accent)">
+<div class="card-title">★ 线性相位型结构 <span class="badge badge-important">必考画图</span></div>
+<p><strong>核心优势：乘法器次数可以减少近一半！</strong></p>
+<p>利用 $h(n)$ 的对称性（偶对称/奇对称），将对称项合并：</p>
+<ul>
+<li><strong>偶对称</strong>：$h(n) = h(N-1-n)$，对称项直接相加后乘一次系数</li>
+<li><strong>奇对称</strong>：$h(n) = -h(N-1-n)$，对称项先取反再合并（引入乘 $-1$）</li>
+<li>中间项（若有）单独处理</li>
+</ul>
+<div class="keypoint">
+<strong>线性相位 FIR 滤波器分类：</strong>
+<table>
+<tr><th>类型</th><th>N</th><th>对称性</th><th>特征</th></tr>
+<tr><td>第 I 类</td><td>奇数</td><td>偶对称</td><td>最常用</td></tr>
+<tr><td>第 II 类</td><td>偶数</td><td>偶对称</td><td>$H(\pi)=0$，不能做高通</td></tr>
+<tr><td>第 III 类</td><td>奇数</td><td>奇对称</td><td>$h(\frac{N-1}{2})=0$</td></tr>
+<tr><td>第 IV 类</td><td>偶数</td><td>奇对称</td><td>$H(0)=0$</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">频率采样型结构</div>
+<ul>
+<li>由两部分组成：<strong>梳状滤波器</strong> + <strong>一阶谐振器并联</strong></li>
+<li>梳状滤波器：$H_1(z) = 1 - z^{-N}$，差分方程 $y(n) = x(n) - x(n-N)$</li>
+<li>频响 $|H_1(e^{j\omega})| = 2|\sin\frac{N\omega}{2}|$（梳齿状）</li>
+<li>特别适用于<strong>窄带滤波器</strong>（如雷达信号处理），可节约运算量</li>
+<li><strong>有反馈</strong>（谐振器部分是 IIR 一阶结构）</li>
+</ul>
+<div class="warning">
+<strong>不需要画频率采样型流图</strong>，但要知道其组成和特点。
+</div>
+</div>
+</div>
+
+
+<h3 id="ch6-quant" class="collapsible" onclick="toggleCollapse(this)">有限字长效应</h3>
+<div class="collapsible-content">
+
+<div class="card">
+<div class="card-title">三种量化误差来源</div>
+<table>
+<tr><th>来源</th><th>说明</th></tr>
+<tr><td><strong>A/D 转换</strong></td><td>采样后叠加量化噪声</td></tr>
+<tr><td><strong>系数量化</strong></td><td>滤波器系数用有限位表示，改变零极点位置</td></tr>
+<tr><td><strong>运算量化</strong></td><td>乘法运算引入舍入噪声（主要指乘法器）</td></tr>
+</table>
+</div>
+
+<div class="card">
+<div class="card-title">A/D 转换量化效应</div>
+<ul>
+<li>可建模为：理想采样 + 量化噪声 $e(n)$</li>
+<li>舍入处理：均值 = 0，方差 $\sigma_e^2 = \frac{q^2}{12}$，其中 $q = 2^{-B}$</li>
+<li>$B$ = 有效尾数位数（<strong>不含</strong>符号位）</li>
+</ul>
+<div class="keypoint">
+<strong>★ 量化信噪比结论（必记）：</strong>有效位数每增加 1 位，量化信噪比约增加 <strong>6 dB</strong>。
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">运算量化误差（乘法舍入噪声）</div>
+<p><strong>输出噪声方差公式：</strong></p>
+<div class="formula" style="font-size:1.1em;color:var(--accent)">
+$$\sigma_{y}^2 = \sigma_e^2 \sum_{n=0}^{\infty} |h_i(n)|^2 = \frac{q^2}{12} \sum |h_i(n)|^2$$
+</div>
+<p>其中 $h_i(n)$ 为第 $i$ 个噪声源到输出的<strong>后续子网络</strong>的单位脉冲响应。</p>
+
+<div class="highlight">
+<strong>三种 IIR 结构的输出噪声大小比较：</strong><br>
+<span style="color:var(--red)">直接型（最大）</span> > <span style="color:var(--orange)">级联型（居中）</span> > <span style="color:var(--green)">并联型（最小）</span><br>
+<strong>原因：</strong>并联型的每个噪声源直接到输出端，不经过其他子网络放大。
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">FIR 滤波器输出噪声（简单！）</div>
+<div class="formula" style="font-size:1.1em;color:var(--accent)">
+$$\sigma_y^2 = M \cdot \frac{q^2}{12}$$
+</div>
+<p><strong>$M$ = 乘法器个数。</strong>因为 FIR 滤波器的所有量化噪声直接加到输出端（非递归），只需数乘法器个数即可。</p>
+</div>
+
+<div class="card">
+<div class="card-title">系数量化与极点灵敏度</div>
+<ul>
+<li>系数量化对滤波器的影响与<strong>字长</strong>和<strong>结构</strong>有关</li>
+<li><strong>极点位置灵敏度</strong>：各极点位置对系数偏差的敏感程度</li>
+<li>极点位置灵敏度与<strong>极点间距离成反比</strong></li>
+<li>并联型/级联型灵敏度<strong>小</strong>，直接型灵敏度<strong>大</strong></li>
+</ul>
+<div class="keypoint">
+<strong>结论：</strong>高阶滤波器应避免使用直接型，应分解为低阶结构的并联或级联形式。
+</div>
+</div>
+
+<div class="card">
+<div class="card-title">极限环振荡</div>
+<ul>
+<li><strong>零输入极限环振荡</strong>：信号归零后，由于舍入引起的非线性，输出不趋于 0，而停留在某个值或在固定值间振荡</li>
+<li><strong>大信号极限环振荡（溢出振荡）</strong>：定点补码加法运算中产生溢出，大信号时引起系统振荡</li>
+</ul>
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+
+<h2 id="quiz">综合自测</h2>
+<p style="color:var(--text-dim);margin-bottom:20px">点击选项后查看答案，检验复习效果</p>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">1. 数字角频率 $\omega$ 与模拟角频率 $\Omega$ 的关系是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q1" value="0"> $\omega = \Omega / T$</label>
+    <label><input type="radio" name="q1" value="1"> $\omega = \Omega + T$</label>
+    <label><input type="radio" name="q1" value="2"> $\omega = \Omega \cdot T = 2\pi f/F_s$</label>
+    <label><input type="radio" name="q1" value="3"> $\omega = 2\pi\Omega T$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">2. 序列 $\cos\left(\frac{3\pi}{7}n\right)$ 的周期是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q2" value="0"> 7</label>
+    <label><input type="radio" name="q2" value="1"> 14</label>
+    <label><input type="radio" name="q2" value="2"> 21</label>
+    <label><input type="radio" name="q2" value="3"> 不是周期序列</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">3. 因果等比序列 $a^n u(n)$ 的 Z 变换收敛域是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q3" value="0"> $|z| > |a|$（圆外）</label>
+    <label><input type="radio" name="q3" value="1"> $|z| < |a|$（圆内）</label>
+    <label><input type="radio" name="q3" value="2"> $|z| = |a|$（圆上）</label>
+    <label><input type="radio" name="q3" value="3"> 全 z 平面</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">4. 以下哪个条件是 LTI 系统稳定的充要条件？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q4" value="0"> $h(n)$ 是因果序列</label>
+    <label><input type="radio" name="q4" value="1"> 收敛域包含无穷远点</label>
+    <label><input type="radio" name="q4" value="2"> $\sum|h(n)| < \infty$（绝对可和）</label>
+    <label><input type="radio" name="q4" value="3"> 所有极点在单位圆上</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">5. 采样频率为 8000 Hz，信号最高频率为 3000 Hz，是否满足采样定理？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q5" value="0"> 满足，$8000 > 3000$</label>
+    <label><input type="radio" name="q5" value="1"> 满足，$8000 > 2 \times 3000 = 6000$</label>
+    <label><input type="radio" name="q5" value="2"> 不满足，需要 $F_s > 8000$</label>
+    <label><input type="radio" name="q5" value="3"> 刚好临界，可能失真</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">6. 8 点按时间抽取 FFT 的输入序列顺序是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q6" value="0"> 0,1,2,3,4,5,6,7（自然顺序）</label>
+    <label><input type="radio" name="q6" value="1"> 7,6,5,4,3,2,1,0（逆序）</label>
+    <label><input type="radio" name="q6" value="2"> 0,2,4,6,1,3,5,7（奇偶分开）</label>
+    <label><input type="radio" name="q6" value="3"> 0,4,2,6,1,5,3,7（码位倒序）</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">7. N=256 点基2 FFT 的复乘次数约为直接 DFT 的几分之一？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q7" value="0"> 1/4</label>
+    <label><input type="radio" name="q7" value="1"> 1/16</label>
+    <label><input type="radio" name="q7" value="2"> 1/64</label>
+    <label><input type="radio" name="q7" value="3"> 1/256</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">8. 三种模拟滤波器中，在相同指标下阶次最低的是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q8" value="0"> 巴特沃斯滤波器</label>
+    <label><input type="radio" name="q8" value="1"> 椭圆滤波器</label>
+    <label><input type="radio" name="q8" value="2"> 切比雪夫滤波器</label>
+    <label><input type="radio" name="q8" value="3"> 三者相同</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">9. 脉冲响应不变法的缺点是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q9" value="0"> 频率映射是非线性关系</label>
+    <label><input type="radio" name="q9" value="1"> 不能设计低通滤波器</label>
+    <label><input type="radio" name="q9" value="2"> 有频谱混叠效应，不能设计高通/带阻</label>
+    <label><input type="radio" name="q9" value="3"> 计算过于复杂</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">10. 双线性变换法的频率映射公式 $\Omega = $ ？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q10" value="0"> $\Omega = \omega / T$</label>
+    <label><input type="radio" name="q10" value="1"> $\Omega = 2\pi f / T$</label>
+    <label><input type="radio" name="q10" value="2"> $\Omega = \frac{T}{2}\sin\frac{\omega}{2}$</label>
+    <label><input type="radio" name="q10" value="3"> $\Omega = \frac{2}{T}\tan\frac{\omega}{2}$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">11. FIR 滤波器线性相位的第1类是指？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q11" value="0"> $h(n)$ 偶对称，$N$ 为奇数</label>
+    <label><input type="radio" name="q11" value="1"> $h(n)$ 偶对称，$N$ 为偶数</label>
+    <label><input type="radio" name="q11" value="2"> $h(n)$ 奇对称，$N$ 为奇数</label>
+    <label><input type="radio" name="q11" value="3"> $h(n)$ 奇对称，$N$ 为偶数</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">12. FIR 滤波器在 $z=1$ 和 $z=-1$ 都有零点，则它是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q12" value="0"> 低通滤波器</label>
+    <label><input type="radio" name="q12" value="1"> 高通滤波器</label>
+    <label><input type="radio" name="q12" value="2"> 带通滤波器</label>
+    <label><input type="radio" name="q12" value="3"> 带阻滤波器</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">13. DFT 是 Z 变换在什么位置的等间隔取样？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q13" value="0"> 实轴上</label>
+    <label><input type="radio" name="q13" value="1"> 单位圆上</label>
+    <label><input type="radio" name="q13" value="2"> 虚轴上</label>
+    <label><input type="radio" name="q13" value="3"> 任意圆上</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">14. 快速卷积要求 DFT 长度 $L$ 满足？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q14" value="0"> $L \geq \max(N_1, N_2)$</label>
+    <label><input type="radio" name="q14" value="1"> $L = N_1 + N_2$</label>
+    <label><input type="radio" name="q14" value="2"> $L \geq N_1 + N_2 - 1$</label>
+    <label><input type="radio" name="q14" value="3"> $L$ 为任意值</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">15. 系统既因果又稳定的条件是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q15" value="0"> 收敛域包含无穷</label>
+    <label><input type="radio" name="q15" value="1"> 收敛域包含单位圆</label>
+    <label><input type="radio" name="q15" value="2"> 所有零点在单位圆内</label>
+    <label><input type="radio" name="q15" value="3"> 所有极点在单位圆内</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">16. DTFT 频谱是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q16" value="0"> 以 $2\pi$ 为周期的连续频谱</label>
+    <label><input type="radio" name="q16" value="1"> 非周期的连续频谱</label>
+    <label><input type="radio" name="q16" value="2"> 以 $2\pi$ 为周期的离散频谱</label>
+    <label><input type="radio" name="q16" value="3"> 非周期的离散频谱</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">17. 量化噪声的方差公式是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q17" value="0"> $\sigma_e^2 = q^2/6$</label>
+    <label><input type="radio" name="q17" value="1"> $\sigma_e^2 = q^2/12$</label>
+    <label><input type="radio" name="q17" value="2"> $\sigma_e^2 = q^2/4$</label>
+    <label><input type="radio" name="q17" value="3"> $\sigma_e^2 = q^2/8$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">18. 循环卷积能代替线性卷积的条件是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q18" value="0"> $L = N_1 \times N_2$</label>
+    <label><input type="radio" name="q18" value="1"> $L \leq N_1 + N_2$</label>
+    <label><input type="radio" name="q18" value="2"> $L \geq N_1 + N_2 - 1$</label>
+    <label><input type="radio" name="q18" value="3"> 任何情况下都可以</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">19. 双线性变换法相比脉冲响应不变法的优势是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q19" value="0"> 频率映射是线性的</label>
+    <label><input type="radio" name="q19" value="1"> 无频谱混叠</label>
+    <label><input type="radio" name="q19" value="2"> 可以设计任意阶滤波器</label>
+    <label><input type="radio" name="q19" value="3"> 计算更简单</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">20. 帕塞瓦尔定理的物理意义是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q20" value="0"> 时域序列能量 = 频域序列能量</label>
+    <label><input type="radio" name="q20" value="1"> 时域卷积 = 频域乘法</label>
+    <label><input type="radio" name="q20" value="2"> 采样频率必须大于最高频率的2倍</label>
+    <label><input type="radio" name="q20" value="3"> 系统稳定性等价于极点在单位圆内</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div style="height:100px"></div>
+</div>
