@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="stylesheet" href="theme.css">
+<!-- Google Tag Manager -->
+<!-- End Google Tag Manager -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>期末复习</title>
+<link rel="stylesheet" href="index.css">
+<script src="https://cdn.jsdelivr.net/npm/pptxjs@1.21.1/dist/pptxjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+
+<script>
+(function(){
+  if(location.hostname!=='sdx123321.github.io') return;
+  try{if(localStorage.getItem('migrate_dismissed')==='1') return;}catch(e){}
+  document.getElementById('migrateNotice').style.display='block';
+  document.getElementById('migrateClose').onclick=function(){
+    document.getElementById('migrateNotice').style.display='none';
+    try{localStorage.setItem('migrate_dismissed','1');}catch(e){}
+  };
+})();
+</script>
+<style>@keyframes migrateIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}</style>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MVBWBRG6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="container">
+  <h1>期末复习</h1>
+  <p class="subtitle">2025-2026 学年第二学期 &middot; 知识点总结与例题精讲</p>
+
+   <!-- 全站搜索 -->
+  <div style="max-width:560px;margin:0 auto 28px;position:relative;">
+    <input type="text" id="globalSearch" placeholder="搜索知识点、资料名称..." oninput="onSearch(this.value)"
+      style="width:100%;padding:12px 16px 12px 40px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:.92rem;outline:none;transition:border-color .2s;"
+      onfocus="this.style.borderColor='var(--accent)'" onblur="setTimeout(function(){document.getElementById('searchResults').style.display='none'},200)">
+    <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:1rem;pointer-events:none;">&#128269;</span>
+    <div id="searchResults" style="display:none;position:absolute;top:100%;left:0;right:0;margin-top:6px;background:var(--card);border:1px solid var(--border);border-radius:12px;max-height:420px;overflow-y:auto;z-index:200;box-shadow:0 8px 30px rgba(0,0,0,.2);"></div>
+  </div>
+  
+  <!-- 考试安排查询 -->
+  <div id="examSection" class="exam-section">
+    <div id="examInput" class="exam-input-wrap">
+      <div class="exam-input-title">&#128197; 查询考试安排</div>
+      <div class="exam-input-row">
+        <input type="text" id="examClassInput" placeholder="输入班级 ID（如 B220207）"
+          autocomplete="off" spellcheck="false">
+        <button onclick="ExamQuery.search()">查询</button>
+      </div>
+      <div class="exam-input-hint">输入班级 ID 即可查看该班所有考试时间、教室和教师信息</div>
+    </div>
+    <div id="examResult" class="exam-result" style="display:none;"></div>
+  </div>
+
+
+
+ 
+
+
+
+  <!-- 更新日志入口 -->
+  <div onclick="document.getElementById('clOverlay').style.display='flex'" style="display:flex;align-items:center;gap:12px;padding:14px 20px;margin-bottom:24px;background:var(--card);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+    <span style="font-size:1.4rem;">&#128221;</span>
+    <div style="flex:1;">
+      <div style="font-weight:600;font-size:.92rem;color:var(--text);">更新日志</div>
+      <div style="font-size:.78rem;color:var(--text3);margin-top:2px;">最新：去除了资料来源说明，优化了首页布局</div>
+    </div>
+    <span style="color:var(--text3);font-size:.85rem;">查看全部 &#8250;</span>
+  </div>
+
+  <!-- 累计学习时间 -->
+  <div id="studyTimeBox" style="display:none;max-width:560px;margin:0 auto 28px;padding:14px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center;">
+    <span style="font-size:1.3rem;">&#128214;</span>
+    <span style="font-size:.92rem;color:var(--text);font-weight:600;margin-left:8px;">累计学习时间</span>
+    <span id="totalStudyTime" style="font-size:1.1rem;color:var(--accent);font-weight:700;margin-left:8px;">--</span>
+  </div>
+
+  <div class="cards">
+    <a class="card" href="courses/probability/">
+      <div class="icon icon-blue">&#128202;</div>
+      <h2>概率论与数理统计</h2>
+      <p>随机事件与概率、随机变量及其分布、多维随机变量、数字特征、大数定律与中心极限定理、参数估计、假设检验。含完整例题解答和易错点汇总。</p>
+      <div class="tags"><span class="tag">7 章</span><span class="tag">公式速查表</span><span class="tag">经典例题</span><span class="tag">考试重点</span></div>
+    </a>
+    <a class="card" href="courses/os/">
+      <div class="icon icon-green">&#128187;</div>
+      <h2>操作系统</h2>
+      <p>操作系统概述、处理器管理（进程/调度/PV 操作/死锁）、存储管理（分页/分段/页面置换）、设备管理、文件系统。含交互式算法演示。</p>
+      <div class="tags"><span class="tag">5 章</span><span class="tag">PV 操作</span><span class="tag">调度算法</span><span class="tag">银行家算法</span></div>
+    </a>
+    <a class="card" href="courses/algorithm/">
+      <div class="icon icon-purple">&#128300;</div>
+      <h2>算法设计与分析</h2>
+      <p>算法概述、分治法、动态规划、贪心算法、回溯法、分支限界法。含算法可视化演示与经典例题详解。</p>
+      <div class="tags"><span class="tag">6 章</span><span class="tag">可视化</span><span class="tag">代码演示</span><span class="tag">复杂度分析</span></div>
+    </a>
+    <a class="card" href="courses/dsp/" style="border-left: 3px solid #00d2ff;">
+      <div class="icon" style="background:linear-gradient(135deg,#6c63ff,#00d2ff);">&#128225;</div>
+      <h2>数字信号处理</h2>
+      <p>离散时间信号与系统、Z 变换、DFT/FFT、数字滤波器设计。含蝶形运算图解与互动练习。</p>
+      <div class="tags"><span class="tag">4 章</span><span class="tag">FFT 图解</span><span class="tag">互动练习</span><span class="tag">MathJax</span></div>
+    </a>
+    <a class="card" href="courses/marxism/" onclick="event.preventDefault();showVersionModal()" style="border-left: 3px solid #e63946;">
+      <div class="icon" style="background:linear-gradient(135deg,#e63946,#f4845f);">&#128220;</div>
+      <h2>马克思主义基本原理</h2>
+      <p>唯物辩证法、认识论、唯物史观、资本主义本质与规律、社会主义发展。含互动复习与知识卡片。</p>
+      <div class="tags"><span class="tag">7 章</span><span class="tag">互动复习</span><span class="tag">知识卡片</span><span class="tag">暗色模式</span></div>
+    </a>
+    <a class="card" href="courses/maogai/" style="border-left: 3px solid #dc2626;">
+      <div class="icon" style="background:linear-gradient(135deg,#dc2626,#f87171);">&#128220;</div>
+      <h2>毛泽东思想和中国特色社会主义理论体系概论</h2>
+      <p>毛泽东思想、邓小平理论、"三个代表"、科学发展观、习近平新时代中国特色社会主义思想。含复习提纲与考试重点。</p>
+      <div class="tags"><span class="tag">复习提纲</span><span class="tag">考试重点</span></div>
+    </a>
+    <a class="card" href="courses/calculus/" style="border-left: 3px solid #e74c3c;">
+      <div class="icon" style="background:linear-gradient(135deg,#e74c3c,#f39c12);">&#128200;</div>
+      <h2>高等数学（重修）</h2>
+      <p>常微分方程、多元函数微分（偏导/复合函数/极值）、多元积分（重积分/格林公式/高斯公式）、复变函数（可导性/柯西积分公式）。</p>
+      <div class="tags"><span class="tag">5 大专题</span><span class="tag">复习课笔记</span><span class="tag">考试分值</span><span class="tag">互动练习</span></div>
+    </a>
+  </div>
+
+
+  <!-- 评论区 -->
+  <div style="max-width:800px;margin:0 auto 32px;padding:0 20px;">
+    <h2 style="font-size:1.15rem;color:var(--text);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#128172; 评论区</h2>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;min-height:200px;">
+      <div class="giscus"></div>
+      <script src="https://giscus.app/client.js"
+              data-repo="SDX123321/SDX123321.github.io"
+              data-repo-id="R_kgDONOvdMA"
+              data-category="Announcements"
+              data-category-id="DIC_kwDONOvdMM4C__x3"
+              data-mapping="pathname"
+              data-strict="0"
+              data-reactions-enabled="1"
+              data-emit-metadata="0"
+              data-input-position="top"
+              data-theme="preferred_color_scheme"
+              data-lang="zh-CN"
+              crossorigin="anonymous"
+              async>
+      </script>
+    </div>
+  </div>
+
+
+  <!-- 资料下载 -->
+  <div style="margin-bottom:40px;">
+    <h2 style="font-size:1.15rem;color:var(--text);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#128196; 资料下载</h2>
+    <div id="filterBar" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+        <span style="font-size:.78rem;color:var(--text3);font-weight:600;">学科：</span>
+        <button onclick="setFilter('s','')" class="filter-btn active" data-g="s" data-v="">全部</button>
+        <button onclick="setFilter('s','probability')" class="filter-btn" data-g="s" data-v="probability">概率论</button>
+        <button onclick="setFilter('s','os')" class="filter-btn" data-g="s" data-v="os">操作系统</button>
+        <button onclick="setFilter('s','algorithm')" class="filter-btn" data-g="s" data-v="algorithm">算法</button>
+        <button onclick="setFilter('s','dsp')" class="filter-btn" data-g="s" data-v="dsp">数字信号</button>
+        <button onclick="setFilter('s','marxism')" class="filter-btn" data-g="s" data-v="marxism">马克思</button>
+        <button onclick="setFilter('s','maogai')" class="filter-btn" data-g="s" data-v="maogai">毛概</button>
+        <button onclick="setFilter('s','signals')" class="filter-btn" data-g="s" data-v="signals">信号与系统</button>
+        <button onclick="setFilter('s','physics2')" class="filter-btn" data-g="s" data-v="physics2">大学物理下</button>
+        <button onclick="setFilter('s','culture')" class="filter-btn" data-g="s" data-v="culture">文化概论</button>
+        <button onclick="setFilter('s','history')" class="filter-btn" data-g="s" data-v="history">近代史</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+        <span style="font-size:.78rem;color:var(--text3);font-weight:600;">类型：</span>
+        <button onclick="setFilter('t','')" class="filter-btn active" data-g="t" data-v="">全部</button>
+        <button onclick="setFilter('t','exam')" class="filter-btn" data-g="t" data-v="exam">历年试卷</button>
+        <button onclick="setFilter('t','review')" class="filter-btn" data-g="t" data-v="review">复习资料</button>
+        <button onclick="setFilter('t','answer')" class="filter-btn" data-g="t" data-v="answer">参考答案</button>
+        <button onclick="setFilter('t','textbook')" class="filter-btn" data-g="t" data-v="textbook">电子课本</button>
+        <button onclick="setFilter('t','slides')" class="filter-btn" data-g="t" data-v="slides">课件</button>
+        <button onclick="setFilter('t','homework')" class="filter-btn" data-g="t" data-v="homework">作业</button>
+        <button onclick="setFilter('t','lab')" class="filter-btn" data-g="t" data-v="lab">实验</button>
+      </div>
+    </div>
+    <div id="fileCount" style="font-size:.8rem;color:var(--text3);margin-bottom:10px;"></div>
+    <div id="fileList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;max-height:480px;overflow-y:auto;padding-right:4px;"></div>
+  </div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+<!-- 改进建议与评论 -->
+  <div style="margin-bottom:32px;">
+    <h2 style="font-size:1.15rem;color:var(--text);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);">&#128172; 改进建议与评论</h2>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;">
+      <p style="color:var(--text2);font-size:.88rem;margin-bottom:14px;">发现错误、缺少内容、或有改进建议？欢迎通过以下方式反馈：</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+        <a href="https://github.com/SDX123321/SDX123321.github.io/issues/new?title=%E6%94%B9%E8%BF%9B%E5%BB%BA%E8%AE%AE%EF%BC%9A&body=%E8%AF%B7%E6%8F%8F%E8%BF%B0%E4%BD%A0%E7%9A%84%E5%BB%BA%E8%AE%AE%E6%88%96%E5%8F%91%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A%0A%0A%E6%B6%89%E5%8F%8A%E8%AF%BE%E7%A8%8B%EF%BC%9A%0A%E5%85%B7%E4%BD%93%E4%BD%8D%E7%BD%AE%EF%BC%9A" target="_blank" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);text-decoration:none;color:var(--text);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 2px 12px rgba(0,0,0,.1)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+          <span style="font-size:1.3rem;">&#128172;</span>
+          <div>
+            <div style="font-weight:600;font-size:.88rem;">提交 Issue</div>
+            <div style="font-size:.75rem;color:var(--text3);">在 GitHub 上提建议或报告错误</div>
+          </div>
+        </a>
+        <a href="https://github.com/SDX123321/SDX123321.github.io/issues" target="_blank" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);text-decoration:none;color:var(--text);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 2px 12px rgba(0,0,0,.1)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+          <span style="font-size:1.3rem;">&#128214;</span>
+          <div>
+            <div style="font-weight:600;font-size:.88rem;">查看已有反馈</div>
+            <div style="font-size:.75rem;color:var(--text3);">浏览其他人的建议与讨论</div>
+          </div>
+        </a>
+        <a href="https://github.com/SDX123321/SDX123321.github.io/pulls" target="_blank" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);text-decoration:none;color:var(--text);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 2px 12px rgba(0,0,0,.1)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+          <span style="font-size:1.3rem;">&#128736;</span>
+          <div>
+            <div style="font-weight:600;font-size:.88rem;">贡献内容</div>
+            <div style="font-size:.75rem;color:var(--text3);">提交 PR 直接改进网页</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="footer">
+    <span id="busuanzi_container_site_pv">&#128065; 本站总访问量 <span id="busuanzi_value_site_pv" style="color:var(--accent);">...</span> 次</span>
+    &middot;
+    <span id="busuanzi_container_site_uv">&#128100; 访客数 <span id="busuanzi_value_site_uv" style="color:var(--purple);">...</span> 人</span>
+    <br>
+    Built with &#10084; &middot; <a href="https://github.com/SDX123321">@SDX123321</a>
+  </div>
+  <div style="text-align:center;padding:0 20px 32px;">
+    <div class="star-box">
+      <span>觉得有帮助？给个 Star 鼓励一下吧 &#9733;</span>
+      <a class="btn-star" href="https://github.com/SDX123321/SDX123321.github.io" target="_blank">&#9733; Star</a>
+    </div>
+    <div style="margin-top:16px;">
+      <span onclick="document.getElementById('rewardModal').style.display='flex'" style="cursor:pointer;color:var(--text3);font-size:0.85rem;user-select:none;transition:color 0.2s;" onmouseover="this.style.color='#f59e0b'" onmouseout="this.style.color='var(--text3)'">通过赞赏码请作者喝杯咖啡 &#9749;</span>
+    </div>
+  </div>
+</div>
+
+<!-- 更新日志弹窗 -->
+<div class="cl-overlay" id="clOverlay" onclick="if(event.target===this)closeChangelog()">
+  <div class="cl-box">
+    <h3>&#128221; 更新日志</h3>
+    <div class="cl-item"><span class="cl-hash">81607c7</span><span class="cl-msg">去除了资料来源说明，优化了首页布局</span></div>
+    <div class="cl-item"><span class="cl-hash">42ca7d6</span><span class="cl-msg">feat: add Giscus comment section to homepage</span></div>
+    <div class="cl-item"><span class="cl-hash">217cd99</span><span class="cl-msg">fix(probability): 修复深色模式切换不生效</span></div>
+    <div class="cl-item"><span class="cl-hash">0be0c34</span><span class="cl-msg">feat: fix quiz hooks, random quiz KaTeX, wrong-book close button, IIR diagrams, probability dark mode, print mode, restore marker bubble</span></div>
+    <div class="cl-item"><span class="cl-hash">79664fd</span><span class="cl-msg">refactor: extract zip files and list individual files in index</span></div>
+    <div class="cl-item"><span class="cl-hash">f5a8640</span><span class="cl-msg">feat: add algorithm SVG diagrams, complexity badges, chapter stats, and new subject materials</span></div>
+    <div class="cl-item"><span class="cl-hash">fd4c9eb</span><span class="cl-msg">feat: add migration notice to web.zzzzcx.cn on all pages</span></div>
+    <div class="cl-item"><span class="cl-hash">e84ab03</span><span class="cl-msg">Create CNAME</span></div>
+    <div class="cl-item"><span class="cl-hash">ab91370</span><span class="cl-msg">feat: migrate images to Cloudflare R2 CDN</span></div>
+    <div class="cl-item"><span class="cl-hash">8f1ad07</span><span class="cl-msg">feat: add extracted 信号与系统 + 大学物理下 exam files (replace zips)</span></div>
+    <div class="cl-item"><span class="cl-hash">68366ba</span><span class="cl-msg">feat: exam schedule query, theme fixes, merge remote</span></div>
+    <div class="cl-item"><span class="cl-hash">042050b</span><span class="cl-msg">Manually enhance HTML content with emphasis and clarity</span></div>
+    <div class="cl-item"><span class="cl-hash">7b21175</span><span class="cl-msg">Marxism: add version selector modal (interactive v1 vs original)</span></div>
+    <div class="cl-item"><span class="cl-hash">94ef441</span><span class="cl-msg">Marxism: toggle cards/sections without full re-render</span></div>
+    <div class="cl-item"><span class="cl-hash">44035a5</span><span class="cl-msg">Fix Marxism page: remove stray &lt;/script&gt; tag from script.js</span></div>
+    <div class="cl-item"><span class="cl-hash">ed77ddd</span><span class="cl-msg">Fix Marxism CSS: add missing --card-shadow and --warn aliases to theme.css</span></div>
+    <div class="cl-item"><span class="cl-hash">0dd1e88</span><span class="cl-msg">update: marxism content - 52 knowledge points + 20 quiz questions + flashcard/stats modes</span></div>
+    <div class="cl-item"><span class="cl-hash">afc152e</span><span class="cl-msg">update: marxism styles - adapt to project theme variables</span></div>
+    <div class="cl-item"><span class="cl-hash">bb63fbc</span><span class="cl-msg">feat(dsp): 添加IIR/FIR网络结构信号流图</span></div>
+    <div class="cl-item"><span class="cl-hash">aa203f2</span><span class="cl-msg">feat(dsp): 添加详细例题与折叠式运算步骤</span></div>
+    <div class="cl-item"><span class="cl-hash">366cb74</span><span class="cl-msg">feat(dsp): 增强DSP复习页面交互与内容</span></div>
+    <div class="cl-item"><span class="cl-hash">aaa1778</span><span class="cl-msg">Revert homepage to d9204b5</span></div>
+    <div class="cl-item"><span class="cl-hash">4aea641</span><span class="cl-msg">Add 35 courseware files + type filters (slides/homework/lab) + scroll list</span></div>
+    <div class="cl-item"><span class="cl-hash">a3285dc</span><span class="cl-msg">Unified dark/light theme system for all 7 pages (theme.css + theme.js)</span></div>
+    <div class="cl-item"><span class="cl-hash">4d73884</span><span class="cl-msg">去除下载计数、学科+类型组合筛选、新用户引导</span></div>
+    <div class="cl-item"><span class="cl-hash">e106548</span><span class="cl-msg">附件下载计数、改进建议评论入口、课程反馈链接</span></div>
+    <div class="cl-item"><span class="cl-hash">99fb8a9</span><span class="cl-msg">修复公式渲染、概率论考点标注（必考/大题必考）</span></div>
+    <div class="cl-item"><span class="cl-hash">7d9d5ad</span><span class="cl-msg">修复全站深浅色模式切换显示异常</span></div>
+    <div class="cl-item"><span class="cl-hash">581649a</span><span class="cl-msg">OCR 提取扫描试卷真题融入概率论与算法页面</span></div>
+    <div class="cl-item"><span class="cl-hash">601ec45</span><span class="cl-msg">概率论默写题公式速查、操作系统 A 卷真题详解</span></div>
+    <div class="cl-item"><span class="cl-hash">b026948</span><span class="cl-msg">全站自适应布局（手机/平板/电脑三档响应式）</span></div>
+    <div class="cl-item"><span class="cl-hash">35a774a</span><span class="cl-msg">算法页面双栏代码示例（快排/归并/Dijkstra/N皇后等）</span></div>
+    <div class="cl-item"><span class="cl-hash">f1bd3e1</span><span class="cl-msg">修正 DSP FFT 流图标签（DFT &rarr; FFT）</span></div>
+    <div class="cl-item"><span class="cl-hash">199fd30</span><span class="cl-msg">新增数字信号处理课程（含蝶形运算图解）</span></div>
+    <div class="cl-item"><span class="cl-hash">14fddbf</span><span class="cl-msg">新增马克思主义基本原理互动复习</span></div>
+    <div class="cl-item"><span class="cl-hash">0c0866b</span><span class="cl-msg">操作系统页面补充飞书文档内容</span></div>
+    <div class="cl-item"><span class="cl-hash">10c7d4c</span><span class="cl-msg">全站添加不蒜子访问量统计</span></div>
+    <div class="cl-item"><span class="cl-hash">feab9ee</span><span class="cl-msg">新增算法设计与分析、资料来源说明</span></div>
+    <div class="cl-item"><span class="cl-hash">3e21cbb</span><span class="cl-msg">首次发布：概率论 + 操作系统复习页面</span></div>
+    <button class="cl-btn" onclick="closeChangelog()">知道了</button>
+  </div>
+</div>
+
+<!-- 版本选择弹窗 -->
+<div id="versionModal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1004;justify-content:center;align-items:center;">
+  <div style="background:var(--card);border-radius:16px;padding:28px;max-width:440px;width:92vw;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.5);animation:splashIn .3s ease;">
+    <h3 style="font-size:1.05rem;color:var(--text);margin-bottom:6px;">&#128220; 选择版本</h3>
+    <p style="font-size:.82rem;color:var(--text2);margin-bottom:20px;">马克思主义基本原理提供两种复习版本：</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <a href="courses/marxism/" style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:1px solid var(--border);text-decoration:none;color:var(--text);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.15)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+        <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#4361ee,#3a0ca3);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#128300;</div>
+        <div>
+          <div style="font-weight:600;font-size:.92rem;">互动复习版</div>
+          <div style="font-size:.78rem;color:var(--text3);margin-top:2px;">知识卡片 · 闪卡 · 测验 · 学习统计 · 搜索</div>
+        </div>
+      </a>
+      <a href="courses/marxism/v1.html" style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:1px solid var(--border);text-decoration:none;color:var(--text);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.15)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+        <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#e63946,#f4845f);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">&#128214;</div>
+        <div>
+          <div style="font-weight:600;font-size:.92rem;">原始完整版</div>
+          <div style="font-size:.78rem;color:var(--text3);margin-top:2px;">全部知识点一览 · 适合快速浏览</div>
+        </div>
+      </a>
+    </div>
+    <button onclick="document.getElementById('versionModal').style.display='none'" style="margin-top:16px;width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.85rem;cursor:pointer;">取消</button>
+  </div>
+</div>
+
+<!-- 开屏赞赏码弹窗 -->
+<div id="splashModal" onclick="if(event.target===this)closeSplash(false)">
+  <div class="splash-box">
+    <p style="font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:6px;">&#10024; 欢迎来到期末复习笔记</p>
+    <p style="font-size:0.85rem;color:var(--text2);margin-bottom:20px;">如果这份笔记对你有帮助，可以请作者喝杯咖啡 &#9749;</p>
+    <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/赞赏码.png" alt="赞赏码" style="width:280px;border-radius:14px;display:block;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,0.4);">
+    <p style="color:var(--text);font-size:0.88rem;margin-top:16px;">微信扫码赞赏</p>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;">
+      <button onclick="closeSplash(false)" style="padding:10px 28px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:0.9rem;cursor:pointer;">关闭</button>
+      <button onclick="closeSplash(true)" style="padding:10px 28px;border-radius:10px;border:1px solid #ef4444;background:rgba(239,68,68,0.1);color:#fca5a5;font-size:0.9rem;cursor:pointer;">残忍拒绝</button>
+    </div>
+    <p style="color:var(--text3);font-size:0.72rem;margin-top:10px;">「残忍拒绝」后不再显示</p>
+  </div>
+</div>
+
+<!-- 赞赏码弹窗 -->
+<div id="rewardModal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;justify-content:center;align-items:center;">
+  <div style="position:relative;background:var(--card);border-radius:16px;padding:28px 28px 20px;text-align:center;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,0.5);max-width:90vw;">
+    <span onclick="this.closest('#rewardModal').style.display='none'" style="position:absolute;top:10px;right:14px;cursor:pointer;color:var(--text3);font-size:1.4rem;line-height:1;transition:color 0.2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">&times;</span>
+    <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/赞赏码.png" alt="赞赏码" style="width:260px;border-radius:12px;display:block;margin:0 auto;">
+    <p style="color:var(--text);font-size:0.9rem;margin-top:14px;">微信扫码赞赏</p>
+    <p style="color:var(--text3);font-size:0.78rem;margin-top:4px;">感谢支持 &#10084;</p>
+  </div>
+</div>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!-- 电子课本免责声明弹窗 -->
+<div id="textbookModal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1004;justify-content:center;align-items:center;">
+  <div style="background:var(--card);border-radius:16px;padding:28px;max-width:440px;width:92vw;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.5);">
+    <h3 style="font-size:1.1rem;color:var(--text);margin-bottom:10px;">&#9888;&#65039; 使用须知</h3>
+    <p style="font-size:.88rem;color:var(--text2);line-height:1.8;margin-bottom:16px;">
+      该电子课本仅供<strong>个人学习交流使用</strong>，不得用于商业用途。版权归原作者及出版社所有。如有侵权，请联系删除。
+    </p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button onclick="document.getElementById('textbookModal').style.display='none'" style="padding:8px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:.88rem;cursor:pointer;">取消</button>
+      <button onclick="proceedTextbook()" style="padding:8px 20px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:.88rem;font-weight:600;cursor:pointer;">我已知悉，继续</button>
+    </div>
+    <input type="hidden" id="tbPath"><input type="hidden" id="tbAction">
+  </div>
+</div>
+
+<!-- 新用户引导 -->
+<div class="guide-overlay" id="guideOverlay">
+  <div class="guide-box">
+    <h3 id="guideTitle"></h3>
+    <p id="guideDesc"></p>
+    <div class="guide-steps" id="guideSteps"></div>
+    <div class="guide-dots" id="guideDots"></div>
+    <div class="guide-btns">
+      <button class="guide-skip" onclick="closeGuide()">跳过</button>
+      <button class="guide-next" id="guideNext" onclick="nextGuideStep()">下一步</button>
+    </div>
+  </div>
+</div>
+<script src="stats.js"></script>
+<script src="search.js"></script>
+<script src="remember.js"></script>
+<script src="preview.js"></script>
+<script src="files/exam-schedule-data.js"></script>
+<script src="exam.js"></script>
+<script src="index.js"></script>
+<script src="theme.js"></script>
+<script src="wrong-book.js"></script>
+<script src="formula-ref.js"></script>
+<script src="mastery.js"></script>
+<script src="random-quiz.js"></script>
+<script src="cross-links.js"></script>
+<script src="print-mode.js"></script>
+<script src="pwa.js"></script>
+<script src="ux.js"></script>
+</body>
+</html>
