@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import '../../styles/homepage.css'
+import '../styles/homepage.css'
 
 const COURSES = [
   { path: 'probability', icon: '📊', title: '概率论与数理统计', desc: '随机事件与概率、随机变量及其分布、多维随机变量、数字特征、大数定律与中心极限定理、参数估计、假设检验。', tags: ['7 章','公式速查表','经典例题','考试重点'], iconClass: 'icon-blue' },
