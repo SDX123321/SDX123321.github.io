@@ -35,6 +35,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Images:** Hosted on Cloudflare R2 CDN, not in the repo
 - **R2 credentials:** Stored in `.env` (gitignored). Endpoint, keys, bucket, and public URL are all in that file.
 - **No tests or linting** — no test framework, no eslint/prettier config exists
+- **Git workflow:** All changes are committed locally by default (`git add -A && git commit`). Do NOT push to remote (`git push`) unless explicitly asked by the user.
 
 ## Adding Images
 
