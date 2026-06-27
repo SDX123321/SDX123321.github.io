@@ -18,6 +18,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div id="migrateNotice" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:10000;max-width:520px;width:calc(100% - 32px);padding:14px 40px 14px 18px;background:var(--card);border:1px solid var(--accent);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:.88rem;color:var(--text);line-height:1.6;animation:migrateIn .4s ease">
+  <span style="margin-right:8px">&#128226;</span>
+  <strong>网站迁移通知：</strong>本站即将迁移至
+  <a href="https://web.zzzzcx.cn" target="_blank" style="color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:2px">web.zzzzcx.cn</a>，
+  后续可通过该网址访问。
+  <span id="migrateClose" style="position:absolute;top:10px;right:14px;cursor:pointer;color:var(--text3);font-size:1.1rem;line-height:1;transition:color .2s" onmouseover="this.style.color=''var(--text)''" onmouseout="this.style.color=''var(--text3)'''">&times;</span>
+</div>
+<script>
+!function(){
+  if(location.hostname!=="sdx123321.github.io") return;
+  try{if(localStorage.getItem("migrate_dismissed")==="1") return}catch(e){}
+  document.getElementById("migrateNotice").style.display="block";
+  document.getElementById("migrateClose").onclick=function(){
+    document.getElementById("migrateNotice").style.display="none";
+    try{localStorage.setItem("migrate_dismissed","1")}catch(e){}
+  };
+}();
+</script>
+<style>@keyframes migrateIn{from{opacity:0;transform:translateX(-50%%) translateY(20px)}to{opacity:1;transform:translateX(-50%%) translateY(0)}}</style>
+
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MVBWBRG6"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
