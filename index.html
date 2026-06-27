@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="index.css">
 <script src="https://cdn.jsdelivr.net/npm/pptxjs@1.21.1/dist/pptxjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<link rel="manifest" href="manifest.json">
 </head>
 <body>
 <!-- 迁移提醒 -->
@@ -55,6 +56,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <div id="examResult" class="exam-result" style="display:none;"></div>
   </div>
+
+
 
   <!-- 全站搜索 -->
   <div style="max-width:560px;margin:0 auto 28px;position:relative;">
@@ -165,7 +168,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div id="fileList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;max-height:480px;overflow-y:auto;padding-right:4px;"></div>
   </div>
 
-  <!-- 全站搜索 -->
+  <!-- 考试倒计时和学习进度已移除 -->
+
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
 <!-- 改进建议与评论 -->
   <div style="margin-bottom:32px;">
@@ -217,7 +221,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <!-- 更新日志弹窗 -->
-<div class="cl-overlay" id="clOverlay">
+<div class="cl-overlay" id="clOverlay" onclick="if(event.target===this)closeChangelog()">
   <div class="cl-box">
     <h3>&#128221; 更新日志</h3>
     <div class="cl-item"><span class="cl-hash">79664fd</span><span class="cl-msg">refactor: extract zip files and list individual files in index</span></div>
@@ -312,7 +316,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 <!-- 电子课本免责声明弹窗 -->
-<div id="textbookModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1004;justify-content:center;align-items:center;">
+<div id="textbookModal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1004;justify-content:center;align-items:center;">
   <div style="background:var(--card);border-radius:16px;padding:28px;max-width:440px;width:92vw;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.5);">
     <h3 style="font-size:1.1rem;color:var(--text);margin-bottom:10px;">&#9888;&#65039; 使用须知</h3>
     <p style="font-size:.88rem;color:var(--text2);line-height:1.8;margin-bottom:16px;">
@@ -347,5 +351,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="exam.js"></script>
 <script src="index.js"></script>
 <script src="theme.js"></script>
+<script src="wrong-book.js"></script>
+<script src="formula-ref.js"></script>
+<script src="mastery.js"></script>
+<script src="random-quiz.js"></script>
+<script src="cross-links.js"></script>
+<script src="print-mode.js"></script>
+<script src="pwa.js"></script>
+<script src="ux.js"></script>
 </body>
 </html>

@@ -20,6 +20,7 @@ MathJax = {
 </script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="../../manifest.json">
 </head>
 <body>
 <div id="migrateNotice" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:10000;max-width:520px;width:calc(100% - 32px);padding:14px 40px 14px 18px;background:var(--card);border:1px solid var(--accent);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:.88rem;color:var(--text);line-height:1.6;animation:migrateIn .4s ease">
@@ -1049,36 +1050,45 @@ $$\boxed{H(z) = \frac{0.0976 + 0.1953\,z^{-1} + 0.0976\,z^{-2}}{1 - 1.1382\,z^{-
 <h4 class="collapsible" onclick="toggleCollapse(this)">例题：第3类线性相位 FIR 求频响（点击展开）</h4>
 <div class="collapsible-content">
 <div class="example">
-<strong>已知：</strong>$h(n) = \{1, -1, 0, -1, 1\}$（奇对称，$N=5$，奇数 → 第3类）
+<strong>已知：</strong>$h(n) = \{1, -2, 0, 2, -1\}$（$N=5$，奇数），求频率响应 $H(e^{j\omega})$、幅度函数 $H(\omega)$ 和相位函数 $\theta(\omega)$。
 
-<strong>Step 1｜验证对称性</strong><br>
-$h(0)=1, h(4)=1$ → $h(0) = -h(4)$? $1 \neq -1$，需要检查。<br>
-实际上：$h(n) = \{1, -1, 0, -1, 1\}$，中心 $h(2) = 0$<br>
-$h(0)=1, h(4)=1$：$h(n) = -h(N-1-n)$ → $h(0) = -h(4)$? $1 = -1$? <strong>不对！</strong><br>
-<span style="color:var(--text-dim)">（注意：题目中 $h(n) = \{1, -1, 0, -1, 1\}$ 其实是偶对称，下面按奇对称 $h(n) = \{1, -1, 0, 1, -1\}$ 计算）</span>
+<strong>Step 1｜验证对称性 → 确定类型</strong><br>
+中心 $\alpha = \frac{N-1}{2} = 2$，检查 $h(n) = -h(N-1-n)$：
+$$h(0)=1,\; h(4)=-1 \implies h(0)=-h(4)\;\checkmark$$
+$$h(1)=-2,\; h(3)=2 \implies h(1)=-h(3)\;\checkmark$$
+$$h(2)=0 \implies \text{中心为零}\;\checkmark$$
+→ 奇对称 + N 为奇数 → <strong>第 3 类线性相位</strong>
 
 <strong>Step 2｜写出 $H(z)$</strong>
-$$H(z) = 1 - z^{-1} + 0\cdot z^{-2} + z^{-3} - z^{-4}$$
+$$H(z) = 1 - 2z^{-1} + 0\cdot z^{-2} + 2z^{-3} - z^{-4}$$
 
-<strong>Step 3｜提公因子 $e^{-j\omega(N-1)/2} = e^{-j2\omega}$</strong>
-$$H(e^{j\omega}) = e^{-j2\omega}\left[e^{j2\omega} - e^{j\omega} + e^{-j\omega} - e^{-j2\omega}\right]$$
+<strong>Step 3｜代入 $z=e^{j\omega}$，以中心 $\alpha=2$ 为基准重新分组</strong>
+$$H(e^{j\omega}) = e^{-j2\omega}\Big[e^{j2\omega} - 2e^{j\omega} + 0 + 2e^{-j\omega} - e^{-j2\omega}\Big]$$
 
-<strong>Step 4｜奇对称项两两合并</strong><br>
-$e^{j2\omega} - e^{-j2\omega} = 2j\sin(2\omega)$<br>
-$-e^{j\omega} + e^{-j\omega} = -2j\sin(\omega)$
+<strong>Step 4｜利用奇对称性 $h(\alpha+k) = -h(\alpha-k)$ 合并</strong><br>
+将关于中心对称的项配对：
+$$\bigl[e^{j2\omega} - e^{-j2\omega}\bigr] + \bigl[-2e^{j\omega} + 2e^{-j\omega}\bigr]$$
 
-$$H(e^{j\omega}) = e^{-j2\omega} \cdot 2j[\sin(2\omega) - \sin(\omega)]$$
+由欧拉公式 $e^{jx} - e^{-jx} = 2j\sin x$：
+$$= 2j\sin(2\omega) + 2 \cdot 2j\sin(\omega) = 2j\bigl[\sin(2\omega) + 2\sin(\omega)\bigr]$$
 
-<strong>Step 5｜提取 $j = e^{j\pi/2}$</strong>
-$$H(e^{j\omega}) = 2[\sin(2\omega) - \sin(\omega)] \cdot e^{-j2\omega} \cdot e^{j\pi/2}$$
-$$= \underbrace{2[\sin(2\omega) - \sin(\omega)]}_{H(\omega)\text{ 幅度函数}} \cdot \underbrace{e^{-j(2\omega - \pi/2)}}_{\text{相位函数}}$$
+<strong>Step 5｜提取 $j = e^{j\pi/2}$，整理为幅-相形式</strong>
+$$H(e^{j\omega}) = e^{-j2\omega} \cdot 2j\bigl[\sin(2\omega) + 2\sin(\omega)\bigr]$$
+$$= \underbrace{2\bigl[\sin(2\omega) + 2\sin(\omega)\bigr]}_{H(\omega)} \cdot \underbrace{e^{-j(2\omega - \pi/2)}}_{\text{相位因子}}$$
 
 <strong>结论：</strong>
 <ul style="margin:8px 0 0 20px;font-size:14px">
-<li>相位函数：$\theta(\omega) = -\omega\frac{N-1}{2} - \frac{\pi}{2} = -2\omega - \frac{\pi}{2}$ ✓（第3类特征）</li>
-<li>幅度函数 $H(\omega) = 2[\sin(2\omega) - \sin(\omega)]$ 是<strong>纯实数</strong>，可正可负</li>
-<li>当 $\omega = 0$ 时：$H(0) = 0$（第3类在直流处为零）</li>
+<li>幅度函数：$H(\omega) = 2\sin(2\omega) + 4\sin(\omega)$（纯实数，可正可负）</li>
+<li>相位函数：$\theta(\omega) = -\omega\dfrac{N-1}{2} - \dfrac{\pi}{2} = -2\omega - \dfrac{\pi}{2}$ ✓（第 3 类特征）</li>
+<li>$\omega=0$（直流）时：$H(0)=0$ → 第 3 类在直流处必为零，<strong>不能做低通</strong></li>
+<li>$\omega=\pi$ 时：$H(\pi)=0$ → 高频处也为零</li>
 </ul>
+
+<div class="keypoint" style="margin-top:12px">
+<strong>通用公式（第 3 类）：</strong><br>
+$N$ 为奇数，$h(n) = -h(N-1-n)$，中心 $h(\alpha)=0$，则：
+$$H(\omega) = 2\sum_{k=1}^{(N-1)/2} h(\alpha + k)\sin(\omega k)$$
+</div>
 </div>
 </div>
 </div>
@@ -1178,21 +1188,10 @@ $z_i^*$（共轭）、$1/z_i$（倒数）、$1/z_i^*$（共轭倒数）<br>
 </span>
 </div>
 
-<h4 style="color:var(--accent2)">① 直接 I 型</h4>
-<div id="iir-direct1" class="card" style="text-align:center;padding:16px"></div>
-<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">两条延迟链：上面分子（前馈 $\color{var(--green)}{b_i}$），下面分母（反馈 $\color{var(--red)}{a_i}$）。共 4 个延迟单元。</p>
-
-<h4 style="color:var(--accent2)">② 直接 II 型（正准型）</h4>
-<div id="iir-direct2" class="card" style="text-align:center;padding:16px"></div>
-<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">合并为<strong>一条</strong>共享延迟链。左反馈、右前馈。只需 2 个延迟单元（最节省）。</p>
-
-<h4 style="color:var(--accent2)">③ 级联型</h4>
-<div id="iir-cascade" class="card" style="text-align:center;padding:16px"></div>
-<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">$H(z) = H_1(z) \cdot H_2(z)$，每个基本节用正准型。零极点可<strong>单独调整</strong>。</p>
-
-<h4 style="color:var(--accent2)">④ 并联型</h4>
-<div id="iir-parallel" class="card" style="text-align:center;padding:16px"></div>
-<p style="font-size:13px;color:var(--text-dim);margin:4px 0 16px">$H(z) = 24 + \frac{-15}{1-0.25z^{-1}} + \frac{96z^{-1}}{(1-0.25z^{-1})^2}$。各节<strong>并行运算</strong>，速度最快。</p>
+<div class="card" style="text-align:center;border-color:var(--accent);box-shadow:0 0 20px rgba(108,99,255,0.15)">
+<p style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:8px">四种 IIR 结构信号流图（直接 I 型 · 直接 II 型 · 级联型 · 并联型）</p>
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/iir_structures.png" alt="四种IIR结构信号流图" style="max-width:100%;margin:8px 0;border-radius:8px">
+</div>
 </div>
 </div>
 <h3 id="ch6-struct-fir" class="collapsible" onclick="toggleCollapse(this)">FIR 滤波器的网络结构 <span class="badge badge-important">必考画图</span></h3>
@@ -1603,5 +1602,13 @@ $$\sigma_y^2 = M \cdot \frac{q^2}{12}$$
 <script src="../../search.js"></script>
 <script src="../../remember.js"></script>
 <script src="../../theme.js"></script>
+<script src="../../wrong-book.js"></script>
+<script src="../../formula-ref.js"></script>
+<script src="../../mastery.js"></script>
+<script src="../../random-quiz.js"></script>
+<script src="../../cross-links.js"></script>
+<script src="../../print-mode.js"></script>
+<script src="../../pwa.js"></script>
+<script src="../../ux.js"></script>
 </body>
 </html>

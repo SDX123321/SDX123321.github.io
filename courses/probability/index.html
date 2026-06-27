@@ -16,6 +16,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="../../manifest.json">
 </head>
 <body>
 <div id="migrateNotice" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:10000;max-width:520px;width:calc(100% - 32px);padding:14px 40px 14px 18px;background:var(--card);border:1px solid var(--accent);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:.88rem;color:var(--text);line-height:1.6;animation:migrateIn .4s ease">
@@ -87,6 +88,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="#formulas" data-keywords="公式 总结">核心公式汇总</a>
     <a href="#formula-sheet" data-keywords="默写题 公式 答案 速查">默写题公式速查</a>
     <a href="#tips" data-keywords="易错 陷阱 注意 考试">易错点与考试提示</a>
+    <a href="#quiz" data-keywords="自测 练习 测试 quiz">自测练习</a>
   </div>
 </nav>
 
@@ -1361,6 +1363,417 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
+  <!-- ==================== 自测练习 ==================== -->
+  <h2 id="quiz" style="color:var(--accent);margin:48px 0 20px;padding-bottom:10px;border-bottom:2px solid var(--border)">自测练习</h2>
+  <p style="color:var(--text-light);margin-bottom:16px">共 25 题，涵盖概率论全部 8 章。点击"检查答案"查看结果。</p>
+
+  <!-- 第一章 Q1-3 -->
+  <div class="quiz-container" data-correct="2">
+    <div class="quiz-q">1. 从 52 张扑克牌中随机抽取 1 张，抽到红心或 A 的概率为</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q1" value="0"> \(\frac{13}{52}\)</label>
+      <label><input type="radio" name="q1" value="1"> \(\frac{16}{52}\)</label>
+      <label><input type="radio" name="q1" value="2"> \(\frac{16}{52}\)，即 \(\frac{4}{13}\)</label>
+      <label><input type="radio" name="q1" value="3"> \(\frac{17}{52}\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="1">
+    <div class="quiz-q">2. 设 \(P(A) = 0.4\)，\(P(B) = 0.5\)，\(P(AB) = 0.2\)，则 \(P(B|\bar{A})\) 等于</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q2" value="0"> \(0.4\)</label>
+      <label><input type="radio" name="q2" value="1"> \(0.5\)</label>
+      <label><input type="radio" name="q2" value="2"> \(0.6\)</label>
+      <label><input type="radio" name="q2" value="3"> \(0.3\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="3">
+    <div class="quiz-q">3. 三台机器生产同种产品，产量占比分别为 50%、30%、20%，次品率分别为 3%、4%、5%。随机取一件为次品，该次品来自第二台机器的概率为</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q3" value="0"> \(\frac{0.012}{0.037}\)</label>
+      <label><input type="radio" name="q3" value="1"> \(\frac{0.015}{0.037}\)</label>
+      <label><input type="radio" name="q3" value="2"> \(0.04\)</label>
+      <label><input type="radio" name="q3" value="3"> \(\frac{0.012}{0.037} \approx 0.324\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <!-- 第二章 Q4-6 -->
+  <div class="quiz-container" data-correct="0">
+    <div class="quiz-q">4. 设离散型随机变量 \(X\) 的分布律为 \(P(X=k) = \frac{c}{k(k+1)},\; k=1,2,3,4\)，则常数 \(c\) 等于</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q4" value="0"> \(\frac{5}{4}\)</label>
+      <label><input type="radio" name="q4" value="1"> \(1\)</label>
+      <label><input type="radio" name="q4" value="2"> \(\frac{4}{5}\)</label>
+      <label><input type="radio" name="q4" value="3"> \(2\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="2">
+    <div class="quiz-q">5. 设 \(X \sim B(10, 0.3)\)，则 \(P(X \ge 3)\) 等于</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q5" value="0"> \(1 - C_{10}^0 \cdot 0.3^0 \cdot 0.7^{10}\)</label>
+      <label><input type="radio" name="q5" value="1"> \(1 - C_{10}^0 \cdot 0.3^0 \cdot 0.7^{10} - C_{10}^1 \cdot 0.3^1 \cdot 0.7^9\)</label>
+      <label><input type="radio" name="q5" value="2"> \(1 - \sum_{k=0}^{2} C_{10}^k \cdot 0.3^k \cdot 0.7^{10-k}\)</label>
+      <label><input type="radio" name="q5" value="3"> \(\sum_{k=3}^{10} C_{10}^k \cdot 0.7^k \cdot 0.3^{10-k}\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="1">
+    <div class="quiz-q">6. 某路口每分钟通过的车辆数服从参数 \(\lambda = 3\) 的泊松分布，则一分钟内恰好通过 2 辆车的概率为</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q6" value="0"> \(\frac{9e^{-3}}{2}\)</label>
+      <label><input type="radio" name="q6" value="1"> \(\frac{9e^{-3}}{2}\)，即 \(\frac{3^2 e^{-3}}{2!}\)</label>
+      <label><input type="radio" name="q6" value="2"> \(\frac{3^2 e^{-3}}{2}\)</label>
+      <label><input type="radio" name="q6" value="3"> \(3e^{-3}\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <!-- 第三章 Q7-9 -->
+  <div class="quiz-container" data-correct="0">
+    <div class="quiz-q">7. 设 \((X,Y)\) 的联合密度为 \(f(x,y) = \begin{cases} 2, & 0 < x < 1,\; 0 < y < x \\ 0, & \text{其他} \end{cases}\)，则 \(P(Y \le \frac{1}{2})\) 等于</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q7" value="0"> \(\frac{3}{4}\)</label>
+      <label><input type="radio" name="q7" value="1"> \(\frac{1}{2}\)</label>
+      <label><input type="radio" name="q7" value="2"> \(\frac{1}{4}\)</label>
+      <label><input type="radio" name="q7" value="3"> \(1\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="2">
+    <div class="quiz-q">8. 设 \((X,Y)\) 的联合密度为 \(f(x,y) = 4xy,\; 0 < x < 1,\; 0 < y < 1\)，则边缘密度 \(f_X(x)\) 为</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q8" value="0"> \(4x,\; 0 < x < 1\)</label>
+      <label><input type="radio" name="q8" value="1"> \(2x,\; 0 < x < 1\)</label>
+      <label><input type="radio" name="q8" value="2"> \(2x,\; 0 < x < 1\)（且 \(f(x,y) = f_X(x)f_Y(y)\)，X、Y 独立）</label>
+      <label><input type="radio" name="q8" value="3"> \(xy,\; 0 < x < 1\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="3">
+    <div class="quiz-q">9. 若 \((X,Y)\) 服从二维正态分布 \(N(\mu_1,\mu_2;\sigma_1^2,\sigma_2^2;\rho)\)，则 \(X\) 与 \(Y\) 独立的充要条件是</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q9" value="0"> \(E(XY) = 0\)</label>
+      <label><input type="radio" name="q9" value="1"> \(D(X) = D(Y)\)</label>
+      <label><input type="radio" name="q9" value="2"> \(E(X) = E(Y)\)</label>
+      <label><input type="radio" name="q9" value="3"> \(\rho = 0\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <!-- 第四章 Q10-13 -->
+  <div class="quiz-container" data-correct="1">
+    <div class="quiz-q">10. 设 \(X \sim U(0, 2)\)，则 \(E(3X + 1)\) 等于</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q10" value="0"> \(3\)</label>
+      <label><input type="radio" name="q10" value="1"> \(4\)</label>
+      <label><input type="radio" name="q10" value="2"> \(5\)</label>
+      <label><input type="radio" name="q10" value="3"> \(7\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="2">
+    <div class="quiz-q">11. 设 \(X \sim N(1, 4)\)，\(Y \sim N(2, 9)\)，X 与 Y 独立，则 \(D(2X - Y)\) 等于</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q11" value="0"> \(7\)</label>
+      <label><input type="radio" name="q11" value="1"> \(16\)</label>
+      <label><input type="radio" name="q11" value="2"> \(25\)</label>
+      <label><input type="radio" name="q11" value="3"> \(5\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="0">
+    <div class="quiz-q">12. 设 \(E(X) = 2\)，\(E(Y) = 3\)，\(E(XY) = 7\)，则 \(\text{Cov}(X,Y)\) 等于</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q12" value="0"> \(1\)</label>
+      <label><input type="radio" name="q12" value="1"> \(-1\)</label>
+      <label><input type="radio" name="q12" value="2"> \(6\)</label>
+      <label><input type="radio" name="q12" value="3"> \(13\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="1">
+    <div class="quiz-q">13. 若 \(X\) 与 \(Y\) 的相关系数 \(\rho_{XY} = 0\)，则下列说法正确的是</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q13" value="0"> \(X\) 与 \(Y\) 一定独立</label>
+      <label><input type="radio" name="q13" value="1"> \(X\) 与 \(Y\) 不相关，但不一定独立</label>
+      <label><input type="radio" name="q13" value="2"> \(X\) 与 \(Y\) 存在线性关系</label>
+      <label><input type="radio" name="q13" value="3"> \(D(X+Y) = D(X) - D(Y)\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <!-- 第五章 Q14-16 -->
+  <div class="quiz-container" data-correct="0">
+    <div class="quiz-q">14. 设 \(E(X) = \mu\)，\(D(X) = \sigma^2\)，由切比雪夫不等式，\(P(|X - \mu| < 2\sigma)\) 的下界为</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q14" value="0"> \(\frac{3}{4}\)</label>
+      <label><input type="radio" name="q14" value="1"> \(\frac{1}{4}\)</label>
+      <label><input type="radio" name="q14" value="2"> \(\frac{1}{2}\)</label>
+      <label><input type="radio" name="q14" value="3"> \(\frac{1}{9}\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="2">
+    <div class="quiz-q">15. 设 \(X_1, X_2, \ldots, X_{100}\) 独立同分布，\(E(X_i) = 5\)，\(D(X_i) = 4\)，由中心极限定理，\(P(\sum_{i=1}^{100} X_i > 520)\) 近似等于</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q15" value="0"> \(\Phi(5)\)</label>
+      <label><input type="radio" name="q15" value="1"> \(1 - \Phi(2)\)</label>
+      <label><input type="radio" name="q15" value="2"> \(1 - \Phi(10)\)</label>
+      <label><input type="radio" name="q15" value="3"> \(\Phi(2)\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="3">
+    <div class="quiz-q">16. 辛钦大数定律表明：若 \(X_1, X_2, \ldots\) 独立同分布且 \(E(X_i) = \mu\) 存在，则</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q16" value="0"> \(\bar{X} \to \mu\) 几乎必然</label>
+      <label><input type="radio" name="q16" value="1"> \(\bar{X} \sim N(\mu, \sigma^2/n)\)</label>
+      <label><input type="radio" name="q16" value="2"> \(P(\bar{X} = \mu) = 1\)</label>
+      <label><input type="radio" name="q16" value="3"> \(\bar{X} \xrightarrow{P} \mu\)（依概率收敛于 \(\mu\)）</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <!-- 第六章（三大抽样分布）Q17-18 -->
+  <div class="quiz-container" data-correct="1">
+    <div class="quiz-q">17. 设 \(X_1, X_2, \ldots, X_n\) 是来自 \(N(\mu, \sigma^2)\) 的样本，\(\sigma^2\) 未知。则统计量 \(\frac{\bar{X} - \mu}{S/\sqrt{n}}\) 服从</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q17" value="0"> \(N(0, 1)\)</label>
+      <label><input type="radio" name="q17" value="1"> \(t(n-1)\)</label>
+      <label><input type="radio" name="q17" value="2"> \(t(n)\)</label>
+      <label><input type="radio" name="q17" value="3"> \(\chi^2(n-1)\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="0">
+    <div class="quiz-q">18. 设 \(X \sim \chi^2(5)\)，\(Y \sim \chi^2(8)\)，X 与 Y 独立，则 \(\frac{X/5}{Y/8}\) 服从</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q18" value="0"> \(F(5, 8)\)</label>
+      <label><input type="radio" name="q18" value="1"> \(F(8, 5)\)</label>
+      <label><input type="radio" name="q18" value="2"> \(\chi^2(13)\)</label>
+      <label><input type="radio" name="q18" value="3"> \(t(13)\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <!-- 第七章 Q19-21 -->
+  <div class="quiz-container" data-correct="2">
+    <div class="quiz-q">19. 设总体 \(X \sim Exp(\lambda)\)，\(X_1, \ldots, X_n\) 是样本，则 \(\lambda\) 的矩估计量为</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q19" value="0"> \(\bar{X}\)</label>
+      <label><input type="radio" name="q19" value="1"> \(n\bar{X}\)</label>
+      <label><input type="radio" name="q19" value="2"> \(\frac{1}{\bar{X}}\)</label>
+      <label><input type="radio" name="q19" value="3"> \(\frac{\bar{X}}{n}\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="3">
+    <div class="quiz-q">20. 设 \(X \sim U(0, \theta)\)，\(X_1, \ldots, X_n\) 是样本，则 \(\theta\) 的最大似然估计量为</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q20" value="0"> \(\bar{X}\)</label>
+      <label><input type="radio" name="q20" value="1"> \(2\bar{X}\)</label>
+      <label><input type="radio" name="q20" value="2"> \(\min(X_1, \ldots, X_n)\)</label>
+      <label><input type="radio" name="q20" value="3"> \(\max(X_1, \ldots, X_n)\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="1">
+    <div class="quiz-q">21. 设总体 \(X \sim N(\mu, \sigma^2)\)，\(\sigma^2\) 已知，\(\mu\) 的置信水平为 \(1-\alpha\) 的置信区间为</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q21" value="0"> \(\bar{X} \pm t_{\alpha/2}(n-1) \cdot \frac{S}{\sqrt{n}}\)</label>
+      <label><input type="radio" name="q21" value="1"> \(\bar{X} \pm z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}\)</label>
+      <label><input type="radio" name="q21" value="2"> \(\bar{X} \pm z_\alpha \cdot \frac{\sigma}{\sqrt{n}}\)</label>
+      <label><input type="radio" name="q21" value="3"> \(\bar{X} \pm z_{\alpha/2} \cdot \frac{\sigma^2}{\sqrt{n}}\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <!-- 第八章 Q22-25 -->
+  <div class="quiz-container" data-correct="0">
+    <div class="quiz-q">22. 在假设检验中，第一类错误是指</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q22" value="0"> \(H_0\) 为真却拒绝了 \(H_0\)</label>
+      <label><input type="radio" name="q22" value="1"> \(H_0\) 为假却接受了 \(H_0\)</label>
+      <label><input type="radio" name="q22" value="2"> \(H_1\) 为真却拒绝了 \(H_1\)</label>
+      <label><input type="radio" name="q22" value="3"> \(H_1\) 为假却接受了 \(H_1\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="2">
+    <div class="quiz-q">23. 设总体 \(X \sim N(\mu, 4)\)，检验 \(H_0: \mu = 10\) vs \(H_1: \mu \ne 10\)，取 \(n = 25\)，\(\alpha = 0.05\)，则拒绝域为</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q23" value="0"> \(|Z| \ge 1.645\)</label>
+      <label><input type="radio" name="q23" value="1"> \(|Z| \ge 2.576\)</label>
+      <label><input type="radio" name="q23" value="2"> \(|Z| \ge 1.96\)</label>
+      <label><input type="radio" name="q23" value="3"> \(|T| \ge t_{0.025}(24)\)</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="1">
+    <div class="quiz-q">24. p 值的含义是</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q24" value="0"> \(H_0\) 为真的概率</label>
+      <label><input type="radio" name="q24" value="1"> 在 \(H_0\) 成立的前提下，观察到当前或更极端结果的概率</label>
+      <label><input type="radio" name="q24" value="2"> 第二类错误的概率</label>
+      <label><input type="radio" name="q24" value="3"> 置信区间的长度</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="3">
+    <div class="quiz-q">25. 当显著性水平 \(\alpha\) 减小时（其他条件不变），下列说法正确的是</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="q25" value="0"> 第一类错误概率减小，第二类错误概率也减小</label>
+      <label><input type="radio" name="q25" value="1"> 第一类错误概率增大，第二类错误概率减小</label>
+      <label><input type="radio" name="q25" value="2"> 两类错误都不变</label>
+      <label><input type="radio" name="q25" value="3"> 第一类错误概率减小，第二类错误概率增大</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <!-- 判断题 Q26-28 -->
+  <div class="quiz-container" data-correct="0" data-type="judge">
+    <div class="quiz-q">判断题 26. 在几何概型中，样本空间中的每个基本事件一定是等可能的。</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="j26" value="1"> 正确 &#10003;</label>
+      <label><input type="radio" name="j26" value="0"> 错误 &#10007;</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="1" data-type="judge">
+    <div class="quiz-q">判断题 27. 泊松分布可以作为二项分布的极限近似，条件是 n 大、p 小、np 适中。</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="j27" value="1"> 正确 &#10003;</label>
+      <label><input type="radio" name="j27" value="0"> 错误 &#10007;</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <div class="quiz-container" data-correct="0" data-type="judge">
+    <div class="quiz-q">判断题 28. 大数定律和中心极限定理的含义完全相同，都是描述大量独立随机变量之和趋于正态分布。</div>
+    <div class="quiz-options">
+      <label><input type="radio" name="j28" value="1"> 正确 &#10003;</label>
+      <label><input type="radio" name="j28" value="0"> 错误 &#10007;</label>
+    </div>
+    <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+    <div class="quiz-result"></div>
+  </div>
+
+  <!-- 填空题 Q29-32 -->
+  <div class="quiz-container" data-type="fill">
+    <div class="quiz-q">填空题 29. 设 \(P(A) = 0.5\)，\(P(B) = 0.4\)，\(P(AB) = 0.2\)，则 \(P(A \cup B)\) = _____ 。</div>
+    <div style="margin:8px 0"><input type="text" class="fill-input" placeholder="填写答案" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);width:200px">
+    <button class="quiz-btn" onclick="checkFill(this)">检查</button></div>
+    <div class="quiz-result"></div>
+    <div class="fill-answer" style="display:none;color:var(--green)">参考答案: 0.7（由加法公式 P(A∪B) = P(A) + P(B) - P(AB) = 0.5 + 0.4 - 0.2 = 0.7）</div>
+  </div>
+
+  <div class="quiz-container" data-type="fill">
+    <div class="quiz-q">填空题 30. 设 \(X \sim \pi(3)\)，则 \(P(X = 2)\) = _____ 。（保留4位小数）</div>
+    <div style="margin:8px 0"><input type="text" class="fill-input" placeholder="填写答案" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);width:200px">
+    <button class="quiz-btn" onclick="checkFill(this)">检查</button></div>
+    <div class="quiz-result"></div>
+    <div class="fill-answer" style="display:none;color:var(--green)">参考答案: 0.2240（由泊松分布 P(X=2) = 3^2 * e^(-3) / 2! = 9 * 0.0498 / 2 = 0.2240）</div>
+  </div>
+
+  <div class="quiz-container" data-type="fill">
+    <div class="quiz-q">填空题 31. 设总体 \(X \sim N(\mu, \sigma^2)\)，则样本方差 \(S^2 = \frac{1}{n-1}\sum_{i=1}^n(X_i - \bar{X})^2\) 是 _____ 的无偏估计量，其自由度为 _____ 。</div>
+    <div style="margin:8px 0"><input type="text" class="fill-input" placeholder="填写答案" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);width:200px">
+    <button class="quiz-btn" onclick="checkFill(this)">检查</button></div>
+    <div class="quiz-result"></div>
+    <div class="fill-answer" style="display:none;color:var(--green)">参考答案: 总体方差 σ^2（或方差 D(X)），n-1</div>
+  </div>
+
+  <div class="quiz-container" data-type="fill">
+    <div class="quiz-q">填空题 32. 设 \(X \sim N(0,1)\)，则 \(P(|X| < 1.96)\) = _____ 。（查标准正态分布表）</div>
+    <div style="margin:8px 0"><input type="text" class="fill-input" placeholder="填写答案" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);width:200px">
+    <button class="quiz-btn" onclick="checkFill(this)">检查</button></div>
+    <div class="quiz-result"></div>
+    <div class="fill-answer" style="display:none;color:var(--green)">参考答案: 0.95（P(|X|<1.96) = 2Φ(1.96) - 1 = 2×0.975 - 1 = 0.95）</div>
+  </div>
+
+  <!-- 简答题 Q33-35 -->
+  <div class="quiz-container" data-type="essay">
+    <div class="quiz-q">简答题 33. 简述矩估计和最大似然估计（MLE）的基本思想和步骤，并指出两者的区别。</div>
+    <textarea class="essay-input" placeholder="在此作答..." style="width:100%;min-height:80px;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:.9rem;resize:vertical"></textarea>
+    <button class="quiz-btn" onclick="toggleAnswer(this)" style="margin-top:8px">查看参考答案</button>
+    <div class="essay-answer" style="display:none;margin-top:12px;padding:16px;background:var(--formula-bg);border-radius:8px;border:1px solid var(--border)">
+      <strong>矩估计：</strong>用样本矩 A_k 替换总体矩 E(X^k)，解出参数。一个参数时令 E(X) = X&#772;，两个参数时联立 E(X) = X&#772; 和 E(X^2) = (1/n)ΣX_i^2。<br><br>
+      <strong>最大似然估计：</strong>写出似然函数 L(θ) = Π f(x_i; θ)，取对数 lnL(θ)，对 θ 求导令其为 0 解出 θ&#770;。<br><br>
+      <strong>区别：</strong>矩估计利用总体矩与样本矩的关系，计算简单；MLE 求使样本出现概率最大的参数，具有一致性和渐近正态性。MLE 具有不变性（若 θ&#770; 是 MLE，则 g(θ&#770;) 是 g(θ) 的 MLE），矩估计没有此性质。
+    </div>
+  </div>
+
+  <div class="quiz-container" data-type="essay">
+    <div class="quiz-q">简答题 34. 什么是置信区间？95% 置信水平的含义是什么？置信区间越窄是否越好？</div>
+    <textarea class="essay-input" placeholder="在此作答..." style="width:100%;min-height:80px;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:.9rem;resize:vertical"></textarea>
+    <button class="quiz-btn" onclick="toggleAnswer(this)" style="margin-top:8px">查看参考答案</button>
+    <div class="essay-answer" style="display:none;margin-top:12px;padding:16px;background:var(--formula-bg);border-radius:8px;border:1px solid var(--border)">
+      <strong>置信区间：</strong>由样本构造的一个区间，以一定概率（置信水平）包含总体参数真值。<br><br>
+      <strong>95% 置信水平的含义：</strong>如果重复抽样构造 100 个置信区间，大约有 95 个区间会包含参数真值。不是说参数有 95% 的概率落在某个具体区间内。<br><br>
+      <strong>置信区间越窄越好？</strong>在样本量确定时，置信区间越窄，置信水平越低。要同时缩小区间和提高置信水平，需要增大样本量 n。因此需要在精度和可靠性之间权衡。
+    </div>
+  </div>
+
+  <div class="quiz-container" data-type="essay">
+    <div class="quiz-q">简答题 35. 什么是第一类错误和第二类错误？两者的关系是什么？减小显著性水平 α 会带来什么影响？</div>
+    <textarea class="essay-input" placeholder="在此作答..." style="width:100%;min-height:80px;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:.9rem;resize:vertical"></textarea>
+    <button class="quiz-btn" onclick="toggleAnswer(this)" style="margin-top:8px">查看参考答案</button>
+    <div class="essay-answer" style="display:none;margin-top:12px;padding:16px;background:var(--formula-bg);border-radius:8px;border:1px solid var(--border)">
+      <strong>第一类错误（弃真）：</strong>H_0 为真却拒绝了 H_0，概率为 α（显著性水平）。<br><br>
+      <strong>第二类错误（取伪）：</strong>H_0 为假却接受了 H_0，概率为 β。<br><br>
+      <strong>两者关系：</strong>在样本量 n 固定时，减小 α 会导致 β 增大，两者此消彼长。要同时减小两类错误，需要增大样本量。<br><br>
+      <strong>减小 α 的影响：</strong>第一类错误概率减小（犯弃真错误的机会减少），但第二类错误概率增大（更容易取伪），检验的拒绝域变窄，检验变得更加保守。
+    </div>
+  </div>
+
 </div>
 
 <!-- Back to top -->
@@ -1380,5 +1793,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="../../search.js"></script>
 <script src="../../remember.js"></script>
 <script src="../../theme.js"></script>
+<script src="../../wrong-book.js"></script>
+<script src="../../formula-ref.js"></script>
+<script src="../../mastery.js"></script>
+<script src="../../random-quiz.js"></script>
+<script src="../../cross-links.js"></script>
+<script src="../../print-mode.js"></script>
+<script src="../../pwa.js"></script>
+<script src="../../ux.js"></script>
 </body>
 </html>

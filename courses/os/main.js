@@ -6,7 +6,7 @@ window.addEventListener('scroll',()=>{
   const btn=document.getElementById('backTop');
   btn.classList.toggle('show',window.scrollY>300);
   // Active nav
-  const sections=['ch1','ch2','ch2-proc','ch2-sched','ch2-sync','ch2-deadlock','ch3','ch3-page','ch3-replace','ch4','ch4-disk','ch5','exam'];
+  const sections=['ch1','ch2','ch2-proc','ch2-sched','ch2-sync','ch2-deadlock','ch3','ch3-page','ch3-replace','ch4','ch4-disk','ch5','exam','quiz'];
   let current='';
   for(const s of sections){const el=document.getElementById(s);if(el&&el.getBoundingClientRect().top<200)current=s;}
   document.querySelectorAll('nav a').forEach(a=>{
@@ -431,6 +431,41 @@ function runDiskSched(){
   });
 
   document.getElementById('diskResult').innerHTML=html;
+}
+
+// === Quiz ===
+function checkQuiz(btn){
+  var container=btn.closest('.quiz-container');
+  var correct=parseInt(container.dataset.correct);
+  var selected=container.querySelector('input:checked');
+  var result=container.querySelector('.quiz-result');
+  if(!selected){result.textContent='请先选择答案';result.className='quiz-result quiz-wrong';return;}
+  if(parseInt(selected.value)===correct){
+    result.textContent='✓ 正确！';result.className='quiz-result quiz-correct';
+  }else{
+    result.textContent='✗ 错误，正确答案是 '+container.querySelectorAll('.quiz-options label')[correct].textContent;
+    result.className='quiz-result quiz-wrong';
+  }
+}
+
+// Fill-in-the-blank check
+function checkFill(btn) {
+  var c = btn.closest('.quiz-container');
+  var input = c.querySelector('.fill-input');
+  var result = c.querySelector('.quiz-result');
+  var answer = c.querySelector('.fill-answer');
+  if (!input.value.trim()) { result.textContent = '请填写答案'; result.className = 'quiz-result quiz-wrong'; return; }
+  answer.style.display = 'block';
+  result.textContent = '已显示参考答案，请自行对照';
+  result.className = 'quiz-result quiz-correct';
+}
+
+// Essay answer toggle
+function toggleAnswer(btn) {
+  var c = btn.closest('.quiz-container');
+  var answer = c.querySelector('.essay-answer');
+  answer.style.display = answer.style.display === 'none' ? 'block' : 'none';
+  btn.textContent = answer.style.display === 'none' ? '查看参考答案' : '隐藏参考答案';
 }
 
 // Init

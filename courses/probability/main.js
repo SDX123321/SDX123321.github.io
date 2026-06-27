@@ -67,3 +67,25 @@ function toggleSidebar(){
   o.classList.toggle('show');
 }
 if(!localStorage.getItem('sg_done_prob'))document.getElementById('subGuide').style.display='flex';
+// Quiz
+function checkQuiz(btn){var c=btn.closest('.quiz-container');var correct=parseInt(c.dataset.correct);var sel=c.querySelector('input:checked');var res=c.querySelector('.quiz-result');if(!sel){res.textContent='请先选择答案';res.className='quiz-result quiz-wrong';return}if(parseInt(sel.value)===correct){res.textContent='✓ 正确！';res.className='quiz-result quiz-correct'}else{res.textContent='✗ 错误，正确答案是 '+c.querySelectorAll('.quiz-options label')[correct].textContent;res.className='quiz-result quiz-wrong'}}
+
+// Fill-in-the-blank check
+function checkFill(btn) {
+  var c = btn.closest('.quiz-container');
+  var input = c.querySelector('.fill-input');
+  var result = c.querySelector('.quiz-result');
+  var answer = c.querySelector('.fill-answer');
+  if (!input.value.trim()) { result.textContent = '请填写答案'; result.className = 'quiz-result quiz-wrong'; return; }
+  answer.style.display = 'block';
+  result.textContent = '已显示参考答案，请自行对照';
+  result.className = 'quiz-result quiz-correct';
+}
+
+// Essay answer toggle
+function toggleAnswer(btn) {
+  var c = btn.closest('.quiz-container');
+  var answer = c.querySelector('.essay-answer');
+  answer.style.display = answer.style.display === 'none' ? 'block' : 'none';
+  btn.textContent = answer.style.display === 'none' ? '查看参考答案' : '隐藏参考答案';
+}

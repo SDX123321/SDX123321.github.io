@@ -13,6 +13,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>操作系统期末复习</title>
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="../../manifest.json">
 </head>
 <body>
 <div id="migrateNotice" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:10000;max-width:520px;width:calc(100% - 32px);padding:14px 40px 14px 18px;background:var(--card);border:1px solid var(--accent);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);font-size:.88rem;color:var(--text);line-height:1.6;animation:migrateIn .4s ease">
@@ -68,6 +69,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <a href="#ch4-disk" class="sub" onclick="scrollToSection('ch4-disk')">4.1 磁盘调度算法</a>
 <a href="#ch5" onclick="scrollToSection('ch5')">第五章 文件系统</a>
 <a href="#exam" onclick="scrollToSection('exam')">考试信息</a>
+<a href="#quiz" onclick="scrollToSection('quiz')">自测练习</a>
 </nav>
 
 <main>
@@ -851,6 +853,333 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 祝考试顺利！
 </div>
 
+<!-- ==================== QUIZ ==================== -->
+<h2 id="quiz"><span class="icon">&#9999;&#65039;</span> 自测练习</h2>
+<p style="color:var(--text2);margin-bottom:16px">共 20 题，涵盖操作系统全部 5 章内容。选择答案后点击"检查答案"查看结果。</p>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">1. 以下哪项不属于操作系统的设计目标？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q1" value="0"> A. 并发性</label>
+    <label><input type="radio" name="q1" value="1"> B. 方便性</label>
+    <label><input type="radio" name="q1" value="2"> C. 可扩充性</label>
+    <label><input type="radio" name="q1" value="3"> D. 开放性</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">2. 微内核结构的优势不包括以下哪项？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q2" value="0"> A. 内核代码量少，更简洁</label>
+    <label><input type="radio" name="q2" value="1"> B. 模块化程度高，可扩展性强</label>
+    <label><input type="radio" name="q2" value="2"> C. 所有模块在内核态运行，效率最高</label>
+    <label><input type="radio" name="q2" value="3"> D. 增强可移植性，修改代码量少</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">3. 在进程三态模型中，以下哪种状态转换是不可能的？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q3" value="0"> A. 运行态 → 就绪态</label>
+    <label><input type="radio" name="q3" value="1"> B. 就绪态 → 等待态</label>
+    <label><input type="radio" name="q3" value="2"> C. 运行态 → 等待态</label>
+    <label><input type="radio" name="q3" value="3"> D. 等待态 → 就绪态</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">4. 三个作业 A(到达0, 运行3)、B(到达1, 运行6)、C(到达3, 运行2)。使用 SJF（最短作业优先）调度，C 的周转时间是多少？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q4" value="0"> A. 2</label>
+    <label><input type="radio" name="q4" value="1"> B. 3</label>
+    <label><input type="radio" name="q4" value="2"> C. 4</label>
+    <label><input type="radio" name="q4" value="3"> D. 5</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">5. 在生产者-消费者问题的 PV 操作实现中，如果一个进程既要申请同步信号量又要申请互斥信号量，正确的 P 操作顺序是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q5" value="0"> A. 先 P 互斥信号量，再 P 同步信号量</label>
+    <label><input type="radio" name="q5" value="1"> B. 先 P 同步信号量，再 P 互斥信号量</label>
+    <label><input type="radio" name="q5" value="2"> C. 顺序无所谓，结果相同</label>
+    <label><input type="radio" name="q5" value="3"> D. 只需 P 互斥信号量即可</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">6. 死锁产生的四个必要条件中，"资源有序分配法"破坏的是哪个条件？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q6" value="0"> A. 互斥使用</label>
+    <label><input type="radio" name="q6" value="1"> B. 不可抢占</label>
+    <label><input type="radio" name="q6" value="2"> C. 请求和保持</label>
+    <label><input type="radio" name="q6" value="3"> D. 循环等待</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">7. 系统有 3 种资源 R1(10)、R2(5)、R3(7)。当前 Available=(3,3,2)。某进程 Need=(1,2,2) 且 Allocation=(2,0,0)。该进程执行完毕后 Available 变为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q7" value="0"> A. (5,3,2)</label>
+    <label><input type="radio" name="q7" value="1"> B. (4,5,4)</label>
+    <label><input type="radio" name="q7" value="2"> C. (3,3,4)</label>
+    <label><input type="radio" name="q7" value="3"> D. (5,5,2)</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">8. HRRN（最高响应比优先）算法中，某作业已等待 10 分钟，运行时间为 5 分钟，其响应比为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q8" value="0"> A. 1.5</label>
+    <label><input type="radio" name="q8" value="1"> B. 2.0</label>
+    <label><input type="radio" name="q8" value="2"> C. 3.0</label>
+    <label><input type="radio" name="q8" value="3"> D. 10.0</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">9. 页面大小为 4KB，逻辑地址 0x00001A5F 的页号和页内偏移分别是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q9" value="0"> A. 页号=0，偏移=0x1A5F</label>
+    <label><input type="radio" name="q9" value="1"> B. 页号=1，偏移=0x0A5F</label>
+    <label><input type="radio" name="q9" value="2"> C. 页号=1，偏移=0x1A5F</label>
+    <label><input type="radio" name="q9" value="3"> D. 页号=2，偏移=0x0A5F</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">10. 引入快表（TLB）后，若 TLB 命中，访问一个逻辑地址需要几次访存？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q10" value="0"> A. 3 次</label>
+    <label><input type="radio" name="q10" value="1"> B. 2 次</label>
+    <label><input type="radio" name="q10" value="2"> C. 0 次</label>
+    <label><input type="radio" name="q10" value="3"> D. 1 次</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">11. 分页存储管理中，页表的作用是什么？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q11" value="0"> A. 实现页号到物理块号的映射</label>
+    <label><input type="radio" name="q11" value="1"> B. 存储进程的程序代码</label>
+    <label><input type="radio" name="q11" value="2"> C. 记录进程的运行状态</label>
+    <label><input type="radio" name="q11" value="3"> D. 管理进程的创建与撤销</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">12. 在页面置换算法中，哪种算法可能出现 Belady 异常（增加页框数反而缺页率上升）？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q12" value="0"> A. OPT</label>
+    <label><input type="radio" name="q12" value="1"> B. LRU</label>
+    <label><input type="radio" name="q12" value="2"> C. FIFO</label>
+    <label><input type="radio" name="q12" value="3"> D. 以上三种都会</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">13. 页面访问序列为 1,2,3,4,1,2,5,1,2,3,4,5，分配 3 个页框。使用 LRU 算法，访问第 4 个页面（页号4）时，哪个页面被替换？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q13" value="0"> A. 页号1</label>
+    <label><input type="radio" name="q13" value="1"> B. 页号2</label>
+    <label><input type="radio" name="q13" value="2"> C. 页号5</label>
+    <label><input type="radio" name="q13" value="3"> D. 页号3</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">14. 段页式存储管理中，逻辑地址到物理地址的转换过程是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q14" value="0"> A. 逻辑地址 → 查页表 → 得物理块号 → 拼接偏移</label>
+    <label><input type="radio" name="q14" value="1"> B. 逻辑地址 → 段号查段表得页表始址 → 页号查页表得物理块号 → 拼接偏移</label>
+    <label><input type="radio" name="q14" value="2"> C. 逻辑地址 → 段始址 + 段内偏移</label>
+    <label><input type="radio" name="q14" value="3"> D. 逻辑地址 → 查快表 → 直接得物理地址</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">15. 分段存储管理中，逻辑地址为 (段号, 段内偏移)，若段内偏移大于段长，会发生什么？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q15" value="0"> A. 产生越界中断</label>
+    <label><input type="radio" name="q15" value="1"> B. 自动扩展段长</label>
+    <label><input type="radio" name="q15" value="2"> C. 取模后继续访问</label>
+    <label><input type="radio" name="q15" value="3"> D. 访问物理地址 0</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">16. 以下 I/O 控制方式中，CPU 介入最少的是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q16" value="0"> A. 询问方式（轮询）</label>
+    <label><input type="radio" name="q16" value="1"> B. 中断方式</label>
+    <label><input type="radio" name="q16" value="2"> C. DMA 方式</label>
+    <label><input type="radio" name="q16" value="3"> D. 通道方式</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">17. 磁盘调度算法中，SSTF（最短查找时间优先）的主要缺点是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q17" value="0"> A. 效率最低</label>
+    <label><input type="radio" name="q17" value="1"> B. 可能产生饥饿</label>
+    <label><input type="radio" name="q17" value="2"> C. 需要预知请求序列</label>
+    <label><input type="radio" name="q17" value="3"> D. 磁头必须到达磁盘两端</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">18. 以下哪种文件物理结构不支持随机访问？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q18" value="0"> A. 顺序结构</label>
+    <label><input type="radio" name="q18" value="1"> B. 索引结构</label>
+    <label><input type="radio" name="q18" value="2"> C. 链接结构</label>
+    <label><input type="radio" name="q18" value="3"> D. 以上都支持</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">19. 磁盘块大小为 1KB，盘块号占 4 字节。一个一级间接索引块最多可以指向多少个物理块？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q19" value="0"> A. 1024</label>
+    <label><input type="radio" name="q19" value="1"> B. 256</label>
+    <label><input type="radio" name="q19" value="2"> C. 64</label>
+    <label><input type="radio" name="q19" value="3"> D. 4</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">20. 文件安全管理中，为防止未授权用户访问文件，应采取的主要措施是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q20" value="0"> A. 访问控制（设置权限）</label>
+    <label><input type="radio" name="q20" value="1"> B. 增加缓冲区大小</label>
+    <label><input type="radio" name="q20" value="2"> C. 使用索引分配方式</label>
+    <label><input type="radio" name="q20" value="3"> D. 提高磁盘转速</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<!-- 判断题 Q21-23 -->
+<div class="quiz-container" data-correct="0" data-type="judge">
+  <div class="quiz-q">判断题 21. 在进程三态模型中，就绪态可以直接转换为等待态。</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="j21" value="1"> 正确 &#10003;</label>
+    <label><input type="radio" name="j21" value="0"> 错误 &#10007;</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0" data-type="judge">
+  <div class="quiz-q">判断题 22. 在生产者-消费者问题中，若先执行 P(mutex) 再执行 P(empty)，当缓冲区满时可能导致死锁。</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="j22" value="1"> 正确 &#10003;</label>
+    <label><input type="radio" name="j22" value="0"> 错误 &#10007;</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1" data-type="judge">
+  <div class="quiz-q">判断题 23. FIFO 页面置换算法可能出现 Belady 异常，即增加页框数反而导致缺页率上升。</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="j23" value="1"> 正确 &#10003;</label>
+    <label><input type="radio" name="j23" value="0"> 错误 &#10007;</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<!-- 填空题 Q24-26 -->
+<div class="quiz-container" data-type="fill">
+  <div class="quiz-q">填空题 24. 死锁产生的四个必要条件是：互斥使用、_____ 、请求和保持、_____ 。</div>
+  <div style="margin:8px 0"><input type="text" class="fill-input" placeholder="填写答案" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);width:200px">
+  <button class="quiz-btn" onclick="checkFill(this)">检查</button></div>
+  <div class="quiz-result"></div>
+  <div class="fill-answer" style="display:none;color:var(--green)">参考答案: 不可抢占、循环等待</div>
+</div>
+
+<div class="quiz-container" data-type="fill">
+  <div class="quiz-q">填空题 25. 页面大小为 4KB，逻辑地址 0x00002B3F 的页号为 _____ ，页内偏移为 _____ 。</div>
+  <div style="margin:8px 0"><input type="text" class="fill-input" placeholder="填写答案" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);width:200px">
+  <button class="quiz-btn" onclick="checkFill(this)">检查</button></div>
+  <div class="quiz-result"></div>
+  <div class="fill-answer" style="display:none;color:var(--green)">参考答案: 页号 = 2，偏移 = 0xB3F（4KB = 2^12，低12位为偏移，高位为页号）</div>
+</div>
+
+<div class="quiz-container" data-type="fill">
+  <div class="quiz-q">填空题 26. 磁盘块大小为 1KB，盘块号占 4 字节，则一个一级间接索引块最多可指向 _____ 个物理块。</div>
+  <div style="margin:8px 0"><input type="text" class="fill-input" placeholder="填写答案" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);width:200px">
+  <button class="quiz-btn" onclick="checkFill(this)">检查</button></div>
+  <div class="quiz-result"></div>
+  <div class="fill-answer" style="display:none;color:var(--green)">参考答案: 256（1024 / 4 = 256 个索引项）</div>
+</div>
+
+<!-- 简答题 Q27-28 -->
+<div class="quiz-container" data-type="essay">
+  <div class="quiz-q">简答题 27. 简述微内核结构的四个优势。</div>
+  <textarea class="essay-input" placeholder="在此作答..." style="width:100%;min-height:80px;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:.9rem;resize:vertical"></textarea>
+  <button class="quiz-btn" onclick="toggleAnswer(this)" style="margin-top:8px">查看参考答案</button>
+  <div class="essay-answer" style="display:none;margin-top:12px;padding:16px;background:var(--formula-bg);border-radius:8px;border:1px solid var(--border)">
+    ① 代码量少，内核更简洁，安全性更高。<br>
+    ② 充分模块化，更换某个模块不影响其他模块。<br>
+    ③ 未使用的模块不必运行，大幅减少内存需求。<br>
+    ④ 增强可移植性，移植时只需修改微内核部分代码。
+  </div>
+</div>
+
+<div class="quiz-container" data-type="essay">
+  <div class="quiz-q">简答题 28. 说明 SPOOLing 技术的核心思想，并以打印机为例说明其工作原理。</div>
+  <textarea class="essay-input" placeholder="在此作答..." style="width:100%;min-height:80px;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:.9rem;resize:vertical"></textarea>
+  <button class="quiz-btn" onclick="toggleAnswer(this)" style="margin-top:8px">查看参考答案</button>
+  <div class="essay-answer" style="display:none;margin-top:12px;padding:16px;background:var(--formula-bg);border-radius:8px;border:1px solid var(--border)">
+    <strong>核心思想：</strong>SPOOLing（假脱机技术）利用磁盘作为缓冲，将独占设备改造为共享设备（虚拟设备）。<br><br>
+    <strong>以打印机为例：</strong><br>
+    ① 多个进程"同时"提交打印请求；<br>
+    ② 输出数据先暂存在磁盘的输出井中；<br>
+    ③ SPOOLing 输出进程依次从输出井取出数据送往打印机；<br>
+    ④ 对用户而言，打印机好像可以共享使用，实现了虚拟化。
+  </div>
+</div>
+
 </main>
 
 <div class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
@@ -869,5 +1198,13 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 <script src="../../search.js"></script>
 <script src="../../remember.js"></script>
 <script src="../../theme.js"></script>
+<script src="../../wrong-book.js"></script>
+<script src="../../formula-ref.js"></script>
+<script src="../../mastery.js"></script>
+<script src="../../random-quiz.js"></script>
+<script src="../../cross-links.js"></script>
+<script src="../../print-mode.js"></script>
+<script src="../../pwa.js"></script>
+<script src="../../ux.js"></script>
 </body>
 </html>
