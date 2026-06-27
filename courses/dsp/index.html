@@ -659,7 +659,7 @@ FFT 不是新变换，是 DFT 的<strong>快速算法</strong>。基本思想：
 
 <h4>蝶形运算基本单元</h4>
 <div class="card" style="text-align:center">
-<img src="images/butterfly_operation.png" alt="蝶形运算" style="max-width:420px;width:100%;margin:12px 0">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/butterfly_operation.png" alt="蝶形运算" style="max-width:420px;width:100%;margin:12px 0">
 <p style="font-size:13px;color:var(--text-dim);margin-top:8px">蝶形运算单元：W 系数在输入端下路，上路输出 = 两输入相加，下路输出 = 两输入相减后再乘 W 系数</p>
 </div>
 
@@ -668,20 +668,20 @@ FFT 不是新变换，是 DFT 的<strong>快速算法</strong>。基本思想：
 
 <div class="card" style="text-align:center">
 <p style="font-size:14px;font-weight:600;color:var(--accent2);margin-bottom:8px">图 3.17：两个 4 点 FFT 组成一个 8 点 FFT</p>
-<img src="images/fft_8pt_freq_split.png" alt="两个4点FFT组成8点FFT" style="max-width:700px;width:100%;margin:8px 0">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_8pt_freq_split.png" alt="两个4点FFT组成8点FFT" style="max-width:700px;width:100%;margin:8px 0">
 <p style="font-size:13px;color:var(--text-dim)">将 8 点序列按奇偶分成两组 4 点序列，分别做 FFT 后通过蝶形运算合成</p>
 </div>
 
 <div class="card" style="text-align:center">
 <p style="font-size:14px;font-weight:600;color:var(--accent2);margin-bottom:8px">图 3.18：由四个 2 点 FFT 组成 8 点 FFT</p>
-<img src="images/four_2pt_to_8pt.png" alt="四个2点FFT组成8点FFT" style="max-width:700px;width:100%;margin:8px 0">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/four_2pt_to_8pt.png" alt="四个2点FFT组成8点FFT" style="max-width:700px;width:100%;margin:8px 0">
 <p style="font-size:13px;color:var(--text-dim)">继续分解，每个 4 点 FFT 再分为两个 2 点 FFT，最终 8 点 FFT = 4 个 2 点 FFT + 蝶形合成</p>
 </div>
 
 <h4>★ 按时间抽取的 N=8 点 FFT 完整流图</h4>
 <div class="card" style="text-align:center;border-color:var(--accent);box-shadow:0 0 20px rgba(108,99,255,0.15)">
 <p style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:8px">图 3.19：按时间抽取的 N=8 点 FFT 运算流图（重点！必须会画）</p>
-<img src="images/fft_8pt_time_full.png" alt="N=8按时间抽取FFT完整流图" style="max-width:800px;width:100%;margin:8px 0">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_8pt_time_full.png" alt="N=8按时间抽取FFT完整流图" style="max-width:800px;width:100%;margin:8px 0">
 </div>
 
 <div class="keypoint">
@@ -699,13 +699,13 @@ FFT 不是新变换，是 DFT 的<strong>快速算法</strong>。基本思想：
 
 <h4>N=4 按时间抽取 FFT 流图</h4>
 <div class="card" style="text-align:center">
-<img src="images/fft_4pt_time.png" alt="N=4按时间抽取FFT" style="max-width:500px;width:100%;margin:8px 0">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_4pt_time.png" alt="N=4按时间抽取FFT" style="max-width:500px;width:100%;margin:8px 0">
 <p style="font-size:13px;color:var(--text-dim)">N=4 按时间抽取：2 级运算，输入码位倒序 {0,2,1,3}，输出自然顺序 {0,1,2,3}</p>
 </div>
 
 <h4>蝶形类型随级数变化</h4>
 <div class="card" style="text-align:center">
-<img src="images/fft_8pt_time_full.png" alt="蝶形类型" style="max-width:700px;width:100%;opacity:0.7;margin:8px 0">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_8pt_time_full.png" alt="蝶形类型" style="max-width:700px;width:100%;opacity:0.7;margin:8px 0">
 <div style="text-align:left;font-size:13px;margin-top:8px">
 <table>
 <tr><th>级数</th><th>蝶形类型数</th><th>W 系数</th><th>蝶距</th></tr>
@@ -735,7 +735,7 @@ FFT 不是新变换，是 DFT 的<strong>快速算法</strong>。基本思想：
 <h4>★ 按频率抽取的 N=8 点 FFT 流图</h4>
 <div class="card" style="text-align:center">
 <p style="font-size:14px;font-weight:600;color:var(--accent2);margin-bottom:8px">图 3.23：按频率抽取的 N=8 点 FFT 运算流图</p>
-<img src="images/fft_8pt_freq_full.png" alt="N=8按频率抽取FFT" style="max-width:800px;width:100%;margin:8px 0">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_8pt_freq_full.png" alt="N=8按频率抽取FFT" style="max-width:800px;width:100%;margin:8px 0">
 <p style="font-size:13px;color:var(--text-dim)">W 系数在输出端下路；输入自然顺序，输出码位倒序；蝶距从大到小（与时间抽取相反）</p>
 </div>
 
@@ -751,7 +751,7 @@ FFT 不是新变换，是 DFT 的<strong>快速算法</strong>。基本思想：
 
 <h4>N=4 时间抽取与频率抽取对比</h4>
 <div class="card" style="text-align:center">
-<img src="images/fft_4pt_compare.png" alt="N=4时间抽取与频率抽取对比" style="max-width:550px;width:100%;margin:8px 0">
+<img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/dsp/fft_4pt_compare.png" alt="N=4时间抽取与频率抽取对比" style="max-width:550px;width:100%;margin:8px 0">
 <p style="font-size:13px;color:var(--text-dim)">左：N=4 按频率抽取 | 右：N=4 按时间抽取。注意 W 系数位置和输入输出顺序的区别</p>
 </div>
 
