@@ -1,7 +1,13 @@
-import { useParams, Link, Outlet, useOutlet } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useEffect, useRef, lazy, Suspense } from 'react'
 import useScrollMemory from '../../hooks/useScrollMemory'
 import { loadBusuanzi } from '../../lib/cdnScripts'
+import { useTheme } from '../../features/theme/ThemeContext'
+import WrongBookFAB from '../../features/wrong-book/WrongBookFAB'
+import RandomQuizFAB from '../../features/random-quiz/RandomQuizFAB'
+import FormulaRefFAB from '../../features/formula-ref/FormulaRefFAB'
+import PrintModeFAB from '../../features/print-mode/PrintModeFAB'
+import KeyboardShortcuts from '../../features/ux/KeyboardShortcuts'
 
 const COURSE_META = {
   probability: { name: '概率论与数理统计', color: '#2563eb', icon: '📊' },
@@ -31,6 +37,7 @@ export default function CourseLayout() {
   const mainRef = useRef(null)
 
   useScrollMemory()
+  const { toggleTheme } = useTheme()
 
   // Load busuanzi counter
   useEffect(() => { loadBusuanzi() }, [])
@@ -112,6 +119,13 @@ export default function CourseLayout() {
           <PageComponent />
         </Suspense>
       </main>
+
+      {/* Shared feature FABs */}
+      <WrongBookFAB />
+      <RandomQuizFAB />
+      <FormulaRefFAB />
+      <PrintModeFAB />
+      <KeyboardShortcuts onToggleTheme={toggleTheme} />
 
       {/* Back to top */}
       <div
