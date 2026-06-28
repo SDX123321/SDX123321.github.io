@@ -10,6 +10,7 @@ export default function FileBrowser() {
   const [subject, setSubject] = useState('')
   const [type, setType] = useState('')
   const [previewFile, setPreviewFile] = useState(null)
+  const [tip, setTip] = useState(null)
 
   const subjects = useMemo(() => {
     const seen = new Set()
@@ -81,7 +82,13 @@ export default function FileBrowser() {
           gap: 10, maxHeight: 480, overflowY: 'auto', paddingRight: 4,
         }}>
           {filtered.map((f, i) => (
-            <div className="file-card" key={i} style={{ cursor: 'pointer' }}>
+            <div className="file-card" key={i} style={{ cursor: 'pointer' }}
+              onMouseEnter={(e) => {
+                const r = e.currentTarget.getBoundingClientRect()
+                setTip({ file: f, x: r.left + 16, y: r.top - 4 })
+              }}
+              onMouseLeave={() => setTip(null)}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, minWidth: 0 }}>
                 <div style={{
                   width: 36, height: 36, borderRadius: 8, display: 'flex',
@@ -157,6 +164,17 @@ export default function FileBrowser() {
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Hover tooltip — fixed position, not clipped by scroll container */}
+      {tip && (
+        <div className="file-tip file-tip-fixed" style={{ left: tip.x, top: tip.y }}>
+          <div className="file-tip-row"><span className="file-tip-label">名称</span><span className="file-tip-value">{tip.file.n}</span></div>
+          <div className="file-tip-row"><span className="file-tip-label">学科</span><span className="file-tip-value">{tip.file.sn}</span></div>
+          <div className="file-tip-row"><span className="file-tip-label">类型</span><span className="file-tip-value">{tip.file.tn}</span></div>
+          <div className="file-tip-row"><span className="file-tip-label">大小</span><span className="file-tip-value">{tip.file.sz}</span></div>
+          <div className="file-tip-row"><span className="file-tip-label">路径</span><span className="file-tip-value" style={{fontSize:'.72rem',color:'var(--text3)'}}>{tip.file.p}</span></div>
         </div>
       )}
     </>
