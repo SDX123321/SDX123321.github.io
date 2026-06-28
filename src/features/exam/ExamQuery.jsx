@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import Turnstile from '../security/Turnstile'
 
 const LS_KEY = 'exam_class_id'
 const LS_DELETED = 'exam_deleted'
+const LS_TS = 'exam_ts_verified'
 
 function getDeletedExams() {
   try { return JSON.parse(localStorage.getItem(LS_DELETED) || '{}') } catch (e) { return {} }
@@ -55,8 +57,23 @@ export default function ExamQuery() {
   const [msg, setMsg] = useState(null)
   const [deletedMap, setDeletedMap] = useState(getDeletedExams)
   const [loading, setLoading] = useState(false)
+  const [tsVerified, setTsVerified] = useState(() => {
+    try {
+      const raw = localStorage.getItem(LS_TS)
+      if (!raw) return false
+      const { exp } = JSON.parse(raw)
+      return exp > Date.now()
+    } catch { return false }
+  })
   const refreshRef = useRef(null)
   const loadedRef = useRef(false)
+
+  const handleTsVerify = useCallback((token) => {
+    setTsVerified(true)
+    try { localStorage.setItem(LS_TS, JSON.stringify({ exp: Date.now() + 3600000 })) } catch {}
+  }, [])
+  const handleTsExpire = useCallback(() => { setTsVerified(false) }, [])
+  const handleTsError = useCallback(() => { setTsVerified(false) }, [])
 
   const loadData = useCallback(() => {
     return new Promise(resolve => {
@@ -77,6 +94,7 @@ export default function ExamQuery() {
 
   const doQuery = useCallback(async (id) => {
     if (!id || !id.trim()) return
+    if (!tsVerified) { setMsg({ text: '请先完成人机验证。', type: 'warn' }); return }
     setLoading(true)
     try {
       const d = await loadData()
@@ -116,14 +134,23 @@ export default function ExamQuery() {
     } finally {
       setLoading(false)
     }
-  }, [loadData])
+  }, [loadData, tsVerified])
 
   useEffect(() => {
     const saved = localStorage.getItem(LS_KEY)
-    if (saved) { setClassId(saved); doQuery(saved) }
+    if (saved) setClassId(saved)
     else loadData()
     return () => clearInterval(refreshRef.current)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-query saved class after Turnstile verification completes
+  const autoQueryRef = useRef(false)
+  useEffect(() => {
+    if (tsVerified && classId && !autoQueryRef.current) {
+      autoQueryRef.current = true
+      doQuery(classId)
+    }
+  }, [tsVerified, classId, doQuery])
 
   const removeExam = (exam, btn) => {
     const card = btn.closest('.exam-card')
@@ -170,6 +197,12 @@ export default function ExamQuery() {
           </button>
         </div>
         <div className="exam-input-hint">输入班级 ID 即可查看该班所有考试时间、教室和教师信息</div>
+        {!tsVerified && (
+          <div style={{ marginTop: 12, marginBottom: 4 }}>
+            <div style={{ fontSize: '.78rem', color: 'var(--text3)', marginBottom: 6 }}>请先完成安全验证：</div>
+            <Turnstile onVerify={handleTsVerify} onError={handleTsError} onExpire={handleTsExpire} />
+          </div>
+        )}
         {msg && <div className={`exam-msg exam-msg-${msg.type}`} style={{ marginTop: 12 }}>{msg.text}</div>}
       </div>
 
