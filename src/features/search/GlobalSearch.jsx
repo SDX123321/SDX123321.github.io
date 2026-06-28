@@ -46,7 +46,7 @@ export default function GlobalSearch() {
   }, [])
 
   const openFile = (f) => {
-    window.open('/site/' + f.p, '_blank')
+    window.open('/' + f.p, '_blank')
     setFocus(false)
   }
 

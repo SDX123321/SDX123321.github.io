@@ -27,11 +27,11 @@ export default function FileBrowser() {
     e.stopPropagation()
     if (f.t === 'textbook') {
       if (confirm('该电子课本仅供个人学习交流使用，不得用于商业用途。是否继续？')) {
-        window.open('/site/' + f.p, '_blank')
+        window.open('/' + f.p, '_blank')
       }
       return
     }
-    window.open('/site/' + f.p, '_blank')
+    window.open('/' + f.p, '_blank')
   }
 
   const openPreview = (f, e) => {
@@ -41,9 +41,9 @@ export default function FileBrowser() {
 
   const getPreviewUrl = (f) => {
     if (f.p.endsWith('.pptx') || f.p.endsWith('.docx')) {
-      return `https://docs.google.com/gview?url=${encodeURIComponent(window.location.origin + '/site/' + f.p)}&embedded=true`
+      return `https://docs.google.com/gview?url=${encodeURIComponent(window.location.origin + '/' + f.p)}&embedded=true`
     }
-    return '/site/' + f.p
+    return '/' + f.p
   }
 
   return (

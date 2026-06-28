@@ -5,13 +5,13 @@ export default function FilePreview({ fileUrl, fileName, onClose }) {
   const [docxHtml, setDocxHtml] = useState('')
   const isPptx = fileUrl?.endsWith('.pptx')
   const isDocx = fileUrl?.endsWith('.docx')
-  const gviewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(window.location.origin + '/site/' + fileUrl)}&embedded=true`
+  const gviewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(window.location.origin + '/' + fileUrl)}&embedded=true`
 
   // Load mammoth for DOCX
   if (isDocx && !docxHtml && !loading) {
     setLoading(true)
     if (window.mammoth) {
-      fetch('/site/' + fileUrl)
+      fetch('/' + fileUrl)
         .then(r => r.arrayBuffer())
         .then(buf => window.mammoth.convertToHtml({ arrayBuffer: buf }))
         .then(r => { setDocxHtml(r.value); setLoading(false) })

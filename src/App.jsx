@@ -21,7 +21,7 @@ function NotFound() {
     <div style={{ textAlign: 'center', padding: '80px 20px', color: 'var(--text)' }}>
       <h1 style={{ fontSize: '3rem', marginBottom: '12px' }}>404</h1>
       <p style={{ color: 'var(--text-light)' }}>页面不存在</p>
-      <Link to="/site/" style={{ color: 'var(--accent)', marginTop: 16, display: 'inline-block' }}>← 返回首页</Link>
+      <Link to="/" style={{ color: 'var(--accent)', marginTop: 16, display: 'inline-block' }}>← 返回首页</Link>
     </div>
   )
 }
@@ -46,11 +46,11 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       {
-        path: '/site/',
+        path: '/',
         element: <Suspense fallback={<Loading />}><HomePage /></Suspense>,
       },
       {
-        path: '/site/courses/:courseId/*',
+        path: '/courses/:courseId/*',
         element: <Suspense fallback={<Loading />}><CourseLayout /></Suspense>,
       },
       {

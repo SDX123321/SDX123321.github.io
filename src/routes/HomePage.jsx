@@ -74,7 +74,7 @@ export default function HomePage() {
       {/* Course cards */}
       <div className="cards">
         {COURSES.map(c => (
-          <Link key={c.path} className="card" to={`/site/courses/${c.path}/`} style={c.style}>
+          <Link key={c.path} className="card" to={`/courses/${c.path}/`} style={c.style}>
             <div className={`icon ${c.iconClass || ''}`} style={c.iconStyle}>{c.icon}</div>
             <h2>{c.title}</h2>
             <p>{c.desc}</p>

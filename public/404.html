@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <script>
 // GitHub Pages SPA fallback: redirect to index.html preserving the URL
-var pathSegmentsToKeep = 1; // keep '/site/' prefix
+var pathSegmentsToKeep = 0; // custom domain: serve from root
 var l = window.location;
 l.replace(
   l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +

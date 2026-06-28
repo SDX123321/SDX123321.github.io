@@ -13,7 +13,7 @@ export default function PWAManager() {
     if (!('serviceWorker' in navigator)) return
 
     // Register service worker
-    navigator.serviceWorker.register('/site/sw.js').then(reg => {
+    navigator.serviceWorker.register('/sw.js').then(reg => {
       // Check for updates periodically
       reg.addEventListener('updatefound', () => {
         const newWorker = reg.installing

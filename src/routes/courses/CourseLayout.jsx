@@ -63,7 +63,7 @@ export default function CourseLayout() {
       <div style={{ textAlign: 'center', padding: '80px 20px', color: 'var(--text)' }}>
         <h1 style={{ fontSize: '2rem', marginBottom: 12 }}>课程未找到</h1>
         <p style={{ color: 'var(--text-light)' }}>「{courseId}」尚未迁移至新版</p>
-        <Link to="/site/" style={{ color: 'var(--accent)', marginTop: 16, display: 'inline-block' }}>← 返回首页</Link>
+        <Link to="/" style={{ color: 'var(--accent)', marginTop: 16, display: 'inline-block' }}>← 返回首页</Link>
       </div>
     )
   }
@@ -97,7 +97,7 @@ export default function CourseLayout() {
           </div>
         </div>
         <Link
-          to="/site/"
+          to="/"
           className="sidebar-back"
         >
           <span className="sidebar-back-icon">←</span>

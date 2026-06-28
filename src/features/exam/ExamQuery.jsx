@@ -64,11 +64,11 @@ export default function ExamQuery() {
       if (window.EXAM_SCHEDULE_DATA && typeof window.EXAM_SCHEDULE_DATA === 'object') {
         loadedRef.current = true; setData(window.EXAM_SCHEDULE_DATA); resolve(window.EXAM_SCHEDULE_DATA); return
       }
-      fetch('/site/files/exam-schedule.json')
+      fetch('/files/exam-schedule.json')
         .then(r => r.json()).then(j => { loadedRef.current = true; setData(j); resolve(j) })
         .catch(() => {
           const script = document.createElement('script')
-          script.src = '/site/files/exam-schedule-data.js'
+          script.src = '/files/exam-schedule-data.js'
           script.onload = () => { loadedRef.current = true; setData(window.EXAM_SCHEDULE_DATA); resolve(window.EXAM_SCHEDULE_DATA) }
           document.head.appendChild(script)
         })
