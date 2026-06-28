@@ -29,6 +29,11 @@ jobs:
 
       - run: npm ci
 
+      # files/ is tracked in repo root; public/files is a symlink on local dev.
+      # CI has no symlink, so create it so Vite copies files/ into dist/files/.
+      - name: Link public/files to files/
+        run: ln -s ../files public/files
+
       - run: npm run build
 
       - uses: actions/upload-pages-artifact@v3
