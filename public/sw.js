@@ -1,9 +1,9 @@
 /* sw.js — Service Worker for 期末复习 PWA */
 'use strict';
 
-var CACHE_NAME = 'exam-review-v1';
-var STATIC_CACHE = 'exam-review-static-v1';
-var HTML_CACHE = 'exam-review-html-v1';
+var CACHE_NAME = 'exam-review-v2';
+var STATIC_CACHE = 'exam-review-static-v2';
+var HTML_CACHE = 'exam-review-html-v2';
 
 /* Static assets to pre-cache on install */
 var PRECACHE_URLS = [
