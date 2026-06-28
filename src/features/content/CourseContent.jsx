@@ -17,8 +17,8 @@ export default function CourseContent({ html, courseKey, onQuizAnswer }) {
     if (!containerRef.current) return
     const el = containerRef.current
 
-    // KaTeX (probability, algorithm)
-    if (courseKey === 'probability' || courseKey === 'algorithm') {
+    // KaTeX (probability, algorithm, calculus)
+    if (courseKey === 'probability' || courseKey === 'algorithm' || courseKey === 'calculus') {
       if (window.renderMathInElement) {
         try {
           window.renderMathInElement(el, {
@@ -34,8 +34,8 @@ export default function CourseContent({ html, courseKey, onQuizAnswer }) {
       }
     }
 
-    // MathJax (DSP)
-    if (courseKey === 'dsp') {
+    // MathJax (DSP, Signals)
+    if (courseKey === 'dsp' || courseKey === 'signals') {
       if (window.MathJax && window.MathJax.typesetPromise) {
         try {
           window.MathJax.typesetPromise([el]).catch(() => {})
@@ -112,7 +112,7 @@ export default function CourseContent({ html, courseKey, onQuizAnswer }) {
     const el = containerRef.current
 
     function handleClick(e) {
-      const header = e.target.closest('.section-header, h3.collapsible, h4.collapsible')
+      const header = e.target.closest('.section-header, h3.collapsible, h4.collapsible, .chapter-header, .card-header')
       if (!header) return
       e.preventDefault()
 
@@ -121,6 +121,24 @@ export default function CourseContent({ html, courseKey, onQuizAnswer }) {
       if (section) {
         section.classList.toggle('collapsed')
         return
+      }
+
+      // Toggle chapter open/close
+      if (header.classList.contains('chapter-header')) {
+        const chapter = header.closest('.chapter')
+        if (chapter) {
+          chapter.classList.toggle('open')
+          return
+        }
+      }
+
+      // Toggle card open/close
+      if (header.classList.contains('card-header')) {
+        const card = header.closest('.card')
+        if (card) {
+          card.classList.toggle('open')
+          return
+        }
       }
 
       // Toggle collapsible content (DSP/algorithm pattern)

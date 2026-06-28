@@ -9,6 +9,7 @@ export default function CalculusPage() {
       courseKey="calculus"
       html={html}
       navLinks={navLinks}
+      needsKaTeX={true}
     />
   )
 }

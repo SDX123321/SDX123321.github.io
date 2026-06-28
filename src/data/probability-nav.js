@@ -25,8 +25,8 @@ export const navLinks = [
     "keywords": ""
   },
   {
-    "id": "dist",
-    "label": "三大抽样分布",
+    "id": "ch6",
+    "label": "Ch6 三大抽样分布",
     "keywords": ""
   },
   {

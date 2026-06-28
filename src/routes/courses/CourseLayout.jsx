@@ -8,6 +8,10 @@ import RandomQuizFAB from '../../features/random-quiz/RandomQuizFAB'
 import FormulaRefFAB from '../../features/formula-ref/FormulaRefFAB'
 import PrintModeFAB from '../../features/print-mode/PrintModeFAB'
 import KeyboardShortcuts from '../../features/ux/KeyboardShortcuts'
+import PageSearch from '../../features/search/PageSearch'
+import ChapterProgress from '../../features/ux/ChapterProgress'
+import CrossLinks from '../../features/cross-links/CrossLinks'
+import '../../styles/course-layout.css'
 
 const COURSE_META = {
   probability: { name: '概率论与数理统计', color: '#2563eb', icon: '📊' },
@@ -17,6 +21,7 @@ const COURSE_META = {
   marxism:     { name: '马克思主义基本原理', color: '#e63946', icon: '📰' },
   calculus:    { name: '高等数学（重修）',   color: '#e74c3c', icon: '📈' },
   maogai:      { name: '毛泽东思想概论',   color: '#dc2626', icon: '📰' },
+  signals:     { name: '信号与系统B',      color: '#06b6d4', icon: '📶' },
 }
 
 // Lazy-loaded course page components
@@ -28,6 +33,7 @@ const COURSE_PAGES = {
   marxism:     lazy(() => import('./MarxismPage')),
   calculus:    lazy(() => import('./CalculusPage')),
   maogai:      lazy(() => import('./MaogaiPage')),
+  signals:     lazy(() => import('./SignalsPage')),
 }
 
 export default function CourseLayout() {
@@ -46,11 +52,10 @@ export default function CourseLayout() {
   useEffect(() => {
     if (!meta) return
     document.title = `${meta.name} - 期末复习`
-    // Update sidebar title
-    const titleEl = document.querySelector('.sidebar-title')
-    if (titleEl) {
-      titleEl.innerHTML = `${meta.icon} ${meta.name}`
-    }
+    const iconEl = document.querySelector('.sidebar-brand-icon')
+    const titleEl = document.querySelector('.sidebar-brand-title')
+    if (iconEl) iconEl.textContent = meta.icon
+    if (titleEl) titleEl.textContent = meta.name
   }, [courseId, meta])
 
   if (!meta || !PageComponent) {
@@ -68,7 +73,10 @@ export default function CourseLayout() {
       {/* Mobile menu button */}
       <button
         className="nav-toggle"
-        onClick={() => document.querySelector('.sidebar')?.classList.toggle('open')}
+        onClick={() => {
+          document.querySelector('.course-sidebar')?.classList.toggle('open')
+          document.querySelector('.sidebar-overlay')?.classList.toggle('show')
+        }}
         aria-label="打开菜单"
       >
         &#9776;
@@ -80,20 +88,20 @@ export default function CourseLayout() {
       </div>
 
       {/* Sidebar */}
-      <nav className="sidebar" id="sidebar">
-        <div className="sidebar-title">
-          {meta.icon} {meta.name}
+      <nav className={`course-sidebar sidebar ${courseId}`} id="sidebar">
+        <div className="sidebar-brand">
+          <div className="sidebar-brand-icon">{meta.icon}</div>
+          <div className="sidebar-brand-text">
+            <span className="sidebar-brand-title">{meta.name}</span>
+            <span className="sidebar-brand-sub">期末复习笔记</span>
+          </div>
         </div>
         <Link
           to="/site/"
-          style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            padding: '10px 20px', color: 'var(--accent)',
-            fontSize: 13, textDecoration: 'none',
-            borderBottom: '1px solid var(--border)',
-          }}
+          className="sidebar-back"
         >
-          ← 返回课程主页
+          <span className="sidebar-back-icon">←</span>
+          <span>返回课程主页</span>
         </Link>
         <div className="nav-group">
           <div className="nav-group-title">加载中…</div>
@@ -104,13 +112,13 @@ export default function CourseLayout() {
       <div
         className="sidebar-overlay"
         onClick={() => {
-          document.querySelector('.sidebar')?.classList.remove('open')
+          document.querySelector('.course-sidebar')?.classList.remove('open')
           document.querySelector('.sidebar-overlay')?.classList.remove('show')
         }}
       />
 
       {/* Main content */}
-      <main className="main" ref={mainRef}>
+      <main className={`course-main main ${courseId}`} ref={mainRef}>
         <Suspense fallback={
           <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-light)' }}>
             <p>加载课程内容…</p>
@@ -126,23 +134,25 @@ export default function CourseLayout() {
       <FormulaRefFAB />
       <PrintModeFAB />
       <KeyboardShortcuts onToggleTheme={toggleTheme} />
+      <PageSearch />
+      <ChapterProgress />
+      <CrossLinks />
 
       {/* Back to top */}
       <div
         className="back-top"
         id="backTop"
-        style={{ display: 'none' }}
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       >
         ↑
       </div>
 
       {/* Visitor counter bar */}
-      <div style={{
+      <div className="visitor-bar" style={{
         position: 'fixed', bottom: 12, left: 286,
-        background: 'rgba(26,29,46,.9)', padding: '6px 14px',
-        borderRadius: 20, fontSize: '.75rem', color: 'var(--text-dim)',
-        zIndex: 80, border: '1px solid var(--border)', backdropFilter: 'blur(8px)',
+        padding: '6px 14px',
+        borderRadius: 20, fontSize: '.75rem',
+        zIndex: 80, backdropFilter: 'blur(8px)',
       }}>
         <span id="busuanzi_container_site_pv">
           👁 <span id="busuanzi_value_site_pv">...</span>

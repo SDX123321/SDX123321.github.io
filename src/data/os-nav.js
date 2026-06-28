@@ -11,22 +11,22 @@ export const navLinks = [
   },
   {
     "id": "ch2-proc",
-    "label": "2.1 进程 重点",
+    "label": "2.1 进程 <span class=\"tag tag-L\">重点</span>",
     "keywords": ""
   },
   {
     "id": "ch2-sched",
-    "label": "2.2 调度算法 重点",
+    "label": "2.2 调度算法 <span class=\"tag tag-L\">重点</span>",
     "keywords": ""
   },
   {
     "id": "ch2-sync",
-    "label": "2.3 同步与互斥 重点",
+    "label": "2.3 同步与互斥 <span class=\"tag tag-L\">重点</span>",
     "keywords": ""
   },
   {
     "id": "ch2-deadlock",
-    "label": "2.4 死锁 重点",
+    "label": "2.4 死锁 <span class=\"tag tag-L\">重点</span>",
     "keywords": ""
   },
   {
@@ -41,7 +41,7 @@ export const navLinks = [
   },
   {
     "id": "ch3-replace",
-    "label": "3.2 页面置换算法 重点",
+    "label": "3.2 页面置换算法 <span class=\"tag tag-L\">重点</span>",
     "keywords": ""
   },
   {

@@ -1,0 +1,870 @@
+<h1>信号与系统B 期末复习</h1>
+<p style="color:var(--text-dim);margin-bottom:24px">基于期末复习提要PPT整理 · 覆盖全6章核心知识点</p>
+
+<div id="exam-info" class="exam-banner">
+  <h3>考试信息</h3>
+  <div class="exam-grid">
+    <div class="exam-item"><strong>考试时间：</strong>2026年7月2日 13:30-15:20</div>
+    <div class="exam-item"><strong>请提前：</strong>15分钟到考场</div>
+    <div class="exam-item"><strong>考试要求：</strong>带作图工具、黑色水笔，不允许带计算器</div>
+    <div class="exam-item"><strong>慕课堂截止：</strong>2026年6月30日</div>
+    <div class="exam-item"><strong>题型：</strong>单选、填空、画图、计算、综合题</div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">章节</div></div>
+  <div class="stat-card"><div class="stat-num">50+</div><div class="stat-label">核心公式</div></div>
+  <div class="stat-card"><div class="stat-num">20+</div><div class="stat-label">典型例题</div></div>
+  <div class="stat-card"><div class="stat-num">20+</div><div class="stat-label">自测题</div></div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ==================== CH1: 信号与系统的基本概念 ==================== -->
+<h2 id="ch1-basic">第1章 信号与系统的基本概念</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">1.1 信号的分类</h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>信号周期性判断</strong>（例1-1-2）：连续信号 $f(t) = f(t+T)$，最小正 $T$ 为周期。离散信号 $f(k) = f(k+N)$，$N$ 需为整数。
+</div>
+
+<h4>能量信号与功率信号快速判断</h4>
+<table>
+<tr><th>信号类型</th><th>判断条件</th><th>结论</th></tr>
+<tr><td>直流信号</td><td>恒定值</td><td>功率信号</td></tr>
+<tr><td>周期信号</td><td>$f(t)=f(t+T)$</td><td>功率信号</td></tr>
+<tr><td>脉冲信号</td><td>$|t|\to\infty$ 时幅值趋于 0</td><td>能量信号</td></tr>
+<tr><td>幅值有界（不趋于0）</td><td>$|t|\to\infty$ 幅值不为无穷大，至少一边有限</td><td>功率信号</td></tr>
+<tr><td>幅值无界</td><td>$|t|\to\infty$ 只要一边幅值为无穷大</td><td>非能量非功率</td></tr>
+</table>
+
+<div class="formula">
+<span class="formula-tag">能量与功率公式</span><br>
+$$E = \int_{-\infty}^{\infty} |f(t)|^2 \, dt \qquad P = \lim_{T\to\infty} \frac{1}{2T} \int_{-T}^{T} |f(t)|^2 \, dt$$
+$$\text{能量信号: } 0 < E < \infty, \; P=0 \qquad \text{功率信号: } E=\infty, \; 0 < P < \infty$$
+</div>
+</div>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">1.2 系统的分类</h3>
+<div class="collapsible-content show">
+
+<h4>线性系统判断（快速判断法）</h4>
+<div class="keypoint">
+<strong>非线性系统</strong>的三个快速判据：<br>
+① 方程中有<strong>常数项</strong><br>
+② $x$ 及 $x$ 各阶导数的<strong>次数 > 1</strong><br>
+③ $y$ 及 $y$ 各阶导数的<strong>次数 > 1</strong><br>
+与原方程式形式不同 → 不满足叠加性 → 非线性系统
+</div>
+
+<h4>时不变系统判断（快速判断法）</h4>
+<div class="keypoint">
+<strong>时不变系统</strong>的两个条件：<br>
+① $y$ 或 $x$ 前系数为<strong>常数</strong><br>
+② $y$ 或 $x$ 中 $t$ 前系数为 <strong>1</strong>
+</div>
+
+<h4>因果系统判断（快速判断法）</h4>
+<div class="keypoint">
+<strong>因果性判断</strong>：代入 $t=0$（或 $k=0$）：<br>
+- $y$ 括号里数值 $<$ $x$ 括号里数值 → <strong>非因果</strong><br>
+- $y$ 括号里数值 $\geq$ $x$ 括号里数值 → <strong>因果</strong>
+</div>
+
+<div class="warning">
+因果系统：响应不超前于激励，没有输入就没有输出。实际系统都是因果系统；非因果系统是理想系统，不是真实系统。
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">例题：判断系统线性/时变/因果性（点击展开）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>例：某系统由微分方程 $y'(t) + 2y(t) = x(t) + 3$ 表示，试判断该系统是否为线性系统。</strong><br><br>
+<strong>解：</strong>方程中存在常数项 3，<strong>不满足齐次性</strong> → <strong>非线性系统</strong>
+</div>
+<div class="example">
+<strong>例：试判断 $y(t) = tx(t)$ 是否为时不变系统。</strong><br><br>
+<strong>解：</strong>$x$ 前系数为 $t$（不是常数）→ <strong>时变系统</strong>
+</div>
+<div class="example">
+<strong>例：试判断 $y(t) = x(t+1)$ 是否为因果系统。</strong><br><br>
+<strong>解：</strong>当 $t=0$ 时，$y(0)=x(1)$，当前输出与<strong>将来输入</strong>有关 → <strong>非因果系统</strong>
+</div>
+</div>
+</div>
+
+<h3 id="ch1-quiz" class="collapsible" onclick="toggleCollapse(this)">1.3 第1章 自测题（点击展开）</h3>
+<div class="collapsible-content">
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">1. 信号 $f(t) = e^{-|t|}$ 属于什么类型的信号？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="ch1q1" value="0"> 功率信号</label>
+    <label><input type="radio" name="ch1q1" value="1"> 能量信号</label>
+    <label><input type="radio" name="ch1q1" value="2"> 非能量非功率信号</label>
+    <label><input type="radio" name="ch1q1" value="3"> 周期信号</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">2. 系统 $y(t) = x^2(t)$ 是什么系统？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="ch1q2" value="0"> 线性时不变因果</label>
+    <label><input type="radio" name="ch1q2" value="1"> 线性时变因果</label>
+    <label><input type="radio" name="ch1q2" value="2"> 非线性时不变因果</label>
+    <label><input type="radio" name="ch1q2" value="3"> 非线性时变非因果</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">3. 系统 $y(k) = x(k-1)$ 是什么系统？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="ch1q3" value="0"> 线性时不变因果</label>
+    <label><input type="radio" name="ch1q3" value="1"> 线性时变因果</label>
+    <label><input type="radio" name="ch1q3" value="2"> 非线性时不变因果</label>
+    <label><input type="radio" name="ch1q3" value="3"> 非线性时不变非因果</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ==================== CH2: 连续时间信号与系统的时域分析 ==================== -->
+<h2 id="ch2-signals">第2章 连续时间信号与系统的时域分析</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">2.1 典型连续时间信号</h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>要求</strong>：给定信号的波形，会用基本信号写出信号的表达式。
+</div>
+
+<h4>单位冲激信号 $\delta(t)$ 的性质</h4>
+<table>
+<tr><th>性质</th><th>公式</th><th>说明</th></tr>
+<tr><td>筛选特性</td><td>$\displaystyle\int_{-\infty}^{\infty} f(t)\delta(t)\,dt = f(0)$</td><td>也叫"抽样特性"</td></tr>
+<tr><td>加权特性</td><td>$f(t)\delta(t) = f(0)\delta(t)$</td><td>广义函数等价</td></tr>
+<tr><td>尺度变换</td><td>$\delta(at) = \frac{1}{|a|}\delta(t)$</td><td></td></tr>
+<tr><td>偶函数</td><td>$\delta(-t) = \delta(t)$</td><td></td></tr>
+</table>
+
+<div class="warning">
+<strong>注意</strong>：在有限积分区间 $(a,b)$ 内使用筛选特性时，只有当 0 在积分区间内，$\int_a^b f(t)\delta(t)\,dt = f(0)$；否则为 0。
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">例题：冲激函数的筛选/加权特性应用（点击展开）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>例2-1-1</strong>：已知 $f(t)$ 的波形如图所示，试求 $f''(t)$，并画出其波形图。<br><br>
+<strong>解</strong>：利用微分性质，含有冲激函数的求导：<br>
+- 在信号跳变点处产生冲激 $\delta(t)$<br>
+- 利用加权特性 $f(t)\delta(t-t_0) = f(t_0)\delta(t-t_0)$<br>
+- 阶跃部分求导为冲激，常数部分求导为 0
+</div>
+</div>
+</div>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">2.2 信号的基本运算与时域分解</h3>
+<div class="collapsible-content show">
+
+<h4>基本运算</h4>
+<table>
+<tr><th>运算</th><th>说明</th></tr>
+<tr><td>翻转</td><td>$f(-t)$：关于纵轴翻转</td></tr>
+<tr><td>尺度变换</td><td>$f(at)$：$|a|>1$ 压缩，$|a|<1$ 展宽</td></tr>
+<tr><td>时移</td><td>$f(t-t_0)$：$t_0>0$ 右移，$t_0<0$ 左移</td></tr>
+</table>
+
+<div class="keypoint">
+<strong>复合运算顺序</strong>：先翻转 → 再压缩/展宽 → 最后时移（建议时移放最后一步）
+</div>
+
+<h4>信号的时域分解</h4>
+<div class="formula">
+<span class="formula-tag">分解方式</span><br>
+交直流分解：$f(t) = f_D + f_A(t)$，其中 $f_D$ 为直流分量<br>
+奇偶分解：$f(t) = f_e(t) + f_o(t)$，其中 $f_e(t) = \frac{1}{2}[f(t)+f(-t)]$ 为偶分量
+</div>
+</div>
+
+<h3 id="ch2-convolution" class="collapsible open" onclick="toggleCollapse(this)">2.3 卷积运算</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">卷积积分定义</span><br>
+$$y(t) = f_1(t) * f_2(t) = \int_{-\infty}^{\infty} f_1(\tau) f_2(t-\tau) \, d\tau$$
+</div>
+
+<h4>卷积积分的重要性质</h4>
+<table>
+<tr><th>性质</th><th>公式</th></tr>
+<tr><td>交换律</td><td>$f_1 * f_2 = f_2 * f_1$</td></tr>
+<tr><td>分配律</td><td>$f_1 * (f_2 + f_3) = f_1*f_2 + f_1*f_3$</td></tr>
+<tr><td>结合律</td><td>$(f_1 * f_2) * f_3 = f_1 * (f_2 * f_3)$</td></tr>
+<tr><td>时移性</td><td>若 $f_1*f_2 = y(t)$，则 $f_1(t-t_1)*f_2(t-t_2) = y(t-t_1-t_2)$</td></tr>
+<tr><td>含冲激函数</td><td>$f(t) * \delta(t) = f(t)$，$f(t) * \delta(t-t_0) = f(t-t_0)$</td></tr>
+</table>
+
+<div class="formula">
+<span class="formula-tag">微积分性质</span><br>
+$$\frac{d}{dt}[f_1(t)*f_2(t)] = f_1'(t)*f_2(t) = f_1(t)*f_2'(t)$$
+$$\int_{-\infty}^{t} [f_1(\tau)*f_2(\tau)] \, d\tau = \left[\int_{-\infty}^{t} f_1(\tau)\,d\tau\right] * f_2(t)$$
+</div>
+
+<div class="keypoint">
+<strong>串/并联系统的冲激响应</strong>：<br>
+- 串联：$h(t) = h_1(t) * h_2(t)$<br>
+- 并联：$h(t) = h_1(t) + h_2(t)$
+</div>
+</div>
+
+<h3 id="ch2-response" class="collapsible open" onclick="toggleCollapse(this)">2.4 系统的全响应</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">全响应分解</span><br>
+$$\text{全响应} = \text{零输入响应} + \text{零状态响应}$$
+</div>
+
+<div class="keypoint">
+<strong>冲激响应 $h(t)$</strong>：系统在零状态条件下，输入为 $\delta(t)$ 时的响应。<br>
+已知 $h(t)$，则系统对任意输入 $x(t)$ 的零状态响应为：$y_{zs}(t) = x(t) * h(t)$
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ==================== CH3: 离散时间信号与系统的时域分析 ==================== -->
+<h2 id="ch3-discrete">第3章 离散时间信号与系统的时域分析</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">3.1 典型离散时间信号</h3>
+<div class="collapsible-content show">
+
+<h4>基本离散信号</h4>
+<table>
+<tr><th>信号</th><th>定义</th><th>说明</th></tr>
+<tr><td>单位脉冲序列</td><td>$\delta(k) = \begin{cases}1, & k=0\\0, & k\neq 0\end{cases}$</td><td>筛选特性：$x(k)\delta(k) = x(0)\delta(k)$</td></tr>
+<tr><td>单位阶跃序列</td><td>$u(k) = \begin{cases}1, & k\geq 0\\0, & k<0\end{cases}$</td><td></td></tr>
+<tr><td>实指数序列</td><td>$a^k u(k)$</td><td>$|a|<1$ 收敛，$|a|>1$ 发散</td></tr>
+</table>
+
+<div class="keypoint">
+<strong>单位脉冲序列的性质</strong>：筛选特性 $x(k)\delta(k-k_0) = x(k_0)\delta(k-k_0)$，加权特性与连续信号类似。
+</div>
+</div>
+
+<h3 id="ch3-conv" class="collapsible open" onclick="toggleCollapse(this)">3.2 离散卷积</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">离散卷积和</span><br>
+$$y(k) = x(k) * h(k) = \sum_{m=-\infty}^{\infty} x(m) h(k-m)$$
+</div>
+
+<h4>离散卷积的列表计算法</h4>
+<div class="example">
+<strong>序列阵表格法</strong>：将 $x(k)$ 和 $h(k)$ 分别作为行和列，行列交叉点填入乘积值，然后沿对角线求和。<br><br>
+
+<table style="max-width:350px">
+<tr><th>$x(k) \backslash h(k)$</th><th>2</th><th>1</th><th>5</th></tr>
+<tr><td><strong>3</strong></td><td>6</td><td>3</td><td>15</td></tr>
+<tr><td><strong>1</strong></td><td>2</td><td>1</td><td>5</td></tr>
+<tr><td><strong>4</strong></td><td>8</td><td>4</td><td>20</td></tr>
+<tr><td><strong>2</strong></td><td>4</td><td>2</td><td>10</td></tr>
+</table>
+<br>
+<strong>不进位乘法</strong>：右端对齐，每列相乘后求和（不进位），注意标注 $k=0$ 的位置。
+</div>
+
+<div class="keypoint">
+<strong>输出序列的起止点</strong>：$y(k)$ 的起始点 = 两输入序列起始点之和，结束点 = 两输入序列结束点之和。
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ==================== CH4: 连续时间信号与系统的频域分析 ==================== -->
+<h2 id="ch4-fourier">第4章 连续时间信号与系统的频域分析</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">4.1 傅里叶级数</h3>
+<div class="collapsible-content show">
+
+<h4>三角形式傅里叶级数</h4>
+<div class="formula">
+<span class="formula-tag">三角形式</span><br>
+$$f(t) = a_0 + \sum_{n=1}^{\infty} \left[ a_n \cos(n\omega_0 t) + b_n \sin(n\omega_0 t) \right]$$
+其中 $\omega_0 = \frac{2\pi}{T}$ 为基波频率。
+</div>
+
+<h4>指数形式傅里叶级数</h4>
+<div class="formula">
+<span class="formula-tag">指数形式</span><br>
+$$f(t) = \sum_{n=-\infty}^{\infty} F_n e^{jn\omega_0 t}, \quad F_n = \frac{1}{T}\int_{T} f(t)e^{-jn\omega_0 t}\,dt$$
+</div>
+</div>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">4.2 周期信号的频谱特点</h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>周期信号频谱的三大特点</strong>：<br>
+① <strong>离散性</strong>：谱线是离散的，不是连续的<br>
+② <strong>谐波性</strong>：谱线只能出现在基波频率 $\omega_0$ 的整数倍上<br>
+③ <strong>收敛性</strong>：谱线幅度随 $n\to\infty$ 衰减到零（谐波次数越大，谱线高度越小）
+</div>
+
+<h4>单边频谱与双边频谱</h4>
+<div class="keypoint">
+<strong>单边频谱 → 双边频谱</strong>的转换规则：<br>
+- 双边幅度频谱：偶对称，$|F_n| = |F_{-n}|$<br>
+- 双边相位频谱：奇对称，$\varphi_n = -\varphi_{-n}$<br>
+- 注意表示成规范形式（余弦形式），以及两者之间的关系
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">例题：由单边频谱求时域表达式（点击展开）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>例：已知某周期信号的单边频谱，试写出该信号的时域表达式，并画出其双边频谱。</strong><br><br>
+<strong>解题步骤</strong>：<br>
+① 根据单边频谱写出余弦形式的傅里叶级数<br>
+② 转换为双边频谱：幅度偶对称，相位奇对称<br>
+③ 可进一步写成指数形式
+</div>
+</div>
+</div>
+
+<h3 id="ch4-ft" class="collapsible open" onclick="toggleCollapse(this)">4.3 傅里叶变换</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">傅里叶变换对</span><br>
+$$F(\omega) = \int_{-\infty}^{\infty} f(t) e^{-j\omega t} \, dt \qquad f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(\omega) e^{j\omega t} \, d\omega$$
+</div>
+
+<h4>常用傅里叶变换对</h4>
+<table>
+<tr><th>$f(t)$</th><th>$F(\omega)$</th></tr>
+<tr><td>$\delta(t)$</td><td>$1$</td></tr>
+<tr><td>$1$</td><td>$2\pi\delta(\omega)$</td></tr>
+<tr><td>$e^{j\omega_0 t}$</td><td>$2\pi\delta(\omega-\omega_0)$</td></tr>
+<tr><td>$u(t)$</td><td>$\pi\delta(\omega) + \frac{1}{j\omega}$</td></tr>
+<tr><td>$e^{-at}u(t), \; a>0$</td><td>$\frac{1}{a+j\omega}$</td></tr>
+<tr><td>$\text{Sa}(Wt) = \frac{\sin Wt}{Wt}$</td><td>$\frac{\pi}{W}\text{rect}\left(\frac{\omega}{2W}\right)$</td></tr>
+</table>
+
+<div class="keypoint">
+<strong>实信号奇偶性</strong>：<br>
+- $f(t)$ 为实偶函数 → $F(\omega)$ 为实偶函数<br>
+- $f(t)$ 为实奇函数 → $F(\omega)$ 为虚奇函数<br>
+- $f(t)$ 为实函数 → $F(\omega)$ 共轭偶对称：$F(-\omega) = F^*(\omega)$
+</div>
+
+<h4>傅里叶变换的重要性质</h4>
+<table>
+<tr><th>性质</th><th>时域</th><th>频域</th></tr>
+<tr><td>线性</td><td>$af_1(t)+bf_2(t)$</td><td>$aF_1(\omega)+bF_2(\omega)$</td></tr>
+<tr><td>时移性</td><td>$f(t-t_0)$</td><td>$e^{-j\omega t_0}F(\omega)$</td></tr>
+<tr><td>比例性</td><td>$f(at)$</td><td>$\frac{1}{|a|}F\left(\frac{\omega}{a}\right)$</td></tr>
+<tr><td>时域微分</td><td>$f'(t)$</td><td>$j\omega F(\omega)$</td></tr>
+<tr><td>调制定理</td><td>$f(t)\cos\omega_0 t$</td><td>$\frac{1}{2}[F(\omega-\omega_0)+F(\omega+\omega_0)]$</td></tr>
+</table>
+
+<div class="warning">
+<strong>时移性的意义</strong>：时域中的时移 $t_0$，对应频域中产生附加相移 $e^{-j\omega t_0}$，不改变幅度谱，只改变相位谱。<br>
+<strong>复合运算顺序</strong>：翻转 → 压缩 → 移位
+</div>
+</div>
+
+<h3 id="ch4-sampling" class="collapsible open" onclick="toggleCollapse(this)">4.4 采样定理与奈奎斯特取样率</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">奈奎斯特采样定理</span><br>
+$$\boxed{f_s \geq 2f_{\max}}$$
+带限信号 $f(t)$ 的最高频率为 $f_{\max}$（带宽 $W_m$），采样频率 $f_s$ 必须不小于 $2f_{\max}$ 才能从采样信号中无失真地恢复原信号。
+</div>
+
+<h4>带宽计算规则</h4>
+<div class="keypoint">
+<strong>信号运算后的带宽</strong>：<br>
+- 两信号<strong>相乘</strong>$f_1(t)\cdot f_2(t)$：带宽 = 原两信号带宽<strong>之和</strong><br>
+- 两信号<strong>相加</strong>$f_1(t)+f_2(t)$：带宽 = 原两信号带宽中<strong>较大的</strong><br>
+- 两信号<strong>卷积</strong>$f_1(t)*f_2(t)$：带宽 = 原两信号带宽中<strong>较小的</strong>
+</div>
+
+<div class="warning">
+<strong>单位换算</strong>：角频率 $\omega$ 单位 rad/s（弧度/秒），频率 $f$ 单位 Hz（赫兹），关系 $f = \omega / 2\pi$。
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">例题：奈奎斯特取样率计算（点击展开）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>例：设 $f(t)$ 为带限信号，带宽为 $W_m$，试分别求 $f(t)\cos\omega_0 t$ 和 $f^2(t)$ 的带宽和奈奎斯特取样率。</strong><br><br>
+<strong>解</strong>：<br>
+① $f(t)\cos\omega_0 t$：由调制定理，频谱搬移到 $\pm\omega_0$，带宽 = $W_m + \omega_0$，$f_s \geq 2(W_m + \omega_0)/2\pi$<br>
+② $f^2(t)$：时域相乘 → 频域卷积，带宽 = $2W_m$，$f_s \geq 2 \cdot 2W_m/2\pi = 4W_m/2\pi$
+</div>
+</div>
+</div>
+
+<h3 id="ch4-filter" class="collapsible open" onclick="toggleCollapse(this)">4.5 系统频域分析 · 无失真传输 · 理想滤波器</h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>频域分析核心</strong>：由时域卷积定理 $y(t) = x(t)*h(t) \Leftrightarrow Y(\omega) = X(\omega) \cdot H(\omega)$<br>
+正（余）弦信号输入到 LTI 系统，输出是<strong>同频率</strong>的信号，只改变了幅度和相位。
+</div>
+
+<div class="formula">
+<span class="formula-tag">无失真传输条件</span><br>
+$$H(\omega) = K e^{-j\omega t_0}$$
+即 $|H(\omega)| = K$（常数），$\varphi(\omega) = -\omega t_0$（线性相位）。
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ==================== CH5: 复频域分析 ==================== -->
+<h2 id="ch5-laplace">第5章 连续时间信号与系统的复频域分析</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">5.1 拉普拉斯变换</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">单边拉普拉斯变换</span><br>
+$$F(s) = \int_{0^{-}}^{\infty} f(t) e^{-st} \, dt \qquad f(t) = \frac{1}{2\pi j} \int_{\sigma-j\infty}^{\sigma+j\infty} F(s) e^{st} \, ds$$
+</div>
+
+<h4>常用拉普拉斯变换对</h4>
+<table>
+<tr><th>$f(t)$</th><th>$F(s)$</th><th>ROC</th></tr>
+<tr><td>$\delta(t)$</td><td>$1$</td><td>全 $s$ 平面</td></tr>
+<tr><td>$u(t)$</td><td>$\frac{1}{s}$</td><td>$\text{Re}(s)>0$</td></tr>
+<tr><td>$e^{-at}u(t)$</td><td>$\frac{1}{s+a}$</td><td>$\text{Re}(s)>-a$</td></tr>
+<tr><td>$t^n u(t)$</td><td>$\frac{n!}{s^{n+1}}$</td><td>$\text{Re}(s)>0$</td></tr>
+<tr><td>$\cos\omega_0 t \cdot u(t)$</td><td>$\frac{s}{s^2+\omega_0^2}$</td><td>$\text{Re}(s)>0$</td></tr>
+<tr><td>$\sin\omega_0 t \cdot u(t)$</td><td>$\frac{\omega_0}{s^2+\omega_0^2}$</td><td>$\text{Re}(s)>0$</td></tr>
+</table>
+
+<h4>拉氏变换的重要性质</h4>
+<table>
+<tr><th>性质</th><th>时域</th><th>$s$ 域</th></tr>
+<tr><td>线性</td><td>$af_1+bf_2$</td><td>$aF_1(s)+bF_2(s)$</td></tr>
+<tr><td>时移性</td><td>$f(t-t_0)u(t-t_0)$</td><td>$e^{-st_0}F(s)$</td></tr>
+<tr><td>$s$ 域平移</td><td>$e^{-at}f(t)$</td><td>$F(s+a)$</td></tr>
+<tr><td>尺度变换</td><td>$f(at)$</td><td>$\frac{1}{a}F\left(\frac{s}{a}\right)$</td></tr>
+<tr><td>时域微分</td><td>$f'(t)$</td><td>$sF(s)-f(0^-)$</td></tr>
+<tr><td>时域积分</td><td>$\int_{0^-}^{t} f(\tau)\,d\tau$</td><td>$\frac{F(s)}{s}$</td></tr>
+<tr><td>时域卷积</td><td>$f_1(t)*f_2(t)$</td><td>$F_1(s)\cdot F_2(s)$</td></tr>
+</table>
+
+<div class="formula">
+<span class="formula-tag">初值定理与终值定理</span><br>
+$$f(0^+) = \lim_{s\to\infty} sF(s) \qquad f(\infty) = \lim_{s\to 0} sF(s)$$
+</div>
+
+<div class="warning">
+<strong>终值定理应用条件</strong>：$F(s)$ 的极点都在 $s$ 平面左半平面；如果在虚轴上有极点，只能在原点处有单极点。
+</div>
+</div>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">5.2 拉氏反变换</h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>部分分式展开法</strong>：将 $F(s)$ 展开为简单分式之和，然后逐项查表反变换。<br>
+<strong>遮挡法</strong>（留数法的简化）：对于 $F(s) = \frac{N(s)}{(s-p_1)(s-p_2)\cdots}$，求系数时遮挡对应因子后代入。
+</div>
+</div>
+
+<h3 id="ch5-hs" class="collapsible open" onclick="toggleCollapse(this)">5.3 系统函数 $H(s)$ 与系统稳定性</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">系统函数</span><br>
+$$H(s) = \frac{Y(s)}{X(s)} = \frac{\text{零状态响应的拉氏变换}}{\text{输入的拉氏变换}}$$
+$H(s)$ 与冲激响应 $h(t)$ 是一对拉普拉斯变换对。
+</div>
+
+<div class="keypoint">
+<strong>由 $H(s)$ 判断系统稳定性</strong>：<br>
+① <strong>稳定系统</strong>：$H(s)$ 的所有极点均位于 $s$ 左半平面<br>
+② <strong>临界稳定</strong>：$H(s)$ 在虚轴上（包括原点）有一阶极点，其余极点在左半平面<br>
+③ <strong>不稳定系统</strong>：$H(s)$ 有位于 $s$ 右半平面的极点，或虚轴上有二阶以上的极点
+</div>
+
+<div class="keypoint">
+<strong>快速判稳</strong>：对于稳定系统，分母多项式 $D(s)$ 各项系数均为<strong>正实常数</strong>，且多项式中无缺项。<br>
+对于<strong>二阶系统</strong>，只要 $D(s)$ 各项系数均为正实常数，则系统稳定。
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">例题：由零极点图求系统函数（点击展开）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>例</strong>：已知系统的零、极点图，并且该系统阶跃响应的终值为 3，试写出系统函数的表达式。<br><br>
+<strong>解</strong>：<br>
+① 由零极点图写出 $H(s) = H_0 \cdot \frac{(s-z_1)\cdots}{(s-p_1)\cdots}$<br>
+② 对阶跃响应 $y(t)$ 应用终值定理：$y(\infty) = \lim_{s\to 0} s \cdot \frac{H(s)}{s} = \lim_{s\to 0} H(s) = 3$<br>
+③ 由此确定系数 $H_0$
+</div>
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">例题：系统稳定性判断（点击展开）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>例5-5-4</strong>：已知系统函数 $H(s) = \frac{k}{s^2 + (3-k)s + 2}$，求系统稳定时 $k$ 的范围。<br><br>
+<strong>解</strong>：系统是二阶系统，分母 $D(s) = s^2 + (3-k)s + 2$<br>
+各系数为正的条件：$3-k > 0$ 且 $2 > 0$<br>
+∴ $k < 3$ 时系统稳定
+</div>
+</div>
+</div>
+
+<h3 id="ch5-simulation" class="collapsible open" onclick="toggleCollapse(this)">5.4 连续系统的模拟</h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>三种基本运算器</strong>：<br>
+① 加法器：$Y = X_1 + X_2$<br>
+② 数乘器（标量乘法器）：$Y = aX$<br>
+③ 积分器：$Y = \int X \, dt$（对应 $s$ 域中的 $\frac{1}{s}$）
+</div>
+
+<div class="keypoint">
+<strong>三种模拟图</strong>：<br>
+- <strong>直接模拟图</strong>：直接由 $H(s)$ 画出<br>
+- <strong>串联模拟图</strong>：$H(s) = H_1(s) \cdot H_2(s) \cdots$<br>
+- <strong>并联模拟图</strong>：$H(s) = H_1(s) + H_2(s) + \cdots$（部分分式展开后）
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ==================== CH6: Z变换分析 ==================== -->
+<h2 id="ch6-z">第6章 离散信号与系统的变换域分析</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">6.1 Z 变换</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">Z 变换定义</span><br>
+$$X(z) = \sum_{k=-\infty}^{\infty} x(k) z^{-k}$$
+单边 Z 变换：$X(z) = \sum_{k=0}^{\infty} x(k) z^{-k}$
+</div>
+
+<h4>常用 Z 变换对</h4>
+<table>
+<tr><th>$x(k)$</th><th>$X(z)$</th><th>ROC</th></tr>
+<tr><td>$\delta(k)$</td><td>$1$</td><td>全 $z$ 平面</td></tr>
+<tr><td>$u(k)$</td><td>$\frac{z}{z-1}$</td><td>$|z|>1$</td></tr>
+<tr><td>$a^k u(k)$</td><td>$\frac{z}{z-a}$</td><td>$|z|>|a|$</td></tr>
+<tr><td>$k \cdot u(k)$</td><td>$\frac{z}{(z-1)^2}$</td><td>$|z|>1$</td></tr>
+<tr><td>$a^k \cos\omega_0 k \cdot u(k)$</td><td>$\frac{z(z-a\cos\omega_0)}{z^2-2az\cos\omega_0+a^2}$</td><td>$|z|>|a|$</td></tr>
+</table>
+
+<h4>Z 变换的重要性质</h4>
+<table>
+<tr><th>性质</th><th>时域</th><th>$z$ 域</th></tr>
+<tr><td>线性</td><td>$ax_1(k)+bx_2(k)$</td><td>$aX_1(z)+bX_2(z)$</td></tr>
+<tr><td>移序性</td><td>$x(k-1)$</td><td>$z^{-1}X(z) + x(-1)$</td></tr>
+<tr><td>比例性</td><td>$a^k x(k)$</td><td>$X(z/a)$</td></tr>
+<tr><td>$z$ 域微分</td><td>$k \cdot x(k)$</td><td>$-z\frac{dX(z)}{dz}$</td></tr>
+<tr><td>时域卷积</td><td>$x(k)*h(k)$</td><td>$X(z)\cdot H(z)$</td></tr>
+<tr><td>序列求和</td><td>$\sum_{i=0}^{k} x(i)$</td><td>$\frac{z}{z-1}X(z)$</td></tr>
+</table>
+
+<div class="formula">
+<span class="formula-tag">初值定理与终值定理</span><br>
+$$x(0) = \lim_{z\to\infty} X(z) \qquad x(\infty) = \lim_{z\to 1} (z-1)X(z)$$
+</div>
+
+<div class="warning">
+<strong>终值定理应用条件</strong>：$X(z)$ 的极点都在单位圆内；如果在单位圆上有极点，只能有单极点。
+</div>
+</div>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">6.2 Z 反变换</h3>
+<div class="collapsible-content show">
+
+<div class="keypoint">
+<strong>两种方法</strong>：<br>
+① <strong>幂级数展开法</strong>（长除法）：将 $X(z)$ 展开为 $z$ 的幂级数，系数即为 $x(k)$<br>
+② <strong>部分分式展开法</strong>：将 $X(z)/z$ 展开为部分分式，再逐项查表
+</div>
+</div>
+
+<h3 id="ch6-hz" class="collapsible open" onclick="toggleCollapse(this)">6.3 系统函数 $H(z)$ 与系统特性</h3>
+<div class="collapsible-content show">
+
+<div class="formula">
+<span class="formula-tag">系统函数</span><br>
+$$H(z) = \frac{Y(z)}{X(z)}$$
+$H(z)$ 与单位脉冲响应 $h(k)$ 是一对 Z 变换对。
+</div>
+
+<div class="keypoint">
+<strong>由 $H(z)$ 判断离散系统稳定性</strong>：<br>
+- <strong>稳定</strong>：$H(z)$ 的所有极点在单位圆内（$|z|<1$）<br>
+- <strong>临界稳定</strong>：单位圆上有一阶极点，其余在单位圆内<br>
+- <strong>不稳定</strong>：有极点在单位圆外，或单位圆上有二阶以上极点
+</div>
+
+<div class="warning">
+<strong>终值定理 vs 收敛域</strong>：<br>
+- $F(s)$ 的极点在 $s$ 左半平面 → 终值存在<br>
+- $F(z)$ 的极点在单位圆内 → 终值存在<br>
+- 两者判断方法一致，只是域不同
+</div>
+
+<h4 class="collapsible" onclick="toggleCollapse(this)">例题：Z变换求差分方程响应（点击展开）</h4>
+<div class="collapsible-content">
+<div class="example">
+<strong>例：对差分方程进行 Z 变换求响应</strong><br><br>
+<strong>步骤</strong>：<br>
+① 对差分方程两端取 Z 变换（利用移序性质）<br>
+② 代入初始条件<br>
+③ 整理得到 $Y(z)$ 的表达式<br>
+④ 部分分式展开<br>
+⑤ 查表取 Z 反变换得 $y(k)$
+</div>
+</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ==================== CH5/6 关联 ==================== -->
+<h2 id="quiz">第5/6章 知识点关联与综合自测</h2>
+
+<h3 class="collapsible open" onclick="toggleCollapse(this)">知识点关联图</h3>
+<div class="collapsible-content show">
+<div class="card" style="text-align:center;padding:30px">
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:500px;margin:0 auto">
+<div class="stat-card"><div style="font-size:14px;color:var(--accent2)">微分/差分方程</div></div>
+<div class="stat-card"><div style="font-size:14px;color:var(--accent2)">变换域求响应</div></div>
+<div class="stat-card"><div style="font-size:14px;color:var(--accent2)">系统函数 $H$</div></div>
+<div class="stat-card"><div style="font-size:14px;color:var(--accent)">模拟图</div></div>
+<div class="stat-card"><div style="font-size:14px;color:var(--accent)">零极点图</div></div>
+<div class="stat-card"><div style="font-size:14px;color:var(--accent)">判断稳定性</div></div>
+</div>
+<p style="margin-top:16px;color:var(--text-dim);font-size:14px">方法论：复杂问题 → 分解 → 简单问题 · 已知问题 → 关联 → 未知问题</p>
+</div>
+</div>
+
+<h3 class="collapsible" onclick="toggleCollapse(this)">综合自测题（点击展开）</h3>
+<div class="collapsible-content">
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">4. 信号 $f(t) = \cos(3t) + \sin(5t)$ 的周期为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q4" value="0"> $\pi$</label>
+    <label><input type="radio" name="q4" value="1"> $2\pi$</label>
+    <label><input type="radio" name="q4" value="2"> $2\pi$</label>
+    <label><input type="radio" name="q4" value="3"> 非周期信号</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">5. 卷积 $f(t) * \delta(t-3)$ 等于？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q5" value="0"> $f(t)$</label>
+    <label><input type="radio" name="q5" value="1"> $f(t-3)$</label>
+    <label><input type="radio" name="q5" value="2"> $f(t+3)$</label>
+    <label><input type="radio" name="q5" value="3"> $3f(t)$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">6. 已知 $f(t) \leftrightarrow F(\omega)$，则 $f(t)\cos\omega_0 t$ 的傅里叶变换为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q6" value="0"> $F(\omega-\omega_0)$</label>
+    <label><input type="radio" name="q6" value="1"> $F(\omega+\omega_0)$</label>
+    <label><input type="radio" name="q6" value="2"> $\frac{1}{2}F(\omega-\omega_0)$</label>
+    <label><input type="radio" name="q6" value="3"> $\frac{1}{2}[F(\omega-\omega_0)+F(\omega+\omega_0)]$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">7. 带限信号 $f(t)$ 的最高频率为 $1000\text{Hz}$，其奈奎斯特取样率为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q7" value="0"> $2000\text{Hz}$</label>
+    <label><input type="radio" name="q7" value="1"> $1000\text{Hz}$</label>
+    <label><input type="radio" name="q7" value="2"> $500\text{Hz}$</label>
+    <label><input type="radio" name="q7" value="3"> $4000\text{Hz}$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">8. 系统 $H(s) = \frac{1}{s^2 + 3s + 2}$ 的稳定性如何？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q8" value="0"> 不稳定</label>
+    <label><input type="radio" name="q8" value="1"> 临界稳定</label>
+    <label><input type="radio" name="q8" value="2"> 稳定</label>
+    <label><input type="radio" name="q8" value="3"> 无法判断</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">9. 拉氏变换 $F(s) = \frac{1}{s+2}$ 对应的原函数为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q9" value="0"> $e^{2t}u(t)$</label>
+    <label><input type="radio" name="q9" value="1"> $e^{-2t}u(t)$</label>
+    <label><input type="radio" name="q9" value="2"> $2e^{-t}u(t)$</label>
+    <label><input type="radio" name="q9" value="3"> $u(t-2)$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">10. Z 变换 $X(z) = \frac{z}{z-0.5}$，$|z|>0.5$，对应的 $x(k)$ 为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q10" value="0"> $(0.5)^k u(k)$</label>
+    <label><input type="radio" name="q10" value="1"> $(0.5)^{-k} u(k)$</label>
+    <label><input type="radio" name="q10" value="2"> $2^k u(k)$</label>
+    <label><input type="radio" name="q10" value="3"> $u(k)$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">11. 已知 $f(t) \leftrightarrow F(\omega)$，则 $f(2t)$ 的傅里叶变换为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q11" value="0"> $2F(2\omega)$</label>
+    <label><input type="radio" name="q11" value="1"> $F(2\omega)$</label>
+    <label><input type="radio" name="q11" value="2"> $F(\omega/2)$</label>
+    <label><input type="radio" name="q11" value="3"> $\frac{1}{2}F(\omega/2)$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">12. 离散系统 $H(z) = \frac{z}{z^2 - 0.5z + 0.06}$，其稳定性为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q12" value="0"> 不稳定</label>
+    <label><input type="radio" name="q12" value="1"> 临界稳定</label>
+    <label><input type="radio" name="q12" value="2"> 稳定</label>
+    <label><input type="radio" name="q12" value="3"> 无法判断</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">13. 两信号在时域卷积，所得信号的带宽为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q13" value="0"> 两信号带宽之和</label>
+    <label><input type="radio" name="q13" value="1"> 两信号带宽中较小的</label>
+    <label><input type="radio" name="q13" value="2"> 两信号带宽中较大的</label>
+    <label><input type="radio" name="q13" value="3"> 两信号带宽之积</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">14. 周期信号频谱的特点不包括以下哪项？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q14" value="0"> 连续性</label>
+    <label><input type="radio" name="q14" value="1"> 离散性</label>
+    <label><input type="radio" name="q14" value="2"> 谐波性</label>
+    <label><input type="radio" name="q14" value="3"> 收敛性</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">15. 系统 $y(t) = x(t-1)$ 的冲激响应 $h(t)$ 为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q15" value="0"> $\delta(t)$</label>
+    <label><input type="radio" name="q15" value="1"> $u(t)$</label>
+    <label><input type="radio" name="q15" value="2"> $\delta(t-1)$</label>
+    <label><input type="radio" name="q15" value="3"> $u(t-1)$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">16. $f(t) = e^{-3t}u(t)$ 的拉氏变换 $F(s)$ 为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q16" value="0"> $\frac{1}{s-3}$</label>
+    <label><input type="radio" name="q16" value="1"> $\frac{3}{s+3}$</label>
+    <label><input type="radio" name="q16" value="2"> $\frac{s}{s+3}$</label>
+    <label><input type="radio" name="q16" value="3"> $\frac{1}{s+3}$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="1">
+  <div class="quiz-q">17. 终值定理 $\lim_{t\to\infty} f(t) = \lim_{s\to 0} sF(s)$ 的应用条件是？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q17" value="0"> $F(s)$ 的所有零点在左半平面</label>
+    <label><input type="radio" name="q17" value="1"> $F(s)$ 的所有极点在左半平面（虚轴上仅原点有单极点）</label>
+    <label><input type="radio" name="q17" value="2"> $F(s)$ 的所有极点在右半平面</label>
+    <label><input type="radio" name="q17" value="3"> 无条件成立</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="0">
+  <div class="quiz-q">18. 离散卷积 $x(k) * \delta(k-2)$ 等于？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q18" value="0"> $x(k-2)$</label>
+    <label><input type="radio" name="q18" value="1"> $x(k+2)$</label>
+    <label><input type="radio" name="q18" value="2"> $x(k)$</label>
+    <label><input type="radio" name="q18" value="3"> $2x(k)$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="2">
+  <div class="quiz-q">19. 拉氏变换中，时域微分 $f'(t)$ 对应的 $s$ 域表达式为？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q19" value="0"> $sF(s)$</label>
+    <label><input type="radio" name="q19" value="1"> $F(s)/s$</label>
+    <label><input type="radio" name="q19" value="2"> $sF(s) - f(0^-)$</label>
+    <label><input type="radio" name="q19" value="3"> $sF(s) + f(0^-)$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+<div class="quiz-container" data-correct="3">
+  <div class="quiz-q">20. 以下哪个系统是因果系统？</div>
+  <div class="quiz-options">
+    <label><input type="radio" name="q20" value="0"> $y(t) = x(t+1)$</label>
+    <label><input type="radio" name="q20" value="1"> $y(t) = x(-t)$</label>
+    <label><input type="radio" name="q20" value="2"> $y(t) = x(2t)$</label>
+    <label><input type="radio" name="q20" value="3"> $y(t) = x(t-2)$</label>
+  </div>
+  <button class="quiz-btn" onclick="checkQuiz(this)">检查答案</button>
+  <div class="quiz-result"></div>
+</div>
+
+</div>
+
+<div style="height:100px"></div>

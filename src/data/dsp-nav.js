@@ -71,17 +71,17 @@ export const navLinks = [
   },
   {
     "id": "ch6-struct-iir",
-    "label": "IIR 结构 重点",
+    "label": "IIR 结构 <span class=\"tag tag-L\">重点</span>",
     "keywords": ""
   },
   {
     "id": "ch6-struct-fir",
-    "label": "FIR 结构 重点",
+    "label": "FIR 结构 <span class=\"tag tag-L\">重点</span>",
     "keywords": ""
   },
   {
     "id": "ch6-quant",
-    "label": "有限字长效应",
+    "label": "有限字长效应</span>",
     "keywords": ""
   },
   {

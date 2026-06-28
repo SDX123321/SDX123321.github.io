@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/homepage.css'
+import GlobalSearch from '../features/search/GlobalSearch'
+import ExamQuery from '../features/exam/ExamQuery'
+import FileBrowser from '../features/files/FileBrowser'
+import SplashModal from '../features/home/SplashModal'
+import MeteorShower from '../features/ux/MeteorShower'
+import FireworkCanvas from '../features/ux/FireworkCanvas'
+import { useGsapAnimations } from '../hooks/useGsapAnimations'
+import useScrollMemory from '../hooks/useScrollMemory'
 
 const COURSES = [
   { path: 'probability', icon: '📊', title: '概率论与数理统计', desc: '随机事件与概率、随机变量及其分布、多维随机变量、数字特征、大数定律与中心极限定理、参数估计、假设检验。', tags: ['7 章','公式速查表','经典例题','考试重点'], iconClass: 'icon-blue' },
@@ -10,10 +18,14 @@ const COURSES = [
   { path: 'marxism', icon: '📰', title: '马克思主义基本原理', desc: '唯物辩证法、认识论、唯物史观、资本主义本质与规律、社会主义发展。含互动复习与知识卡片。', tags: ['7 章','互动复习','知识卡片','暗色模式'], style: { borderLeft: '3px solid #e63946' }, iconStyle: { background: 'linear-gradient(135deg,#e63946,#f4845f)' } },
   { path: 'maogai', icon: '📰', title: '毛泽东思想和中国特色社会主义理论体系概论', desc: '毛泽东思想、邓小平理论、"三个代表"、科学发展观、习近平新时代中国特色社会主义思想。含复习提纲与考试重点。', tags: ['复习提纲','考试重点'], style: { borderLeft: '3px solid #dc2626' }, iconStyle: { background: 'linear-gradient(135deg,#dc2626,#f87171)' } },
   { path: 'calculus', icon: '📈', title: '高等数学（重修）', desc: '常微分方程、多元函数微分（偏导/复合函数/极值）、多元积分（重积分/格林公式/高斯公式）、复变函数（可导性/柯西积分公式）。', tags: ['5 大专题','复习课笔记','考试分值','互动练习'], style: { borderLeft: '3px solid #e74c3c' }, iconStyle: { background: 'linear-gradient(135deg,#e74c3c,#f39c12)' } },
+  { path: 'signals', icon: '📶', title: '信号与系统B', desc: '信号与系统基本概念、连续/离散时域分析、傅里叶变换、拉普拉斯变换、Z 变换。含核心公式速查、典型例题与互动练习。', tags: ['6 章','公式速查','互动练习','MathJax'], style: { borderLeft: '3px solid #06b6d4' }, iconStyle: { background: 'linear-gradient(135deg,#06b6d4,#22d3ee)' } },
 ]
 
 export default function HomePage() {
   const [totalStudyTime, setTotalStudyTime] = useState(null)
+  const containerRef = useGsapAnimations(totalStudyTime)
+
+  useScrollMemory()
 
   useEffect(() => {
     // Aggregate study time from all pages
@@ -37,26 +49,22 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="container">
+    <>
+      <MeteorShower />
+      <FireworkCanvas />
+      <div className="container" ref={containerRef}>
       <h1>期末复习</h1>
       <p className="subtitle">2025-2026 学年第二学期 · 知识点总结与例题精讲</p>
 
-      {/* Global search placeholder */}
-      <div style={{ maxWidth: 560, margin: '0 auto 28px', position: 'relative' }}>
-        <input
-          type="text"
-          placeholder="搜索知识点、资料名称…"
-          style={{
-            width: '100%', padding: '12px 16px 12px 40px', borderRadius: 12,
-            border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text)',
-            fontSize: '.92rem', outline: 'none',
-          }}
-        />
-      </div>
+      {/* Global search */}
+      <GlobalSearch />
+
+      {/* Exam schedule query */}
+      <ExamQuery />
 
       {/* Study time */}
       {totalStudyTime && (
-        <div style={{ maxWidth: 560, margin: '0 auto 28px', padding: '14px 20px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, textAlign: 'center' }}>
+        <div className="study-time-badge" style={{ maxWidth: 560, margin: '0 auto 28px', padding: '14px 20px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, textAlign: 'center' }}>
           <span style={{ fontSize: '1.3rem' }}>📖</span>
           <span style={{ fontSize: '.92rem', color: 'var(--text)', fontWeight: 600, marginLeft: 8 }}>累计学习时间</span>
           <span style={{ fontSize: '1.1rem', color: 'var(--accent)', fontWeight: 700, marginLeft: 8 }}>{totalStudyTime}</span>
@@ -77,8 +85,16 @@ export default function HomePage() {
         ))}
       </div>
 
+      {/* File download section */}
+      <div className="file-section" style={{ marginBottom: 40 }}>
+        <h2 style={{ fontSize: '1.15rem', color: 'var(--text)', marginBottom: 16, paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
+          📥 资料下载
+        </h2>
+        <FileBrowser />
+      </div>
+
       {/* Giscus comments */}
-      <div style={{ maxWidth: 800, margin: '0 auto 32px', padding: '0 20px' }}>
+      <div className="comment-section" style={{ maxWidth: 800, margin: '0 auto 32px', padding: '0 20px' }}>
         <h2 style={{ fontSize: '1.15rem', color: 'var(--text)', marginBottom: 16, paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
           💬 评论区
         </h2>
@@ -105,7 +121,10 @@ export default function HomePage() {
 
       <div className="footer">
         Built with ❤️ · <a href="https://github.com/SDX123321" target="_blank" rel="noreferrer">@SDX123321</a>
+        <br />
+        <SplashModal />
       </div>
     </div>
+    </>
   )
 }

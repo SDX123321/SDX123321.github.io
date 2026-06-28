@@ -5,27 +5,31 @@ import html from '../../content/algorithm.html?raw'
 import { navLinks } from '../../data/algorithm-nav'
 import '../../styles/courses/algorithm.css'
 import FlashcardSystem from '../../courses/algorithm/FlashcardSystem'
+import QuizRenderer from '../../courses/algorithm/QuizRenderer'
 
 export default function AlgorithmPage() {
   const rootsRef = useRef([])
 
   useEffect(() => {
-    // Mount flashcard/quiz system into the quiz placeholder
     const timer = setTimeout(() => {
-      const quizContainers = document.querySelectorAll('.quiz-container[data-quiz]')
-      if (quizContainers.length > 0) {
-        // Find the last quiz container or a dedicated placeholder
-        const target = quizContainers[quizContainers.length - 1].parentElement || quizContainers[0].parentElement
-        if (target) {
-          const mountPoint = document.createElement('div')
-          mountPoint.id = 'flashcard-mount'
-          target.appendChild(mountPoint)
-          const root = createRoot(mountPoint)
-          root.render(<FlashcardSystem />)
+      // Mount QuizRenderer into each quiz container
+      document.querySelectorAll('.quiz-container[data-quiz]').forEach(el => {
+        const quizKey = el.dataset.quiz
+        if (quizKey) {
+          const root = createRoot(el)
+          root.render(<QuizRenderer quizKey={quizKey} />)
           rootsRef.current.push(root)
         }
+      })
+
+      // Mount FlashcardSystem into the flashcard grid
+      const flashcardGrid = document.getElementById('flashcardGrid')
+      if (flashcardGrid) {
+        const root = createRoot(flashcardGrid)
+        root.render(<FlashcardSystem />)
+        rootsRef.current.push(root)
       }
-    }, 200)
+    }, 150)
 
     return () => {
       clearTimeout(timer)

@@ -1,9 +1,4 @@
-/* ========== Layout ========== */
-.app{display:flex;min-height:100vh}
-.sidebar{width:270px;min-width:270px;background:var(--bg2);border-right:1px solid var(--bg3);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s;overflow-y:auto}
-.sidebar.collapsed{transform:translateX(-100%)}
-.main{flex:1;margin-left:270px;padding:0;transition:margin .3s}
-.main.full{margin-left:0}
+/* ========== Layout - handled by CourseLayout ========== */
 
 /* ========== Sidebar ========== */
 .sidebar-header{padding:20px;border-bottom:1px solid var(--bg3)}
@@ -37,7 +32,7 @@
 .mode-tab.active{background:var(--accent);color:#fff}
 
 /* ========== Content ========== */
-.content{max-width:880px;margin:0 auto;padding:24px}
+.content{max-width:1200px;margin:0 auto;padding:24px}
 .page-title{font-size:28px;font-weight:800;color:var(--text);margin-bottom:4px}
 .page-sub{font-size:14px;color:var(--text2);margin-bottom:24px}
 

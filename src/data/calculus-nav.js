@@ -11,12 +11,12 @@ export const navLinks = [
   },
   {
     "id": "pde-partial",
-    "label": "偏导数计算 必考",
+    "label": "偏导数计算 <span class=\"tag tag-L\">必考</span>",
     "keywords": ""
   },
   {
     "id": "pde-chain",
-    "label": "复合函数求导 必考",
+    "label": "复合函数求导 <span class=\"tag tag-L\">必考</span>",
     "keywords": ""
   },
   {
@@ -41,7 +41,7 @@ export const navLinks = [
   },
   {
     "id": "int-green",
-    "label": "格林公式 重点",
+    "label": "格林公式 <span class=\"tag tag-L\">重点</span>",
     "keywords": ""
   },
   {

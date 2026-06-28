@@ -8,3 +8,8 @@
   from { opacity: 0; transform: translateX(-50%) translateY(20px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
+
+/* Override course-specific layouts — sidebar fixed at 260px */
+main.main { margin-left: 260px !important; }
+nav.sidebar { width: 260px !important; }
+@media (max-width: 768px) { main.main { margin-left: 0 !important; } }

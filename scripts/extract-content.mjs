@@ -80,9 +80,11 @@ for (const course of COURSES) {
   while ((m = navRe.exec(html)) !== null) {
     const id = m[1]
     const inner = m[2]
-    const label = inner.replace(/<[^>]+>/g, '').trim()
+    // Preserve HTML tags in label (e.g. <span class="tag tag-L">必考</span>)
+    const plainLabel = inner.replace(/<[^>]+>/g, '').trim()
+    const label = inner.trim()
     // Skip non-nav links (like "返回课程主页")
-    if (label && id && !label.includes('返回') && label.length < 50) {
+    if (plainLabel && id && !plainLabel.includes('返回') && plainLabel.length < 50) {
       // Avoid duplicates
       if (!navLinks.find(n => n.id === id)) {
         navLinks.push({ id, label, keywords: '' })
@@ -121,6 +123,9 @@ for (const course of COURSES) {
   content = content.replace(/<script[\s\S]*?<\/script>/gi, '')
   content = content.replace(/<!--[\s\S]*?-->/g, '')
   content = content.replace(/<style>@keyframes[\s\S]*?<\/style>/gi, '')
+  content = content.replace(/<link\s+rel="stylesheet"[^>]*>/gi, '')
+  content = content.replace(/<link\s+rel="manifest"[^>]*>/gi, '')
+  content = content.replace(/<meta[^>]*>/gi, '')
   content = content.replace(/<div\s+id="migrateNotice"[\s\S]*?<\/div>\s*/gi, '')
   content = content.replace(/<div\s+id="subGuide"[\s\S]*?<\/div>\s*/gi, '')
   content = content.replace(/<div\s+class="sg-overlay"[\s\S]*?<\/div>\s*/gi, '')
