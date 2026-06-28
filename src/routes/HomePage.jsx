@@ -9,6 +9,7 @@ import MeteorShower from '../features/ux/MeteorShower'
 import FireworkCanvas from '../features/ux/FireworkCanvas'
 import { useGsapAnimations } from '../hooks/useGsapAnimations'
 import useScrollMemory from '../hooks/useScrollMemory'
+import { loadBusuanzi } from '../lib/cdnScripts'
 
 const COURSES = [
   { path: 'probability', icon: '📊', title: '概率论与数理统计', desc: '随机事件与概率、随机变量及其分布、多维随机变量、数字特征、大数定律与中心极限定理、参数估计、假设检验。', tags: ['7 章','公式速查表','经典例题','考试重点'], iconClass: 'icon-blue' },
@@ -26,6 +27,7 @@ export default function HomePage() {
   const containerRef = useGsapAnimations(totalStudyTime)
 
   useScrollMemory()
+  useEffect(() => { loadBusuanzi() }, [])
 
   useEffect(() => {
     // Aggregate study time from all pages
@@ -120,6 +122,15 @@ export default function HomePage() {
       </div>
 
       <div className="footer">
+        <div className="footer-stats">
+          <span id="busuanzi_container_site_pv">
+            👁 本站总访问 <span id="busuanzi_value_site_pv">...</span> 次
+          </span>
+          <span style={{ margin: '0 8px' }}>·</span>
+          <span id="busuanzi_container_site_uv">
+            👤 访客 <span id="busuanzi_value_site_uv">...</span> 人
+          </span>
+        </div>
         Built with ❤️ · <a href="https://github.com/SDX123321" target="_blank" rel="noreferrer">@SDX123321</a>
         <br />
         <SplashModal />
