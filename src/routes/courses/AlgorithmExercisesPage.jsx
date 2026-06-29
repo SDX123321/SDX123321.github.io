@@ -92,68 +92,98 @@ export default function AlgorithmExercisesPage() {
         {/* ==================== 1. Dijkstra ==================== */}
         <section id="dijkstra" className="algo-ex-section">
           <h2><span className="algo-ex-num">一</span>Dijkstra 最短路径</h2>
+
           <div className="algo-ex-img">
             <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/ex1.png" alt="Dijkstra 题目" />
           </div>
+
           <div className="algo-ex-problem">
-            <strong>题目：</strong>已知有 5 个顶点（编号 0~4）的无向带权图，邻接矩阵如下。请用 Dijkstra 算法求从顶点 0 到其余所有顶点的最短路径长度。
-            <div className="algo-ex-matrix">
-              <div className="algo-ex-matrix-title">邻接矩阵</div>
-              <div className="algo-ex-matrix-grid">
-                <KV items={[
-                  ['0→1:', '3'],[ '0→3:', '1'],
-                  ['1→2:', '3'],[ '1→4:', '5'],
-                  ['2→4:', '8'],[ '3→4:', '7'],
-                ]} />
-              </div>
-            </div>
+            <strong>题目：</strong>已知有 5 个顶点（编号 0~4）的无向带权图，邻接关系如下。请用 Dijkstra 算法求从顶点 0 到其余所有顶点的最短路径长度。
+
+        ```
+        <div className="algo-ex-matrix">
+          <div className="algo-ex-matrix-title">边及权值</div>
+          <div className="algo-ex-matrix-grid">
+            <KV items={[
+              ['0→1:', '5'], ['0→3:', '3'],
+              ['1→2:', '3'], ['1→4:', '4'],
+              ['2→3:', '8'], ['2→4:', '1'],
+              ['3→4:', '7']
+            ]} />
+          </div>
+        </div>
+        ```
+
           </div>
 
           <h3>1. 无向带权图</h3>
           <div className="ex1">
             <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/ex1.1.png" alt="无向带权图" />
           </div>
-          
 
           <h3>2. Dijkstra 逐步求解表</h3>
           <DijkstraTable data={[
-            ['初始', '—', '0', '∞', '∞', '1', '∞'],
-            ['①', '0', '0', '3', '∞', '1', '∞'],
-            ['②', '3', '0', '3', '∞', '1', '8'],
-            ['③', '1', '0', '3', '6', '1', '8'],
-            ['④', '2', '0', '3', '6', '1', '8'],
-            ['⑤', '4', '0', '3', '6', '1', '8'],
+            ['初始', '—', '0', '5', '∞', '3', '∞'],
+            ['①', '0', '0', '5', '∞', '3', '∞'],
+            ['②', '3', '0', '5', '11', '3', '10'],
+            ['③', '1', '0', '5', '8', '3', '9'],
+            ['④', '2', '0', '5', '8', '3', '9'],
+            ['⑤', '4', '0', '5', '8', '3', '9'],
           ]} />
 
           <div className="algo-ex-steps">
             <p><strong>步骤详解：</strong></p>
             <ol>
-              <li><strong>初始化：</strong>d[0]=0, d[1]=∞, d[2]=∞, d[3]=1, d[4]=∞。S=∅</li>
-              <li><strong>①</strong> 加入 0（d 最小）：S={0}。通过 0 更新：d[1]=3, d[3]=1（不变）</li>
-              <li><strong>②</strong> 加入 3（d=1 最小）：S={0,3}。通过 3 更新：d[4]=1+7=8</li>
-              <li><strong>③</strong> 加入 1（d=3 最小）：S={0,3,1}。通过 1 更新：d[2]=3+3=6</li>
-              <li><strong>④</strong> 加入 2（d=6 最小）：S={0,3,1,2}。通过 2 更新：d[4]=min(8,6+8)=8 不变</li>
-              <li><strong>⑤</strong> 加入 4（d=8 最小）：S={0,3,1,2,4}。所有顶点已加入，算法结束</li>
-            </ol>
+              <li><strong>初始化：</strong>d[0]=0, d[1]=5, d[2]=∞, d[3]=3, d[4]=∞。S=∅</li>
+
+        ```
+          <li><strong>①</strong> 选取 0（最小）：S={'{'}0{'}'}。更新：
+            d[1]=5，d[3]=3（保持不变）
+          </li>
+
+          <li><strong>②</strong> 选取 3（d=3）：S={'{'}0,3{'}'}。更新：
+            d[2]=3+8=11，
+            d[4]=3+7=10
+          </li>
+
+          <li><strong>③</strong> 选取 1（d=5）：S={'{'}0,3,1{'}'}。更新：
+            d[2]=min(11,5+3)=8，
+            d[4]=min(10,5+4)=9
+          </li>
+
+          <li><strong>④</strong> 选取 2（d=8）：S={'{'}0,3,1,2{'}'}。更新：
+            d[4]=min(9,8+1)=9（不变）
+          </li>
+
+          <li><strong>⑤</strong> 选取 4（d=9）：S={'{'}0,3,1,2,4{'}'}。算法结束</li>
+        </ol>
+        ```
+
           </div>
 
           <h3>3. 最终最短路径长度</h3>
           <div className="algo-ex-table-wrap">
             <table className="algo-ex-table algo-ex-table-result">
               <thead>
-                <tr><th>起点</th><th>终点</th><th>最短路径长度</th><th>路径</th></tr>
+                <tr>
+                  <th>起点</th><th>终点</th><th>最短路径长度</th><th>路径</th>
+                </tr>
               </thead>
               <tbody>
                 <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-                <tr><td>0</td><td>1</td><td>3</td><td>0 → 1</td></tr>
-                <tr><td>0</td><td>2</td><td>6</td><td>0 → 1 → 2</td></tr>
-                <tr><td>0</td><td>3</td><td>1</td><td>0 → 3</td></tr>
-                <tr><td>0</td><td>4</td><td>8</td><td>0 → 3 → 4</td></tr>
+                <tr><td>0</td><td>1</td><td>5</td><td>0 → 1</td></tr>
+                <tr><td>0</td><td>2</td><td>8</td><td>0 → 1 → 2</td></tr>
+                <tr><td>0</td><td>3</td><td>3</td><td>0 → 3</td></tr>
+                <tr><td>0</td><td>4</td><td>9</td><td>0 → 1 → 4</td></tr>
               </tbody>
             </table>
           </div>
-          <ResultBox>顶点 0 到 0,1,2,3,4 的最短路径长度分别为：0, 3, 6, 1, 8</ResultBox>
+
+          <ResultBox>
+            顶点 0 到 0,1,2,3,4 的最短路径长度分别为：0, 5, 8, 3, 9
+          </ResultBox>
         </section>
+
 
         {/* ==================== 2. 0-1 Knapsack ==================== */}
         <section id="knapsack" className="algo-ex-section">
