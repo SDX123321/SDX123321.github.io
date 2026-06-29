@@ -14,7 +14,9 @@ import { loadBusuanzi } from '../lib/cdnScripts'
 const COURSES = [
   { path: 'probability', icon: '📊', title: '概率论与数理统计', desc: '随机事件与概率、随机变量及其分布、多维随机变量、数字特征、大数定律与中心极限定理、参数估计、假设检验。', tags: ['7 章','公式速查表','经典例题','考试重点'], iconClass: 'icon-blue' },
   { path: 'os', icon: '💻', title: '操作系统', desc: '操作系统概述、处理器管理（进程/调度/PV 操作/死锁）、存储管理（分页/分段/页面置换）、设备管理、文件系统。', tags: ['5 章','PV 操作','调度算法','银行家算法'], iconClass: 'icon-green' },
-  { path: 'algorithm', icon: '🔬', title: '算法设计与分析', desc: '算法概述、分治法、动态规划、贪心算法、回溯法、分支限界法。含算法可视化演示与经典例题详解。', tags: ['6 章','可视化','代码演示','复杂度分析'], iconClass: 'icon-purple' },
+  { path: 'algorithm', icon: '🔬', title: '算法设计与分析', desc: '算法概述、分治法、动态规划、贪心算法、回溯法、分支限界法。含算法可视化演示与经典例题详解。', tags: ['6 章','可视化','代码演示','复杂度分析'], iconClass: 'icon-purple', subLinks: [
+    { to: '/courses/algorithm/exercises', label: '📝 习题解答' },
+  ] },
   { path: 'dsp', icon: '📡', title: '数字信号处理', desc: '离散时间信号与系统、Z 变换、DFT/FFT、数字滤波器设计。含蝶形运算图解与互动练习。', tags: ['4 章','FFT 图解','互动练习','MathJax'], style: { borderLeft: '3px solid #00d2ff' }, iconStyle: { background: 'linear-gradient(135deg,#6c63ff,#00d2ff)' } },
   { path: 'marxism', icon: '📰', title: '马克思主义基本原理', desc: '唯物辩证法、认识论、唯物史观、资本主义本质与规律、社会主义发展。含互动复习与知识卡片。', tags: ['7 章','互动复习','知识卡片','暗色模式'], style: { borderLeft: '3px solid #e63946' }, iconStyle: { background: 'linear-gradient(135deg,#e63946,#f4845f)' } },
   { path: 'maogai', icon: '📰', title: '毛泽东思想和中国特色社会主义理论体系概论', desc: '毛泽东思想、邓小平理论、"三个代表"、科学发展观、习近平新时代中国特色社会主义思想。含复习提纲与考试重点。', tags: ['复习提纲','考试重点'], style: { borderLeft: '3px solid #dc2626' }, iconStyle: { background: 'linear-gradient(135deg,#dc2626,#f87171)' } },
@@ -76,14 +78,23 @@ export default function HomePage() {
       {/* Course cards */}
       <div className="cards">
         {COURSES.map(c => (
-          <Link key={c.path} className="card" to={`/courses/${c.path}/`} style={c.style}>
-            <div className={`icon ${c.iconClass || ''}`} style={c.iconStyle}>{c.icon}</div>
-            <h2>{c.title}</h2>
-            <p>{c.desc}</p>
-            <div className="tags">
-              {c.tags.map(t => <span key={t} className="tag">{t}</span>)}
-            </div>
-          </Link>
+          <div key={c.path} className="card-wrap">
+            <Link className="card" to={`/courses/${c.path}/`} style={c.style}>
+              <div className={`icon ${c.iconClass || ''}`} style={c.iconStyle}>{c.icon}</div>
+              <h2>{c.title}</h2>
+              <p>{c.desc}</p>
+              <div className="tags">
+                {c.tags.map(t => <span key={t} className="tag">{t}</span>)}
+              </div>
+            </Link>
+            {c.subLinks && (
+              <div className="card-sublinks">
+                {c.subLinks.map(link => (
+                  <Link key={link.to} to={link.to} className="card-sublink">{link.label}</Link>
+                ))}
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
