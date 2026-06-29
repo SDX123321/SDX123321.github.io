@@ -7,6 +7,7 @@ import { runMigration } from './lib/storage'
 
 const HomePage = lazy(() => import('./routes/HomePage'))
 const CourseLayout = lazy(() => import('./routes/courses/CourseLayout'))
+const AlgorithmExercisesPage = lazy(() => import('./routes/courses/AlgorithmExercisesPage'))
 
 function Loading() {
   return (
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: '/courses/:courseId/*',
         element: <Suspense fallback={<Loading />}><CourseLayout /></Suspense>,
+      },
+      {
+        path: '/courses/algorithm/exercises',
+        element: <Suspense fallback={<Loading />}><AlgorithmExercisesPage /></Suspense>,
       },
       {
         path: '*',

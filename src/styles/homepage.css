@@ -48,6 +48,18 @@ h1 {
 .icon-green { background: linear-gradient(135deg, #059669, #10b981); }
 .icon-purple { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
 
+/* Card sublinks */
+.card-wrap { display: flex; flex-direction: column; gap: 6px; }
+.card-sublinks { display: flex; flex-direction: column; gap: 4px; padding: 0 4px; }
+.card-sublink {
+  display: flex; align-items: center; gap: 6px;
+  font-size: .8rem; color: var(--text2); text-decoration: none;
+  padding: 6px 12px; border-radius: 8px;
+  background: var(--card); border: 1px solid var(--border);
+  transition: all .2s;
+}
+.card-sublink:hover { color: var(--accent); border-color: var(--accent); background: rgba(124,58,237,.06); }
+
 /* Footer */
 .footer { text-align: center; padding: 24px 20px; color: var(--text3); font-size: 0.8rem; border-top: 1px solid var(--border); }
 .footer a { color: var(--accent); text-decoration: none; }

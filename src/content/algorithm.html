@@ -26,6 +26,51 @@
           </ul>
         </div>
       </div>
+      <div class="card" style="border-left:3px solid #a78bfa;margin-top:12px;">
+        <div class="card-header"><h3>📝 习题解答</h3><span class="expand-icon">&#9654;</span></div>
+        <div class="card-body">
+          <p>作业讲解 + 习题课完整解答，涵盖：</p>
+          <ul>
+            <li><strong>Dijkstra</strong> 最短路径逐步求解（含完整填表过程）</li>
+            <li><strong>0-1 背包</strong> 分支限界法（搜索树 + 剪枝过程详解）</li>
+            <li><strong>二分查找</strong> 手写 3 步分步演示</li>
+            <li><strong>矩阵连乘</strong> DP 填表（A·B·C + M1M2M3M4 两题）</li>
+            <li><strong>合并排序</strong> 时间复杂度 O(n log n) 数学证明</li>
+            <li><strong>哈夫曼编码</strong> 建树 + 平均码长 + 编/解码</li>
+          </ul>
+          <a href="/courses/algorithm/exercises" style="display:inline-block;margin-top:8px;padding:8px 20px;border-radius:8px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600;font-size:.88rem;">查看完整解答 →</a>
+        </div>
+      </div>
+      <div class="card" style="border-left:3px solid #ef4444">
+        <div class="card-header"><h3>考前冲刺策略</h3><span class="expand-icon">&#9654;</span></div>
+        <div class="card-body">
+          <h4>分值分布估计</h4>
+          <table>
+            <tr><th>题型</th><th>估计分数</th><th>来源章节</th><th>策略</th></tr>
+            <tr><td>选择题</td><td>~30-40分</td><td>各章均沾</td><td>概念理解为主，刷quiz题</td></tr>
+            <tr><td>填空题</td><td>~10-15分</td><td>主要Ch1-Ch4</td><td>背术语：分治三步骤、DP两要素等</td></tr>
+            <tr><td>简答题</td><td>~15-20分</td><td>Ch3 Ch4对比</td><td>DP vs 贪心、回溯 vs 分支限界</td></tr>
+            <tr><td>代码题</td><td>~5-6分</td><td>Ch2 Ch4</td><td>写排序/Dijkstra的代码片段</td></tr>
+            <tr><td>计算/证明</td><td>~10-15分</td><td>Ch1 Ch3 Ch4</td><td>复杂度证明、DP填表、Dijkstra迭代</td></tr>
+          </table>
+          <h4>必背公式 &amp; 数据</h4>
+          <ul>
+            <li><strong>渐进复杂度排序：</strong>O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n&sup2;) &lt; O(n&sup3;) &lt; O(2<sup>n</sup>) &lt; O(n!) &lt; O(n<sup>n</sup>)</li>
+            <li><strong>Master Theorem：</strong>T(n)=aT(n/b)+f(n) 三种情况的结论</li>
+            <li><strong>状态转移方程：</strong>矩阵连乘、LCS、0-1背包的方程要能闭眼写出</li>
+            <li><strong>Dijkstra迭代过程：</strong>手工模拟3-4个顶点的图</li>
+            <li><strong>哈夫曼树构建：</strong>每次合并最小的两个频率</li>
+          </ul>
+          <h4>高频简答题问答</h4>
+          <ul>
+            <li><strong>动态规划 vs 贪心法(必考!)：</strong>相同点：都有最优子结构；不同：DP自底向上(重叠子问题)，贪心自顶向下(贪心选择)</li>
+            <li><strong>回溯法 vs 分支限界法：</strong>回溯=DFS+剪枝(所有解)，分支限界=BFS+剪枝(最优解)</li>
+            <li><strong>蒙特卡洛 vs 拉斯维加斯(2分)：</strong>蒙特卡洛=时间确定/结果可能错，拉斯维加斯=结果一定对/时间不确定</li>
+            <li><strong>递归分治 vs 动态规划：</strong>分治子问题独立，DP子问题重叠</li>
+          </ul>
+          <div class="keypoint"><strong>做题策略：</strong>选择题先做，不会的跳过；计算题留足时间；最后一题通常是Dijkstra迭代或DP填表；代码题5分钟能写完就写。</div>
+        </div>
+      </div>
     </section>
 
     <!-- ==================== CH1 ==================== -->
@@ -1255,7 +1300,36 @@
             </ol>
           </div></div>
 
-          <div class="card"><div class="card-header"><h3>6.3 单源最短路径(分支限界)</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card"><div class="card-header"><h3>6.3 0-1背包(分支限界法)</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <p><strong>优先队列式分支限界法</strong>求解0-1背包：</p>
+            <div class="keypoint"><strong>限界函数(上界计算)：</strong>对当前结点，按单位价值降序贪心装入剩余物品，计算价值上界。若上界 &le; 当前最优值，则剪枝。</div>
+            <div class="keypoint warn"><strong>复习课重点：</strong>要会手工模拟分支限界法的搜索过程！画出优先队列的变化过程。</div>
+            <p><strong>状态空间树结点包含：</strong>层号i、当前重量tw、当前价值tv、上界ub</p>
+            <p><strong>扩展规则：</strong></p>
+            <ul>
+              <li>左孩子(选物品i)：tw+w[i]&le;W 时扩展，更新tw,tv,ub</li>
+              <li>右孩子(不选物品i)：直接扩展，tw不变，更新ub</li>
+              <li>只扩展 ub &gt; 当前最优解 的结点</li>
+            </ul>
+
+            <h4>手工模拟示例</h4>
+            <p>n=3, W=30, w=[16,15,15], v=[45,25,25]</p>
+            <table>
+              <tr><th>步骤</th><th>优先队列(按ub降序)</th><th>扩展结点</th><th>操作</th></tr>
+              <tr><td>0</td><td>[A(0,0,90.6)]</td><td>根A</td><td>初始化</td></tr>
+              <tr><td>1</td><td>[B(1,45,70), C(0,0,50)]</td><td>B(选物品1)</td><td>左孩子B: tw=16,tv=45,ub&asymp;70; 右孩子C: ub&asymp;50</td></tr>
+              <tr><td>2</td><td>[E(2,45,58.3), C(0,0,50)]</td><td>B的左孩子D超重(31&gt;30)</td><td>剪枝！扩展E(不选物品2)</td></tr>
+              <tr><td>3</td><td>[C(0,0,50)]</td><td>C(不选物品1)</td><td>继续扩展C的左右孩子...</td></tr>
+              <tr><td>...</td><td colspan="3">直到队列空或所有结点ub&le;当前最优</td></tr>
+            </table>
+            <div class="keypoint"><strong>关键区别（回溯 vs 分支限界求0-1背包）：</strong><br>
+            回溯法用DFS，逐层深入叶子结点，找到可行解后回溯比较；<br>
+            分支限界用BFS+优先队列，每次扩展ub最大的活结点，更快逼近最优解。<br>
+            两者限界函数相同，但搜索顺序不同导致实际效率不同。</div>
+          </div></div>
+
+          <div class="card"><div class="card-header"><h3>6.4 单源最短路径(分支限界)</h3><span class="expand-icon">&#9654;</span></div>
           <div class="card-body">
             <p>用BFS/优先队列BFS求解：</p>
             <div class="complexity"><span class="cx-time"><span class="cx-label">时间</span>FIFO式 O(V&sup2;) / 优先队列式 O((V+E) log V)</span><span class="cx-space"><span class="cx-label">空间</span>O(V&sup2;)</span></div>
@@ -1344,19 +1418,88 @@
           <div class="card-body">
             <div class="keypoint"><strong>复习课：随机算法就一道2分的概念题！把概念搞清楚即可。</strong></div>
             <table>
-              <tr><th>类型</th><th>结果正确性</th><th>时间确定性</th><th>应用</th></tr>
-              <tr><td><strong>蒙特卡洛(Monte Carlo)</strong></td><td>大概率正确，小概率出错</td><td>确定</td><td>素数判定、图像处理去噪</td></tr>
-              <tr><td><strong>拉斯维加斯(Las Vegas)</strong></td><td>完全正确</td><td>不确定</td><td>N皇后问题</td></tr>
+              <tr><th>类型</th><th>结果正确性</th><th>时间确定性</th><th>典型应用</th><th>举例</th></tr>
+              <tr><td><strong>蒙特卡洛(Monte Carlo)</strong></td><td>大概率正确，小概率出错</td><td>确定(有界)</td><td>素数判定、近似计算</td><td>Miller-Rabin素性测试</td></tr>
+              <tr><td><strong>拉斯维加斯(Las Vegas)</strong></td><td>完全正确(或无解)</td><td>不确定(可能很长)</td><td>精确求解</td><td>随机快速排序、N皇后随机放置</td></tr>
             </table>
             <div class="keypoint"><strong>记忆口诀：</strong><br>
-            蒙特卡洛 = 概率保真，可能出错(有时间保证)<br>
-            拉斯维加斯 = 结果保真，可能慢(无时间保证)</div>
-            <p><strong>应用背景(数字媒体)：</strong></p>
+            蒙特卡洛 = <strong>结果可能错</strong>，时间有保证(快)<br>
+            拉斯维加斯 = <strong>结果一定对</strong>，时间无保证(可能慢)</div>
+            <div class="keypoint warn"><strong>易错辨析：</strong><br>
+            &bull; 蒙特卡洛不是"完全随机"，而是通过随机化提高效率，但允许小概率错误<br>
+            &bull; 拉斯维加斯不是"赌博"，而是结果保证正确，但运行时间是随机变量<br>
+            &bull; 两者区别核心在<strong>正确性</strong> vs <strong>时间</strong>哪个有保证</div>
+          </div></div>
+
+          <div class="card"><div class="card-header"><h3>7.2 典型随机算法详解</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <h4>蒙特卡洛：Miller-Rabin 素性测试</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>原理：</strong>对 n-1 进行分解，n-1 = 2<sup>s</sup>&middot;d。随机选底数 a，计算 a<sup>d</sup> mod n，通过一系列检验判断 n 是否为素数。</p>
+                <p><strong>正确率：</strong>单次测试错误率 &le; 1/4。独立重复 k 次，错误率 &le; (1/4)<sup>k</sup>。</p>
+                <p><strong>特点：</strong>确定性时间复杂度，但结论有小概率错误 &rarr; 蒙特卡洛型。</p>
+              </div>
+              <div class="col-code"><pre><span class="cm">// Miller-Rabin 素性测试(简化)</span>
+<span class="kw">bool</span> <span class="fn">miller_rabin</span>(<span class="kw">int</span> n) {
+  <span class="kw">if</span>(n&lt;<span class="num">2</span>) <span class="kw">return false</span>;
+  <span class="cm">// n-1 = 2^s * d</span>
+  <span class="kw">int</span> d=n-<span class="num">1</span>, s=<span class="num">0</span>;
+  <span class="kw">while</span>(d%<span class="num">2</span>==<span class="num">0</span>){d/=<span class="num">2</span>;s++;}
+  <span class="cm">// 随机选底数a测试</span>
+  <span class="kw">int</span> a = <span class="fn">rand</span>()%(n-<span class="num">2</span>)+<span class="num">2</span>;
+  <span class="kw">int</span> x = <span class="fn">pow_mod</span>(a, d, n);
+  <span class="kw">if</span>(x==<span class="num">1</span>||x==n-<span class="num">1</span>) <span class="kw">return true</span>;
+  <span class="kw">for</span>(<span class="kw">int</span> r=<span class="num">1</span>;r&lt;s;r++){
+    x=(<span class="kw">long long</span>)x*x%n;
+    <span class="kw">if</span>(x==n-<span class="num">1</span>) <span class="kw">return true</span>;
+  }
+  <span class="kw">return false</span>; <span class="cm">// 合数</span>
+}</pre></div>
+            </div>
+
+            <h4>拉斯维加斯：随机快速排序</h4>
+            <div class="two-col">
+              <div class="col-text">
+                <p><strong>原理：</strong>随机选择pivot，避免最坏情况 O(n&sup2;)。</p>
+                <p><strong>期望复杂度：</strong>O(n log n)，无论输入分布如何。</p>
+                <p><strong>特点：</strong>排序结果一定正确，但运行时间是随机变量 &rarr; 拉斯维加斯型。</p>
+                <p><strong>与确定性快排对比：</strong>确定性快排在已排序输入下退化为 O(n&sup2;)，随机快排避免了这种情况。</p>
+              </div>
+              <div class="col-code"><pre><span class="cm">// 随机快速排序</span>
+<span class="kw">void</span> <span class="fn">rand_quicksort</span>(<span class="kw">int</span> a[],
+    <span class="kw">int</span> l, <span class="kw">int</span> r) {
+  <span class="kw">if</span>(l&gt;=r) <span class="kw">return</span>;
+  <span class="cm">// 随机选pivot(拉斯维加斯关键)</span>
+  <span class="kw">int</span> ri = l+<span class="fn">rand</span>()%(r-l+<span class="num">1</span>);
+  swap(a[l], a[ri]);
+  <span class="kw">int</span> i=l-<span class="num">1</span>, j=r+<span class="num">1</span>, x=a[l];
+  <span class="kw">while</span>(i&lt;j){
+    <span class="kw">do</span> i++;<span class="kw">while</span>(a[i]&lt;x);
+    <span class="kw">do</span> j--;<span class="kw">while</span>(a[j]&gt;x);
+    <span class="kw">if</span>(i&lt;j) swap(a[i],a[j]);
+  }
+  <span class="fn">rand_quicksort</span>(a,l,j);
+  <span class="fn">rand_quicksort</span>(a,j+<span class="num">1</span>,r);
+}</pre></div>
+            </div>
+
+            <div class="keypoint"><strong>面试/考试常见问法：</strong><br>
+            Q: "随机快速排序属于蒙特卡洛还是拉斯维加斯？"<br>
+            A: <strong>拉斯维加斯</strong> — 排序结果一定正确，时间不确定。<br>
+            Q: "Miller-Rabin属于哪种？"<br>
+            A: <strong>蒙特卡洛</strong> — 时间确定，但判定结果有小概率错误。</div>
+          </div></div>
+
+          <div class="card"><div class="card-header"><h3>7.3 应用背景(数字媒体)</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
             <ul>
-              <li>图像加白噪声 → 随机算法</li>
-              <li>复现实验 → 保存噪声图像 或 多组数据取平均</li>
-              <li>噪声是随机的，信道突发错误是随机的</li>
+              <li><strong>图像加白噪声</strong>：随机算法在图像处理中的应用(去噪需要多组数据取平均)</li>
+              <li><strong>信道突发错误</strong>：通信中信道噪声是随机的，纠错码利用随机性</li>
+              <li><strong>复现实验</strong>：保存噪声图像 或 多次实验取平均值以消除随机误差</li>
+              <li><strong>采样与估计</strong>：蒙特卡洛方法用于近似计算积分、面积等</li>
             </ul>
+            <div class="keypoint"><strong>考试考点(2分)：</strong>区分蒙特卡洛和拉斯维加斯的概念，知道对应的实际例子。</div>
           </div></div>
 
           <div class="card"><div class="card-header"><h3>第7章 练习题</h3><span class="expand-icon">&#9654;</span></div>
@@ -1424,6 +1567,26 @@
               <tr><td>图着色(回溯)</td><td colspan="3">O(m<sup>n</sup>)</td><td>O(n)</td></tr>
               <tr><td>BFS/DFS</td><td colspan="3">O(V+E)</td><td>O(V)</td></tr>
             </table>
+          </div></div>
+
+          <div class="card"><div class="card-header"><h3>算法选择决策指南</h3><span class="expand-icon">&#9654;</span></div>
+          <div class="card-body">
+            <div class="keypoint"><strong>遇到一道算法题，如何判断用什么方法？</strong></div>
+            <table>
+              <tr><th>问题特征</th><th>适合策略</th><th>判断依据</th></tr>
+              <tr><td>有重叠子问题 + 最优解</td><td><strong>动态规划</strong></td><td>子问题反复出现，需要填表</td></tr>
+              <tr><td>局部最优 = 全局最优</td><td><strong>贪心算法</strong></td><td>贪心选择性质，Dijkstra/哈夫曼</td></tr>
+              <tr><td>子问题独立(不重叠)</td><td><strong>分治法</strong></td><td>分解为独立子问题，如归并排序</td></tr>
+              <tr><td>需要找出所有可行解</td><td><strong>回溯法</strong></td><td>DFS搜遍解空间，需要剪枝优化</td></tr>
+              <tr><td>需要找单个最优解</td><td><strong>分支限界法</strong></td><td>BFS+优先队列，剪枝更快</td></tr>
+              <tr><td>结果可以近似，追求速度</td><td><strong>蒙特卡洛</strong></td><td>允许小概率错误，时间有保证</td></tr>
+              <tr><td>结果必须精确，速度次要</td><td><strong>拉斯维加斯</strong></td><td>保证正确性，随机化避免最坏情况</td></tr>
+            </table>
+            <div class="keypoint"><strong>以0-1背包为例的跨方法对比：</strong><br>
+            &bull; 容量小(n&le;20, W&le;100) &rarr; 回溯法/分支限界(精确)<br>
+            &bull; n大但物品重量整数 &rarr; 动态规划 O(nW)<br>
+            &bull; n大W大，要精确解 &rarr; 回溯法+强剪枝(分支限界)<br>
+            &bull; 只要近似解 &rarr; 贪心法(分数背包，O(n log n)，但不保证0-1背包最优)</div>
           </div></div>
 
           <div class="card"><div class="card-header"><h3>闪卡复习 - 点击翻转</h3><span class="expand-icon">&#9654;</span></div>
