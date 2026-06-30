@@ -105,7 +105,7 @@ export default function ExamQuery() {
     if (!examsArr) {
       const matches = Object.keys(d).filter(k => k.indexOf(id) !== -1)
       if (matches.length === 1) { targetId = matches[0]; examsArr = d[targetId] }
-      else if (matches.length > 1) { setMsg({ text: '多个匹配：' + matches.slice(0, 8).join('、') + '，请输入完整 ID。', type: 'warn' }); return }
+      else if (matches.length > 1) { setMsg({ text: '多个匹配：' + matches.slice(0, 8).join('、') + '，请输入完整 ID.', type: 'warn' }); return }
       else { setMsg({ text: '未找到班级「' + id + '」的考试安排。', type: 'warn' }); return }
     }
 

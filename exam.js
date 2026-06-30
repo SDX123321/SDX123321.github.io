@@ -109,7 +109,7 @@
       var matches = [];
       for (var k in data) { if (k.indexOf(classId) !== -1) matches.push(k); }
       if (matches.length === 1) { exams = data[matches[0]]; classId = matches[0]; }
-      else if (matches.length > 1) { showMsg('多个匹配：' + matches.slice(0, 8).join('、') + '，请输入完整 ID。', 'warn'); return; }
+      else if (matches.length > 1) { showMsg('多个匹配：' + matches.slice(0, 8).join('、') + '，请输入完整 ID.', 'warn'); return; }
       else { showMsg('未找到班级「' + classId + '」的考试安排。', 'warn'); return; }
     }
     currentClassId = classId;

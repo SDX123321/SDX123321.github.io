@@ -13,7 +13,9 @@ import { loadBusuanzi } from '../lib/cdnScripts'
 
 const COURSES = [
   { path: 'probability', icon: '📊', title: '概率论与数理统计', desc: '随机事件与概率、随机变量及其分布、多维随机变量、数字特征、大数定律与中心极限定理、参数估计、假设检验。', tags: ['7 章','公式速查表','经典例题','考试重点'], iconClass: 'icon-blue' },
-  { path: 'os', icon: '💻', title: '操作系统', desc: '操作系统概述、处理器管理（进程/调度/PV 操作/死锁）、存储管理（分页/分段/页面置换）、设备管理、文件系统。', tags: ['5 章','PV 操作','调度算法','银行家算法'], iconClass: 'icon-green' },
+  { path: 'os', icon: '💻', title: '操作系统', desc: '操作系统概述、处理器管理（进程/调度/PV 操作/死锁）、存储管理（分页/分段/页面置换）、设备管理、文件系统。', tags: ['5 章','PV 操作','调度算法','银行家算法'], iconClass: 'icon-green', subLinks: [
+    { to: '/courses/os/exercises', label: '📝 习题解答' },
+  ] },
   { path: 'algorithm', icon: '🔬', title: '算法设计与分析', desc: '算法概述、分治法、动态规划、贪心算法、回溯法、分支限界法。含算法可视化演示与经典例题详解。', tags: ['6 章','可视化','代码演示','复杂度分析'], iconClass: 'icon-purple', subLinks: [
     { to: '/courses/algorithm/exercises', label: '📝 习题解答' },
   ] },
