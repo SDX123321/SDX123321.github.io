@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import Turnstile from '../security/Turnstile'
+import { loadAnimeJS } from '../../lib/cdnScripts'
 
 const LS_KEY = 'exam_class_id'
 const LS_DELETED = 'exam_deleted'
-const LS_TS = 'exam_ts_verified'
 
 function getDeletedExams() {
   try { return JSON.parse(localStorage.getItem(LS_DELETED) || '{}') } catch (e) { return {} }
@@ -38,13 +37,51 @@ function formatDate(ds) {
   return m + '月' + d + '日 周' + wd
 }
 
-function getCountdown(iso) {
-  const diff = new Date(iso) - new Date()
-  if (diff <= 0) return ''
-  const days = Math.floor(diff / 86400000), hours = Math.floor((diff % 86400000) / 3600000)
-  if (days > 0) return `${days} 天 ${hours} 小时`
-  if (hours > 0) return `${hours} 小时`
-  return Math.floor((diff % 3600000) / 60000) + ' 分钟'
+function LiveCountdown({ iso }) {
+  const ref = useRef(null)
+  const prevRef = useRef({ d: -1, h: -1, m: -1, s: -1 })
+
+  useEffect(() => {
+    loadAnimeJS().then(() => {
+      function tick() {
+        const el = ref.current
+        if (!el) return
+        const diff = new Date(iso) - new Date()
+        if (diff <= 0) { el.textContent = '已开始！'; return }
+        const d = Math.floor(diff / 86400000)
+        const h = Math.floor((diff % 86400000) / 3600000)
+        const m = Math.floor((diff % 3600000) / 60000)
+        const s = Math.floor((diff % 60000) / 1000)
+        const prev = prevRef.current
+
+        if (d > 0) {
+          el.innerHTML = `${d} 天 ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+        } else {
+          el.innerHTML = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+        }
+
+        if (s !== prev.s && window.anime) {
+          const spans = el.querySelectorAll('.cd-sec')
+          if (spans.length) {
+            window.anime({
+              targets: spans,
+              scale: [1, 1.3, 1],
+              duration: 400,
+              easing: 'easeOutQuad'
+            })
+          }
+        }
+
+        prevRef.current = { d, h, m, s }
+      }
+
+      tick()
+      const interval = setInterval(tick, 1000)
+      return () => clearInterval(interval)
+    })
+  }, [iso])
+
+  return <span ref={ref} className="live-countdown" />
 }
 
 export default function ExamQuery() {
@@ -57,23 +94,9 @@ export default function ExamQuery() {
   const [msg, setMsg] = useState(null)
   const [deletedMap, setDeletedMap] = useState(getDeletedExams)
   const [loading, setLoading] = useState(false)
-  const [tsVerified, setTsVerified] = useState(() => {
-    try {
-      const raw = localStorage.getItem(LS_TS)
-      if (!raw) return false
-      const { exp } = JSON.parse(raw)
-      return exp > Date.now()
-    } catch { return false }
-  })
   const refreshRef = useRef(null)
   const loadedRef = useRef(false)
-
-  const handleTsVerify = useCallback((token) => {
-    setTsVerified(true)
-    try { localStorage.setItem(LS_TS, JSON.stringify({ exp: Date.now() + 3600000 })) } catch {}
-  }, [])
-  const handleTsExpire = useCallback(() => { setTsVerified(false) }, [])
-  const handleTsError = useCallback(() => { setTsVerified(false) }, [])
+  const autoQueryRef = useRef(false)
 
   const loadData = useCallback(() => {
     return new Promise(resolve => {
@@ -94,7 +117,6 @@ export default function ExamQuery() {
 
   const doQuery = useCallback(async (id) => {
     if (!id || !id.trim()) return
-    if (!tsVerified) { setMsg({ text: '请先完成人机验证。', type: 'warn' }); return }
     setLoading(true)
     try {
       const d = await loadData()
@@ -134,23 +156,14 @@ export default function ExamQuery() {
     } finally {
       setLoading(false)
     }
-  }, [loadData, tsVerified])
+  }, [loadData])
 
   useEffect(() => {
     const saved = localStorage.getItem(LS_KEY)
-    if (saved) setClassId(saved)
+    if (saved) { setClassId(saved); doQuery(saved) }
     else loadData()
     return () => clearInterval(refreshRef.current)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Auto-query saved class after Turnstile verification completes
-  const autoQueryRef = useRef(false)
-  useEffect(() => {
-    if (tsVerified && classId && !autoQueryRef.current) {
-      autoQueryRef.current = true
-      doQuery(classId)
-    }
-  }, [tsVerified, classId, doQuery])
 
   const removeExam = (exam, btn) => {
     const card = btn.closest('.exam-card')
@@ -197,12 +210,6 @@ export default function ExamQuery() {
           </button>
         </div>
         <div className="exam-input-hint">输入班级 ID 即可查看该班所有考试时间、教室和教师信息</div>
-        {!tsVerified && (
-          <div style={{ marginTop: 12, marginBottom: 4 }}>
-            <div style={{ fontSize: '.78rem', color: 'var(--text3)', marginBottom: 6 }}>请先完成安全验证：</div>
-            <Turnstile onVerify={handleTsVerify} onError={handleTsError} onExpire={handleTsExpire} />
-          </div>
-        )}
         {msg && <div className={`exam-msg exam-msg-${msg.type}`} style={{ marginTop: 12 }}>{msg.text}</div>}
       </div>
 
@@ -226,7 +233,6 @@ export default function ExamQuery() {
               <div className="exam-scroll-window">
                 <div className="exam-list">
                   {exams.map((ev, j) => {
-                    const cd = getCountdown(ev.iso)
                     return (
                       <div className="exam-card" key={j}>
                         <button className="exam-del" onClick={(e) => removeExam(ev, e.target)} title="移除">&times;</button>
@@ -240,7 +246,9 @@ export default function ExamQuery() {
                           <div className="exam-info"><span className="exam-label">教室</span><span className="exam-value">{ev.room}</span></div>
                           <div className="exam-info"><span className="exam-label">教师</span><span className="exam-value">{ev.teacher}</span></div>
                         </div>
-                        {cd && <div className="exam-countdown">距考试还有 {cd}</div>}
+                        {ev.iso && new Date(ev.iso) > new Date() && (
+                          <div className="exam-countdown">距考试还有 <LiveCountdown iso={ev.iso} /></div>
+                        )}
                       </div>
                     )
                   })}

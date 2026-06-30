@@ -39,6 +39,7 @@ h1 {
   display: flex; flex-direction: column; gap: 10px;
 }
 .card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); border-color: var(--accent); }
+.card-no-exam .card:hover { filter: blur(3px); transform: none; box-shadow: none; border-color: var(--border); cursor: default; }
 .card .icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
 .card h2 { font-size: 1.25rem; color: var(--text); }
 .card p { font-size: 0.88rem; color: var(--text2); line-height: 1.6; flex-grow: 1; }
@@ -215,6 +216,7 @@ h1 {
 .exam-label{font-size:.72rem;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
 .exam-value{font-size:.88rem;color:var(--text2);font-weight:500}
 .exam-countdown{margin-top:10px;padding:8px 12px;border-radius:8px;background:var(--accent-bg);color:var(--accent);font-size:.82rem;font-weight:600;text-align:center}
+.live-countdown{display:inline-block;font-variant-numeric:tabular-nums;min-width:8ch}
 .exam-msg{padding:14px 18px;border-radius:10px;font-size:.88rem;text-align:center}
 .exam-msg-warn{background:var(--warning-bg);color:var(--warning);border:1px solid rgba(210,153,34,.2)}
 .exam-msg-error{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(248,81,73,.2)}

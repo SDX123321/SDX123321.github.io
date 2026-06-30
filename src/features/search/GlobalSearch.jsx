@@ -51,7 +51,7 @@ export default function GlobalSearch() {
   }
 
   return (
-    <div className="search-section" style={{ maxWidth: 560, margin: '0 auto 28px', position: 'relative' }}>
+    <div className="search-section" style={{ maxWidth: 560, margin: '0 auto 28px', position: 'relative', zIndex: 100 }}>
       <div style={{ position: 'relative' }}>
         <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text3)', fontSize: '1rem', pointerEvents: 'none' }}>🔍</span>
         <input

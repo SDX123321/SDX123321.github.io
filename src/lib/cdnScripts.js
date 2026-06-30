@@ -69,3 +69,14 @@ export function loadBusuanzi() {
   script.async = true
   document.body.appendChild(script)
 }
+
+export function loadAnimeJS() {
+  if (window.anime) return Promise.resolve()
+  return new Promise((resolve) => {
+    const script = document.createElement('script')
+    script.src = 'https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js'
+    script.onload = resolve
+    script.onerror = resolve
+    document.head.appendChild(script)
+  })
+}

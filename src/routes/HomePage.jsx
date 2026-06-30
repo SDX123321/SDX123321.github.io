@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import '../styles/homepage.css'
 import GlobalSearch from '../features/search/GlobalSearch'
@@ -28,10 +28,100 @@ const COURSES = [
 
 export default function HomePage() {
   const [totalStudyTime, setTotalStudyTime] = useState(null)
+  const [sortedCourses, setSortedCourses] = useState(COURSES)
   const containerRef = useGsapAnimations(totalStudyTime)
+  const sortRef = useRef(false)
 
   useScrollMemory()
   useEffect(() => { loadBusuanzi() }, [])
+
+  // Load giscus dynamically (script tag in JSX doesn't execute)
+  useEffect(() => {
+    const container = document.querySelector('.giscus-wrap')
+    if (!container || container.querySelector('script')) return
+    const script = document.createElement('script')
+    script.src = 'https://giscus.app/client.js'
+    script.setAttribute('data-repo', 'SDX123321/SDX123321.github.io')
+    script.setAttribute('data-repo-id', 'R_kgDONOvdMA')
+    script.setAttribute('data-category', 'Announcements')
+    script.setAttribute('data-category-id', 'DIC_kwDONOvdMM4C__x3')
+    script.setAttribute('data-mapping', 'pathname')
+    script.setAttribute('data-strict', '0')
+    script.setAttribute('data-reactions-enabled', '1')
+    script.setAttribute('data-emit-metadata', '0')
+    script.setAttribute('data-input-position', 'top')
+    script.setAttribute('data-theme', 'preferred_color_scheme')
+    script.setAttribute('data-lang', 'zh-CN')
+    script.crossOrigin = 'anonymous'
+    script.async = true
+    container.appendChild(script)
+  }, [])
+
+  // Dynamic course ordering based on saved exam schedule
+  useEffect(() => {
+    if (sortRef.current) return
+    const classId = localStorage.getItem('exam_class_id')
+    if (!classId) { setSortedCourses(COURSES); return }
+
+    const courseKeys = {
+      os: ['操作系统'], algorithm: ['算法'], signals: ['信号与系统'],
+      dsp: ['数字信号处理'], calculus: ['高等数学'], marxism: ['马克思主义'],
+      probability: ['概率论'], maogai: ['毛泽东'],
+    }
+
+    // Parse deleted exams to deprioritize courses the user hid
+    const deletedCourses = new Set()
+    try {
+      const raw = localStorage.getItem('exam_deleted')
+      if (raw) {
+        const delMap = JSON.parse(raw)
+        const list = delMap[classId]
+        if (Array.isArray(list)) {
+          list.forEach(entry => {
+            const courseName = entry.split('|')[0]
+            for (const [path, keys] of Object.entries(courseKeys)) {
+              if (keys.some(k => courseName.includes(k))) deletedCourses.add(path)
+            }
+          })
+        }
+      }
+    } catch (e) {}
+
+    const load = (data) => {
+      const exams = data[classId]
+      if (!exams) { setSortedCourses(COURSES); return }
+      const now = new Date()
+      const withDate = COURSES.map(c => {
+        const keys = courseKeys[c.path] || []
+        let earliest = null
+        for (const e of exams) {
+          if (!keys.some(k => e.course.includes(k))) continue
+          const dt = new Date(e.iso)
+          if (dt > now && (!earliest || dt < earliest)) earliest = dt
+        }
+        return { ...c, _examDate: earliest, _deprioritized: deletedCourses.has(c.path), _noExam: !earliest || deletedCourses.has(c.path) }
+      })
+      withDate.sort((a, b) => {
+        if (a._deprioritized && !b._deprioritized) return 1
+        if (!a._deprioritized && b._deprioritized) return -1
+        if (a._examDate && b._examDate) return a._examDate - b._examDate
+        if (a._examDate) return -1
+        if (b._examDate) return 1
+        return 0
+      })
+      setSortedCourses(withDate)
+      sortRef.current = true
+    }
+
+    // Try window cache first, then fetch
+    if (window.EXAM_SCHEDULE_DATA) { load(window.EXAM_SCHEDULE_DATA); return }
+    fetch('/files/exam-schedule.json').then(r => r.json()).then(load).catch(() => {
+      const script = document.createElement('script')
+      script.src = '/files/exam-schedule-data.js'
+      script.onload = () => { if (window.EXAM_SCHEDULE_DATA) load(window.EXAM_SCHEDULE_DATA) }
+      document.head.appendChild(script)
+    })
+  }, [])
 
   useEffect(() => {
     // Aggregate study time from all pages
@@ -79,8 +169,8 @@ export default function HomePage() {
 
       {/* Course cards */}
       <div className="cards">
-        {COURSES.map(c => (
-          <div key={c.path} className="card-wrap">
+        {sortedCourses.map(c => (
+          <div key={c.path} className={`card-wrap${c._noExam ? ' card-no-exam' : ''}`}>
             <Link className="card" to={`/courses/${c.path}/`} style={c.style}>
               <div className={`icon ${c.iconClass || ''}`} style={c.iconStyle}>{c.icon}</div>
               <h2>{c.title}</h2>
@@ -109,28 +199,10 @@ export default function HomePage() {
       </div>
 
       {/* Giscus comments */}
-      <div className="comment-section" style={{ maxWidth: 800, margin: '0 auto 32px', padding: '0 20px' }}>
-        <h2 style={{ fontSize: '1.15rem', color: 'var(--text)', marginBottom: 16, paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
-          💬 评论区
-        </h2>
-        <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: 20, minHeight: 200 }}>
+      <div className="comment-section">
+        <h2>💬 评论区</h2>
+        <div className="giscus-wrap">
           <div className="giscus" />
-          <script
-            src="https://giscus.app/client.js"
-            data-repo="SDX123321/SDX123321.github.io"
-            data-repo-id="R_kgDONOvdMA"
-            data-category="Announcements"
-            data-category-id="DIC_kwDONOvdMM4C__x3"
-            data-mapping="pathname"
-            data-strict="0"
-            data-reactions-enabled="1"
-            data-emit-metadata="0"
-            data-input-position="top"
-            data-theme="preferred_color_scheme"
-            data-lang="zh-CN"
-            crossOrigin="anonymous"
-            async
-          />
         </div>
       </div>
 
