@@ -55,7 +55,7 @@
 </div>
 </div>
 
-<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>微内核 & SPOOLing 练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>微内核 &amp; SPOOLing 练习题</h3><span class="expand-icon">&#9654;</span></div>
 <div class="card-body">
 <h4>题目1（简答）</h4>
 <p>简述微内核结构的四个优势。</p>
@@ -197,7 +197,7 @@
 
 <h4>HRRN 最高响应比优先</h4>
 <p>响应比 H = 1 + 等待时间/运行时间。10:00时计算响应比：JOB2=2.4, JOB3=7, JOB4=1.5 → 选JOB3; 10:10再算：JOB2=2.6, JOB4=2 → 选JOB2</p>
-<p>平均周转时间 <strong>97.5min</strong>，平均带权周转时间 <strong>3.525</strong></p>
+<p>平均周转时间 <strong>102.5min</strong>，平均带权周转时间 <strong>3.775</strong></p>
 
 <div class="key-point">
 <strong>结论：</strong>FCFS性能最差，SJF性能最优（平均周转时间最短），HRRN介于两者之间但兼顾公平性。
@@ -547,7 +547,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 <p>缺页次数：<strong>9次</strong>，缺页率：9/12 = 75%</p>
 
 <h4>LRU 最近最少用</h4>
-<p>4,3,2 入内存 → 访问1时，4最久未访问，替换4 → 访问4时缺页，替换3 → 访问2时，5最久未访问（与FIFO不同！）</p>
+<p>4,3,2 入内存 → 访问1时，4最久未访问，替换4 → 访问4时缺页，替换3 → ...</p>
 <p>缺页次数：<strong>10次</strong>，缺页率：10/12 ≈ 83.3%</p>
 
 <div class="warning">
@@ -656,7 +656,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 <p>当前磁头在 53 号磁道，请求队列：98, 183, 37, 122, 14, 124, 65, 67。分别用 FCFS、SSTF、SCAN（向磁道号增大方向）求总移动磁道数。</p>
 <div class="highlight">
 <strong>FCFS：</strong>53→98→183→37→122→14→124→65→67<br>
-移动：45+85+146+85+108+110+41+2 = <strong>622</strong><br><br>
+移动：45+85+146+85+108+110+59+2 = <strong>640</strong><br><br>
 <strong>SSTF：</strong>53→65→67→37→14→98→122→124→183<br>
 移动：12+2+30+23+84+24+2+59 = <strong>236</strong><br><br>
 <strong>SCAN（向大号）：</strong>53→65→67→98→122→124→183→37→14<br>
@@ -721,7 +721,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 <p>文件安全涉及访问控制、加密、备份恢复等机制，确保文件的<strong>机密性、完整性和可用性</strong>。</p>
 </div>
 
-<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>索引文件 & 位示图练习题</h3><span class="expand-icon">&#9654;</span></div>
+<div class="card"><div class="card-header" onclick="toggleCard(this)"><h3>索引文件 &amp; 位示图练习题</h3><span class="expand-icon">&#9654;</span></div>
 <div class="card-body">
 <h4>题目1：索引文件最大长度</h4>
 <p>磁盘块大小 1KB，盘块号占 4 字节。采用三级索引结构（10个直接索引 + 1个一级间接 + 1个二级间接 + 1个三级间接）。求文件最大长度。</p>
@@ -786,7 +786,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 
 
 <h2 id="quiz"><span class="icon">&#9999;&#65039;</span> 自测练习</h2>
-<p style="color:var(--text2);margin-bottom:16px">共 20 题，涵盖操作系统全部 5 章内容。选择答案后点击"检查答案"查看结果。</p>
+<p style="color:var(--text2);margin-bottom:16px">共 20 题，涵盖操作系统全部 5 章内容。选择答案后单击"检查答案"查看结果。</p>
 
 <div class="quiz-container" data-correct="0">
   <div class="quiz-q">1. 以下哪项不属于操作系统的设计目标？</div>
@@ -824,7 +824,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
   <div class="quiz-result"></div>
 </div>
 
-<div class="quiz-container" data-correct="2">
+<div class="quiz-container" data-correct="0">
   <div class="quiz-q">4. 三个作业 A(到达0, 运行3)、B(到达1, 运行6)、C(到达3, 运行2)。使用 SJF（最短作业优先）调度，C 的周转时间是多少？</div>
   <div class="quiz-options">
     <label><input type="radio" name="q4" value="0"> A. 2</label>
@@ -932,7 +932,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
   <div class="quiz-result"></div>
 </div>
 
-<div class="quiz-container" data-correct="3">
+<div class="quiz-container" data-correct="0">
   <div class="quiz-q">13. 页面访问序列为 1,2,3,4,1,2,5,1,2,3,4,5，分配 3 个页框。使用 LRU 算法，访问第 4 个页面（页号4）时，哪个页面被替换？</div>
   <div class="quiz-options">
     <label><input type="radio" name="q13" value="0"> A. 页号1</label>
@@ -1039,7 +1039,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
   <div class="quiz-result"></div>
 </div>
 
-<div class="quiz-container" data-correct="0" data-type="judge">
+<div class="quiz-container" data-correct="1" data-type="judge">
   <div class="quiz-q">判断题 22. 在生产者-消费者问题中，若先执行 P(mutex) 再执行 P(empty)，当缓冲区满时可能导致死锁。</div>
   <div class="quiz-options">
     <label><input type="radio" name="j22" value="1"> 正确 &#10003;</label>
@@ -1110,5 +1110,4 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
     ④ 对用户而言，打印机好像可以共享使用，实现了虚拟化。
   </div>
 </div>
-
 </main>
