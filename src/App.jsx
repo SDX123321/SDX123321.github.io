@@ -9,6 +9,7 @@ const HomePage = lazy(() => import('./routes/HomePage'))
 const CourseLayout = lazy(() => import('./routes/courses/CourseLayout'))
 const AlgorithmExercisesPage = lazy(() => import('./routes/courses/AlgorithmExercisesPage'))
 const OsExercisesPage = lazy(() => import('./routes/courses/OsExercisesPage'))
+const MarxismReviewPage = lazy(() => import('./routes/courses/MarxismReviewPage'))
 
 function Loading() {
   return (
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: '/courses/os/exercises',
         element: <Suspense fallback={<Loading />}><OsExercisesPage /></Suspense>,
+      },
+      {
+        path: '/courses/marxism/review',
+        element: <Suspense fallback={<Loading />}><MarxismReviewPage /></Suspense>,
       },
       {
         path: '*',

@@ -19,12 +19,16 @@ function Code({ children }) {
   return <pre className="os-ex-code">{children}</pre>
 }
 
-function Table({ head, body }) {
+function Table({ head, body, className, groupHeaders, colGroups }) {
   return (
-    <div className="os-ex-tbl">
+    <div className={`os-ex-tbl ${className || ''}`}>
       <table>
-        {head && <thead><tr>{head.map((h,i) => <th key={i}>{h}</th>)}</tr></thead>}
-        <tbody>{body.map((row,ri) => <tr key={ri}>{row.map((c,ci) => <td key={ci}>{c}</td>)}</tr>)}</tbody>
+        {colGroups && <colgroup>{colGroups.map((c,i) => <col key={i} className={c} />)}</colgroup>}
+        <thead>
+          {groupHeaders && <tr className="os-ex-grp">{groupHeaders.map((h,i) => <th key={i} colSpan={h.colSpan}>{h.label}</th>)}</tr>}
+          {head && <tr>{head.map((h,i) => <th key={i} className={colGroups?.[i]}>{h}</th>)}</tr>}
+        </thead>
+        <tbody>{body.map((row,ri) => <tr key={ri}>{row.map((c,ci) => <td key={ci} className={colGroups?.[ci]}>{c}</td>)}</tr>)}</tbody>
       </table>
     </div>
   )
@@ -503,14 +507,21 @@ while (true) {                while (true) {                 while (true) {
 
             <Q id="ex2-43"><b>（7）</b>银行家算法：A 6个, B 3个, C 4个, D 2个。</Q>
             <Answer>
-              <Table head={['进程', 'Alloc', 'Alloc', 'Alloc', 'Alloc', 'Max', 'Max', 'Max', 'Max', 'Need', 'Need', 'Need', 'Need']} body={[
-                ['', 'A','B','C','D', 'A','B','C','D', 'A','B','C','D'],
-                ['P1', '3','0','1','1', '4','1','1','1', '1','1','0','0'],
-                ['P2', '0','1','0','0', '0','2','1','2', '0','1','1','2'],
-                ['P3', '1','1','1','0', '4','2','1','0', '3','1','0','0'],
-                ['P4', '1','1','0','1', '1','1','1','1', '0','0','1','0'],
-                ['P5', '0','0','0','0', '2','1','1','0', '2','1','1','0'],
-              ]} />
+              <Table className="os-ex-banker" colGroups={['', 'banker-alloc','banker-alloc','banker-alloc','banker-alloc', 'banker-max','banker-max','banker-max','banker-max', 'banker-need','banker-need','banker-need','banker-need']}
+                groupHeaders={[
+                  { label: '', colSpan: 1 },
+                  { label: '已分配 (Alloc)', colSpan: 4 },
+                  { label: '最大需求 (Max)', colSpan: 4 },
+                  { label: '仍需 (Need)', colSpan: 4 },
+                ]}
+                head={['进程', 'A','B','C','D', 'A','B','C','D', 'A','B','C','D']}
+                body={[
+                  ['P1', '3','0','1','1', '4','1','1','1', '1','1','0','0'],
+                  ['P2', '0','1','0','0', '0','2','1','2', '0','1','1','2'],
+                  ['P3', '1','1','1','0', '4','2','1','0', '3','1','0','0'],
+                  ['P4', '1','1','0','1', '1','1','1','1', '0','0','1','0'],
+                  ['P5', '0','0','0','0', '2','1','1','0', '2','1','1','0'],
+                ]} />
 
               <p><strong>① 系统是否安全？</strong></p>
               <p>Available = (6-5, 3-3, 4-2, 2-2) = (1, 0, 2, 0)</p>
@@ -523,14 +534,22 @@ while (true) {                while (true) {                 while (true) {
 
             <Q id="ex2-44"><b>（8）</b>银行家算法：5 进程，A=10, B=5, C=7。</Q>
             <Answer>
-              <Table head={['进程', 'Max', 'Max', 'Max', 'Alloc', 'Alloc', 'Alloc', 'Need', 'Need', 'Need', 'Avail', 'Avail', 'Avail']} body={[
-                ['', 'A','B','C', 'A','B','C', 'A','B','C', 'A','B','C'],
-                ['P0', '7','5','3', '0','1','0', '7','4','3', '', '', ''],
-                ['P1', '3','2','2', '2','0','0', '1','2','2', '', '', ''],
-                ['P2', '9','0','2', '3','0','2', '6','0','0', '', '', ''],
-                ['P3', '2','2','2', '2','1','1', '0','1','1', '', '', ''],
-                ['P4', '4','3','3', '0','0','2', '4','3','1', '', '', ''],
-              ]} />
+              <Table className="os-ex-banker" colGroups={['', 'banker-max','banker-max','banker-max', 'banker-alloc','banker-alloc','banker-alloc', 'banker-need','banker-need','banker-need', 'banker-avail','banker-avail','banker-avail']}
+                groupHeaders={[
+                  { label: '', colSpan: 1 },
+                  { label: '最大需求 (Max)', colSpan: 3 },
+                  { label: '已分配 (Alloc)', colSpan: 3 },
+                  { label: '仍需 (Need)', colSpan: 3 },
+                  { label: '可用 (Avail)', colSpan: 3 },
+                ]}
+                head={['进程', 'A','B','C', 'A','B','C', 'A','B','C', 'A','B','C']}
+                body={[
+                  ['P0', '7','5','3', '0','1','0', '7','4','3', '','',''],
+                  ['P1', '3','2','2', '2','0','0', '1','2','2', '','',''],
+                  ['P2', '9','0','2', '3','0','2', '6','0','0', '','',''],
+                  ['P3', '2','2','2', '2','1','1', '0','1','1', '','',''],
+                  ['P4', '4','3','3', '0','0','2', '4','3','1', '','',''],
+                ]} />
               <p><strong>① T0 时刻是否安全？</strong></p>
               <p>Available = (10-7, 5-2, 7-5) = (3, 3, 2)</p>
               <p>安全序列：P1(1,2,2) → P3(0,1,1) → P0(7,4,3) → P2(6,0,0) → P4(4,3,1)</p>
@@ -798,6 +817,22 @@ while (true) {                while (true) {                 while (true) {
               <Q id="ex4-14"><b>（3）</b>按操作特性分类，可把外部设备分为输入设备和 <strong>输出设备</strong>。</Q>
               <Q id="ex4-15"><b>（4）</b>缓冲区的设置可分为单缓冲、<strong>双缓冲</strong>、<strong>循环缓冲</strong> 和缓冲池。</Q>
               <Q id="ex4-16"><b>（5）</b>I/O 进行设备分配时所需的表格主要有 <strong>系统设备表（SDT）</strong>、设备控制表、控制器控制表和通道控制表。</Q>
+              <Answer>
+                <p><strong>系统设备表（SDT, System Device Table）：</strong></p>
+                <ul>
+                  <li>整个系统只有<strong>一张</strong>SDT，记录系统中全部 I/O 设备的信息。</li>
+                  <li>每个设备对应一个表项，包含设备类型、设备标识符、设备控制表（DCT）入口指针等。</li>
+                  <li>是设备管理模块进行设备分配的总入口。</li>
+                </ul>
+                <p><strong>设备控制表（DCT, Device Control Table）：</strong></p>
+                <ul>
+                  <li>每台设备对应<strong>一张</strong>DCT，记录该设备的详细信息。</li>
+                  <li>主要字段包括：设备状态（忙/闲）、设备类型、指向设备队列的指针、设备处理程序入口地址等。</li>
+                  <li>若多个进程同时请求同一设备，未获得设备的进程进入设备等待队列，由 DCT 中的队列指针管理。</li>
+                </ul>
+                <p><strong>设备分配涉及的四种表格关系：</strong></p>
+                <p>系统设备表（SDT）→ <strong>设备控制表（DCT）</strong> → 控制器控制表（COCT）→ 通道控制表（CHCT）。<br/>分配设备时，系统从 SDT 出发查找 DCT，然后依次分配控制器、通道等资源，形成完整的 I/O 通路。</p>
+              </Answer>
             </div>
 
             <div className="os-ex-group">

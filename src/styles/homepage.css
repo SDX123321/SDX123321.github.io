@@ -37,6 +37,10 @@ h1 {
   gap: 20px;
   margin-bottom: 48px;
 }
+.card-wrap {
+  display: flex;
+  flex-direction: column;
+}
 .card {
   position: relative;
   background: var(--card);
@@ -45,6 +49,7 @@ h1 {
   color: var(--text);
   display: flex;
   flex-direction: column;
+  flex: 1;
   transition: transform 0.3s cubic-bezier(.34,1.56,.64,1),
               box-shadow 0.3s ease,
               border-color 0.3s ease,
@@ -56,11 +61,14 @@ h1 {
   border-color: var(--accent);
 }
 .card-no-exam:hover {
-  filter: blur(3px);
   transform: none;
   box-shadow: none;
   border-color: var(--border);
   cursor: default;
+}
+.card-no-exam:hover .card-body {
+  filter: blur(3px);
+  pointer-events: none;
 }
 .card-body {
   flex: 1;
@@ -94,19 +102,18 @@ h1 {
   gap: 8px;
   padding: 0 28px 16px;
   margin-top: 12px;
-  /* Always occupy space, smoothly fade in */
   opacity: 0;
   visibility: hidden;
   transform: translateY(6px);
   transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s;
 }
 .card:not(.card-no-exam):hover .card-actions,
-.card:not(.card-no-exam):focus-within .card-actions {
+.card:not(.card-no-exam):focus-within .card-actions,
+.card-no-exam:hover .card-actions {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
-.card-no-exam .card-actions { display: none !important; }
 
 .card-action-btn {
   flex: 1;
@@ -150,8 +157,6 @@ h1 {
   box-shadow: 0 4px 12px rgba(16,185,129,.15);
 }
 .card-action-sub:active { transform: translateY(0); }
-
-.card-wrap { display: flex; flex-direction: column; gap: 6px; }
 
 /* Footer */
 .footer { text-align: center; padding: 24px 20px; color: var(--text3); font-size: 0.8rem; border-top: 1px solid var(--border); }

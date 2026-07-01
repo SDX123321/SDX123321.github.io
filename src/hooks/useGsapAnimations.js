@@ -18,9 +18,12 @@ export function useGsapAnimations(totalStudyTime) {
   }, { scope: containerRef })
 
   // ── Scroll-triggered sections ──
-  // Uses useEffect + gsap.context so we control exactly when things re-init.
-  // Cards use ScrollTrigger.batch({ once: true }) — once animated they stay put.
+  // Runs once on mount only — never re-runs to avoid reverting and losing card visibility.
+  const initRef = useRef(false)
   useEffect(() => {
+    if (initRef.current) return
+    initRef.current = true
+
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduceMotion) return
 
@@ -36,15 +39,6 @@ export function useGsapAnimations(totalStudyTime) {
         y: 30, opacity: 0, duration: 0.6, ease: 'power2.out',
         scrollTrigger: { trigger: '.exam-section', start: 'top 85%' },
       })
-
-      // Study time badge (only present when totalStudyTime is set)
-      const badge = document.querySelector('.study-time-badge')
-      if (badge) {
-        gsap.from(badge, {
-          y: 16, opacity: 0, duration: 0.5, ease: 'power2.out',
-          scrollTrigger: { trigger: badge, start: 'top 90%' },
-        })
-      }
 
       // Course cards: staggered entrance via scroll
       gsap.from('.card', {
@@ -73,7 +67,15 @@ export function useGsapAnimations(totalStudyTime) {
     }, containerRef) // scope to container
 
     return () => ctx.revert()
-  }, [totalStudyTime])
+  }, []) // stable — never re-runs
+
+  // ── Study time badge (appears async, animate separately) ──
+  useEffect(() => {
+    if (!totalStudyTime) return
+    const badge = containerRef.current?.querySelector('.study-time-badge')
+    if (!badge) return
+    gsap.from(badge, { y: 16, opacity: 0, duration: 0.5, ease: 'power2.out' })
+  }, [totalStudyTime, containerRef])
 
   return containerRef
 }

@@ -310,6 +310,76 @@
   background: var(--card);
 }
 
+/* ── Banker's Algorithm Table ── */
+.os-ex-banker {
+  margin-left: 0 !important;
+}
+.os-ex-banker table {
+  font-size: .82rem;
+  min-width: max-content;
+}
+.os-ex-banker th,
+.os-ex-banker td {
+  padding: 7px 8px;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+/* Group header row */
+.os-ex-banker thead tr.os-ex-grp th {
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+  padding: 6px 8px;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--border);
+}
+/* Color-coded column groups */
+.os-ex-banker .banker-alloc {
+  background: rgba(16,185,129,.07);
+}
+.os-ex-banker .banker-max {
+  background: rgba(99,102,241,.07);
+}
+.os-ex-banker .banker-need {
+  background: rgba(251,191,36,.07);
+}
+.os-ex-banker .banker-avail {
+  background: rgba(244,114,182,.06);
+}
+/* Column group header row — colored header cells */
+.os-ex-banker thead th.banker-alloc {
+  background: rgba(16,185,129,.14);
+  color: #10b981;
+}
+.os-ex-banker thead th.banker-max {
+  background: rgba(99,102,241,.14);
+  color: #818cf8;
+}
+.os-ex-banker thead th.banker-need {
+  background: rgba(251,191,36,.14);
+  color: #fbbf24;
+}
+.os-ex-banker thead th.banker-avail {
+  background: rgba(244,114,182,.14);
+  color: #f472b6;
+}
+/* Process name column — sticky */
+.os-ex-banker tbody td:first-child,
+.os-ex-banker thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  font-weight: 600;
+  background: var(--card);
+  border-right: 2px solid var(--border);
+}
+.os-ex-banker thead th:first-child {
+  background: var(--bg);
+}
+
 /* Footer */
 .os-ex-footer {
   display: flex;
