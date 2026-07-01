@@ -19,12 +19,17 @@ const COURSES = [
   { path: 'algorithm', icon: '🔬', title: '算法设计与分析', desc: '算法概述、分治法、动态规划、贪心算法、回溯法、分支限界法。含算法可视化演示与经典例题详解。', tags: ['6 章','可视化','代码演示','复杂度分析'], iconClass: 'icon-purple', subLinks: [
     { to: '/courses/algorithm/exercises', label: '📝 习题解答' },
   ] },
-  { path: 'dsp', icon: '📡', title: '数字信号处理', desc: '离散时间信号与系统、Z 变换、DFT/FFT、数字滤波器设计。含蝶形运算图解与互动练习。', tags: ['4 章','FFT 图解','互动练习','MathJax'], style: { borderLeft: '3px solid #00d2ff' }, iconStyle: { background: 'linear-gradient(135deg,#6c63ff,#00d2ff)' } },
+  { path: 'dsp', icon: '📡', title: '数字信号处理', desc: '离散时间信号与系统、Z 变换、DFT/FFT、数字滤波器设计。含蝶形运算图解与互动练习。', tags: ['4 章','FFT 图解','互动练习','MathJax'], style: { borderLeft: '3px solid #00d2ff' }, iconStyle: { background: 'linear-gradient(135deg,#6c63ff,#00d2ff)' }, subLinks: [
+    { to: '/courses/dsp/exercises', label: '📝 习题解答' },
+  ] },
   { path: 'marxism', icon: '📰', title: '马克思主义基本原理', desc: '唯物辩证法、认识论、唯物史观、资本主义本质与规律、社会主义发展。含互动复习与知识卡片。', tags: ['7 章','互动复习','知识卡片','暗色模式'], style: { borderLeft: '3px solid #e63946' }, iconStyle: { background: 'linear-gradient(135deg,#e63946,#f4845f)' }, subLinks: [
     { to: '/courses/marxism/review', label: '📝 复习提纲' },
   ] },
   { path: 'maogai', icon: '📰', title: '毛泽东思想和中国特色社会主义理论体系概论', desc: '毛泽东思想、邓小平理论、"三个代表"、科学发展观、习近平新时代中国特色社会主义思想。含复习提纲与考试重点。', tags: ['复习提纲','考试重点'], style: { borderLeft: '3px solid #dc2626' }, iconStyle: { background: 'linear-gradient(135deg,#dc2626,#f87171)' } },
   { path: 'calculus', icon: '📈', title: '高等数学（重修）', desc: '常微分方程、多元函数微分（偏导/复合函数/极值）、多元积分（重积分/格林公式/高斯公式）、复变函数（可导性/柯西积分公式）。', tags: ['5 大专题','复习课笔记','考试分值','互动练习'], style: { borderLeft: '3px solid #e74c3c' }, iconStyle: { background: 'linear-gradient(135deg,#e74c3c,#f39c12)' } },
+  { path: 'dmath', icon: '🧮', title: '离散数学基础', desc: '命题逻辑、一阶逻辑、集合论、二元关系与函数。含核心定义、公式、定理和经典例题。', tags: ['4 章','核心公式','等价关系','MathJax'], style: { borderLeft: '3px solid #8b5cf6' }, iconStyle: { background: 'linear-gradient(135deg,#3b82f6,#8b5cf6)' }, subLinks: [
+    { to: '/courses/dmath/review', label: '📝 复习' },
+  ] },
   { path: 'signals', icon: '📶', title: '信号与系统B', desc: '信号与系统基本概念、连续/离散时域分析、傅里叶变换、拉普拉斯变换、Z 变换。含核心公式速查、典型例题与互动练习。', tags: ['6 章','公式速查','互动练习','MathJax'], style: { borderLeft: '3px solid #06b6d4' }, iconStyle: { background: 'linear-gradient(135deg,#06b6d4,#22d3ee)' } },
 ]
 

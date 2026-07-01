@@ -1,0 +1,215 @@
+/* ============================================
+   Discrete Math Review Page
+   ============================================ */
+.dm-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom: 60px;
+}
+
+.dm-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  gap: 12px;
+  padding: 10px 24px;
+  background: rgba(10,10,15,.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.dm-back {
+  font-size: .85rem;
+  color: var(--accent2, #a78bfa);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: background .2s;
+}
+.dm-back:hover { background: rgba(108,99,255,.12); }
+
+.dm-container {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.dm-header {
+  text-align: center;
+  padding: 48px 0 24px;
+}
+.dm-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+.dm-subtitle {
+  font-size: .9rem;
+  color: var(--text-light);
+}
+
+/* TOC */
+.dm-toc {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+.dm-toc-title {
+  font-size: .82rem;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 12px;
+}
+.dm-toc-group { margin-bottom: 12px; }
+.dm-toc-group:last-child { margin-bottom: 0; }
+.dm-toc-chapter {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--accent2, #a78bfa);
+  margin-bottom: 6px;
+}
+.dm-toc-list { display: flex; flex-wrap: wrap; gap: 4px 0; }
+.dm-toc-item {
+  font-size: .8rem;
+  color: var(--text-light);
+  text-decoration: none;
+  padding: 2px 10px;
+  border-radius: 4px;
+  transition: background .2s;
+}
+.dm-toc-item:hover {
+  background: rgba(59,130,246,.1);
+  color: var(--accent2, #a78bfa);
+}
+
+.dm-chapter-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 48px 0 24px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+  color: var(--text);
+}
+
+/* Sections */
+.dm-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.dm-section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--accent2, #8b5cf6);
+  margin-bottom: 16px;
+}
+
+.dm-section-body > p { margin-bottom: 8px; line-height: 1.65; }
+
+.dm-section-body p:last-child { margin-bottom: 0; }
+
+/* Definition box */
+.dm-def {
+  border-left: 3px solid #3b82f6;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  background: rgba(59,130,246,.04);
+  border-radius: 0 8px 8px 0;
+}
+.dm-def-label {
+  font-size: .78rem;
+  font-weight: 700;
+  color: #3b82f6;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 6px;
+}
+.dm-def-body > p { margin-bottom: 4px; line-height: 1.65; }
+.dm-def-body > p:last-child { margin-bottom: 0; }
+
+/* Theorem */
+.dm-theorem {
+  padding: 10px 16px;
+  margin-bottom: 10px;
+  background: rgba(139,92,246,.06);
+  border-radius: 8px;
+  line-height: 1.65;
+}
+
+/* Example */
+.dm-example {
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  background: rgba(59,130,246,.05);
+  border: 1px dashed rgba(59,130,246,.25);
+  border-radius: 8px;
+  line-height: 1.65;
+}
+.dm-example > p { margin-bottom: 4px; }
+
+/* Formula */
+.dm-formula {
+  padding: 8px 14px;
+  margin: 6px 0;
+  background: rgba(139,92,246,.04);
+  border-radius: 6px;
+  font-family: 'Courier New', Courier, monospace;
+  overflow-x: auto;
+}
+
+/* Table */
+.dm-table-wrap {
+  overflow-x: auto;
+  margin: 12px 0;
+}
+.dm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85rem;
+}
+.dm-table th,
+.dm-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border: 1px solid var(--border);
+}
+.dm-table th {
+  background: rgba(59,130,246,.08);
+  font-weight: 700;
+  color: var(--accent2);
+  font-size: .8rem;
+}
+.dm-table td {
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* MathJax adjustments */
+.dm-section .MathJax {
+  font-size: 1.05em !important;
+}
+
+.dm-section mjx-container {
+  font-size: 1.05em !important;
+  margin: 2px 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .dm-container { padding: 0 12px; }
+  .dm-header h1 { font-size: 1.4rem; }
+  .dm-section { padding: 16px; }
+  .dm-table { font-size: .75rem; }
+  .dm-table th,
+  .dm-table td { padding: 5px 8px; }
+}

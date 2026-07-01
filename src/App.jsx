@@ -10,6 +10,8 @@ const CourseLayout = lazy(() => import('./routes/courses/CourseLayout'))
 const AlgorithmExercisesPage = lazy(() => import('./routes/courses/AlgorithmExercisesPage'))
 const OsExercisesPage = lazy(() => import('./routes/courses/OsExercisesPage'))
 const MarxismReviewPage = lazy(() => import('./routes/courses/MarxismReviewPage'))
+const DspExercisesPage = lazy(() => import('./routes/courses/DspExercisesPage'))
+const DmathReviewPage = lazy(() => import('./routes/courses/DmathReviewPage'))
 
 function Loading() {
   return (
@@ -67,6 +69,14 @@ const router = createBrowserRouter([
       {
         path: '/courses/marxism/review',
         element: <Suspense fallback={<Loading />}><MarxismReviewPage /></Suspense>,
+      },
+      {
+        path: '/courses/dsp/exercises',
+        element: <Suspense fallback={<Loading />}><DspExercisesPage /></Suspense>,
+      },
+      {
+        path: '/courses/dmath/review',
+        element: <Suspense fallback={<Loading />}><DmathReviewPage /></Suspense>,
       },
       {
         path: '*',

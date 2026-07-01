@@ -3,15 +3,15 @@ import { useState } from 'react'
 function runOPT(frames, seq) {
   const mem = []; let faults = 0; const log = []
   seq.forEach((page, i) => {
-    if (mem.includes(page)) { log.push({ page, mem: [...mem], fault: false }); return }
+    if (mem.includes(page)) { log.push({ page, mem: [...mem], fault: false, repl: -1 }); return }
     faults++
-    if (mem.length < frames) { mem.push(page) }
+    if (mem.length < frames) { mem.push(page); log.push({ page, mem: [...mem], fault: true, repl: mem.length - 1 }) }
     else {
       let farthest = -1, replaceIdx = 0
       mem.forEach((p, j) => { const next = seq.indexOf(p, i + 1); const dist = next === -1 ? Infinity : next; if (dist > farthest) { farthest = dist; replaceIdx = j } })
       mem[replaceIdx] = page
+      log.push({ page, mem: [...mem], fault: true, repl: replaceIdx })
     }
-    log.push({ page, mem: [...mem], fault: true })
   })
   return { log, faults }
 }
@@ -19,11 +19,10 @@ function runOPT(frames, seq) {
 function runFIFO(frames, seq) {
   const mem = []; const queue = []; let faults = 0; const log = []
   seq.forEach(page => {
-    if (mem.includes(page)) { log.push({ page, mem: [...mem], fault: false }); return }
+    if (mem.includes(page)) { log.push({ page, mem: [...mem], fault: false, repl: -1 }); return }
     faults++
-    if (mem.length < frames) { mem.push(page); queue.push(page) }
-    else { const out = queue.shift(); mem[mem.indexOf(out)] = page; queue.push(page) }
-    log.push({ page, mem: [...mem], fault: true })
+    if (mem.length < frames) { mem.push(page); queue.push(page); log.push({ page, mem: [...mem], fault: true, repl: mem.length - 1 }) }
+    else { const out = queue.shift(); const idx = mem.indexOf(out); mem[idx] = page; queue.push(page); log.push({ page, mem: [...mem], fault: true, repl: idx }) }
   })
   return { log, faults }
 }
@@ -31,11 +30,10 @@ function runFIFO(frames, seq) {
 function runLRU(frames, seq) {
   const mem = []; let faults = 0; const log = []
   seq.forEach(page => {
-    if (mem.includes(page)) { mem.splice(mem.indexOf(page), 1); mem.push(page); log.push({ page, mem: [...mem], fault: false }); return }
+    if (mem.includes(page)) { mem.splice(mem.indexOf(page), 1); mem.push(page); log.push({ page, mem: [...mem], fault: false, repl: -1 }); return }
     faults++
-    if (mem.length < frames) { mem.push(page) }
-    else { mem.shift(); mem.push(page) }
-    log.push({ page, mem: [...mem], fault: true })
+    if (mem.length < frames) { mem.push(page); log.push({ page, mem: [...mem], fault: true, repl: mem.length - 1 }) }
+    else { mem.shift(); mem.push(page); log.push({ page, mem: [...mem], fault: true, repl: mem.length - 1 }) }
   })
   return { log, faults }
 }
@@ -55,7 +53,7 @@ function AlgoTable({ name, result, frames, seqLen }) {
                 <td>{i + 1}</td>
                 {Array.from({ length: frames }, (_, j) => {
                   const val = entry.mem[j] !== undefined ? entry.mem[j] : '-'
-                  const bg = entry.fault && j === entry.mem.length - 1 ? 'rgba(255,107,107,.15)' : ''
+                  const bg = entry.fault && j === entry.repl ? 'rgba(255,107,107,.15)' : ''
                   return <td key={j} style={{ background: bg, textAlign: 'center' }}>{val}</td>
                 })}
                 <td style={{ fontWeight: 600, textAlign: 'center' }}>{entry.page}</td>

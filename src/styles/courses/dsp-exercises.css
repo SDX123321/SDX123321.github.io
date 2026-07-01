@@ -1,0 +1,314 @@
+/* ============================================
+   DSP Exercises Solutions Page
+   ============================================ */
+.dsp-ex-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom: 60px;
+}
+
+/* Nav */
+.dsp-ex-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  gap: 12px;
+  padding: 10px 24px;
+  background: rgba(10,10,15,.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.dsp-ex-back {
+  font-size: .85rem;
+  color: var(--accent2,#a78bfa);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: background .2s;
+}
+.dsp-ex-back:hover { background: rgba(108,99,255,.12); }
+
+.dsp-ex-container {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.dsp-ex-header {
+  text-align: center;
+  padding: 48px 0 24px;
+}
+.dsp-ex-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #6c63ff, #00d2ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+.dsp-ex-subtitle {
+  font-size: .95rem;
+  color: var(--text-light);
+}
+
+/* TOC */
+.dsp-ex-toc {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+.dsp-ex-toc-title {
+  font-size: .82rem;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 12px;
+}
+.dsp-ex-toc-group {
+  margin-bottom: 12px;
+}
+.dsp-ex-toc-group:last-child { margin-bottom: 0; }
+.dsp-ex-toc-chapter {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--accent2,#a78bfa);
+  margin-bottom: 6px;
+}
+.dsp-ex-toc-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dsp-ex-toc-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .85rem;
+  color: var(--text);
+  text-decoration: none;
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  transition: all .2s;
+}
+.dsp-ex-toc-item:hover {
+  border-color: var(--accent2,#a78bfa);
+  background: rgba(108,99,255,.08);
+}
+
+/* Sections */
+.dsp-ex-section {
+  margin-bottom: 48px;
+  scroll-margin-top: 64px;
+}
+.dsp-ex-section > h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+}
+.dsp-ex-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6c63ff, #00d2ff);
+  color: #fff;
+  font-size: .95rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.dsp-ex-img {
+  margin: 12px 0 16px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+.dsp-ex-img img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.dsp-ex-original-img {
+  margin: 10px 0 16px;
+}
+.dsp-ex-original-img summary {
+  cursor: pointer;
+  font-size: .85rem;
+  color: var(--accent2,#a78bfa);
+  padding: 6px 0;
+  font-weight: 600;
+  user-select: none;
+}
+.dsp-ex-original-img img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+.dsp-ex-section h3 {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--accent2,#a78bfa);
+  margin: 20px 0 10px;
+}
+
+/* Problem box */
+.dsp-ex-problem {
+  background: rgba(108,99,255,.06);
+  border-left: 3px solid var(--accent2,#a78bfa);
+  border-radius: 0 10px 10px 0;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  font-size: .93rem;
+  line-height: 1.65;
+}
+.dsp-ex-problem strong { color: var(--accent2,#a78bfa); }
+
+/* Steps / solution */
+.dsp-ex-steps {
+  font-size: .92rem;
+  line-height: 1.7;
+}
+.dsp-ex-steps ol, .dsp-ex-steps ul {
+  margin: 8px 0;
+  padding-left: 22px;
+}
+.dsp-ex-steps li { margin-bottom: 4px; }
+
+/* Formula display */
+.dsp-ex-formula {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin: 10px 0 16px;
+  overflow-x: auto;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Result box */
+.dsp-ex-result {
+  background: rgba(34,197,94,.08);
+  border: 1px solid rgba(34,197,94,.3);
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin: 14px 0;
+  font-size: .95rem;
+  font-weight: 600;
+  color: #4ade80;
+  text-align: center;
+}
+
+/* Table */
+.dsp-ex-table-wrap {
+  overflow-x: auto;
+  margin: 12px 0 16px;
+}
+.dsp-ex-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+}
+.dsp-ex-table th, .dsp-ex-table td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.dsp-ex-table th {
+  background: rgba(108,99,255,.1);
+  color: var(--text);
+  font-weight: 600;
+}
+.dsp-ex-table td {
+  color: var(--text);
+  background: var(--card);
+}
+
+/* KV pairs */
+.dsp-ex-kv {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+.dsp-ex-kv-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: .88rem;
+}
+.dsp-ex-kv-k { font-weight: 700; color: var(--accent2,#a78bfa); }
+
+/* List styling */
+.dsp-ex-list {
+  margin: 8px 0;
+  padding-left: 22px;
+  font-size: .92rem;
+  line-height: 1.7;
+}
+.dsp-ex-list li { margin-bottom: 4px; }
+
+/* Footer */
+.dsp-ex-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 40px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+.dsp-ex-footer-link {
+  color: var(--accent2,#a78bfa);
+  text-decoration: none;
+  font-size: .92rem;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: all .2s;
+}
+.dsp-ex-footer-link:hover {
+  border-color: var(--accent2,#a78bfa);
+  background: rgba(108,99,255,.08);
+}
+
+/* Light mode */
+.light .dsp-ex-nav {
+  background: rgba(255,255,255,.88);
+}
+.light .dsp-ex-result {
+  background: rgba(34,197,94,.06);
+  color: #15803d;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .dsp-ex-container { padding: 0 16px; }
+  .dsp-ex-header h1 { font-size: 1.5rem; }
+  .dsp-ex-toc-list { flex-direction: column; }
+  .dsp-ex-table { font-size: .82rem; }
+  .dsp-ex-table th, .dsp-ex-table td { padding: 6px 8px; }
+}
