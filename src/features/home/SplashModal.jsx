@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 const LS_COUNT = 'visit_count'
 const LS_DISMISSED = 'reward_dismissed'
 const LS_SPLASH_SEEN = 'splash_seen_v2'
-const QR_URL = 'https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/赞赏码.png'
+const QR_URL = 'https://r2.zzzzcx.cn/images/赞赏码.png'
 
 function getVisitCount() {
   try { return parseInt(localStorage.getItem(LS_COUNT) || '0') } catch (e) { return 0 }

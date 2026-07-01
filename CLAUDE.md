@@ -55,8 +55,8 @@ Images are hosted on Cloudflare R2 and referenced by absolute URL. Workflow:
      Body: fs.readFileSync('<local path>'), ContentType: 'image/png'
    }));
    ```
-3. Reference in HTML by R2 public URL: `https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/<subdir>/<filename>`
-4. R2 URL base: `https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev` (bucket: `web`)
+3. Reference in HTML by R2 public URL: `https://r2.zzzzcx.cn/images/<subdir>/<filename>`
+4. R2 URL base: `https://r2.zzzzcx.cn` (bucket: `web`)
 
 For images from course PPTX files: extract PNGs with `unzip -o <file>.pptx "ppt/media/*.png" -d <dest>`, then upload the relevant ones. WMF/EMF files in PPTX are not web-compatible — only PNG/JPEG work.
 

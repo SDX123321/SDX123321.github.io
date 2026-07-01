@@ -170,22 +170,25 @@ export default function HomePage() {
       {/* Course cards */}
       <div className="cards">
         {sortedCourses.map(c => (
-          <div key={c.path} className={`card-wrap${c._noExam ? ' card-no-exam' : ''}`}>
-            <Link className="card" to={`/courses/${c.path}/`} style={c.style}>
-              <div className={`icon ${c.iconClass || ''}`} style={c.iconStyle}>{c.icon}</div>
-              <h2>{c.title}</h2>
-              <p>{c.desc}</p>
-              <div className="tags">
-                {c.tags.map(t => <span key={t} className="tag">{t}</span>)}
-              </div>
-            </Link>
-            {c.subLinks && (
-              <div className="card-sublinks">
-                {c.subLinks.map(link => (
-                  <Link key={link.to} to={link.to} className="card-sublink">{link.label}</Link>
+          <div key={c.path} className="card-wrap">
+            <div className={`card${c._noExam ? ' card-no-exam' : ''}`} style={c.style}>
+              <Link to={`/courses/${c.path}/`} className="card-body">
+                <div className={`icon ${c.iconClass || ''}`} style={c.iconStyle}>{c.icon}</div>
+                <h2>{c.title}</h2>
+                <p>{c.desc}</p>
+                <div className="tags">
+                  {c.tags.map(t => <span key={t} className="tag">{t}</span>)}
+                </div>
+              </Link>
+              <div className="card-actions">
+                <Link to={`/courses/${c.path}/`} className="card-action-btn card-action-main">进入课程 →</Link>
+                {c.subLinks?.map(link => (
+                  <Link key={link.to} to={link.to} className="card-action-btn card-action-sub">
+                    {link.label.replace('📝 ', '')} →
+                  </Link>
                 ))}
               </div>
-            )}
+            </div>
           </div>
         ))}
       </div>

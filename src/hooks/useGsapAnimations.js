@@ -46,18 +46,11 @@ export function useGsapAnimations(totalStudyTime) {
         })
       }
 
-      // Course cards: staggered entrance via batch
-      // gsap.set hides them before the ScrollTrigger fires
-      gsap.set('.card', { opacity: 0, y: 50 })
-      ScrollTrigger.batch('.card', {
-        onEnter: (batch) => {
-          gsap.to(batch, {
-            opacity: 1, y: 0, duration: 0.7, stagger: 0.1,
-            ease: 'power3.out', overwrite: true,
-          })
-        },
-        start: 'top 85%',
-        once: true,
+      // Course cards: staggered entrance via scroll
+      gsap.from('.card', {
+        y: 50, opacity: 0, duration: 0.7, stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: '.cards', start: 'top 82%' },
       })
 
       // File browser section

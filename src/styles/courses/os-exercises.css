@@ -376,3 +376,7 @@
   .os-ex-tbl table { font-size: .78rem; }
   .os-ex-tbl th, .os-ex-tbl td { padding: 4px 6px; }
 }
+
+/* Annotation highlight tweaks for exercises */
+.os-ex-page [data-ann-id] { border-radius: 3px; transition: background .15s; }
+.os-ex-page [data-ann-id]:hover { filter: brightness(1.15); }

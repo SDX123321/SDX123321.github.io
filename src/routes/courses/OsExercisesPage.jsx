@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import '../../styles/courses/os-exercises.css'
+import AnnotationOverlay from '../../features/annotation/AnnotationOverlay'
 
 const SECTIONS = [
   { id: 'ex1', title: '习题 1 — 操作系统概述', icon: '🖥️' },
@@ -46,9 +47,10 @@ function Opts({ items, answer }) {
 export default function OsExercisesPage() {
   useEffect(() => { document.title = '操作系统习题解答 - 期末复习' }, [])
   const [sbOpen, setSbOpen] = useState(true)
+  const pageRef = useRef(null)
 
   return (
-    <div className="os-ex-page">
+    <div className="os-ex-page" ref={pageRef}>
       <div className="os-ex-nav">
         <Link to="/courses/os/" className="os-ex-back">← 返回操作系统笔记</Link>
         <Link to="/" className="os-ex-back">← 返回首页</Link>
@@ -875,7 +877,7 @@ while (true) {                while (true) {                 while (true) {
                 <p><strong>SSTF 最短查找时间优先：</strong></p>
                 <p>100 → 90(10) → 58(32) → 55(3) → 39(16) → 38(1) → 18(20) → 150(132) → 160(10) → 180(20)</p>
                 <p>总移动 = 10+32+3+16+1+20+132+10+20 = <strong>244</strong></p>
-                <p>注意：90 距离 10 最近，然后 58 距离 32，55 距离 3，依次类推。</p>
+                <p>注意：90 距离 100 最近，然后 58 距离 32，55 距离 3，依次类推。</p>
               </Answer>
             </div>
           </section>
@@ -937,6 +939,16 @@ while (true) {                while (true) {                 while (true) {
               <Q id="ex5-18"><b>（5）</b>目录文件是由若干 <strong>文件控制块（FCB）</strong> 构成的有序集合。</Q>
               <Q id="ex5-19"><b>（6）</b>顺序存取速度最快的物理结构文件是 <strong>顺序</strong> 文件，不适宜直接存取的物理结构文件是 <strong>链接（串联）</strong> 文件。</Q>
               <Q id="ex5-20"><b>（7）</b>Linux 中文件 F 的存取权限为 "– r w x r – x – – –"，表示这是一个普通文件，同组用户对该文件的读写权限为 <strong>r-x（可读可执行）</strong>。</Q>
+              <Answer>
+                <p>Linux 文件权限由 10 个字符表示，结构如下：</p>
+                <ul>
+                  <li><strong>第 1 位</strong>：文件类型。`-` 表示普通文件，`d` 表示目录。</li>
+                  <li><strong>第 2-4 位</strong>：文件所有者（owner）的权限。此处 `rwx` 表示可读可写可执行。</li>
+                  <li><strong>第 5-7 位</strong>：同组用户（group）的权限。此处 `r-x` 表示可读、可执行，但因第 6 位为 `-` 故不可写。</li>
+                  <li><strong>第 8-10 位</strong>：其他用户（others）的权限。此处 `---` 表示无任何权限。</li>
+                </ul>
+                <p>每种权限用一位表示：<code>r</code>（读取，4）、<code>w</code>（写入，2）、<code>x</code>（执行，1），<code>-</code> 表示无对应权限。数字表示法可将三者相加，如 <code>rwx</code> = 4+2+1 = 7，<code>r-x</code> = 4+0+1 = 5。完整权限 "– rwx r-x ---" 对应的数字权限为 <strong>750</strong>。</p>
+              </Answer>
             </div>
 
             <div className="os-ex-group">
@@ -1013,13 +1025,53 @@ while (true) {                while (true) {                 while (true) {
 
               <Q id="ex5-26"><b>（2）</b>Linux 混合索引方式：13 个索引项，每项 4B，磁盘块 4KB.直接寻址、一次/二次/三次间接寻址分别可表示多大的文件？</Q>
               <Answer>
-                <p>一个索引块可存放的索引项数 = 4KB / 4B = <strong>1024 项</strong></p>
+                <p><strong>已知条件：</strong></p>
                 <ul>
-                  <li><strong>直接寻址（10 项）：</strong>10 × 4KB = <strong>40KB</strong></li>
-                  <li><strong>一次间接（第 11 项→1024 块）：</strong>1024 × 4KB = <strong>4MB</strong></li>
-                  <li><strong>二次间接（第 12 项→1024² 块）：</strong>1024 × 1024 × 4KB = <strong>4GB</strong></li>
-                  <li><strong>三次间接（第 13 项→1024³ 块）：</strong>1024³ × 4KB = <strong>4TB</strong></li>
+                  <li>磁盘块大小 = <strong>4KB</strong> = 4096B</li>
+                  <li>每个索引项（磁盘块号）占 <strong>4B</strong></li>
+                  <li>一个磁盘块可存放的索引项数 = 4KB / 4B = <strong>1024 项</strong></li>
+                  <li>Linux 的 13 个索引项分配为：0~9 = 直接寻址（共 10 项），10 = 一次间接，11 = 二次间接，12 = 三次间接</li>
                 </ul>
+
+                <p><strong>① 直接寻址（索引项 0~9，共 10 项）：</strong></p>
+                <p>每项直接指向一个数据块，因此可表示的文件大小 = 10 × 4KB = <strong>40KB</strong>。</p>
+                <p>小型文件无需额外的索引块，直接通过这 10 个指针访问数据。</p>
+
+                <p><strong>② 一次间接寻址（索引项 10）：</strong></p>
+                <p>该项指向一个<strong>索引块</strong>，该索引块内含 1024 个指向数据块的指针。</p>
+                <p>可表示的文件大小 = 1024 × 4KB = <strong>4MB</strong>。</p>
+                <p>访问方式：先读一次间接块 → 得到数据块号 → 读数据块（共 2 次磁盘 I/O）。</p>
+
+                <p><strong>③ 二次间接寻址（索引项 11）：</strong></p>
+                <p>该项指向一个<strong>二级索引块</strong>，其中 1024 个指针各指向一个<strong>一级索引块</strong>，每个一级索引块又有 1024 个指向数据块的指针。</p>
+                <p>可表示的文件大小 = 1024 × 1024 × 4KB = <strong>4GB</strong>。</p>
+                <p>访问方式：二次间接块 → 一次间接块 → 数据块（共 3 次磁盘 I/O）。</p>
+
+                <p><strong>④ 三次间接寻址（索引项 12）：</strong></p>
+                <p>三级嵌套：三次间接块 → 二次间接块 → 一次间接块 → 数据块。</p>
+                <p>可表示的文件大小 = 1024 × 1024 × 1024 × 4KB = <strong>4TB</strong>。</p>
+                <p>访问方式需 4 次磁盘 I/O。</p>
+
+                <p><strong>完整寻址结构示意图：</strong></p>
+                <pre style={{ background:'#0d0d14', color:'#c9d1d9', padding:'12px 16px', borderRadius:8, fontSize:'.82rem', lineHeight:1.6, overflow:'auto', margin:'8px 0' }}>
+                inode（13 项）
+                ┌─────┐
+                │  0  │────→ [数据块]
+                │  1  │────→ [数据块]
+                │ ... │           （直接寻址 10 项，共 40KB）
+                │  9  │────→ [数据块]
+                ├─────┤
+                │ 10  │────→ [索引块] ─→ [数据块] × 1024       = 4MB
+                ├─────┤
+                │ 11  │────→ [二级索引] ─→ [索引块] × 1024
+                │     │                  └→ [数据块] × 1024²  = 4GB
+                ├─────┤
+                │ 12  │────→ [三级索引] ─→ [二级索引] × 1024
+                │     │                  └→ [索引块] × 1024²
+                │     │                  └→ [数据块] × 1024³  = 4TB
+                └─────┘</pre>
+
+                <p>Linux 通过这种混合索引方式，既能高效管理小文件（直接寻址，少量 I/O），又能支持超大文件（多次间接寻址），在灵活性和性能间取得了良好平衡。</p>
               </Answer>
             </div>
           </section>
@@ -1030,6 +1082,7 @@ while (true) {                while (true) {                 while (true) {
           <Link to="/courses/os/" className="os-ex-footer-link">← 返回「操作系统」笔记</Link>
           <Link to="/" className="os-ex-footer-link">← 返回首页</Link>
         </footer>
+        <AnnotationOverlay containerRef={pageRef} />
       </div>
     </div>
   )

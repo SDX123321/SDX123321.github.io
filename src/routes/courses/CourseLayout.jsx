@@ -11,6 +11,7 @@ import KeyboardShortcuts from '../../features/ux/KeyboardShortcuts'
 import PageSearch from '../../features/search/PageSearch'
 import ChapterProgress from '../../features/ux/ChapterProgress'
 import CrossLinks from '../../features/cross-links/CrossLinks'
+import AnnotationOverlay from '../../features/annotation/AnnotationOverlay'
 import '../../styles/course-layout.css'
 
 const COURSE_META = {
@@ -137,6 +138,7 @@ export default function CourseLayout() {
       <PageSearch />
       <ChapterProgress />
       <CrossLinks />
+      <AnnotationOverlay containerRef={mainRef} />
 
       {/* Back to top */}
       <div

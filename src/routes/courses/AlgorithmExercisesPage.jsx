@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import '../../styles/courses/algorithm-exercises.css'
+import AnnotationOverlay from '../../features/annotation/AnnotationOverlay'
 
 const SECTIONS = [
   { id: 'dijkstra', title: '一、Dijkstra 最短路径', icon: '🔗' },
@@ -62,8 +63,10 @@ export default function AlgorithmExercisesPage() {
     }
   }, [])
 
+  const pageRef = useRef(null)
+
   return (
-    <div className="algo-exercises-page">
+    <div className="algo-exercises-page" ref={pageRef}>
       {/* Nav bar */}
       <div className="algo-ex-nav">
         <Link to="/courses/algorithm/" className="algo-ex-back">← 返回算法笔记</Link>
@@ -94,7 +97,7 @@ export default function AlgorithmExercisesPage() {
           <h2><span className="algo-ex-num">一</span>Dijkstra 最短路径</h2>
 
           <div className="algo-ex-img">
-            <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/ex1.png" alt="Dijkstra 题目" />
+            <img src="https://r2.zzzzcx.cn/images/algorithm-exercises/ex1.png" alt="Dijkstra 题目" />
           </div>
 
           <div className="algo-ex-problem">
@@ -118,7 +121,7 @@ export default function AlgorithmExercisesPage() {
 
           <h3>1. 无向带权图</h3>
           <div className="ex1">
-            <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/ex1.1.png" alt="无向带权图" />
+            <img src="https://r2.zzzzcx.cn/images/algorithm-exercises/ex1.1.png" alt="无向带权图" />
           </div>
 
           <h3>2. Dijkstra 逐步求解表</h3>
@@ -189,7 +192,7 @@ export default function AlgorithmExercisesPage() {
         <section id="knapsack" className="algo-ex-section">
           <h2><span className="algo-ex-num">二</span>0-1 背包（分支限界法）</h2>
           <div className="algo-ex-img">
-            <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/problem_slide4.png" alt="0-1 背包题目" />
+            <img src="https://r2.zzzzcx.cn/images/algorithm-exercises/problem_slide4.png" alt="0-1 背包题目" />
           </div>
           <div className="algo-ex-problem">
             <strong>题目：</strong>物品数量 n=3，背包容量 C=6，重量 W={2,3,5}，价值 V={6,3,10}。
@@ -273,7 +276,7 @@ export default function AlgorithmExercisesPage() {
         <section id="binary" className="algo-ex-section">
           <h2><span className="algo-ex-num">三</span>二分查找</h2>
           <div className="algo-ex-img">
-            <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/problem_slide6.png" alt="二分查找题目" />
+            <img src="https://r2.zzzzcx.cn/images/algorithm-exercises/problem_slide6.png" alt="二分查找题目" />
           </div>
           <div className="algo-ex-problem">
             <strong>题目：</strong>在有序数组 [2, 5, 8, 12, 16, 23, 38, 56, 72, 91] 中，使用二分查找查找元素 23。写出每一步的左边界、右边界、中间位置索引及对应元素值。
@@ -318,7 +321,7 @@ export default function AlgorithmExercisesPage() {
         <section id="matrix1" className="algo-ex-section">
           <h2><span className="algo-ex-num">四</span>矩阵连乘 A×B×C</h2>
           <div className="algo-ex-img">
-            <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/problem_slide8.png" alt="矩阵连乘 A×B×C 题目" />
+            <img src="https://r2.zzzzcx.cn/images/algorithm-exercises/problem_slide8.png" alt="矩阵连乘 A×B×C 题目" />
           </div>
           <div className="algo-ex-problem">
             <strong>题目：</strong>A(2×3), B(3×4), C(4×5)。用动态规划求最少乘法次数及最优计算顺序。
@@ -353,7 +356,7 @@ export default function AlgorithmExercisesPage() {
         <section id="matrix2" className="algo-ex-section">
           <h2><span className="algo-ex-num">五</span>矩阵连乘 M1×M2×M3×M4</h2>
           <div className="algo-ex-img">
-            <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/problem_slide9.png" alt="矩阵连乘 M1~M4 题目" />
+            <img src="https://r2.zzzzcx.cn/images/algorithm-exercises/problem_slide9.png" alt="矩阵连乘 M1~M4 题目" />
           </div>
           <div className="algo-ex-problem">
             <strong>题目：</strong>M1(3×5), M2(5×2), M3(2×7), M4(7×4)。用动态规划求最少乘法次数。
@@ -425,7 +428,7 @@ export default function AlgorithmExercisesPage() {
         <section id="mergesort" className="algo-ex-section">
           <h2><span className="algo-ex-num">六</span>合并排序时间复杂度证明</h2>
           <div className="algo-ex-img">
-            <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/problem_slide11.png" alt="合并排序题目" />
+            <img src="https://r2.zzzzcx.cn/images/algorithm-exercises/problem_slide11.png" alt="合并排序题目" />
           </div>
           <div className="algo-ex-problem">
             <strong>题目：</strong>合并排序中合并与复制操作的时间复杂度为 O(n)，给出递推公式并证明 T(n) = O(n log n)。
@@ -434,7 +437,7 @@ export default function AlgorithmExercisesPage() {
           <h3>递推公式</h3>
           <details className="algo-ex-original-img">
             <summary>📷 查看 PPT 原图 · 递归树</summary>
-            <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/image6.png" alt="合并排序递归树 PPT 原图" />
+            <img src="https://r2.zzzzcx.cn/images/algorithm-exercises/image6.png" alt="合并排序递归树 PPT 原图" />
           </details>
           <div className="algo-ex-formula">
             {`$$T(n) = \\begin{cases} O(1) & n = 1 \\\\ 2T\\left(\\frac{n}{2}\\right) + O(n) & n > 1 \\end{cases}$$`}
@@ -490,7 +493,7 @@ T(n) = 2T(n/2) + n
         <section id="huffman" className="algo-ex-section">
           <h2><span className="algo-ex-num">七</span>哈夫曼编码</h2>
           <div className="algo-ex-img">
-            <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/problem_slide15.png" alt="哈夫曼编码题目" />
+            <img src="https://r2.zzzzcx.cn/images/algorithm-exercises/problem_slide15.png" alt="哈夫曼编码题目" />
           </div>
           <div className="algo-ex-problem">
             <strong>题目：</strong>字符 a~d 的频度分别为 8, 1, 4, 6。
@@ -524,7 +527,7 @@ T(n) = 2T(n/2) + n
 
           <details className="algo-ex-original-img">
             <summary>📷 查看 PPT 原图 · 哈夫曼树</summary>
-            <img src="https://pub-0e031b3dd57041d0928acde612f1d662.r2.dev/images/algorithm-exercises/image5.png" alt="哈夫曼树 PPT 原图" />
+            <img src="https://r2.zzzzcx.cn/images/algorithm-exercises/image5.png" alt="哈夫曼树 PPT 原图" />
           </details>
 
           <p><strong>编码表：</strong></p>
@@ -578,6 +581,7 @@ T(n) = 2T(n/2) + n
           <Link to="/courses/algorithm/" className="algo-ex-footer-link">← 返回「算法设计与分析」笔记</Link>
           <Link to="/" className="algo-ex-footer-link">← 返回首页</Link>
         </footer>
+        <AnnotationOverlay containerRef={pageRef} />
       </div>
     </div>
   )
