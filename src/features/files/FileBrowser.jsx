@@ -24,15 +24,17 @@ export default function FileBrowser() {
     return FILES.filter(f => (!subject || f.s === subject) && (!type || f.t === type))
   }, [subject, type])
 
+  const fileUrl = (f) => f.p.startsWith('http') ? f.p : '/' + f.p
+
   const downloadFile = (f, e) => {
     e.stopPropagation()
     if (f.t === 'textbook') {
       if (confirm('该电子课本仅供个人学习交流使用，不得用于商业用途。是否继续？')) {
-        window.open('/' + f.p, '_blank')
+        window.open(fileUrl(f), '_blank')
       }
       return
     }
-    window.open('/' + f.p, '_blank')
+    window.open(fileUrl(f), '_blank')
   }
 
   const openPreview = (f, e) => {
@@ -41,10 +43,11 @@ export default function FileBrowser() {
   }
 
   const getPreviewUrl = (f) => {
+    const url = fileUrl(f)
     if (f.p.endsWith('.pptx') || f.p.endsWith('.docx')) {
-      return `https://docs.google.com/gview?url=${encodeURIComponent(window.location.origin + '/' + f.p)}&embedded=true`
+      return `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`
     }
-    return '/' + f.p
+    return url
   }
 
   return (

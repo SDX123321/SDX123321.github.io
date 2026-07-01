@@ -45,8 +45,10 @@ export default function GlobalSearch() {
     setResults(r.map(m => m.item))
   }, [])
 
+  const fileUrl = (f) => f.p.startsWith('http') ? f.p : '/' + f.p
+
   const openFile = (f) => {
-    window.open('/' + f.p, '_blank')
+    window.open(fileUrl(f), '_blank')
     setFocus(false)
   }
 
