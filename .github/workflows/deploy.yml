@@ -17,37 +17,49 @@ jobs:
 
       - run: npm ci
 
-      # public/files symlink for Vite build
       - name: Link public/files to files/
         run: ln -s ../files public/files
 
       - run: npm run build
 
-      # 配置 SSH 连接
-      - name: Setup SSH
+      # SSH 密钥设置 — 写入前先确保换行符正确
+      - name: Setup SSH key
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
+          # 将 Secret 写入文件，确保换行符正确
+          echo "$VPS_SSH_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          # 验证密钥格式
+          ssh-keygen -l -f ~/.ssh/id_rsa || {
+            echo "=========================================="
+            echo "密钥格式错误！"
+            echo "请在 VPS 上重新生成 RSA 密钥再试："
+            echo "  ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N \"\""
+            echo "  cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
+            echo "  cat ~/.ssh/id_rsa"
+            echo "将私钥内容完整复制到 GitHub Secret VPS_SSH_KEY"
+            echo "=========================================="
+            exit 1
+          }
           ssh-keyscan -p ${{ secrets.VPS_PORT || 22 }} ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
-      # 阶段1：部署 Vite 构建产物（SPA 主站）
       - name: Deploy dist to VPS
         run: |
           rsync -avz --delete --checksum \
-            -e "ssh -p ${{ secrets.VPS_PORT || 22 }}" \
+            -e "ssh -p ${{ secrets.VPS_PORT || 22 }} -i ~/.ssh/id_rsa" \
             dist/ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/site/
 
-      # 阶段2：部署旧版 course 页面和共享模块
       - name: Deploy courses & shared modules to VPS
         run: |
           rsync -avz --checksum \
-            -e "ssh -p ${{ secrets.VPS_PORT || 22 }}" \
+            -e "ssh -p ${{ secrets.VPS_PORT || 22 }} -i ~/.ssh/id_rsa" \
             courses/ \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/site/courses/
           rsync -avz --checksum \
-            -e "ssh -p ${{ secrets.VPS_PORT || 22 }}" \
+            -e "ssh -p ${{ secrets.VPS_PORT || 22 }} -i ~/.ssh/id_rsa" \
             theme.css index.css index.js wrong-book.js formula-ref.js mastery.js \
             random-quiz.js cross-links.js print-mode.js pwa.js stats.js search.js \
             remember.js preview.js exam.js search_index.json \

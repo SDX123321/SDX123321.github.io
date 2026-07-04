@@ -1,0 +1,18 @@
+# Cloudflare Worker 配置 — Turnstile 服务端校验
+# 部署：  npx wrangler deploy
+# 设置密钥（首次部署后执行一次）：
+#   npx wrangler secret put SECRET_KEY
+#   （粘贴 Cloudflare Turnstile dashboard 里的 "Server-side secret key"，以 0x4AAAAAAD... 开头）
+#   npx wrangler secret put ALLOWED_ORIGIN   # 可选：输入 https://web.zzzzcx.com
+
+name = "turnstile-verify"
+main = "turnstile-worker.js"
+compatibility_date = "2024-09-01"
+
+# 生产环境变量（非敏感的可以放这里）
+[vars]
+# ALLOWED_ORIGIN 通过 secret 设置，不放 vars
+
+# 路由：把 /api/turnstile-verify 路由到这个 Worker
+# 部署前在 Cloudflare Dashboard → Workers & Pages → 这个 worker → Triggers 里加：
+#   Route: web.zzzzcx.com/api/turnstile-verify/*

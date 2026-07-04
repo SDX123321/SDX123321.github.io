@@ -3,23 +3,31 @@
  *
  * Deploy:  npx wrangler deploy
  * Usage:   POST /verify  { "token": "<turnstile-response>" }
- * Env:     SECRET_KEY (set via wrangler secret put SECRET_KEY)
+ * Env:     SECRET_KEY  — 通过 `wrangler secret put SECRET_KEY` 设置，不要硬编码
+ *          ALLOWED_ORIGIN — 可选，通过 `wrangler secret put ALLOWED_ORIGIN`
+ *                           设置成 https://web.zzzzcx.com，开启严格 CORS
  */
-
-const SECRET_KEY = '0x4AAAAAADsVdWruaZL5aJ1Id-2j1uB9cVs'
-
 const CORS = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': '*', // 部署时改用 env.ALLOWED_ORIGIN 收紧
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 }
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS })
 
-    if (request.method !== 'POST' || !request.url.endsWith('/verify')) {
+    if (request.method !== 'POST' || !new URL(request.url).pathname.endsWith('/verify')) {
       return new Response('Not Found', { status: 404, headers: CORS })
+    }
+
+    const SECRET_KEY = env?.SECRET_KEY
+    if (!SECRET_KEY) {
+      // 缺少密钥时**拒绝**而非放行，避免 secret 配置遗漏变成"裸奔"
+      return Response.json(
+        { success: false, error: 'server_misconfigured' },
+        { status: 500, headers: CORS }
+      )
     }
 
     let body
@@ -39,15 +47,21 @@ export default {
     formData.append('response', token)
     formData.append('remoteip', request.headers.get('CF-Connecting-IP') || '')
 
-    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      body: formData,
-    })
-    const result = await res.json()
-
-    return Response.json(
-      { success: result.success, error: result['error-codes']?.[0] || null },
-      { headers: CORS },
-    )
+    try {
+      const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        body: formData,
+      })
+      const result = await res.json()
+      return Response.json(
+        { success: !!result.success, error: result['error-codes']?.[0] || null },
+        { headers: CORS },
+      )
+    } catch (e) {
+      return Response.json(
+        { success: false, error: 'upstream_error' },
+        { status: 502, headers: CORS },
+      )
+    }
   },
 }

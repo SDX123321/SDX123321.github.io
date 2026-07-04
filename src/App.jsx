@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider, Outlet, Link } from 'react-router-
 import { ThemeProvider } from './features/theme/ThemeContext'
 import ThemeToggle from './features/theme/ThemeToggle'
 import PWAManager from './features/pwa/PWAManager'
+import ErrorBoundary from './components/ErrorBoundary'
 import { runMigration } from './lib/storage'
 
 const HomePage = lazy(() => import('./routes/HomePage'))
@@ -88,8 +89,10 @@ const router = createBrowserRouter([
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </ErrorBoundary>
   )
 }
