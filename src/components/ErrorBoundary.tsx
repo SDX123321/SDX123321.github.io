@@ -1,4 +1,13 @@
-import { Component } from 'react'
+import { Component, type ErrorInfo, type ReactNode } from 'react'
+
+interface ErrorBoundaryProps {
+  children: ReactNode
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean
+  error: Error | null
+}
 
 /**
  * 全局错误边界。
@@ -7,17 +16,17 @@ import { Component } from 'react'
  *
  * 注：error 仅在 production 构建里携带 message/stack（dev 仍可用）。
  */
-export default class ErrorBoundary extends Component {
-  constructor(props) {
+export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props)
     this.state = { hasError: false, error: null }
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error }
   }
 
-  componentDidCatch(error, info) {
+  override componentDidCatch(error: Error, info: ErrorInfo): void {
     // 上报到 window.__errorSink__（如果有接 Sentry 等可在此挂载）
     if (typeof window !== 'undefined' && window.__errorSink__) {
       try { window.__errorSink__(error, info) } catch {}
@@ -35,7 +44,7 @@ export default class ErrorBoundary extends Component {
     if (typeof window !== 'undefined') window.location.href = '/'
   }
 
-  render() {
+  override render() {
     if (!this.state.hasError) return this.props.children
 
     const msg = this.state.error?.message || '未知错误'
