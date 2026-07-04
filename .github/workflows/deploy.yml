@@ -17,6 +17,12 @@ jobs:
 
       - run: npm ci
 
+      - name: Lint check
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
       - name: Link public/files to files/
         run: ln -s ../files public/files
 
