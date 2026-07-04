@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /courses/*/exercises
+Disallow: /courses/*/review
+
+Sitemap: https://web.zzzzcx.com/sitemap.xml
