@@ -1,24 +1,12 @@
-name: Deploy to GitHub Pages
+name: Deploy to VPS
 
 on:
   push:
     branches: [main]
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -29,16 +17,38 @@ jobs:
 
       - run: npm ci
 
-      # files/ is tracked in repo root; public/files is a symlink on local dev.
-      # CI has no symlink, so create it so Vite copies files/ into dist/files/.
+      # public/files symlink for Vite build
       - name: Link public/files to files/
         run: ln -s ../files public/files
 
       - run: npm run build
 
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
+      # 配置 SSH 连接
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.VPS_PORT || 22 }} ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      # 阶段1：部署 Vite 构建产物（SPA 主站）
+      - name: Deploy dist to VPS
+        run: |
+          rsync -avz --delete --checksum \
+            -e "ssh -p ${{ secrets.VPS_PORT || 22 }}" \
+            dist/ \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/site/
+
+      # 阶段2：部署旧版 course 页面和共享模块
+      - name: Deploy courses & shared modules to VPS
+        run: |
+          rsync -avz --checksum \
+            -e "ssh -p ${{ secrets.VPS_PORT || 22 }}" \
+            courses/ \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/site/courses/
+          rsync -avz --checksum \
+            -e "ssh -p ${{ secrets.VPS_PORT || 22 }}" \
+            theme.css index.css index.js wrong-book.js formula-ref.js mastery.js \
+            random-quiz.js cross-links.js print-mode.js pwa.js stats.js search.js \
+            remember.js preview.js exam.js search_index.json \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/site/

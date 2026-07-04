@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-"期末复习笔记" — a zero-build static study site for university exam review. Pure vanilla HTML/CSS/JS, no frameworks, no bundler, no package manager. Deployed to GitHub Pages at `web.zzzzcx.cn`.
+"期末复习笔记" — a zero-build static study site for university exam review. Pure vanilla HTML/CSS/JS, no frameworks, no bundler, no package manager. Deployed to GitHub Pages at `web.zzzzcx.com`.
 
 **To run:** Open `index.html` directly in a browser. No build step or server required.
 
