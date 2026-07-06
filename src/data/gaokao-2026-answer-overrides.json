@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T11:58:04.384795+00:00",
+  "generatedAt": "2026-07-06T12:01:30.120869+00:00",
   "scope": {
     "datasets": [
       "gaokao-2026-docx-extracted.json",
@@ -18,18 +18,18 @@
   "summary": {
     "questionsScanned": 1498,
     "missingBeforeOverrides": 1073,
-    "overrides": 830,
-    "missingAfterOverrides": 257,
+    "overrides": 834,
+    "missingAfterOverrides": 253,
     "byMethod": {
       "answer-source-file": 122,
-      "web-answer-source": 258,
+      "web-answer-source": 262,
       "embedded-answer-in-prompt": 144,
       "existing-question-answer": 257,
       "answer-only-question": 18,
       "family-alias-answer": 31
     },
     "byDataset": {
-      "gaokao-2026-docx-extracted.json": 252,
+      "gaokao-2026-docx-extracted.json": 256,
       "gaokao-2026-pdf-text-extracted.json": 140,
       "gaokao-2026-ocr-extracted.json": 397,
       "gaokao-2026-residual-extracted.json": 25,
@@ -245,6 +245,62 @@
       "solution": [],
       "method": "web-answer-source",
       "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-d1f345ecebe78c05",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "陕西历史.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年陕西高考\\陕西历史.docx",
+      "subject": "history",
+      "family": "history:shanjinqingning",
+      "number": 17,
+      "answer": "（1）清代边疆厅多直属中央，官员由中央选派；兼具民政、军政职能；面向多民族地区，因地制宜治理；设置持续时间较长。（2）有利于加强中央集权、巩固统一多民族国家；强化边疆治理和边防安全；促进边疆开发、商贸往来与民族交融；丰富古代国家治理和边疆治理经验。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://tiku.baidu.com/tikupc/paperdetail/76b248a7fd0a79563c1e728b",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-53af1a211a929681",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "陕西历史.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年陕西高考\\陕西历史.docx",
+      "subject": "history",
+      "family": "history:shanjinqingning",
+      "number": 18,
+      "answer": "（1）设立专门管理机构并出台扶持政策；向牧民提供贷款等资金支持；引进、改良优良品种，建立兽医站点防治疫病；组织互助合作，统筹劳力和养殖资源；划定牧场、保护草场生态。（2）启示：坚持政府引导和政策扶持；因地制宜发展特色产业；重视科技赋能和人才支撑；坚持生态优先、可持续发展；发挥群众主体作用并完善利益联结机制。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://tiku.baidu.com/tikupc/paperdetail/76b248a7fd0a79563c1e728b",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-623af00e3c19fc23",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "陕西历史.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年陕西高考\\陕西历史.docx",
+      "subject": "history",
+      "family": "history:shanjinqingning",
+      "number": 19,
+      "answer": "（1）古希腊城邦民主政治、公共生活和宗教庆典为戏剧兴起提供环境；中世纪教会借宗教剧传播教义，使戏剧延续；文艺复兴时期商品经济发展、市民阶层壮大和赞助制度提供支撑；人文主义兴起推动题材与思想内涵丰富。（2）戏剧作为文化传播载体，承载城邦文化、宗教文化和世俗市民文化；培养公民意识，传播人文主义，冲击封建神学束缚，推动民众思想解放和社会思想变革。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://tiku.baidu.com/tikupc/paperdetail/76b248a7fd0a79563c1e728b",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-5d02ed0ed9a18bd3",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "陕西历史.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年陕西高考\\陕西历史.docx",
+      "subject": "history",
+      "family": "history:shanjinqingning",
+      "number": 20,
+      "answer": "示例：论题：水利工程的建设与利用深刻影响文明发展和国家治理。论述：战国都江堰兼具防洪、灌溉和水运功能，使成都平原成为重要农业区，体现国家组织动员能力；隋代大运河沟通南北水系，促进经济文化交流并加强中央对南方的控制，但过度役使民力也加剧社会矛盾。古埃及依托尼罗河定期泛滥形成历法、土地丈量和统一水利管理，推动早期中央集权国家形成；近代苏伊士运河缩短东西方航程，改变国际贸易和地缘政治格局。综上，水的治理与利用既塑造文明形态，也体现国家治理能力并影响历史走向。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://tiku.baidu.com/tikupc/paperdetail/76b248a7fd0a79563c1e728b",
       "confidence": "local-heuristic"
     },
     {
