@@ -43,6 +43,17 @@ const eventSchema = z.object({
   payload: z.record(z.any()).default({}),
 })
 
+const gaokaoAttemptSchema = z.object({
+  questionKey: z.string().min(1).max(160),
+  subjectKey: z.string().max(64).optional().nullable(),
+  result: z.enum(['correct', 'wrong']),
+  knowledgeNodes: z.array(z.string().max(120)).default([]),
+  promptSnapshot: z.string().max(4000).optional().nullable(),
+  answerSnapshot: z.string().max(2000).optional().nullable(),
+  sourceType: z.string().max(120).optional().nullable(),
+  metadata: z.record(z.any()).default({}),
+})
+
 const questionQuerySchema = z.object({
   subject: z.string().max(64).optional(),
   year: z.coerce.number().int().min(1900).max(2100).optional(),
@@ -306,6 +317,52 @@ app.get('/api/gaokao/questions', authUser, async (req, res) => {
     LIMIT ${limitParam}
   `, params)
   res.json({ questions: rows })
+})
+
+app.post('/api/gaokao/attempts', authUser, async (req, res) => {
+  const parsed = gaokaoAttemptSchema.safeParse(req.body)
+  if (!parsed.success) return res.status(400).json({ error: 'invalid_input' })
+  const attempt = parsed.data
+  await query(`
+    INSERT INTO gaokao_answer_attempts (
+      user_id, question_key, subject_key, result, knowledge_nodes,
+      prompt_snapshot, answer_snapshot, source_type, metadata
+    )
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+  `, [
+    req.user.id,
+    attempt.questionKey,
+    attempt.subjectKey || null,
+    attempt.result,
+    JSON.stringify(attempt.knowledgeNodes),
+    attempt.promptSnapshot || null,
+    attempt.answerSnapshot || null,
+    attempt.sourceType || null,
+    JSON.stringify(attempt.metadata),
+  ])
+  await incrementSnapshot(req.user.id, 'practice_done_count', attempt.metadata?.pagePath)
+  if (attempt.result === 'wrong') {
+    await incrementSnapshot(req.user.id, 'wrong_count', attempt.metadata?.pagePath)
+  }
+  res.status(201).json({ ok: true })
+})
+
+app.get('/api/gaokao/weaknesses', authUser, async (req, res) => {
+  const { rows } = await query(`
+    SELECT
+      node.value AS "knowledgeNode",
+      COUNT(*)::int AS total,
+      COUNT(*) FILTER (WHERE result = 'correct')::int AS correct,
+      COUNT(*) FILTER (WHERE result = 'wrong')::int AS wrong,
+      MAX(answered_at) AS "lastAnsweredAt"
+    FROM gaokao_answer_attempts
+    CROSS JOIN LATERAL jsonb_array_elements_text(knowledge_nodes) AS node(value)
+    WHERE user_id = $1
+    GROUP BY node.value
+    ORDER BY wrong DESC, total DESC, "lastAnsweredAt" DESC
+    LIMIT 30
+  `, [req.user.id])
+  res.json({ weaknesses: rows })
 })
 
 app.post('/api/auth/register', async (req, res) => {

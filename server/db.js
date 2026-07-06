@@ -152,11 +152,27 @@ export async function ensureSchema() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
 
+    CREATE TABLE IF NOT EXISTS gaokao_answer_attempts (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      question_key TEXT NOT NULL,
+      subject_key TEXT,
+      result TEXT NOT NULL CHECK (result IN ('correct', 'wrong')),
+      knowledge_nodes JSONB NOT NULL DEFAULT '[]'::jsonb,
+      prompt_snapshot TEXT,
+      answer_snapshot TEXT,
+      source_type TEXT,
+      metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+      answered_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
     CREATE INDEX IF NOT EXISTS idx_study_events_user_time ON study_events(user_id, occurred_at DESC);
     CREATE INDEX IF NOT EXISTS idx_sessions_token_hash ON sessions(token_hash);
     CREATE INDEX IF NOT EXISTS idx_gaokao_papers_subject_year ON gaokao_papers(subject_key, year);
     CREATE INDEX IF NOT EXISTS idx_gaokao_questions_subject_year ON gaokao_questions(subject_key, year);
     CREATE INDEX IF NOT EXISTS idx_gaokao_questions_quality ON gaokao_questions(quality);
     CREATE INDEX IF NOT EXISTS idx_gaokao_questions_source_type ON gaokao_questions(source_type);
+    CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_time ON gaokao_answer_attempts(user_id, answered_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_subject ON gaokao_answer_attempts(user_id, subject_key);
   `)
 }

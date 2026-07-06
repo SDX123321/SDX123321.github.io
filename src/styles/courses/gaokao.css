@@ -577,6 +577,54 @@
   margin-top: 14px;
 }
 
+.question-actions button.is-selected {
+  border-color: var(--success);
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+.question-actions button.is-selected.is-wrong {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.knowledge-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.knowledge-tags span {
+  padding: 4px 9px;
+  border: 1px solid rgba(37, 99, 235, .24);
+  border-radius: 999px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  font-size: .74rem;
+  font-weight: 800;
+}
+
+.attempt-note {
+  width: fit-content;
+  margin-top: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  color: var(--text2);
+  background: var(--bg2);
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.gaokao-question.attempt-correct {
+  border-color: rgba(34, 197, 94, .45);
+}
+
+.gaokao-question.attempt-wrong {
+  border-color: rgba(239, 68, 68, .45);
+}
+
 .question-explain {
   margin-top: 12px;
   padding: 14px;
@@ -763,6 +811,128 @@
   font-weight: 700;
 }
 
+.knowledge-graph-wrap {
+  overflow-x: auto;
+  margin-bottom: 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, .07), rgba(5, 150, 105, .05)),
+    var(--bg2);
+}
+
+.knowledge-graph {
+  display: block;
+  min-width: 960px;
+}
+
+.knowledge-graph line {
+  stroke: rgba(148, 163, 184, .45);
+  stroke-width: 1.4;
+}
+
+.graph-cross-edge line {
+  stroke: rgba(234, 88, 12, .32);
+  stroke-dasharray: 5 6;
+}
+
+.graph-cross-edge text {
+  fill: var(--text3);
+  font-size: 10px;
+}
+
+.graph-node rect {
+  fill: var(--card);
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.graph-node.is-subject rect {
+  fill: rgba(37, 99, 235, .12);
+  stroke: rgba(37, 99, 235, .38);
+}
+
+.graph-node.is-strong rect {
+  fill: var(--success-bg);
+  stroke: rgba(34, 197, 94, .55);
+}
+
+.graph-node.is-weak rect {
+  fill: var(--danger-bg);
+  stroke: rgba(239, 68, 68, .62);
+}
+
+.graph-label,
+.graph-stat {
+  fill: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.graph-stat {
+  fill: var(--text2);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.weakness-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 16px;
+}
+
+.weakness-panel article {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg2);
+}
+
+.weakness-panel h3 {
+  margin: 0 0 12px;
+}
+
+.weakness-panel p {
+  margin: 0;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.weakness-list,
+.recommend-list {
+  display: grid;
+  gap: 10px;
+}
+
+.weakness-list div,
+.recommend-list button {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--card);
+  text-align: left;
+}
+
+.recommend-list button {
+  cursor: pointer;
+}
+
+.recommend-list button:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.weakness-list span,
+.recommend-list span {
+  color: var(--text2);
+  font-size: .82rem;
+  line-height: 1.55;
+}
+
 @media (max-width: 900px) {
   .gaokao-hero {
     grid-template-columns: 1fr;
@@ -777,6 +947,10 @@
   .year-card-head {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .weakness-panel {
+    grid-template-columns: 1fr;
   }
 }
 

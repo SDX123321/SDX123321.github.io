@@ -59,7 +59,10 @@ export function AuthProvider({ children }) {
   }, [refreshStats])
 
   useEffect(() => {
-    refreshMe()
+    const timer = window.setTimeout(() => {
+      refreshMe()
+    }, 0)
+    return () => window.clearTimeout(timer)
   }, [refreshMe])
 
   const importLocalProgress = useCallback(async () => {
@@ -106,7 +109,9 @@ export function AuthProvider({ children }) {
   const logout = useCallback(async () => {
     try {
       await api('/api/auth/logout', { method: 'POST' })
-    } catch {}
+    } catch {
+      // The session may already be expired locally or on the API.
+    }
     setUser(null)
     setStats(null)
   }, [])
@@ -117,6 +122,22 @@ export function AuthProvider({ children }) {
       await api('/api/study/event', {
         method: 'POST',
         body: JSON.stringify(event),
+      })
+      setApiAvailable(true)
+      return true
+    } catch (error) {
+      if (error.status === 401) setUser(null)
+      else setApiAvailable(false)
+      return false
+    }
+  }, [user])
+
+  const syncGaokaoAttempt = useCallback(async attempt => {
+    if (!user) return false
+    try {
+      await api('/api/gaokao/attempts', {
+        method: 'POST',
+        body: JSON.stringify(attempt),
       })
       setApiAvailable(true)
       return true
@@ -140,6 +161,7 @@ export function AuthProvider({ children }) {
     refreshStats,
     importLocalProgress,
     syncStudyEvent,
+    syncGaokaoAttempt,
   }), [
     user,
     stats,
@@ -153,6 +175,7 @@ export function AuthProvider({ children }) {
     refreshStats,
     importLocalProgress,
     syncStudyEvent,
+    syncGaokaoAttempt,
   ])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

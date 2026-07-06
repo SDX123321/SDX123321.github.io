@@ -13,6 +13,13 @@ import {
 import extractedQuestions from '../../data/jiangsu-gaokao-extracted.json'
 import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
 import ocrQuestions from '../../data/jiangsu-gaokao-ocr.json'
+import {
+  getQuestionKnowledgeIds,
+  knowledgeEdges,
+  knowledgeNodes,
+  recommendPracticeQuestions,
+  summarizeKnowledgeAttempts,
+} from '../../data/gaokao-knowledge-graph'
 import { useAuth } from '../../features/account/AuthContext'
 import '../../styles/courses/gaokao.css'
 
@@ -99,11 +106,133 @@ function formatGeneratedAt(value) {
   }
 }
 
-function QuestionCard({ question, isDone, onDone }) {
-  const [open, setOpen] = useState(isDone)
+function KnowledgeGraph({ activeSubject, attempts }) {
+  const { nodeStats } = useMemo(() => summarizeKnowledgeAttempts(attempts), [attempts])
+  const visibleSubjects = activeSubject ? [activeSubject] : subjects
+  const visibleNodes = visibleSubjects.flatMap(subject => (
+    knowledgeNodes.filter(node => node.subject === subject.key).slice(0, activeSubject ? 8 : 3)
+  ))
+  const positions = new Map()
+  const rowHeight = 92
+  const width = 1120
+  const height = Math.max(180, visibleSubjects.length * rowHeight + 38)
+
+  visibleSubjects.forEach((subject, rowIndex) => {
+    const y = 46 + rowIndex * rowHeight
+    positions.set(`subject:${subject.key}`, { x: 88, y, label: subject.name, subject })
+    visibleNodes
+      .filter(node => node.subject === subject.key)
+      .forEach((node, nodeIndex) => {
+        positions.set(node.id, { x: 292 + nodeIndex * 194, y, label: node.label, node })
+      })
+  })
+
+  const nodeClass = id => {
+    const stat = nodeStats[id]
+    if (!stat) return 'is-idle'
+    if (stat.wrong > 0 && stat.correct / stat.total < 0.7) return 'is-weak'
+    return 'is-strong'
+  }
 
   return (
-    <article className={`gaokao-question ${isDone ? 'is-complete' : ''}`}>
+    <div className="knowledge-graph-wrap">
+      <svg className="knowledge-graph" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="高考知识图谱">
+        {visibleSubjects.flatMap(subject => (
+          visibleNodes
+            .filter(node => node.subject === subject.key)
+            .map(node => {
+              const from = positions.get(`subject:${subject.key}`)
+              const to = positions.get(node.id)
+              return <line key={`${subject.key}-${node.id}`} x1={from.x + 56} y1={from.y} x2={to.x - 58} y2={to.y} />
+            })
+        ))}
+        {knowledgeEdges.map(([fromId, toId, label]) => {
+          const from = positions.get(fromId)
+          const to = positions.get(toId)
+          if (!from || !to) return null
+          return (
+            <g key={`${fromId}-${toId}`} className="graph-cross-edge">
+              <line x1={from.x + 58} y1={from.y + 24} x2={to.x - 58} y2={to.y + 24} />
+              <text x={(from.x + to.x) / 2} y={(from.y + to.y) / 2 + 8}>{label}</text>
+            </g>
+          )
+        })}
+        {[...positions.entries()].map(([id, point]) => {
+          const isSubject = id.startsWith('subject:')
+          const stat = nodeStats[id]
+          return (
+            <g key={id} className={`graph-node ${isSubject ? 'is-subject' : nodeClass(id)}`} transform={`translate(${point.x} ${point.y})`}>
+              <rect x="-64" y="-24" width="128" height="48" rx="8" />
+              <text className="graph-label" y="-2">{point.label}</text>
+              {!isSubject && (
+                <text className="graph-stat" y="15">
+                  {stat ? `${stat.correct}/${stat.total}` : '未作答'}
+                </text>
+              )}
+            </g>
+          )
+        })}
+      </svg>
+    </div>
+  )
+}
+
+function WeaknessPanel({ attempts, questions, activeSubject }) {
+  const { weakNodes } = useMemo(() => summarizeKnowledgeAttempts(attempts), [attempts])
+  const recommendations = useMemo(() => (
+    recommendPracticeQuestions(questions, attempts, 6)
+  ), [attempts, questions])
+  const visibleWeakNodes = activeSubject
+    ? weakNodes.filter(item => item.node?.subject === activeSubject.key)
+    : weakNodes
+
+  return (
+    <div className="weakness-panel">
+      <article>
+        <h3>薄弱环节</h3>
+        {visibleWeakNodes.length > 0 ? (
+          <div className="weakness-list">
+            {visibleWeakNodes.slice(0, 6).map(item => (
+              <div key={item.id}>
+                <strong>{item.node?.label || item.id}</strong>
+                <span>错 {item.wrong} 次 · 正确率 {Math.round(item.accuracy * 100)}%</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>完成练习并标记“做错了”后，这里会把结果映射到知识图谱。</p>
+        )}
+      </article>
+      <article>
+        <h3>对应推荐题</h3>
+        {recommendations.length > 0 ? (
+          <div className="recommend-list">
+            {recommendations.map(({ question, knowledgeIds }) => (
+              <button
+                type="button"
+                key={question.id}
+                onClick={() => document.getElementById(`practice-${question.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+              >
+                <strong>{question.title}</strong>
+                <span>{knowledgeIds.map(id => knowledgeNodes.find(node => node.id === id)?.label || id).join(' / ')}</span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p>当前没有薄弱点记录，先从任意一题开始反馈即可。</p>
+        )}
+      </article>
+    </div>
+  )
+}
+
+function QuestionCard({ question, isDone, onDone, attempt, onAttempt }) {
+  const [open, setOpen] = useState(isDone)
+  const knowledgeIds = getQuestionKnowledgeIds(question)
+  const knowledgeLabels = knowledgeIds.map(id => knowledgeNodes.find(node => node.id === id)?.label || id)
+
+  return (
+    <article id={`practice-${question.id}`} className={`gaokao-question ${isDone ? 'is-complete' : ''} ${attempt ? `attempt-${attempt.result}` : ''}`}>
       <div className="question-topline">
         <span>{question.year}</span>
         <span>{subjects.find(item => item.key === question.subject)?.name}</span>
@@ -111,12 +240,26 @@ function QuestionCard({ question, isDone, onDone }) {
         <span className={`difficulty difficulty-${question.difficulty}`}>{difficultyLabels[question.difficulty]}</span>
       </div>
       <h3>{question.title}</h3>
+      <div className="knowledge-tags">
+        {knowledgeLabels.map(label => <span key={label}>{label}</span>)}
+      </div>
       <pre className="question-prompt">{question.prompt}</pre>
       <div className="question-actions">
         <button type="button" onClick={() => { setOpen(value => !value); onDone(question.id) }}>
           {open ? '收起题解' : '查看详细题解'}
         </button>
+        <button type="button" className={attempt?.result === 'correct' ? 'is-selected' : ''} onClick={() => onAttempt(question, 'correct')}>
+          做对了
+        </button>
+        <button type="button" className={attempt?.result === 'wrong' ? 'is-selected is-wrong' : ''} onClick={() => onAttempt(question, 'wrong')}>
+          做错了
+        </button>
       </div>
+      {attempt && (
+        <div className="attempt-note">
+          已记录：{attempt.result === 'correct' ? '掌握' : '薄弱'} · {new Date(attempt.updatedAt).toLocaleString('zh-CN', { hour12: false })}
+        </div>
+      )}
       {open && (
         <div className="question-explain">
           <strong>参考答案：{question.answer}</strong>
@@ -218,6 +361,7 @@ export default function GaokaoPage() {
     const links = [
       { id: 'subject-overview', label: `${activeSubject.name}概览`, keywords: `${activeSubject.name} 高考 概览` },
       { id: 'subject-trend', label: '命题趋势', keywords: `${activeSubject.name} 趋势 高频考点` },
+      { id: 'subject-knowledge', label: '知识图谱', keywords: `${activeSubject.name} 知识图谱 薄弱点` },
       { id: 'subject-years', label: '年份资料', keywords: `${activeSubject.name} 年份 资料` },
       { id: 'subject-extracts', label: '真实样本', keywords: `${activeSubject.name} 题干 解析` },
       { id: 'subject-practice', label: '扩展训练', keywords: `${activeSubject.name} 练习 题解` },
@@ -234,7 +378,8 @@ export default function GaokaoPage() {
     difficulty: 'all',
   }))
   const [completed, setCompleted] = useState(() => new Set(loadJson('gaokao_jiangsu_done', [])))
-  const { syncStudyEvent } = useAuth()
+  const [attempts, setAttempts] = useState(() => loadJson('gaokao_knowledge_attempts', {}))
+  const { syncStudyEvent, syncGaokaoAttempt } = useAuth()
 
   useEffect(() => {
     document.title = activeSubject
@@ -249,6 +394,10 @@ export default function GaokaoPage() {
   useEffect(() => {
     localStorage.setItem('gaokao_jiangsu_done', JSON.stringify([...completed]))
   }, [completed])
+
+  useEffect(() => {
+    localStorage.setItem('gaokao_knowledge_attempts', JSON.stringify(attempts))
+  }, [attempts])
 
   useEffect(() => {
     const sidebar = document.querySelector('.sidebar')
@@ -360,6 +509,50 @@ export default function GaokaoPage() {
     })
   }
 
+  const recordAttempt = (question, result) => {
+    const knowledgeIds = getQuestionKnowledgeIds(question)
+    const nextAttempt = {
+      result,
+      knowledgeIds,
+      updatedAt: new Date().toISOString(),
+      subject: question.subject,
+      title: question.title,
+    }
+    setAttempts(prev => ({ ...prev, [question.id]: nextAttempt }))
+    setCompleted(prev => {
+      const next = new Set(prev)
+      next.add(question.id)
+      return next
+    })
+    syncGaokaoAttempt({
+      questionKey: question.id,
+      subjectKey: question.subject,
+      result,
+      knowledgeNodes: knowledgeIds,
+      promptSnapshot: question.prompt,
+      answerSnapshot: question.answer,
+      sourceType: question.sourceType,
+      metadata: {
+        pagePath: window.location.pathname,
+        difficulty: question.difficulty,
+        title: question.title,
+      },
+    })
+    syncStudyEvent({
+      eventType: result === 'correct' ? 'gaokao_answer_correct' : 'gaokao_answer_wrong',
+      course: 'gaokao',
+      subject: question.subject,
+      pagePath: window.location.pathname,
+      objectId: question.id,
+      payload: {
+        result,
+        knowledgeIds,
+        difficulty: question.difficulty,
+        sourceType: question.sourceType,
+      },
+    })
+  }
+
   const indexCoverage = [
     { label: '候选资料', value: `${gaokaoIndex.totals.files} 个文件` },
     { label: '可直接抽取', value: `${gaokaoIndex.totals.extractable} 个 DOCX` },
@@ -420,6 +613,15 @@ export default function GaokaoPage() {
               </ul>
             </article>
           </div>
+        </section>
+
+        <section id="subject-knowledge" className="gaokao-section">
+          <div className="section-heading">
+            <span>Knowledge Graph</span>
+            <h2>{activeSubject.name}知识图谱与薄弱点</h2>
+          </div>
+          <KnowledgeGraph activeSubject={activeSubject} attempts={attempts} />
+          <WeaknessPanel attempts={attempts} questions={subjectPracticeQuestions} activeSubject={activeSubject} />
         </section>
 
         <section id="subject-years" className="gaokao-section">
@@ -487,6 +689,8 @@ export default function GaokaoPage() {
                   question={question}
                   isDone={completed.has(question.id)}
                   onDone={completeQuestion}
+                  attempt={attempts[question.id]}
+                  onAttempt={recordAttempt}
                 />
               ))}
             </div>
@@ -651,6 +855,15 @@ export default function GaokaoPage() {
         </div>
       </section>
 
+      <section id="knowledge-map" className="gaokao-section">
+        <div className="section-heading">
+          <span>Knowledge Graph</span>
+          <h2>九科知识图谱与薄弱点推荐</h2>
+        </div>
+        <KnowledgeGraph attempts={attempts} />
+        <WeaknessPanel attempts={attempts} questions={practiceQuestions} />
+      </section>
+
       <section id="ocr" className="gaokao-section">
         <div className="section-heading">
           <span>OCR Scan</span>
@@ -731,6 +944,8 @@ export default function GaokaoPage() {
               question={question}
               isDone={completed.has(question.id)}
               onDone={completeQuestion}
+              attempt={attempts[question.id]}
+              onAttempt={recordAttempt}
             />
           ))}
         </div>
