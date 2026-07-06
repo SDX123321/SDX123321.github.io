@@ -116,12 +116,21 @@ function isMixedOcrQuestionFragment(item) {
       .every(marker => compactPrompt.includes(marker))
 }
 
+function isEnglishContinuationOcrFragment(item) {
+  const compactPrompt = getQuestionPrompt(item).replace(/\s+/g, ' ').trim()
+  if (!compactPrompt || hasQuestionOptions(item)) return false
+  if (!compactPrompt.includes('Slovik') || !compactPrompt.includes('Chatham')) return false
+  return ['HaileySlovik', 'The couple suggested', 'Three days later', '续写开头']
+    .some(marker => compactPrompt.includes(marker))
+}
+
 function shouldImportExtractedQuestion(item) {
   return !isNumericExtractionFragment(item)
     && !isUnnumberedExtractionFragment(item)
     && !isPassageOnlyExtractionFragment(item)
     && !isAnswerAnalysisExtractionFragment(item)
     && !isMixedOcrQuestionFragment(item)
+    && !isEnglishContinuationOcrFragment(item)
 }
 
 function isOcrAnswerSourceFile(file) {

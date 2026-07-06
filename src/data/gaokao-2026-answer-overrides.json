@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T14:57:43.527844+00:00",
+  "generatedAt": "2026-07-06T15:07:31.718876+00:00",
   "scope": {
     "datasets": [
       "gaokao-2026-docx-extracted.json",
@@ -22,12 +22,12 @@
     }
   },
   "summary": {
-    "questionsScanned": 1285,
+    "questionsScanned": 1283,
     "answerSourceRowsScanned": 79,
-    "missingBeforeOverrides": 864,
+    "missingBeforeOverrides": 862,
     "overrides": 820,
     "corrections": 4,
-    "missingAfterOverrides": 48,
+    "missingAfterOverrides": 46,
     "byMethod": {
       "answer-source-file": 124,
       "web-answer-source": 322,

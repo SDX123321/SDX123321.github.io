@@ -111,6 +111,23 @@ def is_mixed_ocr_question_fragment(question: dict) -> bool:
     )
 
 
+def is_english_continuation_ocr_fragment(question: dict) -> bool:
+    prompt = clean_text(question.get("prompt", ""))
+    if not prompt or question.get("options"):
+        return False
+    if "Slovik" not in prompt or "Chatham" not in prompt:
+        return False
+    return any(
+        marker in prompt
+        for marker in [
+            "HaileySlovik",
+            "The couple suggested",
+            "Three days later",
+            "续写开头",
+        ]
+    )
+
+
 def should_import_extracted_question(question: dict) -> bool:
     return not (
         is_numeric_extraction_fragment(question)
@@ -118,6 +135,7 @@ def should_import_extracted_question(question: dict) -> bool:
         or is_passage_only_extraction_fragment(question)
         or is_answer_analysis_extraction_fragment(question)
         or is_mixed_ocr_question_fragment(question)
+        or is_english_continuation_ocr_fragment(question)
     )
 
 
