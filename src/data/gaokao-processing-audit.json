@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T07:23:16.784Z",
+  "generatedAt": "2026-07-06T07:29:39.090Z",
   "sourceRootLabel": "本地 2026 高考试卷资料目录",
   "scope": "包含路径或文件名带 2026 的资料；排除 1990-2025 历史合集，避免父目录年份误判。",
   "totals": {
@@ -7,8 +7,9 @@
     "byStatus": {
       "needs-pdf-ocr": 73,
       "answer-pdf-needs-linking": 29,
-      "needs-docx-extraction": 19,
-      "answer-source": 24,
+      "structured": 33,
+      "answer-source": 6,
+      "needs-docx-extraction": 4,
       "needs-image-review": 5
     },
     "bySubject": {
@@ -32,17 +33,17 @@
         "total": 21,
         "byStatus": {
           "answer-pdf-needs-linking": 4,
-          "needs-docx-extraction": 1,
-          "needs-pdf-ocr": 16
+          "needs-pdf-ocr": 16,
+          "structured": 1
         }
       },
       "english": {
         "subjectName": "英语",
-        "total": 15,
+        "total": 17,
         "byStatus": {
           "answer-pdf-needs-linking": 2,
           "answer-source": 2,
-          "needs-docx-extraction": 1,
+          "needs-docx-extraction": 3,
           "needs-pdf-ocr": 10
         }
       },
@@ -58,8 +59,8 @@
         "total": 18,
         "byStatus": {
           "answer-pdf-needs-linking": 2,
-          "needs-docx-extraction": 8,
-          "needs-pdf-ocr": 8
+          "needs-pdf-ocr": 8,
+          "structured": 8
         }
       },
       "math": {
@@ -67,10 +68,9 @@
         "total": 45,
         "byStatus": {
           "answer-pdf-needs-linking": 11,
-          "answer-source": 5,
-          "needs-docx-extraction": 5,
           "needs-image-review": 4,
-          "needs-pdf-ocr": 20
+          "needs-pdf-ocr": 20,
+          "structured": 10
         }
       },
       "physics": {
@@ -78,9 +78,9 @@
         "total": 25,
         "byStatus": {
           "answer-pdf-needs-linking": 6,
-          "answer-source": 15,
-          "needs-docx-extraction": 1,
-          "needs-pdf-ocr": 3
+          "answer-source": 2,
+          "needs-pdf-ocr": 3,
+          "structured": 14
         }
       },
       "politics": {
@@ -92,10 +92,10 @@
       },
       "unknown": {
         "subjectName": "未知",
-        "total": 6,
+        "total": 4,
         "byStatus": {
           "answer-source": 2,
-          "needs-docx-extraction": 3,
+          "needs-docx-extraction": 1,
           "needs-image-review": 1
         }
       }
@@ -265,15 +265,6 @@
       "status": "answer-pdf-needs-linking"
     },
     {
-      "name": "全国二卷语文.docx",
-      "relativePath": "2026高考试卷（更新中）\\二卷\\全国二卷语文.docx",
-      "ext": ".docx",
-      "subjectKey": "chinese",
-      "subjectName": "语文",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
       "name": "2026全国高考语文1卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026全国高考语文1卷.pdf",
       "ext": ".pdf",
@@ -418,6 +409,15 @@
       "status": "needs-pdf-ocr"
     },
     {
+      "name": "全国二卷语文.docx",
+      "relativePath": "2026高考试卷（更新中）\\二卷\\全国二卷语文.docx",
+      "ext": ".docx",
+      "subjectKey": "chinese",
+      "subjectName": "语文",
+      "role": "original",
+      "status": "structured"
+    },
+    {
       "name": "2026届上海高考英语主观题（作文+翻译回忆版）解析参考.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026年上海高考\\2026届上海高考英语主观题（作文+翻译回忆版）解析参考.pdf",
       "ext": ".pdf",
@@ -452,6 +452,24 @@
       "subjectName": "英语",
       "role": "answer-or-analysis",
       "status": "answer-source"
+    },
+    {
+      "name": "全国一卷语法填空.docx",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\全国一卷语法填空.docx",
+      "ext": ".docx",
+      "subjectKey": "english",
+      "subjectName": "英语",
+      "role": "original",
+      "status": "needs-docx-extraction"
+    },
+    {
+      "name": "全国一卷阅读理解D篇.docx",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\全国一卷阅读理解D篇.docx",
+      "ext": ".docx",
+      "subjectKey": "english",
+      "subjectName": "英语",
+      "role": "original",
+      "status": "needs-docx-extraction"
     },
     {
       "name": "全国二卷英语 语法填空（网络）.docx",
@@ -607,78 +625,6 @@
       "status": "answer-pdf-needs-linking"
     },
     {
-      "name": "广东历史.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年广东高考\\广东历史.docx",
-      "ext": ".docx",
-      "subjectKey": "history",
-      "subjectName": "历史",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "2026河南高考历史.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\2026河南高考历史.docx",
-      "ext": ".docx",
-      "subjectKey": "history",
-      "subjectName": "历史",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "2026西北高考历史.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年西北高考\\2026西北高考历史.docx",
-      "ext": ".docx",
-      "subjectKey": "history",
-      "subjectName": "历史",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "陕西历史.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年陕西高考\\陕西历史.docx",
-      "ext": ".docx",
-      "subjectKey": "history",
-      "subjectName": "历史",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "广东历史.docx",
-      "relativePath": "补充\\2026年广东高考\\广东历史.docx",
-      "ext": ".docx",
-      "subjectKey": "history",
-      "subjectName": "历史",
-      "role": "unknown",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "2026河南高考历史.docx",
-      "relativePath": "补充\\2026年河南高考\\2026河南高考历史.docx",
-      "ext": ".docx",
-      "subjectKey": "history",
-      "subjectName": "历史",
-      "role": "unknown",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "2026西北高考历史.docx",
-      "relativePath": "补充\\2026年西北高考\\2026西北高考历史.docx",
-      "ext": ".docx",
-      "subjectKey": "history",
-      "subjectName": "历史",
-      "role": "unknown",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "陕西历史.docx",
-      "relativePath": "补充\\2026年陕西高考\\陕西历史.docx",
-      "ext": ".docx",
-      "subjectKey": "history",
-      "subjectName": "历史",
-      "role": "unknown",
-      "status": "needs-docx-extraction"
-    },
-    {
       "name": "云南高考历史题.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026云南高考\\云南高考历史题.pdf",
       "ext": ".pdf",
@@ -749,6 +695,78 @@
       "subjectName": "历史",
       "role": "unknown",
       "status": "needs-pdf-ocr"
+    },
+    {
+      "name": "广东历史.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年广东高考\\广东历史.docx",
+      "ext": ".docx",
+      "subjectKey": "history",
+      "subjectName": "历史",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "2026河南高考历史.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\2026河南高考历史.docx",
+      "ext": ".docx",
+      "subjectKey": "history",
+      "subjectName": "历史",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "2026西北高考历史.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年西北高考\\2026西北高考历史.docx",
+      "ext": ".docx",
+      "subjectKey": "history",
+      "subjectName": "历史",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "陕西历史.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年陕西高考\\陕西历史.docx",
+      "ext": ".docx",
+      "subjectKey": "history",
+      "subjectName": "历史",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "广东历史.docx",
+      "relativePath": "补充\\2026年广东高考\\广东历史.docx",
+      "ext": ".docx",
+      "subjectKey": "history",
+      "subjectName": "历史",
+      "role": "unknown",
+      "status": "structured"
+    },
+    {
+      "name": "2026河南高考历史.docx",
+      "relativePath": "补充\\2026年河南高考\\2026河南高考历史.docx",
+      "ext": ".docx",
+      "subjectKey": "history",
+      "subjectName": "历史",
+      "role": "unknown",
+      "status": "structured"
+    },
+    {
+      "name": "2026西北高考历史.docx",
+      "relativePath": "补充\\2026年西北高考\\2026西北高考历史.docx",
+      "ext": ".docx",
+      "subjectKey": "history",
+      "subjectName": "历史",
+      "role": "unknown",
+      "status": "structured"
+    },
+    {
+      "name": "陕西历史.docx",
+      "relativePath": "补充\\2026年陕西高考\\陕西历史.docx",
+      "ext": ".docx",
+      "subjectKey": "history",
+      "subjectName": "历史",
+      "role": "unknown",
+      "status": "structured"
     },
     {
       "name": "2026全国数学I卷试题逐题规范解答.pdf",
@@ -848,96 +866,6 @@
       "subjectName": "数学",
       "role": "answer-or-analysis",
       "status": "answer-pdf-needs-linking"
-    },
-    {
-      "name": "精品解析：2026年上海市春季招生统一文化考试（春季高考）数学试卷（解析版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年上海市春季招生统一文化考试（春季高考）数学试卷（解析版）.docx",
-      "ext": ".docx",
-      "subjectKey": "math",
-      "subjectName": "数学",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "精品解析：2026年高考上海卷数学高考真题（解析版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考上海卷数学高考真题（解析版）.docx",
-      "ext": ".docx",
-      "subjectKey": "math",
-      "subjectName": "数学",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
-      "ext": ".docx",
-      "subjectKey": "math",
-      "subjectName": "数学",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "精品解析：2026年高考全国2卷数学高考真题（解析版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国2卷数学高考真题（解析版）.docx",
-      "ext": ".docx",
-      "subjectKey": "math",
-      "subjectName": "数学",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "精品解析：2026年高考天津卷数学高考真题（解析版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考天津卷数学高考真题（解析版）.docx",
-      "ext": ".docx",
-      "subjectKey": "math",
-      "subjectName": "数学",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "精品解析：2026年上海市春季招生统一文化考试（春季高考）数学试卷（原卷版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年上海市春季招生统一文化考试（春季高考）数学试卷（原卷版）.docx",
-      "ext": ".docx",
-      "subjectKey": "math",
-      "subjectName": "数学",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "精品解析：2026年高考上海卷数学高考真题（原卷版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考上海卷数学高考真题（原卷版）.docx",
-      "ext": ".docx",
-      "subjectKey": "math",
-      "subjectName": "数学",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
-      "ext": ".docx",
-      "subjectKey": "math",
-      "subjectName": "数学",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
-      "ext": ".docx",
-      "subjectKey": "math",
-      "subjectName": "数学",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "精品解析：2026年高考天津卷数学高考真题（原卷版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考天津卷数学高考真题（原卷版）.docx",
-      "ext": ".docx",
-      "subjectKey": "math",
-      "subjectName": "数学",
-      "role": "original",
-      "status": "needs-docx-extraction"
     },
     {
       "name": "2026北京高考数学解答题回忆1.jpg",
@@ -1156,6 +1084,96 @@
       "status": "needs-pdf-ocr"
     },
     {
+      "name": "精品解析：2026年上海市春季招生统一文化考试（春季高考）数学试卷（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年上海市春季招生统一文化考试（春季高考）数学试卷（原卷版）.docx",
+      "ext": ".docx",
+      "subjectKey": "math",
+      "subjectName": "数学",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "精品解析：2026年上海市春季招生统一文化考试（春季高考）数学试卷（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年上海市春季招生统一文化考试（春季高考）数学试卷（解析版）.docx",
+      "ext": ".docx",
+      "subjectKey": "math",
+      "subjectName": "数学",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "精品解析：2026年高考上海卷数学高考真题（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考上海卷数学高考真题（原卷版）.docx",
+      "ext": ".docx",
+      "subjectKey": "math",
+      "subjectName": "数学",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "精品解析：2026年高考上海卷数学高考真题（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考上海卷数学高考真题（解析版）.docx",
+      "ext": ".docx",
+      "subjectKey": "math",
+      "subjectName": "数学",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "ext": ".docx",
+      "subjectKey": "math",
+      "subjectName": "数学",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+      "ext": ".docx",
+      "subjectKey": "math",
+      "subjectName": "数学",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
+      "ext": ".docx",
+      "subjectKey": "math",
+      "subjectName": "数学",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "精品解析：2026年高考全国2卷数学高考真题（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国2卷数学高考真题（解析版）.docx",
+      "ext": ".docx",
+      "subjectKey": "math",
+      "subjectName": "数学",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "精品解析：2026年高考天津卷数学高考真题（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考天津卷数学高考真题（原卷版）.docx",
+      "ext": ".docx",
+      "subjectKey": "math",
+      "subjectName": "数学",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "精品解析：2026年高考天津卷数学高考真题（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考天津卷数学高考真题（解析版）.docx",
+      "ext": ".docx",
+      "subjectKey": "math",
+      "subjectName": "数学",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
       "name": "2026黑吉辽高考真题——物理卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026黑吉辽高考真题——物理卷.pdf",
       "ext": ".pdf",
@@ -1210,24 +1228,6 @@
       "status": "answer-pdf-needs-linking"
     },
     {
-      "name": "2026云南卷物理解读.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026云南卷物理解读.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "2026年高考云南卷物理高考真题（网络 收集版）（解析版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026云南卷物理试卷+答案（参考版）\\2026年高考云南卷物理高考真题（网络 收集版）（解析版）.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
       "name": "【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
       "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考上海卷物理高考真题（网络+收集版）\\【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
       "ext": ".docx",
@@ -1244,114 +1244,6 @@
       "subjectName": "物理",
       "role": "answer-or-analysis",
       "status": "answer-source"
-    },
-    {
-      "name": "2026年高考云南卷物理高考真题（网络 收集版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考云南卷物理高考真题（网络+收集版）\\2026年高考云南卷物理高考真题（网络 收集版）.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "2026年高考云南卷物理高考真题（网络 收集版）（纯答案版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考云南卷物理高考真题（网络+收集版）\\2026年高考云南卷物理高考真题（网络 收集版）（纯答案版）.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "2026年高考云南卷物理高考真题（网络收集版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考云南卷物理高考真题（网络收集版）.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "2026年高考物理真题完全解读（湖南卷）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考物理真题完全解读（湖南卷）.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "2026年高考陕晋青宁卷物理高考真题（网络 收集版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026陕晋青宁卷物理试题+答案（word版）\\2026年高考陕晋青宁卷物理高考真题（网络 收集版）.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "2026年高考陕晋青宁卷物理高考真题（网络 收集版）（纯答案版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026陕晋青宁卷物理试题+答案（word版）\\2026年高考陕晋青宁卷物理高考真题（网络 收集版）（纯答案版）.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "2026高考物理云南卷.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026高考物理云南卷.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "2026黑吉辽高考真题——物理卷.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026黑吉辽高考真题——物理卷.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "湖南2026年物理试卷.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
-      "name": "2026年高考云南卷物理高考真题（网络 收集版）（原卷版）.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026云南卷物理试卷+答案（参考版）\\2026年高考云南卷物理高考真题（网络 收集版）（原卷版）.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "original",
-      "status": "needs-docx-extraction"
     },
     {
       "name": "2026上海高考学业水平等级性考试-物理.pdf",
@@ -1379,6 +1271,132 @@
       "subjectName": "物理",
       "role": "original",
       "status": "needs-pdf-ocr"
+    },
+    {
+      "name": "2026云南卷物理解读.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026云南卷物理解读.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "2026年高考云南卷物理高考真题（网络 收集版）（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026云南卷物理试卷+答案（参考版）\\2026年高考云南卷物理高考真题（网络 收集版）（原卷版）.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "2026年高考云南卷物理高考真题（网络 收集版）（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026云南卷物理试卷+答案（参考版）\\2026年高考云南卷物理高考真题（网络 收集版）（解析版）.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "2026年高考云南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考云南卷物理高考真题（网络+收集版）\\2026年高考云南卷物理高考真题（网络 收集版）.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "2026年高考云南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考云南卷物理高考真题（网络+收集版）\\2026年高考云南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "2026年高考云南卷物理高考真题（网络收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考云南卷物理高考真题（网络收集版）.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考物理真题完全解读（湖南卷）.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "2026年高考陕晋青宁卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026陕晋青宁卷物理试题+答案（word版）\\2026年高考陕晋青宁卷物理高考真题（网络 收集版）.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "2026年高考陕晋青宁卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026陕晋青宁卷物理试题+答案（word版）\\2026年高考陕晋青宁卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "2026高考物理云南卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026高考物理云南卷.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "2026黑吉辽高考真题——物理卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026黑吉辽高考真题——物理卷.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
+    },
+    {
+      "name": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "answer-or-analysis",
+      "status": "structured"
     },
     {
       "name": "2026年上海高考【政治】回忆.pdf",
@@ -1415,24 +1433,6 @@
       "subjectName": "未知",
       "role": "answer-or-analysis",
       "status": "answer-source"
-    },
-    {
-      "name": "全国一卷语法填空.docx",
-      "relativePath": "2026高考试卷（更新中）\\一卷\\全国一卷语法填空.docx",
-      "ext": ".docx",
-      "subjectKey": "unknown",
-      "subjectName": "未知",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "全国一卷阅读理解D篇.docx",
-      "relativePath": "2026高考试卷（更新中）\\一卷\\全国一卷阅读理解D篇.docx",
-      "ext": ".docx",
-      "subjectKey": "unknown",
-      "subjectName": "未知",
-      "role": "original",
-      "status": "needs-docx-extraction"
     },
     {
       "name": "必看更新资料.docx",

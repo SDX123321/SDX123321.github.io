@@ -11,7 +11,7 @@ const outFile = path.join(repoRoot, 'src', 'data', 'gaokao-processing-audit.json
 const SUBJECTS = [
   { key: 'chinese', name: '语文', terms: ['语文'] },
   { key: 'math', name: '数学', terms: ['数学'] },
-  { key: 'english', name: '英语', terms: ['英语', '外语'] },
+  { key: 'english', name: '英语', terms: ['英语', '外语', '语法填空', '阅读理解', '七选五', '完形填空', '听力'] },
   { key: 'physics', name: '物理', terms: ['物理'] },
   { key: 'chemistry', name: '化学', terms: ['化学'] },
   { key: 'biology', name: '生物', terms: ['生物'] },
@@ -68,7 +68,14 @@ function increment(object, key) {
 }
 
 const extracted = JSON.parse(fs.readFileSync(path.join(repoRoot, 'src', 'data', 'jiangsu-gaokao-extracted.json'), 'utf8'))
-const extractedNames = new Set(extracted.files.map(file => file.source))
+const extracted2026Path = path.join(repoRoot, 'src', 'data', 'gaokao-2026-docx-extracted.json')
+const extracted2026 = fs.existsSync(extracted2026Path)
+  ? JSON.parse(fs.readFileSync(extracted2026Path, 'utf8'))
+  : { files: [] }
+const extractedNames = new Set([
+  ...extracted.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
+  ...extracted2026.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
+])
 const files = walk(sourceRoot)
   .map(file => {
     const fileName = path.basename(file)

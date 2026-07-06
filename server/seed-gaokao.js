@@ -170,7 +170,7 @@ async function seedSubjectProfiles() {
   }
 }
 
-async function seedStaticSources(index, extracted, ocr) {
+async function seedStaticSources(index, extracted, docx2026, ocr) {
   let count = 0
   for (const source of sources) {
     await upsertSource({
@@ -202,6 +202,15 @@ async function seedStaticSources(index, extracted, ocr) {
     metadata: { generatedAt: extracted.generatedAt, summary: extracted.summary, scope: extracted.scope },
   })
   await upsertSource({
+    sourceKey: 'local_gaokao_2026_docx_extracted',
+    name: '2026 高考 DOCX 审计抽取结果',
+    detail: 'src/data/gaokao-2026-docx-extracted.json',
+    status: 'extracted-needs-review',
+    sourceType: 'local-extract',
+    relativePath: 'src/data/gaokao-2026-docx-extracted.json',
+    metadata: { generatedAt: docx2026.generatedAt, summary: docx2026.summary, scope: docx2026.scope },
+  })
+  await upsertSource({
     sourceKey: 'local_gaokao_ocr_2026_jiangsu_math',
     name: ocr.source?.filename || '2026 江苏数学 OCR',
     detail: ocr.source?.note,
@@ -210,7 +219,7 @@ async function seedStaticSources(index, extracted, ocr) {
     relativePath: ocr.source?.relativePath,
     metadata: { generatedAt: ocr.generatedAt, summary: ocr.summary, pages: ocr.pages },
   })
-  return count + 3
+  return count + 4
 }
 
 async function seedIndexPapers(index) {
@@ -458,16 +467,18 @@ async function seedTrendNotes() {
 async function main() {
   const index = await loadJson('jiangsu-gaokao-index.json')
   const extracted = await loadJson('jiangsu-gaokao-extracted.json')
+  const docx2026 = await loadJson('gaokao-2026-docx-extracted.json')
   const ocr = await loadJson('jiangsu-gaokao-ocr.json')
 
   await ensureSchema()
   await query('BEGIN')
   try {
     await seedSubjectProfiles()
-    const sourceCount = await seedStaticSources(index, extracted, ocr)
+    const sourceCount = await seedStaticSources(index, extracted, docx2026, ocr)
     const indexPaperCount = await seedIndexPapers(index)
     const overviewPaperCount = await seedYearOverviewPapers()
     const extractedResult = await seedExtractedQuestions(extracted)
+    const docx2026Result = await seedExtractedQuestions(docx2026)
     const ocrResult = await seedOcrQuestions(ocr)
     const practiceResult = await seedPracticeQuestions()
     const trendNoteCount = await seedTrendNotes()
@@ -475,9 +486,10 @@ async function main() {
     const summary = {
       subjects: subjects.length,
       sources: sourceCount,
-      papers: indexPaperCount + overviewPaperCount + extractedResult.papers + ocrResult.papers + practiceResult.papers,
-      questions: extractedResult.questions + ocrResult.questions + practiceResult.questions,
+      papers: indexPaperCount + overviewPaperCount + extractedResult.papers + docx2026Result.papers + ocrResult.papers + practiceResult.papers,
+      questions: extractedResult.questions + docx2026Result.questions + ocrResult.questions + practiceResult.questions,
       extractedQuestions: extractedResult.questions,
+      docx2026Questions: docx2026Result.questions,
       ocrQuestions: ocrResult.questions,
       practiceQuestions: practiceResult.questions,
       trendNotes: trendNoteCount,

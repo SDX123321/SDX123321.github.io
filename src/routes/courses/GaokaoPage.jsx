@@ -11,6 +11,7 @@ import {
   years,
 } from '../../data/jiangsu-gaokao'
 import extractedQuestions from '../../data/jiangsu-gaokao-extracted.json'
+import extracted2026Docx from '../../data/gaokao-2026-docx-extracted.json'
 import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
 import ocrQuestions from '../../data/jiangsu-gaokao-ocr.json'
 import {
@@ -458,25 +459,23 @@ export default function GaokaoPage() {
   }, [filters])
 
   const extractedSamples = useMemo(() => {
-    return extractedQuestions.files
+    return [...extractedQuestions.files, ...extracted2026Docx.files]
       .flatMap(file => file.questions.map(question => ({ file, question })))
       .filter(item => item.question.prompt.length >= 20)
       .sort((left, right) => (
         (extractedQualityOrder[left.question.quality] ?? 9) - (extractedQualityOrder[right.question.quality] ?? 9)
       ))
-      .slice(0, 12)
   }, [])
 
   const subjectExtractedSamples = useMemo(() => {
     if (!activeSubject) return []
-    return extractedQuestions.files
+    return [...extractedQuestions.files, ...extracted2026Docx.files]
       .filter(file => file.subject === activeSubject.key)
       .flatMap(file => file.questions.map(question => ({ file, question })))
       .filter(item => item.question.prompt.length >= 20)
       .sort((left, right) => (
         (extractedQualityOrder[left.question.quality] ?? 9) - (extractedQualityOrder[right.question.quality] ?? 9)
       ))
-      .slice(0, 12)
   }, [activeSubject])
 
   const subjectPracticeQuestions = useMemo(() => {
@@ -559,7 +558,12 @@ export default function GaokaoPage() {
     { label: '需转换', value: `${gaokaoIndex.totals.needsConversion} 个旧 DOC` },
     { label: '需 OCR 检查', value: `${gaokaoIndex.totals.needsOcrCheck} 个 PDF` },
   ]
-  const extractSummary = extractedQuestions.summary
+  const combinedExtractSummary = {
+    files: (extractedQuestions.summary.files || 0) + (extracted2026Docx.summary.files || 0),
+    questions: (extractedQuestions.summary.questions || 0) + (extracted2026Docx.summary.questions || 0),
+    matchedQuestions: (extractedQuestions.summary.matchedQuestions || 0) + (extracted2026Docx.summary.matchedQuestions || 0),
+    reviewQuestions: (extractedQuestions.summary.reviewQuestions || 0) + (extracted2026Docx.summary.reviewQuestions || 0),
+  }
 
   if (subjectNotFound) {
     return (
@@ -659,7 +663,7 @@ export default function GaokaoPage() {
         <section id="subject-extracts" className="gaokao-section">
           <div className="section-heading">
             <span>Extracted</span>
-            <h2>真实抽取样本</h2>
+            <h2>结构化题库</h2>
           </div>
           {subjectExtractedSamples.length > 0 ? (
             <div className="extract-grid">
@@ -889,16 +893,16 @@ export default function GaokaoPage() {
       <section id="extracts" className="gaokao-section">
         <div className="section-heading">
           <span>Extracted DOCX</span>
-          <h2>真实题干抽取样本</h2>
+          <h2>真实题干结构化题库</h2>
         </div>
         <div className="extract-summary">
-          <span>来源文件 {extractSummary.files} 份</span>
-          <span>抽取题干 {extractSummary.questions} 题</span>
-          <span>已匹配解析 {extractSummary.matchedQuestions ?? 0} 题</span>
-          <span>需核验 {extractSummary.reviewQuestions} 题</span>
+          <span>来源文件 {combinedExtractSummary.files} 份</span>
+          <span>抽取题干 {combinedExtractSummary.questions} 题</span>
+          <span>已匹配解析 {combinedExtractSummary.matchedQuestions ?? 0} 题</span>
+          <span>需核验 {combinedExtractSummary.reviewQuestions} 题</span>
         </div>
         <p className="extract-intro">
-          这一栏来自真实 DOCX 试卷抽取。含公式、图片、复杂表格的题目可能会丢失部分内容，因此带有质量标记；
+          这一栏来自真实 DOCX 试卷抽取，已合并 2020-2025 江苏/新高考样本与 2026 审计清单中的 DOCX。含公式、图片、复杂表格的题目可能会丢失部分内容，因此带有质量标记；
           已匹配解析的样本会展示答案与解析摘录，但在人工复核前仍不替代正式练习区。
         </p>
         <div className="extract-grid">
