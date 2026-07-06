@@ -5,6 +5,7 @@ export const navLinks = [
   { id: 'coverage', label: '资料矩阵', keywords: '年份 科目 江苏卷 新高考一卷 新课标一卷' },
   { id: 'subjects', label: '九科分析', keywords: '语文 数学 英语 物理 化学 生物 政治 历史 地理' },
   { id: 'gene', label: '出题基因', keywords: '命题趋势 迁移 改造 能力' },
+  { id: 'ocr', label: '扫描卷 OCR', keywords: '2026 江苏 数学 扫描 PDF OCR 待核验' },
   { id: 'extracts', label: '真实抽取', keywords: 'DOCX 抽取 真实题干 待核验' },
   { id: 'questions', label: '完整题解', keywords: '题干 解析 答案 互动练习' },
   { id: 'sources', label: '来源说明', keywords: '本地资料 OCR 扫描 DOCX PDF' },

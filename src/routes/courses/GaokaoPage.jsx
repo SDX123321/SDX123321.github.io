@@ -11,6 +11,7 @@ import {
 } from '../../data/jiangsu-gaokao'
 import extractedQuestions from '../../data/jiangsu-gaokao-extracted.json'
 import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
+import ocrQuestions from '../../data/jiangsu-gaokao-ocr.json'
 import '../../styles/courses/gaokao.css'
 
 const difficultyLabels = {
@@ -166,6 +167,29 @@ function ExtractedQuestionCard({ file, question }) {
         {question.quality === 'matched'
           ? '题解状态：已从解析卷自动匹配答案与解析，仍需人工复核公式、图片和表格。'
           : '题解状态：需人工核验。含公式或图表的内容可能在 DOCX 抽取时缺失，暂不作为正式题库条目。'}
+      </p>
+    </article>
+  )
+}
+
+function OcrQuestionCard({ question }) {
+  const score = Math.round((question.averageScore || 0) * 100)
+
+  return (
+    <article className="ocr-card">
+      <div className="question-topline">
+        <span>2026</span>
+        <span>江苏数学</span>
+        <span>{question.type}</span>
+        <span>置信度 {score}%</span>
+      </div>
+      <h3>扫描卷 OCR · 第 {question.number} 题</h3>
+      <pre className="question-prompt">{question.prompt}</pre>
+      <div className="extract-flags">
+        {question.flags.map(flag => <span key={flag}>{flag}</span>)}
+      </div>
+      <p className="extract-note">
+        该题来自 2026 江苏数学 PDF 扫描识别。题干顺序已按双栏版面整理，公式、根号、上下标和图形信息仍需人工复核。
       </p>
     </article>
   )
@@ -404,6 +428,28 @@ export default function GaokaoPage() {
                 {block.points.map(point => <li key={point}>{point}</li>)}
               </ul>
             </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="ocr" className="gaokao-section">
+        <div className="section-heading">
+          <span>OCR Scan</span>
+          <h2>2026 江苏数学扫描卷 OCR</h2>
+        </div>
+        <div className="extract-summary">
+          <span>PDF 页 {ocrQuestions.summary.pdfPages} 页</span>
+          <span>OCR 行 {ocrQuestions.summary.ocrLines} 行</span>
+          <span>拆分题目 {ocrQuestions.summary.questions} 题</span>
+          <span>全部待复核 {ocrQuestions.summary.reviewQuestions} 题</span>
+        </div>
+        <p className="extract-intro">
+          这部分来自本地 2026 江苏数学扫描 PDF。页面展示的是 OCR 题干，用于分析题型分布、情境包装和压轴结构；
+          涉及公式、图形、选项排版的地方先标记为待复核，不混入正式题解练习。
+        </p>
+        <div className="ocr-grid">
+          {ocrQuestions.questions.map(question => (
+            <OcrQuestionCard key={question.number} question={question} />
           ))}
         </div>
       </section>

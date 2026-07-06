@@ -249,6 +249,7 @@
 .year-card,
 .subject-card,
 .gaokao-question,
+.ocr-card,
 .prep-grid article,
 .source-list article {
   border: 1px solid var(--border);
@@ -454,6 +455,7 @@
 }
 
 .gaokao-question,
+.ocr-card,
 .extract-card {
   padding: 18px;
 }
@@ -555,6 +557,17 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 16px;
+}
+
+.ocr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.ocr-card {
+  border-left: 4px solid var(--warning);
+  background: var(--bg2);
 }
 
 .extract-card {
@@ -706,6 +719,10 @@
   }
 
   .question-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ocr-grid {
     grid-template-columns: 1fr;
   }
 
