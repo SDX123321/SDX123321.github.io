@@ -129,6 +129,22 @@ SOURCES = [
         ],
     },
     {
+        "id": "cnjy-shanghai-spring-math-fill-2026",
+        "family": "math:shanghai-spring",
+        "title": "2026\u5e74\u4e0a\u6d77\u5e02\u6625\u5b63\u9ad8\u8003\u6570\u5b66\u586b\u7a7a\u9898\u53c2\u8003\u7b54\u6848",
+        "pageUrl": "https://zy.21cnjy.com/25980046",
+        "sourceName": "21\u4e16\u7eaa\u6559\u80b2\u7f51 + \u672c\u5730\u89e3\u6790\u7248WMF\u516c\u5f0f\u4eba\u5de5\u590d\u6838",
+        "manualAnswers": [
+            {"number": 1, "answer": "4"},
+            {"number": 2, "answer": "(-2, 3)"},
+            {"number": 5, "answer": "18"},
+            {"number": 8, "answer": "1"},
+            {"number": 10, "answer": "-39/32"},
+            {"number": 11, "answer": "√3"},
+            {"number": 12, "answer": "14.2"},
+        ],
+    },
+    {
         "id": "sohu-guangdong-history-open-2026",
         "family": "history:guangdong",
         "title": "2026\u5e74\u9ad8\u8003\u5e7f\u4e1c\u7701\u5386\u53f2\u5377\u975e\u9009\u62e9\u9898\u53c2\u8003\u7b54\u6848",

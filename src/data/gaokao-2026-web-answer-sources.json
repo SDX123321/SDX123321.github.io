@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-06T12:01:20.648175+00:00",
+  "generatedAt": "2026-07-06T12:17:04.968092+00:00",
   "scope": {
     "note": "Web answer maps from public gaokzx.com article image pages and reviewed public PDF answer files. Review source URLs before relying on open-ended answers."
   },
   "summary": {
-    "sources": 17,
-    "answers": 256,
+    "sources": 18,
+    "answers": 263,
     "byFamily": {
       "biology:anhui": 19,
       "chemistry:yunnan": 18,
@@ -20,6 +20,7 @@
       "chinese:national1": 0,
       "math:beijing": 21,
       "math:tianjin": 2,
+      "math:shanghai-spring": 7,
       "history:guangdong": 4,
       "physics:shanjinqingning": 5,
       "history:shanjinqingning": 4
@@ -1582,6 +1583,82 @@
         {
           "number": 7,
           "answer": "B",
+          "confidence": "reviewed-web-text"
+        }
+      ]
+    },
+    {
+      "id": "cnjy-shanghai-spring-math-fill-2026",
+      "family": "math:shanghai-spring",
+      "title": "2026年上海市春季高考数学填空题参考答案",
+      "pageUrl": "https://zy.21cnjy.com/25980046",
+      "sourceName": "21世纪教育网 + 本地解析版WMF公式人工复核",
+      "manualAnswers": [
+        {
+          "number": 1,
+          "answer": "4"
+        },
+        {
+          "number": 2,
+          "answer": "(-2, 3)"
+        },
+        {
+          "number": 5,
+          "answer": "18"
+        },
+        {
+          "number": 8,
+          "answer": "1"
+        },
+        {
+          "number": 10,
+          "answer": "-39/32"
+        },
+        {
+          "number": 11,
+          "answer": "√3"
+        },
+        {
+          "number": 12,
+          "answer": "14.2"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 1,
+          "answer": "4",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 2,
+          "answer": "(-2, 3)",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 5,
+          "answer": "18",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 8,
+          "answer": "1",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 10,
+          "answer": "-39/32",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 11,
+          "answer": "√3",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 12,
+          "answer": "14.2",
           "confidence": "reviewed-web-text"
         }
       ]
