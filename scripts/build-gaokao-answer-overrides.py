@@ -17,6 +17,10 @@ WEB_ANSWER_SOURCES_PATH = DATA_DIR / "gaokao-2026-web-answer-sources.json"
 FAMILY_ANSWER_ALIASES = {
     "math:数学江苏卷": ["math:全国数学I卷试题逐题规范解答"],
 }
+EXISTING_ANSWER_CORRECTION_TARGETS = {
+    ("chemistry:heilongjiliao", "2026高考化学黑吉辽蒙卷.pdf"),
+}
+TRUSTED_CORRECTION_METHODS = {"ocr-answer-source", "web-answer-source"}
 DATASETS = [
     "gaokao-2026-docx-extracted.json",
     "gaokao-2026-pdf-text-extracted.json",
@@ -146,7 +150,16 @@ def number_value(value) -> int | None:
         return None
 
 
-def load_question_records() -> list[dict]:
+def is_ocr_answer_source_file(file_item: dict) -> bool:
+    if file_item.get("role") != "answer-or-analysis":
+        return False
+    source_text = f"{file_item.get('source', '')} {file_item.get('relativePath', '')}"
+    if re.search(r"答案版|解析|教师版", source_text):
+        return True
+    return any("【答案】" in (question.get("prompt") or "") for question in file_item.get("questions") or [])
+
+
+def load_question_records(include_ocr_answer_sources: bool = False) -> list[dict]:
     records = []
     for dataset in DATASETS:
         data = load_json(DATA_DIR / dataset)
@@ -162,6 +175,8 @@ def load_question_records() -> list[dict]:
                 "questions": data.get("questions") or [],
             }]
         for file_item in files:
+            if dataset == "gaokao-2026-ocr-extracted.json" and is_ocr_answer_source_file(file_item) and not include_ocr_answer_sources:
+                continue
             subject = file_item.get("subject") or file_item.get("subjectKey") or "unknown"
             for question in file_item.get("questions") or []:
                 if is_numeric_extraction_fragment(question):
@@ -333,7 +348,8 @@ def build_answer_maps(records: list[dict]) -> dict[str, dict[int, list[dict]]]:
 
         prompt_answer = extract_answer_from_prompt(question.get("prompt", ""))
         if prompt_answer:
-            add_candidate(answer_maps, record["family"], number, prompt_answer, file_item.get("source", ""), "embedded-answer-in-prompt")
+            method = "ocr-answer-source" if record["dataset"] == "gaokao-2026-ocr-extracted.json" and is_ocr_answer_source_file(file_item) else "embedded-answer-in-prompt"
+            add_candidate(answer_maps, record["family"], number, prompt_answer, file_item.get("source", ""), method)
 
     audit = load_json(AUDIT_PATH)
     seen_sources = set()
@@ -398,12 +414,22 @@ def choose_candidate(candidates: list[dict]) -> dict | None:
     priority = {
         "embedded-answer-in-prompt": 0,
         "existing-question-answer": 1,
-        "answer-source-file": 2,
-        "family-alias-answer": 3,
-        "web-answer-source": 4,
-        "answer-only-question": 5,
+        "ocr-answer-source": 2,
+        "answer-source-file": 3,
+        "family-alias-answer": 4,
+        "web-answer-source": 5,
+        "answer-only-question": 6,
     }
     return sorted(candidates, key=lambda item: (priority.get(item["method"], 9), len(item["answer"])))[0]
+
+
+def choose_candidate_for_record(record: dict, candidates: list[dict]) -> dict | None:
+    target = (record["family"], record["file"].get("source", ""))
+    if target in EXISTING_ANSWER_CORRECTION_TARGETS:
+        web_candidates = [candidate for candidate in candidates if candidate.get("method") == "web-answer-source"]
+        if web_candidates:
+            return choose_candidate(web_candidates)
+    return choose_candidate(candidates)
 
 
 def target_can_use_family_answer(record: dict) -> bool:
@@ -424,43 +450,81 @@ def target_can_use_family_answer(record: dict) -> bool:
     return True
 
 
+def is_override_target_record(record: dict) -> bool:
+    return not (
+        record["dataset"] == "gaokao-2026-ocr-extracted.json"
+        and is_ocr_answer_source_file(record["file"])
+    )
+
+
+def choose_existing_answer_correction(record: dict, answer_maps: dict[str, dict[int, list[dict]]]) -> dict | None:
+    question = record["question"]
+    existing_answer = normalize_answer(question.get("answer") or "")
+    if not existing_answer or not record["number"]:
+        return None
+    target = (record["family"], record["file"].get("source", ""))
+    if target not in EXISTING_ANSWER_CORRECTION_TARGETS:
+        return None
+    candidates = [
+        candidate for candidate in answer_maps.get(record["family"], {}).get(record["number"], [])
+        if candidate.get("method") in TRUSTED_CORRECTION_METHODS
+    ]
+    chosen = choose_candidate_for_record(record, candidates)
+    if not chosen or normalize_answer(chosen["answer"]) == existing_answer:
+        return None
+    return {
+        **chosen,
+        "method": "correct-existing-answer",
+        "answerSourceMethod": chosen.get("method"),
+        "replacesAnswer": existing_answer,
+    }
+
+
 def build_overrides() -> dict:
-    records = load_question_records()
+    records = load_question_records(include_ocr_answer_sources=True)
     answer_maps = build_answer_maps(records)
     overrides = []
     by_method = Counter()
     by_dataset = Counter()
+    correction_count = 0
 
     for record in records:
-        question = record["question"]
-        if question.get("answer"):
+        if not is_override_target_record(record):
             continue
+        question = record["question"]
         number = record["number"]
         if not number:
             continue
 
-        candidates = []
-        prompt_answer = extract_answer_from_prompt(question.get("prompt", ""))
-        if prompt_answer:
-            candidates.append({
-                "answer": prompt_answer,
-                "solution": [],
-                "source": record["file"].get("source", ""),
-                "method": "embedded-answer-in-prompt",
-            })
-        if is_answer_only_file(record["file"]) and is_short_answer_prompt(question.get("prompt", "")):
-            candidates.append({
-                "answer": question.get("prompt", ""),
-                "solution": [],
-                "source": record["file"].get("source", ""),
-                "method": "answer-only-question",
-            })
-        if target_can_use_family_answer(record):
-            candidates.extend(answer_maps.get(record["family"], {}).get(number, []))
+        replaces_answer = ""
+        if question.get("answer"):
+            chosen = choose_existing_answer_correction(record, answer_maps)
+            if not chosen:
+                continue
+            replaces_answer = chosen.get("replacesAnswer", "")
+        else:
+            candidates = []
+            prompt_answer = extract_answer_from_prompt(question.get("prompt", ""))
+            if prompt_answer:
+                candidates.append({
+                    "answer": prompt_answer,
+                    "solution": [],
+                    "source": record["file"].get("source", ""),
+                    "method": "embedded-answer-in-prompt",
+                })
+            if is_answer_only_file(record["file"]) and is_short_answer_prompt(question.get("prompt", "")):
+                candidates.append({
+                    "answer": question.get("prompt", ""),
+                    "solution": [],
+                    "source": record["file"].get("source", ""),
+                    "method": "answer-only-question",
+                })
+            if target_can_use_family_answer(record):
+                candidates.extend(answer_maps.get(record["family"], {}).get(number, []))
 
-        chosen = choose_candidate(candidates)
-        if not chosen:
-            continue
+            chosen = choose_candidate_for_record(record, candidates)
+            if not chosen:
+                continue
 
         override = {
             "questionId": record["questionId"],
@@ -476,23 +540,36 @@ def build_overrides() -> dict:
             "answerSource": chosen["source"],
             "confidence": "local-heuristic",
         }
+        if replaces_answer:
+            override["replacesAnswer"] = replaces_answer
+            if chosen.get("answerSourceMethod"):
+                override["answerSourceMethod"] = chosen["answerSourceMethod"]
+            correction_count += 1
         overrides.append(override)
         by_method[override["method"]] += 1
         by_dataset[override["dataset"]] += 1
 
-    before_missing = sum(1 for record in records if not record["question"].get("answer"))
+    target_records = [record for record in records if is_override_target_record(record)]
+    before_missing = sum(1 for record in target_records if not record["question"].get("answer"))
+    override_ids = {item["questionId"] for item in overrides}
+    after_missing = sum(
+        1 for record in target_records
+        if not record["question"].get("answer") and record["questionId"] not in override_ids
+    )
     return {
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "scope": {
             "datasets": DATASETS,
-            "note": "Local answer overrides mined from parsed answers, answer-only files, answer-source DOCX/PDF files, reviewed family answer aliases, and reviewed web OCR/PDF answer maps. Applied only when the raw question answer is empty.",
+            "note": "Local answer overrides mined from parsed answers, OCR answer-source rows, answer-only files, answer-source DOCX/PDF files, reviewed family answer aliases, and reviewed web OCR/PDF answer maps. Applied when the raw question answer is empty, with narrowly scoped corrections for reviewed bad extractions; OCR answer-source reference rows are excluded from importable question coverage.",
             "familyAnswerAliases": FAMILY_ANSWER_ALIASES,
         },
         "summary": {
-            "questionsScanned": len(records),
+            "questionsScanned": len(target_records),
+            "answerSourceRowsScanned": len(records) - len(target_records),
             "missingBeforeOverrides": before_missing,
             "overrides": len(overrides),
-            "missingAfterOverrides": before_missing - len({item["questionId"] for item in overrides}),
+            "corrections": correction_count,
+            "missingAfterOverrides": after_missing,
             "byMethod": dict(by_method),
             "byDataset": dict(by_dataset),
         },

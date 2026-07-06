@@ -37,9 +37,10 @@ function cleanOverrideText(value) {
 }
 
 function applyAnswerOverride(item) {
-  if (!item?.id || item.answer) return item
+  if (!item?.id) return item
   const override = answerOverrideMap.get(item.id)
   if (!override?.answer) return item
+  if (item.answer && !override.replacesAnswer) return item
   return {
     ...item,
     answer: cleanOverrideText(override.answer),
@@ -68,6 +69,13 @@ function isNumericExtractionFragment(item) {
 
 function shouldImportExtractedQuestion(item) {
   return !isNumericExtractionFragment(item)
+}
+
+function isOcrAnswerSourceFile(file) {
+  if (file?.role !== 'answer-or-analysis') return false
+  const sourceText = `${file.source || ''} ${file.relativePath || ''}`
+  if (/答案版|解析|教师版/u.test(sourceText)) return true
+  return (file.questions || []).some(item => getQuestionPrompt(item).includes('【答案】'))
 }
 
 async function deleteQuestionByKey(questionKey) {
@@ -478,7 +486,17 @@ async function seedAuditOcrQuestions(auditOcr) {
   let papers = 0
   let questions = 0
   let skippedFragments = 0
+  let skippedAnswerSources = 0
   for (const file of auditOcr.files || []) {
+    if (isOcrAnswerSourceFile(file)) {
+      for (const rawItem of file.questions || []) {
+        const questionKey = rawItem.id || hashKey('audit_ocr_question', [file.year, file.subject, file.source, rawItem.number, rawItem.prompt])
+        await deleteQuestionByKey(questionKey)
+        skippedAnswerSources += 1
+      }
+      continue
+    }
+
     const paperId = await upsertPaper({
       paperKey: hashKey('audit_ocr_paper', [file.year, file.subject, file.source, file.relativePath]),
       year: file.year || 2026,
@@ -533,7 +551,7 @@ async function seedAuditOcrQuestions(auditOcr) {
       questions += 1
     }
   }
-  return { papers, questions, skippedFragments }
+  return { papers, questions, skippedFragments, skippedAnswerSources }
 }
 
 async function seedPracticeQuestions() {
@@ -667,6 +685,7 @@ async function main() {
       docx2026SkippedFragments: docx2026Result.skippedFragments || 0,
       pdfText2026SkippedFragments: pdfText2026Result.skippedFragments || 0,
       auditOcr2026SkippedFragments: auditOcr2026Result.skippedFragments || 0,
+      auditOcr2026SkippedAnswerSources: auditOcr2026Result.skippedAnswerSources || 0,
       residual2026SkippedFragments: residual2026Result.skippedFragments || 0,
       ocrSkippedFragments: ocrResult.skippedFragments || 0,
       answerOverrides: answerOverrides.summary?.overrides || 0,
