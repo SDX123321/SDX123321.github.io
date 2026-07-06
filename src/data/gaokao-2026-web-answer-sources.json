@@ -1,20 +1,25 @@
 {
-  "generatedAt": "2026-07-06T10:48:40.303181+00:00",
+  "generatedAt": "2026-07-06T11:37:08.762277+00:00",
   "scope": {
     "note": "Web answer maps from public gaokzx.com article image pages and reviewed public PDF answer files. Review source URLs before relying on open-ended answers."
   },
   "summary": {
-    "sources": 9,
-    "answers": 172,
+    "sources": 14,
+    "answers": 243,
     "byFamily": {
       "biology:anhui": 19,
       "chemistry:yunnan": 18,
       "history:hunan": 38,
+      "history:henan": 20,
       "geography:guangdong": 16,
+      "history:yunnan": 15,
       "physics:heilongjiliao": 15,
+      "physics:hunan": 15,
+      "chemistry:heilongjiliao": 19,
       "english:national1": 45,
       "chinese:national1": 0,
-      "math:beijing": 21
+      "math:beijing": 21,
+      "math:tianjin": 2
     }
   },
   "sources": [
@@ -494,6 +499,139 @@
       ]
     },
     {
+      "id": "gaokzx-henan-history-2026",
+      "family": "history:henan",
+      "title": "2026年河南高考历史试题及答案",
+      "pageUrl": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "parseInlineAnswerBlocks": true,
+      "parseSequentialChoiceAnswers": 16,
+      "sourceName": "北京高考在线",
+      "imageCount": 19,
+      "imageUrls": [
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009330_00011781172009140.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009332_00021781172009169.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009335_00031781172009175.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009337_00041781172009536.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009339_00051781172009540.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009341_00061781172010202.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009342_00071781172010189.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009348_00081781172010201.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009350_00091781172010250.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009352_00101781172010332.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009353_00111781172010834.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009355_00121781172011408.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009356_00131781172011807.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009358_00141781172011855.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009359_00151781172012176.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009361_00161781172012756.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009362_00171781172013875.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009364_00181781172014019.png",
+        "https://cdn.gaokzx.com/zixunzhan/_1781172009366_00191781172014613.png"
+      ],
+      "answers": [
+        {
+          "number": 1,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 2,
+          "answer": "A",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 3,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 4,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 5,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 6,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 7,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 8,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 9,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 10,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 11,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 12,
+          "answer": "C",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 13,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 14,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 15,
+          "answer": "A",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 16,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 17,
+          "answer": "（1）优秀品质：坚守奉献，如西北荒漠地带的基层干部数十年如一日坚守一线治沙；担当实干， 航空科研团队在困境中潜心钻研、攻坚克难；创新攻坚，航空科研团队完成多项关键技术突破，推动产业 市场化发展；家国情怀，党员干部始终以国家发展和人民利益为已任，投身国家建设事业。 (2）选择材料一。20 世纪50年代，我国西北荒漠地带风沙肆虐、土地沙化严重，生态环境恶劣，农牧业 发展受到严重制约。在这样的时代背景下，党员领导干部响应国家号召，扎根荒漠，带领群众植树造林、 固沙治土。他们的行为和价值选择受到时代环境的深刻影响，一方面，国家的生态治理需求和农牧业发展 需要促使他们挺身而出，担当起治沙的重任；另一方面，恶劣的自然环境也考验着他们的意志和决心，激 发了他们坚守奉献的精神。他们的努力不仅改善了当地的生态环境，也为西北农牧业发展筑牢了基础，体 现了党员干部在时代需求面前的责任与担当。 选择材料二。20世纪60年代，面对严峻的国际形势和国内工业发展的迫切需求，我国启动了三线建设。在 这样的时代背景下，党员领导干部响应国家号召，奔赴三线地区，投身国防科技和重工业建设。他们的行 为和价值选择受到时代环境的深刻影响，一方面，国家的战略安全需求和工业发展需要促使他们放弃城市 的舒适生活，扎根艰苦的三线地区；另一方面，恶劣的工作和生活环境考验着他们的意志和决心，激发了 他们无私奉献、艰苦奋斗的精神。他们的努力不仅推动了我国国防科技和重工业的发展，也为国家的战略 安全奠定了坚实基础，体现了党员干部在国家危难时刻的忠诚与担当。",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 18,
+          "answer": "（1）原因：斗争力量差异；殖民历史与区域基础差异。 (2）内外挑战：殖民时代遗留的边界划分问题、单一经济结构问题；外部挑战：全球气候变化、粮食短缺、 地区冲突等全球性与区域性问题。 举措：开展区域合作，组建区域国际组织。",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 19,
+          "answer": "（1）相同点：均以粮食种植为核心，农业生产服务于自身生存与物资供给；都形成了适配本土生 产模式的农业技术体系。 不同点：生产技术特点：中国以精耕细作为核心，重视水利、轮作、施肥、选种等精细化技术，亩产水平 高；欧洲长期推行粗放耕作、休耕制，生产技术改进缓慢，耕作较为粗放。生产经营模式：中国以小农家 庭个体经营为主，技术适配分散的小农耕作；欧洲中世纪以庄园规模化集体劳作为主，技术依托庄园模式 发展。技术服务目的：中国兼顾民众生活与国家赋税需求；欧洲主要满足庄园内部自给自足。 (2）主要原因：人地关系：中国人口稠密、人均耕地少，只能依靠精耕细作提高单产；欧洲地广人稀，土 地充足，无需精细化耕作。土地制度：中国以土地私有制、个体小农经济为主；欧洲中世纪盛行庄园制、 领主土地所有制，形成大规模庄园经营。政治与赋税制度：古代中国依赖农业赋税维持运转，官府重视农 业技术推广；欧洲中世纪王权较弱，庄园相对独立，缺乏推动农业技术革新的动力。经济形态：中国小农 经济是国家经济主体；欧洲庄园经济自给性强，商品经济发展缓慢，缺乏技术进步的外部刺激。",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 20,
+          "answer": "错误1：火药助力新航路开辟。改正：指南针助力新航路开辟。理由：指南针用于航海导航，是远洋航行的 重要条件；火药主要打击欧洲封建势力。 错误2：指南针引发欧美资产阶级革命。改正：火药助力欧美资产阶级革命。理由：火药摧毁了欧洲封建骑 士阶层，动摇封建统治，服务于资产阶级革命。 错误3：科举制直接催生西方民主共和制度。改正：科举制影响西方近代文官制度。理由：西方民主共和制 度源于资产阶级革命，科举制的选官模式被西方借鉴发展为文官制度。 错误4：古代丝绸之路促成世界市场最终形成。改正：古代丝绸之路促进东西方经济文化交流。理由：古代 丝绸之路仅限亚欧局部交流，世界市场最终形成于第二次工业革命之后。",
+          "confidence": "web-ocr"
+        }
+      ]
+    },
+    {
       "id": "zizzs-guangdong-geography-2026",
       "family": "geography:guangdong",
       "title": "2026年广东高考地理试题及答案（全）",
@@ -596,6 +734,105 @@
       ]
     },
     {
+      "id": "zizzs-yunnan-history-2026",
+      "family": "history:yunnan",
+      "title": "2026年云南高考历史试题及答案",
+      "pageUrl": "https://www.zizzs.com/gk/shitiku/223171.html",
+      "imageUrlPattern": "178174656",
+      "sourceName": "自主选拔在线",
+      "parseInlineAnswerBlocks": true,
+      "parseTextChoiceTables": true,
+      "imageCount": 9,
+      "imageUrls": [
+        "https://cdn.zizzs.com/zixunzhan/_1781746562366_00011781746562290.jpg",
+        "https://cdn.zizzs.com/zixunzhan/_1781746562374_00021781746562320.jpg",
+        "https://cdn.zizzs.com/zixunzhan/_1781746562376_00031781746562313.jpg",
+        "https://cdn.zizzs.com/zixunzhan/_1781746562378_00041781746562313.jpg",
+        "https://cdn.zizzs.com/zixunzhan/_1781746562380_00051781746562318.jpg",
+        "https://cdn.zizzs.com/zixunzhan/_1781746562381_00061781746562317.jpg",
+        "https://cdn.zizzs.com/zixunzhan/_1781746562383_00071781746562425.jpg",
+        "https://cdn.zizzs.com/zixunzhan/_1781746562385_00081781746562417.jpg",
+        "https://cdn.zizzs.com/zixunzhan/_1781746562387_00091781746562439.jpg"
+      ],
+      "answers": [
+        {
+          "number": 2,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 3,
+          "answer": "C",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 4,
+          "answer": "C",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 5,
+          "answer": "D",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 6,
+          "answer": "A",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 7,
+          "answer": "D",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 8,
+          "answer": "A",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 9,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 10,
+          "answer": "C",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 11,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 12,
+          "answer": "A",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 13,
+          "answer": "D",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 14,
+          "answer": "C",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 15,
+          "answer": "D",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 16,
+          "answer": "B",
+          "confidence": "web-ocr"
+        }
+      ]
+    },
+    {
       "id": "zizzs-heilongjiliao-physics-2026",
       "family": "physics:heilongjiliao",
       "title": "2026年黑吉辽蒙高考物理试题及答案",
@@ -689,6 +926,239 @@
         {
           "number": 15,
           "answer": "(1)△E= e²BR²-eU 2m (2）co= 11mL2U2 2edBR2 (3)T= 8edB2R²x 11mL2β",
+          "confidence": "web-ocr"
+        }
+      ]
+    },
+    {
+      "id": "gaokzx-hunan-physics-2026",
+      "family": "physics:hunan",
+      "title": "2026年高考湖南卷物理试题及答案",
+      "pageUrl": "https://www.gaokzx.com/gk/shitiku/156321.html",
+      "pdfUrl": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "sourceName": "北京高考在线",
+      "parsePdfBracketAnswers": true,
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 1,
+          "answer": "B",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 2,
+          "answer": "D",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 3,
+          "answer": "C",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 4,
+          "answer": "B",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 5,
+          "answer": "A",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 6,
+          "answer": "A",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 7,
+          "answer": "D",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 8,
+          "answer": "BC",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 9,
+          "answer": "BC",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 10,
+          "answer": "AD",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 11,
+          "answer": "①. 0.6 ②. b ③. 2 2 4 l T  ④. 低于",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 12,
+          "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 13,
+          "answer": "（1） 23 3 （2） 0.9",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 14,
+          "answer": "（1） 0 BELa mr= （2） 0BLUEv BL mk=− （3） 2 22 2Q R r mE R r B L += + （ ） 2（ ）",
+          "confidence": "web-pdf-text"
+        },
+        {
+          "number": 15,
+          "answer": "（1） 2v gL= （2） 23tan 2 = （3）（i） 2 2 (1 )[ 1]4 cos kE mgLk  +=− ；（ii） 8 69 tan9dL =",
+          "confidence": "web-pdf-text"
+        }
+      ]
+    },
+    {
+      "id": "zizzs-heilongjiliao-chemistry-2026",
+      "family": "chemistry:heilongjiliao",
+      "title": "2026年黑吉辽蒙高考化学试题及答案",
+      "pageUrl": "https://www.zizzs.com/gk/shitiku/222654.html",
+      "imageUrlPattern": "17811460|17811461",
+      "sourceName": "自主选拔在线",
+      "parseInlineAnswerBlocks": true,
+      "imageCount": 36,
+      "imageUrls": [
+        "https://cdn.zizzs.com/zixunzhan/_1781146082321_辽宁化学试题11781146084167.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082323_辽宁化学试题21781146084157.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082325_辽宁化学试题31781146085241.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082327_辽宁化学试题41781146084176.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082328_辽宁化学试题51781146084181.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082330_辽宁化学试题61781146084581.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082332_辽宁化学试题71781146084290.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082334_辽宁化学试题81781146084306.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082336_辽宁化学试题91781146084306.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082339_辽宁化学试题101781146084425.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082343_辽宁化学试题111781146084505.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082345_辽宁化学试题121781146084827.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082347_辽宁化学试题131781146085163.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082349_辽宁化学试题141781146085319.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082351_辽宁化学试题151781146085480.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082352_辽宁化学试题161781146085926.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082354_辽宁化学试题171781146086652.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082356_辽宁化学试题181781146086800.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082358_辽宁化学试题191781146086834.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082360_辽宁化学试题201781146087014.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082361_辽宁化学试题211781146087217.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082363_辽宁化学试题221781146087486.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082365_辽宁化学试题231781146087797.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082367_辽宁化学试题241781146087936.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146082369_辽宁化学试题251781146088103.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146115807_辽宁化学试题261781146117589.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146115810_辽宁化学试题271781146117601.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146115812_辽宁化学试题281781146117583.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146115814_辽宁化学试题291781146117590.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146115816_辽宁化学试题301781146117593.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146115818_辽宁化学试题311781146117590.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146115820_辽宁化学试题321781146117958.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146115822_辽宁化学试题331781146117983.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146115824_辽宁化学试题341781146118438.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146115826_辽宁化学试题351781146118561.png",
+        "https://cdn.zizzs.com/zixunzhan/_1781146115830_辽宁化学试题361781146118840.png"
+      ],
+      "answers": [
+        {
+          "number": 1,
+          "answer": "A",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 2,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 3,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 4,
+          "answer": "A",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 5,
+          "answer": "D",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 6,
+          "answer": "C",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 7,
+          "answer": "A",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 8,
+          "answer": "A",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 9,
+          "answer": "C",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 10,
+          "answer": "B",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 11,
+          "answer": "D",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 12,
+          "answer": "C",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 13,
+          "answer": "D",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 14,
+          "answer": "D",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 15,
+          "answer": "C",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 16,
+          "answer": "（1）d (2) ①.增大氧气的溶解度（或浓度），加快反应速率 ②. NiS + 2O2 +6NH, ·HO = [Ni(NH)。JSO4 + 6H,O (3) ①.[Cu(NH)4]+②. NH, (4）2 (5）(NH4),SO4 (6) ①.2②.[Ni(NH)]”被还原时发生反应：[Ni(NH)]+H=Ni+NH+H*，溶液 不会生成游离的H+，因此还原程度较高",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 17,
+          "answer": "（1）ADF (2）HOOC COOH (3) ①.洗出滤渣表面吸附的对苯二甲酸钠，提高对苯二甲酸产率 ②.分液 (4) ①.氯化钠 ②.氯化氢 (或盐酸) (5) 95 (6）BPA-PC",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 18,
+          "answer": "(1）有副反应发生生成烷烃(或生成高碳烷烃) (2) ①. -497 ②.A (3) ①. GeAPO ②. 85%×(1-32%)×83% (4) ①.②.< (5) ①. 0.3 3②.3.8x10-4",
+          "confidence": "web-ocr"
+        },
+        {
+          "number": 19,
+          "answer": "(1) (2）碳溴键 (溴原子) CH,COOH （3）取代反应 ① ② CH,Br CH,COOH CH,COOCH, +CHOH HSO4 +H2O CH,OH CH,OH HN (5) ①. HN NH",
           "confidence": "web-ocr"
         }
       ]
@@ -1079,6 +1549,37 @@
           "number": 21,
           "answer": "(1)数表 1A 不具有性质 P ，数表 2A 具有性质 P ； (2)12 (3)性质 P 中的四个数都属于 1,1 ，且四个数的和为0 ，所以其中恰有两个1和两个 1 ． 因此，对任意满足性质 P 下标条件的四个位置，都有 1ij iq pj pqa a a a  ①， 对 1, 2, , 6i   ， 1, 2, ,5j   ，令 , 1.ij ij i jc a a  先取行距为3 、列距为1的矩形． 由①，对 1, 2,3i  及 1, 2, ,5j   ，有 3, 1.ij i jc c   由于  3,, 1,1ij i jc c    ，所以 3,i j ijc c  ②， 下面比较第1行与第2 行的c 值． 对 1, 2,3, 4j  ，取第1、5 行和第 j 、 2j  列． 此时行距为4 ，列距为2 ，由①得  1 1, 1 5 5, 1 1.j j j jc c c c   由②知 5 2j jc c ，故  1 2 1, 1 2, 1 1j j j jc c c c   ③， 令 1 2 .j j jd c c 则由③得 1 1j jd d   ，所以 1 2 3 4 5.d d d d d    再取第1、2 行和第1、4 列． 此时行距为1，列距为3 ，由①得  11 12 13 21 22 23 1,c c c c c c  即 1 2 3 1.d d d  由于 1 2 3d d d  且  1 1,1d   ，所以 1 1d  ． 从而  1 2 1, 2, ,5j jc c j   ④， 同理，取第2 、6 行和相距2 的两列，再取第2 、3 行和相距3 的两列，可得  2 3 1, 2, ,5j jc c j   ⑤， 结合②、④、⑤，可知对于每个 1, 2, ,5j   ，都有 1 2 6j j jc c c   ⑥， 当 1j  时，由 11 1a  ，显然有 1 1 11.i ia a a 当 2j  时，由⑥，由中间因子均成对出现，且 2 1ika  ，有      1 1 2 2 3 , 1 1 2 , 1.i ij i i i i i j ij i i i ja a a a a a a a c c c    再由⑥， 1 2 , 1 11 12 1, 1 11 1 1 .i i i j j j jc c c c c c a a a     两边同乘 1ia ，并利用 2 1 1ia  ，得 1 1 .ij i ja a a 命题得证． 【分析】（1）性质 P 的下标约束条件，选取符合要求的四元组代入验证，若存在不满足和为 0 的组合则不具有性质 P ，反之则具有性质 P . （2）由性质 P 的和约束推导行列符号的等价乘积约束，确定每行 1 的最大可行数量，结合行之间的符号交替规律 计算总 1 的个数的上界，构造符合条件的实例证明上界可达. （3）利用性质 P 的乘积等价性质，结合 11 1a  的初始条件，先验证差为 2 的下标组合，再通过递推推广到所有下标 ,i j ，完成证明. 【详解】（1）对于 1A ，只有两行，所以行距只能为1．要满足|行距- 列距| 2 ，列距只能为3 ．取第1、2 行和第1、 4 列，四个顶点之和为  1 1 1 1 2 0.      所以 1A 不具有性质 P ． 对于 2A ，行距为1时，列距只能为3 ；行距为2 时，不存在符合条件的列距．因此，只需检验相邻两行与第1、4 列 组成的两个矩形．第1、2 行对应的四个顶点之和为    1 1 1 1 0.      第2 、3 行对应的四个顶点之和为    1 1 1 1 0.      所以 2A 具有性质 P ． （2）设第i 行元素之和为 4 1 .i ij j s a    先考察第1行与第4 行．令  1 4 1, 2,3, 4 .j j jx a a j   对 1, 2,3j  ，第1、4 行的行 距为3 ，第 j 、 1j  列的列距为1，由性质 P 得 1 0.j jx x   因此x2=−x1, x3=x1,x4=−x1,从而 1 4 1 2 3 4 0.s s x x x x      同理，考察第2 行与第5 行，可得 2 5 0.s s  所以整个数阵所有元素之和为 1 2 3 4 5 3 4.s s s s s s      设数阵中1的个 数为 N ．数阵中共有20 个数，因此 1 的个数为20 N ，从而  20 4.N N   解得 12.N  下面说明12 可以达到．取 1 1 1 1 1 1 1 1 .1 1 1 1 1 1 1 1 1 1 1 1 A                  该数阵中共有12 个1．对于5 4 数阵，可能的行距、列距组合只有      1,3 , 3,1 , 4, 2 . 当行距、列距为 1,3 时，相邻两行第1、4 列的四个数之和均为0 ；当行距、列距为 3,1 时，第1、 4 行以及第2 、5 行对应各列的元素之和均为0 ；当行距、列距为 4, 2 时，第1、5 行与相距2 的两列组成的四个数 之和也为0 ．所以该数阵具有性质 P ，且1的个数为12 ．因此，1的个数最多为12. （3）略",
           "confidence": "web-pdf-text"
+        }
+      ]
+    },
+    {
+      "id": "baidu-tiku-tianjin-math-2026",
+      "family": "math:tianjin",
+      "title": "2026年高考真题 数学 (天津卷)",
+      "pageUrl": "https://tiku.baidu.com/tikupc/paperdetail/f02e253f482fb4daa58d4b95",
+      "sourceName": "百度题库",
+      "manualAnswers": [
+        {
+          "number": 6,
+          "answer": "A"
+        },
+        {
+          "number": 7,
+          "answer": "B"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 6,
+          "answer": "A",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 7,
+          "answer": "B",
+          "confidence": "reviewed-web-text"
         }
       ]
     }

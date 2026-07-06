@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T10:49:02.416282+00:00",
+  "generatedAt": "2026-07-06T11:37:10.758504+00:00",
   "scope": {
     "datasets": [
       "gaokao-2026-docx-extracted.json",
@@ -18,21 +18,21 @@
   "summary": {
     "questionsScanned": 1498,
     "missingBeforeOverrides": 1073,
-    "overrides": 747,
-    "missingAfterOverrides": 340,
+    "overrides": 812,
+    "missingAfterOverrides": 275,
     "byMethod": {
       "answer-source-file": 122,
+      "web-answer-source": 240,
       "embedded-answer-in-prompt": 144,
       "existing-question-answer": 257,
-      "answer-only-question": 58,
-      "web-answer-source": 135,
+      "answer-only-question": 18,
       "family-alias-answer": 31
     },
     "byDataset": {
-      "gaokao-2026-docx-extracted.json": 203,
-      "gaokao-2026-pdf-text-extracted.json": 135,
-      "gaokao-2026-ocr-extracted.json": 377,
-      "gaokao-2026-residual-extracted.json": 16,
+      "gaokao-2026-docx-extracted.json": 238,
+      "gaokao-2026-pdf-text-extracted.json": 136,
+      "gaokao-2026-ocr-extracted.json": 397,
+      "gaokao-2026-residual-extracted.json": 25,
       "jiangsu-gaokao-ocr.json": 16
     }
   },
@@ -175,6 +175,20 @@
       "solution": [],
       "method": "answer-source-file",
       "answerSource": "2026高考试卷（更新中）\\二卷\\语文答案二卷.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-36d77101c31c2fd4",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026河南高考历史.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\2026河南高考历史.docx",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 16,
+      "answer": "B",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
       "confidence": "local-heuristic"
     },
     {
@@ -1676,8 +1690,8 @@
       "number": 1,
       "answer": "B",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1690,8 +1704,8 @@
       "number": 2,
       "answer": "D",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1704,8 +1718,8 @@
       "number": 3,
       "answer": "C",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1718,8 +1732,8 @@
       "number": 4,
       "answer": "B",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1732,8 +1746,8 @@
       "number": 5,
       "answer": "A",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1746,8 +1760,8 @@
       "number": 6,
       "answer": "A",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1760,8 +1774,8 @@
       "number": 7,
       "answer": "D",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1774,8 +1788,8 @@
       "number": 8,
       "answer": "BC",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1788,8 +1802,8 @@
       "number": 9,
       "answer": "BC",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1802,8 +1816,148 @@
       "number": 10,
       "answer": "AD",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-52e56b888d21fb5c",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 11,
+      "answer": "①. 0.6 ②. b ③. 2 2 4 l T  ④. 低于",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-41d06e3cddb0bb65",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-2053be8e6d6c588b",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 11,
+      "answer": "①. 0.6 ②. b ③. 2 2 4 l T  ④. 低于",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-f6668de23b7db620",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 11,
+      "answer": "①. 0.6 ②. b ③. 2 2 4 l T  ④. 低于",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-0b7255b6fccb7137",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-ab3840cd190b4240",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-0e64f47eaa568db3",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-589fa1e4931bc032",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-416620fb62946c4c",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-0d7286c367b1b3d0",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1847,6 +2001,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-docx-1f2cc0bd51856d1d",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-docx-0c663e7407e4f6b6",
       "dataset": "gaokao-2026-docx-extracted.json",
       "source": "2026年高考湖南卷物理高考真题（网络 收集版）.docx",
@@ -1876,8 +2044,8 @@
       "number": 1,
       "answer": "B",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1890,8 +2058,8 @@
       "number": 2,
       "answer": "D",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1904,8 +2072,8 @@
       "number": 3,
       "answer": "C",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1918,8 +2086,8 @@
       "number": 4,
       "answer": "B",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1932,8 +2100,8 @@
       "number": 5,
       "answer": "A",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1946,8 +2114,8 @@
       "number": 6,
       "answer": "A",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1960,8 +2128,8 @@
       "number": 7,
       "answer": "D",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1974,8 +2142,8 @@
       "number": 8,
       "answer": "BC",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -1988,8 +2156,8 @@
       "number": 9,
       "answer": "BC",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2002,8 +2170,50 @@
       "number": 10,
       "answer": "AD",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-bc6c9a2ba0348374",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 11,
+      "answer": "①. 0.6 ②. b ③. 2 2 4 l T  ④. 低于",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-c11938e54fe9137a",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-36b143eff92e9f98",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2024,6 +2234,132 @@
       ],
       "method": "existing-question-answer",
       "answerSource": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-bd09cbac531303cb",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考湖南卷物理高考真题（网络+收集版）\\2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 15,
+      "answer": "（1） 2v gL= （2） 23tan 2 = （3）（i） 2 2 (1 )[ 1]4 cos kE mgLk  +=− ；（ii） 8 69 tan9dL =",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-6b8ba8e989341be9",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考物理真题完全解读（湖南卷）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 11,
+      "answer": "①. 0.6 ②. b ③. 2 2 4 l T  ④. 低于",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-2b904beebbddc061",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考物理真题完全解读（湖南卷）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 11,
+      "answer": "①. 0.6 ②. b ③. 2 2 4 l T  ④. 低于",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-97bc63767099929c",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考物理真题完全解读（湖南卷）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-b73e4c849b94f96b",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考物理真题完全解读（湖南卷）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-57e9a9472892ccf9",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考物理真题完全解读（湖南卷）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-dbfff8ec3b2a31e2",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考物理真题完全解读（湖南卷）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-9822d2a76198d7e8",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考物理真题完全解读（湖南卷）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-8bc03c77703d1082",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考物理真题完全解读（湖南卷）.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2761,8 +3097,8 @@
       "number": 1,
       "answer": "B",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2775,8 +3111,8 @@
       "number": 2,
       "answer": "D",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2789,8 +3125,8 @@
       "number": 3,
       "answer": "C",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2803,8 +3139,8 @@
       "number": 4,
       "answer": "B",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2817,8 +3153,8 @@
       "number": 5,
       "answer": "A",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2831,8 +3167,8 @@
       "number": 6,
       "answer": "A",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2845,8 +3181,8 @@
       "number": 7,
       "answer": "D",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2859,8 +3195,8 @@
       "number": 8,
       "answer": "BC",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2873,8 +3209,8 @@
       "number": 9,
       "answer": "BC",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2887,8 +3223,148 @@
       "number": 10,
       "answer": "AD",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-b4f409223fae4aed",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 11,
+      "answer": "①. 0.6 ②. b ③. 2 2 4 l T  ④. 低于",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-d34089d816a917a7",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-88779a42b1fba187",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 11,
+      "answer": "①. 0.6 ②. b ③. 2 2 4 l T  ④. 低于",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-a82e7968db84d95d",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 11,
+      "answer": "①. 0.6 ②. b ③. 2 2 4 l T  ④. 低于",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-46467a40f1bfba56",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-e25212e2dea8bd3a",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-99bb3fe47730bfa5",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-12b8a116a28bd663",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-edce710979ca8912",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-759698a6a86d716e",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -2929,6 +3405,20 @@
       ],
       "method": "existing-question-answer",
       "answerSource": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-6f978d9cb8769adb",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "湖南2026年物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\湖南2026年物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -4417,6 +4907,20 @@
       "solution": [],
       "method": "existing-question-answer",
       "answerSource": "2026 高考二卷-数学（高清）.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-0f17878503cbdc87",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "精品解析：2026年高考天津卷数学高考真题（解析版）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考天津卷数学高考真题（解析版）.pdf",
+      "subject": "math",
+      "family": "math:tianjin",
+      "number": 6,
+      "answer": "A",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://tiku.baidu.com/tikupc/paperdetail/f02e253f482fb4daa58d4b95",
       "confidence": "local-heuristic"
     },
     {
@@ -7394,6 +7898,104 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-ocr-e6ca302672d1326a",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "云南高考历史题.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026云南高考\\云南高考历史题.pdf",
+      "subject": "history",
+      "family": "history:yunnan",
+      "number": 2,
+      "answer": "B",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.zizzs.com/gk/shitiku/223171.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-7d43c6fe57fe8b84",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "云南高考历史题.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026云南高考\\云南高考历史题.pdf",
+      "subject": "history",
+      "family": "history:yunnan",
+      "number": 3,
+      "answer": "C",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.zizzs.com/gk/shitiku/223171.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-e6dbccf45576be0c",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "云南高考历史题.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026云南高考\\云南高考历史题.pdf",
+      "subject": "history",
+      "family": "history:yunnan",
+      "number": 4,
+      "answer": "C",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.zizzs.com/gk/shitiku/223171.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-e4906465cec5bc6c",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "云南高考历史题.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026云南高考\\云南高考历史题.pdf",
+      "subject": "history",
+      "family": "history:yunnan",
+      "number": 5,
+      "answer": "D",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.zizzs.com/gk/shitiku/223171.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-7abaca662b8d2b65",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "云南高考历史题.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026云南高考\\云南高考历史题.pdf",
+      "subject": "history",
+      "family": "history:yunnan",
+      "number": 6,
+      "answer": "A",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.zizzs.com/gk/shitiku/223171.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-7794e2db6a286a9d",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "云南高考历史题.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026云南高考\\云南高考历史题.pdf",
+      "subject": "history",
+      "family": "history:yunnan",
+      "number": 7,
+      "answer": "D",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.zizzs.com/gk/shitiku/223171.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-9036d4476dfb07f8",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "云南高考历史题.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026云南高考\\云南高考历史题.pdf",
+      "subject": "history",
+      "family": "history:yunnan",
+      "number": 8,
+      "answer": "A",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.zizzs.com/gk/shitiku/223171.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-ocr-ac00981db5b08977",
       "dataset": "gaokao-2026-ocr-extracted.json",
       "source": "河南高考历史卷.pdf",
@@ -7530,6 +8132,90 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-ocr-e24266067d2ba5be",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "河南高考历史卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\河南高考历史卷.pdf",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 9,
+      "answer": "B",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-c8be36c07d063d93",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "河南高考历史卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\河南高考历史卷.pdf",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 10,
+      "answer": "B",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-602a20788309c1cf",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "河南高考历史卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\河南高考历史卷.pdf",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 11,
+      "answer": "B",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-7fad3147c6d5e7da",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "河南高考历史卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\河南高考历史卷.pdf",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 12,
+      "answer": "C",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-b2857a702d4e10b6",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "河南高考历史卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\河南高考历史卷.pdf",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 13,
+      "answer": "B",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-d2283f24ac809208",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "河南高考历史卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\河南高考历史卷.pdf",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 14,
+      "answer": "B",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-ocr-04ce8830f1850b04",
       "dataset": "gaokao-2026-ocr-extracted.json",
       "source": "河南高考历史卷.pdf",
@@ -7544,6 +8230,76 @@
       ],
       "method": "existing-question-answer",
       "answerSource": "2026河南高考历史.docx",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-5472b600b912cb03",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "河南高考历史卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\河南高考历史卷.pdf",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 16,
+      "answer": "B",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-a866d4ce143b07c3",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "河南高考历史卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\河南高考历史卷.pdf",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 17,
+      "answer": "（1）优秀品质：坚守奉献，如西北荒漠地带的基层干部数十年如一日坚守一线治沙；担当实干， 航空科研团队在困境中潜心钻研、攻坚克难；创新攻坚，航空科研团队完成多项关键技术突破，推动产业 市场化发展；家国情怀，党员干部始终以国家发展和人民利益为已任，投身国家建设事业。 (2）选择材料一。20 世纪50年代，我国西北荒漠地带风沙肆虐、土地沙化严重，生态环境恶劣，农牧业 发展受到严重制约。在这样的时代背景下，党员领导干部响应国家号召，扎根荒漠，带领群众植树造林、 固沙治土。他们的行为和价值选择受到时代环境的深刻影响，一方面，国家的生态治理需求和农牧业发展 需要促使他们挺身而出，担当起治沙的重任；另一方面，恶劣的自然环境也考验着他们的意志和决心，激 发了他们坚守奉献的精神。他们的努力不仅改善了当地的生态环境，也为西北农牧业发展筑牢了基础，体 现了党员干部在时代需求面前的责任与担当。 选择材料二。20世纪60年代，面对严峻的国际形势和国内工业发展的迫切需求，我国启动了三线建设。在 这样的时代背景下，党员领导干部响应国家号召，奔赴三线地区，投身国防科技和重工业建设。他们的行 为和价值选择受到时代环境的深刻影响，一方面，国家的战略安全需求和工业发展需要促使他们放弃城市 的舒适生活，扎根艰苦的三线地区；另一方面，恶劣的工作和生活环境考验着他们的意志和决心，激发了 他们无私奉献、艰苦奋斗的精神。他们的努力不仅推动了我国国防科技和重工业的发展，也为国家的战略 安全奠定了坚实基础，体现了党员干部在国家危难时刻的忠诚与担当。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-185379e329f30c46",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "河南高考历史卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\河南高考历史卷.pdf",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 18,
+      "answer": "（1）原因：斗争力量差异；殖民历史与区域基础差异。 (2）内外挑战：殖民时代遗留的边界划分问题、单一经济结构问题；外部挑战：全球气候变化、粮食短缺、 地区冲突等全球性与区域性问题。 举措：开展区域合作，组建区域国际组织。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-be90c4e90e13e0df",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "河南高考历史卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\河南高考历史卷.pdf",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 19,
+      "answer": "（1）相同点：均以粮食种植为核心，农业生产服务于自身生存与物资供给；都形成了适配本土生 产模式的农业技术体系。 不同点：生产技术特点：中国以精耕细作为核心，重视水利、轮作、施肥、选种等精细化技术，亩产水平 高；欧洲长期推行粗放耕作、休耕制，生产技术改进缓慢，耕作较为粗放。生产经营模式：中国以小农家 庭个体经营为主，技术适配分散的小农耕作；欧洲中世纪以庄园规模化集体劳作为主，技术依托庄园模式 发展。技术服务目的：中国兼顾民众生活与国家赋税需求；欧洲主要满足庄园内部自给自足。 (2）主要原因：人地关系：中国人口稠密、人均耕地少，只能依靠精耕细作提高单产；欧洲地广人稀，土 地充足，无需精细化耕作。土地制度：中国以土地私有制、个体小农经济为主；欧洲中世纪盛行庄园制、 领主土地所有制，形成大规模庄园经营。政治与赋税制度：古代中国依赖农业赋税维持运转，官府重视农 业技术推广；欧洲中世纪王权较弱，庄园相对独立，缺乏推动农业技术革新的动力。经济形态：中国小农 经济是国家经济主体；欧洲庄园经济自给性强，商品经济发展缓慢，缺乏技术进步的外部刺激。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-273678edefb52808",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "河南高考历史卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年河南高考\\河南高考历史卷.pdf",
+      "subject": "history",
+      "family": "history:henan",
+      "number": 20,
+      "answer": "错误1：火药助力新航路开辟。改正：指南针助力新航路开辟。理由：指南针用于航海导航，是远洋航行的 重要条件；火药主要打击欧洲封建势力。 错误2：指南针引发欧美资产阶级革命。改正：火药助力欧美资产阶级革命。理由：火药摧毁了欧洲封建骑 士阶层，动摇封建统治，服务于资产阶级革命。 错误3：科举制直接催生西方民主共和制度。改正：科举制影响西方近代文官制度。理由：西方民主共和制 度源于资产阶级革命，科举制的选官模式被西方借鉴发展为文官制度。 错误4：古代丝绸之路促成世界市场最终形成。改正：古代丝绸之路促进东西方经济文化交流。理由：古代 丝绸之路仅限亚欧局部交流，世界市场最终形成于第二次工业革命之后。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gaokzx.com/gk/shitiku/156387.html",
       "confidence": "local-heuristic"
     },
     {
@@ -8560,6 +9316,34 @@
       ],
       "method": "existing-question-answer",
       "answerSource": "精品解析：2026年高考天津卷数学高考真题（解析版）.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-64a4843a578f72ff",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "数学天津卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年天津高考\\数学天津卷.pdf",
+      "subject": "math",
+      "family": "math:tianjin",
+      "number": 6,
+      "answer": "A",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://tiku.baidu.com/tikupc/paperdetail/f02e253f482fb4daa58d4b95",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-b40914c0e3b51edd",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "数学天津卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年天津高考\\数学天津卷.pdf",
+      "subject": "math",
+      "family": "math:tianjin",
+      "number": 7,
+      "answer": "B",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://tiku.baidu.com/tikupc/paperdetail/f02e253f482fb4daa58d4b95",
       "confidence": "local-heuristic"
     },
     {
@@ -10344,8 +11128,8 @@
       "number": 1,
       "answer": "B",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -10358,8 +11142,8 @@
       "number": 2,
       "answer": "D",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -10372,8 +11156,8 @@
       "number": 3,
       "answer": "C",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -10386,8 +11170,8 @@
       "number": 4,
       "answer": "B",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -10400,8 +11184,8 @@
       "number": 5,
       "answer": "A",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -10414,8 +11198,8 @@
       "number": 6,
       "answer": "A",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -10428,8 +11212,8 @@
       "number": 7,
       "answer": "D",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -10442,8 +11226,8 @@
       "number": 8,
       "answer": "BC",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -10456,8 +11240,8 @@
       "number": 9,
       "answer": "BC",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -10470,8 +11254,120 @@
       "number": 10,
       "answer": "AD",
       "solution": [],
-      "method": "answer-only-question",
-      "answerSource": "2026年高考湖南卷物理高考真题（网络 收集版）（纯答案版）.docx",
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-93d1098101ea01d9",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "2026高考湖南物理试题（高清完整版）.pdf",
+      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 11,
+      "answer": "①. 0.6 ②. b ③. 2 2 4 l T  ④. 低于",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-2d2146ae75940c4c",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "2026高考湖南物理试题（高清完整版）.pdf",
+      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-244a4e2e07bc7a1e",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "2026高考湖南物理试题（高清完整版）.pdf",
+      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-1d9d02a195ee78d4",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "2026高考湖南物理试题（高清完整版）.pdf",
+      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-d5e277d2bbbc0b42",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "2026高考湖南物理试题（高清完整版）.pdf",
+      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 12,
+      "answer": "①. c 、 d ②. 50 ③. 11.350 ## 11.349 ## 11.351 ④. ⑤. 1.55",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-41fec6dcf37c0f39",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "2026高考湖南物理试题（高清完整版）.pdf",
+      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-a25796735eb28458",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "2026高考湖南物理试题（高清完整版）.pdf",
+      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-596a2ff68985dad1",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "2026高考湖南物理试题（高清完整版）.pdf",
+      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 13,
+      "answer": "（1） 23 3 （2） 0.9",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -10532,6 +11428,20 @@
       ],
       "method": "existing-question-answer",
       "answerSource": "2026年高考物理真题完全解读（湖南卷）.docx",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-eb26f70dd4fdfcd5",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "2026高考湖南物理试题（高清完整版）.pdf",
+      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
+      "subject": "physics",
+      "family": "physics:hunan",
+      "number": 15,
+      "answer": "（1） 2v gL= （2） 23tan 2 = （3）（i） 2 2 (1 )[ 1]4 cos kE mgLk  +=− ；（ii） 8 69 tan9dL =",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://cdn.gaokzx.com/zixunzhan/2026湖南高考真题物理   有答案1781604136417.pdf",
       "confidence": "local-heuristic"
     },
     {

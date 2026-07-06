@@ -45,12 +45,30 @@ SOURCES = [
         "sourceName": "自主选拔在线",
     },
     {
+        "id": "gaokzx-henan-history-2026",
+        "family": "history:henan",
+        "title": "2026年河南高考历史试题及答案",
+        "pageUrl": "https://www.gaokzx.com/gk/shitiku/156387.html",
+        "parseInlineAnswerBlocks": True,
+        "parseSequentialChoiceAnswers": 16,
+    },
+    {
         "id": "zizzs-guangdong-geography-2026",
         "family": "geography:guangdong",
         "title": "2026年广东高考地理试题及答案（全）",
         "pageUrl": "https://www.zizzs.com/gk/shitiku/222652.html",
         "imageUrlPattern": r"_000[1-9]",
         "sourceName": "自主选拔在线",
+    },
+    {
+        "id": "zizzs-yunnan-history-2026",
+        "family": "history:yunnan",
+        "title": "2026年云南高考历史试题及答案",
+        "pageUrl": "https://www.zizzs.com/gk/shitiku/223171.html",
+        "imageUrlPattern": r"178174656",
+        "sourceName": "自主选拔在线",
+        "parseInlineAnswerBlocks": True,
+        "parseTextChoiceTables": True,
     },
     {
         "id": "zizzs-heilongjiliao-physics-2026",
@@ -60,6 +78,24 @@ SOURCES = [
         "imageUrlPattern": r"178245645",
         "sourceName": "自主选拔在线",
         "parsePlainNumberedAnswers": True,
+    },
+    {
+        "id": "gaokzx-hunan-physics-2026",
+        "family": "physics:hunan",
+        "title": "2026年高考湖南卷物理试题及答案",
+        "pageUrl": "https://www.gaokzx.com/gk/shitiku/156321.html",
+        "pdfUrl": "https://cdn.gaokzx.com/zixunzhan/2026\u6e56\u5357\u9ad8\u8003\u771f\u9898\u7269\u7406   \u6709\u7b54\u68481781604136417.pdf",
+        "sourceName": "北京高考在线",
+        "parsePdfBracketAnswers": True,
+    },
+    {
+        "id": "zizzs-heilongjiliao-chemistry-2026",
+        "family": "chemistry:heilongjiliao",
+        "title": "2026年黑吉辽蒙高考化学试题及答案",
+        "pageUrl": "https://www.zizzs.com/gk/shitiku/222654.html",
+        "imageUrlPattern": r"17811460|17811461",
+        "sourceName": "自主选拔在线",
+        "parseInlineAnswerBlocks": True,
     },
     {
         "id": "gaokzx-national1-english-2026",
@@ -80,6 +116,17 @@ SOURCES = [
         "pageUrl": "https://www.gaokzx.com/gk/shitiku/156470.html",
         "pdfUrl": "https://cdn.xschu.com/zixunzhan/1781596760729%E3%80%8A2026%E5%B9%B4%E5%8C%97%E4%BA%AC%E9%AB%98%E8%80%83%E6%95%B0%E5%AD%A6%E8%AF%95%E5%8D%B7%E3%80%8B%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88.pdf",
         "sourceName": "北京高考在线",
+    },
+    {
+        "id": "baidu-tiku-tianjin-math-2026",
+        "family": "math:tianjin",
+        "title": "2026\u5e74\u9ad8\u8003\u771f\u9898 \u6570\u5b66 (\u5929\u6d25\u5377)",
+        "pageUrl": "https://tiku.baidu.com/tikupc/paperdetail/f02e253f482fb4daa58d4b95",
+        "sourceName": "\u767e\u5ea6\u9898\u5e93",
+        "manualAnswers": [
+            {"number": 6, "answer": "A"},
+            {"number": 7, "answer": "B"},
+        ],
     },
 ]
 
@@ -296,6 +343,81 @@ def parse_plain_numbered_answers(lines: list[str]) -> dict[int, str]:
     return answers
 
 
+def parse_inline_answer_blocks(lines: list[str]) -> dict[int, str]:
+    answers = {}
+    current_number = None
+    answer_number = None
+    answer_lines = []
+
+    def flush() -> None:
+        nonlocal answer_number, answer_lines
+        if answer_number is None:
+            return
+        answer = clean_answer(" ".join(answer_lines))
+        if answer:
+            answers.setdefault(answer_number, answer)
+        answer_number = None
+        answer_lines = []
+
+    for line in lines:
+        line = re.sub(r"\s+", " ", line).strip()
+        if not line or re.match(r"^第\d+页", line):
+            continue
+        question = re.match(r"^(?P<number>\d{1,2})[.．](?!\d)\s*", line)
+        if question:
+            flush()
+            current_number = int(question.group("number"))
+            continue
+        answer = re.match(r"^【答案】(?P<body>.*)$", line)
+        if answer and current_number is not None:
+            flush()
+            body = answer.group("body").strip()
+            choice = re.fullmatch(r"[A-D]{1,4}", body)
+            if current_number <= 15 and choice:
+                answers.setdefault(current_number, body)
+                continue
+            answer_number = current_number
+            answer_lines = [body] if body else []
+            continue
+        if answer_number is not None:
+            if re.match(r"^【(?:解析|详解|分析)】", line):
+                flush()
+                continue
+            answer_lines.append(line)
+    flush()
+    return answers
+
+
+def parse_sequential_choice_answers(lines: list[str], count: int) -> dict[int, str]:
+    answers = {}
+    for line in lines:
+        line = re.sub(r"\s+", " ", line).strip()
+        match = re.match(r"^【答案】\s*([A-D])\s*$", line)
+        if not match:
+            continue
+        number = len(answers) + 1
+        if number > count:
+            break
+        answers[number] = match.group(1)
+    return answers
+
+
+def parse_text_choice_tables(lines: list[str]) -> dict[int, str]:
+    answers = {}
+    for index, line in enumerate(lines):
+        if not line.strip().startswith("题号"):
+            continue
+        answer_line = next((candidate.strip() for candidate in lines[index + 1 : index + 4] if candidate.strip().startswith("答案")), "")
+        if not answer_line:
+            continue
+        numbers = [int(value) for value in re.findall(r"\d{1,2}", line)]
+        choices = re.findall(r"(?<![A-Z])[A-GV]{1,4}(?![A-Z])", answer_line)
+        for number, answer in zip(numbers, choices):
+            if re.fullmatch(r"[A-G]{1,4}", answer):
+                answers.setdefault(number, answer)
+    return answers
+
+
 def parse_written_answers(lines: list[str]) -> dict[int, str]:
     answers = {}
     current_number = None
@@ -355,7 +477,7 @@ def parse_pdf_choice_tables(lines: list[str]) -> dict[int, str]:
         if not answer_line:
             continue
         numbers = [int(value) for value in re.findall(r"\d{1,2}", line)]
-        choices = re.findall(r"[A-G]", answer_line)
+        choices = re.findall(r"(?<![A-Z])[A-G]{1,4}(?![A-Z])", answer_line)
         if len(choices) >= len(numbers):
             for number, answer in zip(numbers, choices):
                 answers.setdefault(number, answer)
@@ -396,11 +518,74 @@ def parse_pdf_numbered_answers(lines: list[str]) -> dict[int, str]:
     return answers
 
 
+def parse_pdf_bracket_answers(lines: list[str]) -> dict[int, str]:
+    answers = {}
+    in_answers = False
+    current_number = None
+    current_lines = []
+
+    def flush() -> None:
+        nonlocal current_number, current_lines
+        if current_number is None:
+            return
+        answer = clean_answer(" ".join(current_lines))
+        if answer:
+            answers.setdefault(current_number, answer)
+        current_number = None
+        current_lines = []
+
+    for line in lines:
+        line = re.sub(r"\s+", " ", line).strip()
+        if not line or re.match(r"^第\d+页", line):
+            continue
+        if "参考答案" in line:
+            in_answers = True
+            flush()
+            continue
+        if not in_answers:
+            continue
+        match = re.match(r"^(?P<number>\d{1,2})[.．]\s*【答案】\s*(?P<body>.*)$", line)
+        if match:
+            flush()
+            current_number = int(match.group("number"))
+            body = match.group("body").strip()
+            current_lines = [body] if body else []
+            continue
+        if current_number is not None:
+            if re.match(r"^【(?:详解|解析|分析|小问\s*\d+\s*详解)】", line):
+                flush()
+                continue
+            current_lines.append(line)
+    flush()
+    return answers
+
+
 def build_source(source: dict, ocr: RapidOCR) -> dict:
+    if source.get("manualAnswers"):
+        answers = [
+            {
+                "number": int(item["number"]),
+                "answer": item["answer"],
+                "confidence": "reviewed-web-text",
+            }
+            for item in source["manualAnswers"]
+            if item.get("answer")
+        ]
+        return {
+            **source,
+            "sourceName": source.get("sourceName", "reviewed public web text"),
+            "imageCount": 0,
+            "imageUrls": [],
+            "answers": answers,
+        }
+
     if source.get("pdfUrl"):
         lines = pdf_text_lines(source["id"], source["pdfUrl"])
         answer_map = parse_pdf_choice_tables(lines)
-        answer_map.update(parse_pdf_numbered_answers(lines))
+        if source.get("parsePdfBracketAnswers"):
+            answer_map.update(parse_pdf_bracket_answers(lines))
+        else:
+            answer_map.update(parse_pdf_numbered_answers(lines))
         answers = [
             {
                 "number": number,
@@ -428,6 +613,12 @@ def build_source(source: dict, ocr: RapidOCR) -> dict:
         answer_map.update(parse_choice_tables(items))
         lines.extend(row_lines(items))
     answer_map.update(parse_bracket_heading_answers(lines))
+    if source.get("parseInlineAnswerBlocks"):
+        answer_map.update(parse_inline_answer_blocks(lines))
+    if source.get("parseSequentialChoiceAnswers"):
+        answer_map.update(parse_sequential_choice_answers(lines, int(source["parseSequentialChoiceAnswers"])))
+    if source.get("parseTextChoiceTables"):
+        answer_map.update(parse_text_choice_tables(lines))
     if source.get("parsePlainNumberedAnswers"):
         answer_map.update(parse_plain_numbered_answers(lines))
     answer_map.update(parse_written_answers(lines))
