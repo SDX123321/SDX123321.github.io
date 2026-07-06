@@ -15,26 +15,27 @@ import AnnotationOverlay from '../../features/annotation/AnnotationOverlay'
 import '../../styles/course-layout.css'
 
 const COURSE_META = {
-  probability: { name: '概率论与数理统计', color: '#2563eb', icon: '📊' },
-  os:          { name: '操作系统',         color: '#10b981', icon: '💻' },
-  algorithm:   { name: '算法设计与分析',   color: '#7c3aed', icon: '🔬' },
-  dsp:         { name: '数字信号处理',     color: '#6c63ff', icon: '📡' },
-  marxism:     { name: '马克思主义基本原理', color: '#e63946', icon: '📰' },
-  calculus:    { name: '高等数学（重修）',   color: '#e74c3c', icon: '📈' },
-  maogai:      { name: '毛泽东思想概论',   color: '#dc2626', icon: '📰' },
-  signals:     { name: '信号与系统B',      color: '#06b6d4', icon: '📶' },
+  probability: { name: '概率论与数理统计', color: '#2563eb', icon: '统' },
+  os: { name: '操作系统', color: '#10b981', icon: 'OS' },
+  algorithm: { name: '算法设计与分析', color: '#7c3aed', icon: '算' },
+  dsp: { name: '数字信号处理', color: '#6c63ff', icon: 'DSP' },
+  marxism: { name: '马克思主义基本原理', color: '#e63946', icon: '马' },
+  calculus: { name: '高等数学（重修）', color: '#e74c3c', icon: '∫' },
+  maogai: { name: '毛泽东思想概论', color: '#dc2626', icon: '概' },
+  signals: { name: '信号与系统', color: '#06b6d4', icon: '信' },
+  gaokao: { name: '江苏高考真题基因库', color: '#2563eb', icon: '高' },
 }
 
-// Lazy-loaded course page components
 const COURSE_PAGES = {
   probability: lazy(() => import('./ProbabilityPage')),
-  os:          lazy(() => import('./OsPage')),
-  algorithm:   lazy(() => import('./AlgorithmPage')),
-  dsp:         lazy(() => import('./DspPage')),
-  marxism:     lazy(() => import('./MarxismPage')),
-  calculus:    lazy(() => import('./CalculusPage')),
-  maogai:      lazy(() => import('./MaogaiPage')),
-  signals:     lazy(() => import('./SignalsPage')),
+  os: lazy(() => import('./OsPage')),
+  algorithm: lazy(() => import('./AlgorithmPage')),
+  dsp: lazy(() => import('./DspPage')),
+  marxism: lazy(() => import('./MarxismPage')),
+  calculus: lazy(() => import('./CalculusPage')),
+  maogai: lazy(() => import('./MaogaiPage')),
+  signals: lazy(() => import('./SignalsPage')),
+  gaokao: lazy(() => import('./GaokaoPage')),
 }
 
 export default function CourseLayout() {
@@ -42,14 +43,11 @@ export default function CourseLayout() {
   const meta = COURSE_META[courseId]
   const PageComponent = COURSE_PAGES[courseId]
   const mainRef = useRef(null)
-
-  useScrollMemory()
   const { toggleTheme } = useTheme()
 
-  // Load busuanzi counter
+  useScrollMemory()
   useEffect(() => { loadBusuanzi() }, [])
 
-  // Update sidebar title when course changes
   useEffect(() => {
     if (!meta) return
     document.title = `${meta.name} - 期末复习`
@@ -63,15 +61,14 @@ export default function CourseLayout() {
     return (
       <div style={{ textAlign: 'center', padding: '80px 20px', color: 'var(--text)' }}>
         <h1 style={{ fontSize: '2rem', marginBottom: 12 }}>课程未找到</h1>
-        <p style={{ color: 'var(--text-light)' }}>「{courseId}」尚未迁移至新版</p>
-        <Link to="/" style={{ color: 'var(--accent)', marginTop: 16, display: 'inline-block' }}>← 返回首页</Link>
+        <p style={{ color: 'var(--text-light)' }}>“{courseId}”尚未迁移至新版课程体系。</p>
+        <Link to="/" style={{ color: 'var(--accent)', marginTop: 16, display: 'inline-block' }}>返回首页</Link>
       </div>
     )
   }
 
   return (
     <>
-      {/* Mobile menu button */}
       <button
         className="nav-toggle"
         onClick={() => {
@@ -83,33 +80,27 @@ export default function CourseLayout() {
         &#9776;
       </button>
 
-      {/* Progress bar */}
       <div className="progress-bar">
         <div className="fill" id="progress" />
       </div>
 
-      {/* Sidebar */}
       <nav className={`course-sidebar sidebar ${courseId}`} id="sidebar">
         <div className="sidebar-brand">
           <div className="sidebar-brand-icon">{meta.icon}</div>
           <div className="sidebar-brand-text">
             <span className="sidebar-brand-title">{meta.name}</span>
-            <span className="sidebar-brand-sub">期末复习笔记</span>
+            <span className="sidebar-brand-sub">{courseId === 'gaokao' ? '高中内容' : '大学内容'}</span>
           </div>
         </div>
-        <Link
-          to="/"
-          className="sidebar-back"
-        >
+        <Link to="/" className="sidebar-back">
           <span className="sidebar-back-icon">←</span>
           <span>返回课程主页</span>
         </Link>
         <div className="nav-group">
-          <div className="nav-group-title">加载中…</div>
+          <div className="nav-group-title">加载中</div>
         </div>
       </nav>
 
-      {/* Sidebar overlay (mobile) */}
       <div
         className="sidebar-overlay"
         onClick={() => {
@@ -118,18 +109,16 @@ export default function CourseLayout() {
         }}
       />
 
-      {/* Main content */}
       <main className={`course-main main ${courseId}`} ref={mainRef}>
         <Suspense fallback={
           <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-light)' }}>
-            <p>加载课程内容…</p>
+            <p>加载课程内容中...</p>
           </div>
         }>
           <PageComponent />
         </Suspense>
       </main>
 
-      {/* Shared feature FABs */}
       <WrongBookFAB />
       <RandomQuizFAB />
       <FormulaRefFAB />
@@ -140,7 +129,6 @@ export default function CourseLayout() {
       <CrossLinks />
       <AnnotationOverlay containerRef={mainRef} />
 
-      {/* Back to top */}
       <div
         className="back-top"
         id="backTop"
@@ -149,19 +137,25 @@ export default function CourseLayout() {
         ↑
       </div>
 
-      {/* Visitor counter bar */}
-      <div className="visitor-bar" style={{
-        position: 'fixed', bottom: 12, left: 286,
-        padding: '6px 14px',
-        borderRadius: 20, fontSize: '.75rem',
-        zIndex: 80, backdropFilter: 'blur(8px)',
-      }}>
+      <div
+        className="visitor-bar"
+        style={{
+          position: 'fixed',
+          bottom: 12,
+          left: 286,
+          padding: '6px 14px',
+          borderRadius: 20,
+          fontSize: '.75rem',
+          zIndex: 80,
+          backdropFilter: 'blur(8px)',
+        }}
+      >
         <span id="busuanzi_container_site_pv">
-          👁 <span id="busuanzi_value_site_pv">...</span>
+          总访问 <span id="busuanzi_value_site_pv">...</span>
         </span>
         {' · '}
         <span id="busuanzi_container_page_pv">
-          📄 <span id="busuanzi_value_page_pv">...</span>
+          本页 <span id="busuanzi_value_page_pv">...</span>
         </span>
         {' '}
         <a
@@ -171,7 +165,7 @@ export default function CourseLayout() {
           style={{ color: '#fbbf24', textDecoration: 'none', marginLeft: 4 }}
           title="提交建议或反馈"
         >
-          💬 反馈
+          反馈
         </a>
       </div>
     </>
