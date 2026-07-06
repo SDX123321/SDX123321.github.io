@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const DATA_DIR = path.resolve(__dirname, '../src/data')
 let answerOverrideMap = new Map()
+let answerOverrideFallbackMap = new Map()
 const PLACEHOLDER_CHINESE_SOURCE = '\u0032\u0030\u0032\u0036\u5e74\u666e\u901a\u9ad8\u7b49\u5b66\u6821\u62db\u751f\u5168\u56fd\u7edf\u4e00\u8003\u8bd5\u8bed\u6587\uff08\u65b0\u0049\uff09\u0020\u002e\u0070\u0064\u0066'
 const PLACEHOLDER_CHINESE_MARKERS = [
   '\u4eba\u5de5\u667a\u80fd\u6280\u672f\u5728\u533b\u7597',
@@ -36,15 +37,36 @@ async function loadJson(filename) {
 
 function loadAnswerOverrides(data) {
   answerOverrideMap = new Map((data.overrides || []).map(override => [override.questionId, override]))
+  answerOverrideFallbackMap = new Map()
+  for (const override of data.overrides || []) {
+    const key = answerOverrideLookupKey(override)
+    if (key && !answerOverrideFallbackMap.has(key)) {
+      answerOverrideFallbackMap.set(key, override)
+    }
+  }
+}
+
+function answerOverrideLookupKey(value) {
+  if (!value?.dataset || !value?.source || value?.number === undefined || value?.number === null) return null
+  return [value.dataset, value.source, value.relativePath || '', String(value.number)].join('\u241f')
+}
+
+function findAnswerOverride(item, context = {}) {
+  if (item?.id && answerOverrideMap.has(item.id)) return answerOverrideMap.get(item.id)
+  return answerOverrideFallbackMap.get(answerOverrideLookupKey({
+    dataset: context.dataset,
+    source: context.source,
+    relativePath: context.relativePath,
+    number: item?.number,
+  }))
 }
 
 function cleanOverrideText(value) {
   return typeof value === 'string' ? value.replace(/\u0000/g, '') : value
 }
 
-function applyAnswerOverride(item) {
-  if (!item?.id) return item
-  const override = answerOverrideMap.get(item.id)
+function applyAnswerOverride(item, context = {}) {
+  const override = findAnswerOverride(item, context)
   if (!override?.answer) return item
   if (item.answer && !override.replacesAnswer) return item
   return {
@@ -68,9 +90,19 @@ function hasQuestionOptions(item) {
 }
 
 function isNumericExtractionFragment(item) {
-  const compactPrompt = getQuestionPrompt(item).replace(/\s+/g, ' ').trim()
+  const compactPrompt = getQuestionPrompt(item).replace(/\s+/g, '').trim()
   if (!compactPrompt || hasQuestionOptions(item)) return false
-  return /^[\d\s.,，。:：;；\-+*/()（）[\]{}<>《》=≈~～^_\\|√π%°]+$/u.test(compactPrompt)
+  return /^[\d.,，。:：;；\-+*/()（）[\]{}<>《》=≈~～^_\\|√π%°]+$/u.test(compactPrompt)
+}
+
+function isEmptyPromptFragment(item) {
+  return !getQuestionPrompt(item).replace(/\s+/g, '').trim()
+}
+
+function isAnswerKeyOnlyFragment(item) {
+  const compactPrompt = getQuestionPrompt(item).replace(/\s+/g, '').trim()
+  if (!compactPrompt || hasQuestionOptions(item)) return false
+  return /^[A-D]{1,4}$/iu.test(compactPrompt)
 }
 
 function questionNumberValue(value) {
@@ -125,7 +157,9 @@ function isEnglishContinuationOcrFragment(item) {
 }
 
 function shouldImportExtractedQuestion(item) {
-  return !isNumericExtractionFragment(item)
+  return !isEmptyPromptFragment(item)
+    && !isNumericExtractionFragment(item)
+    && !isAnswerKeyOnlyFragment(item)
     && !isUnnumberedExtractionFragment(item)
     && !isPassageOnlyExtractionFragment(item)
     && !isAnswerAnalysisExtractionFragment(item)
@@ -529,7 +563,11 @@ async function seedOcrQuestions(ocr) {
       skippedFragments += 1
       continue
     }
-    const item = applyAnswerOverride(rawItem)
+    const item = applyAnswerOverride(rawItem, {
+      dataset: 'jiangsu-gaokao-ocr.json',
+      source: source.filename,
+      relativePath: source.relativePath,
+    })
     const questionId = await upsertQuestion({
       questionKey,
       paperId,
@@ -541,9 +579,9 @@ async function seedOcrQuestions(ocr) {
       difficulty: null,
       quality: 'review',
       prompt: item.prompt,
-      answer: null,
-      solution: [],
-      flags: item.flags,
+      answer: item.answer || null,
+      solution: item.solution || [],
+      flags: item.flags || [],
       sourceType: 'real-ocr',
       metadata: {
         averageScore: item.averageScore,

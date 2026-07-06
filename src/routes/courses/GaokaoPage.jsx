@@ -65,10 +65,30 @@ const extractedLibraries = [
 ]
 
 const answerOverrideById = new Map((answerOverrides.overrides || []).map(override => [override.questionId, override]))
+const answerOverrideBySource = new Map(
+  (answerOverrides.overrides || [])
+    .map(override => [answerOverrideLookupKey(override), override])
+    .filter(([key]) => key),
+)
 
-function applyAnswerOverride(question) {
-  if (!question?.id || question.answer) return question
-  const override = answerOverrideById.get(question.id)
+function answerOverrideLookupKey(value) {
+  if (!value?.dataset || !value?.source || value?.number === undefined || value?.number === null) return null
+  return [value.dataset, value.source, value.relativePath || '', String(value.number)].join('\u241f')
+}
+
+function findAnswerOverride(question, context = {}) {
+  if (question?.id && answerOverrideById.has(question.id)) return answerOverrideById.get(question.id)
+  return answerOverrideBySource.get(answerOverrideLookupKey({
+    dataset: context.dataset,
+    source: context.source,
+    relativePath: context.relativePath,
+    number: question?.number,
+  }))
+}
+
+function applyAnswerOverride(question, context = {}) {
+  if (question?.answer) return question
+  const override = findAnswerOverride(question, context)
   if (!override?.answer) return question
   return {
     ...question,
@@ -407,7 +427,11 @@ function ExtractedQuestionCard({ file, question }) {
 }
 
 function OcrQuestionCard({ question }) {
-  const displayQuestion = applyAnswerOverride(question)
+  const displayQuestion = applyAnswerOverride(question, {
+    dataset: 'jiangsu-gaokao-ocr.json',
+    source: ocrQuestions.source?.filename,
+    relativePath: ocrQuestions.source?.relativePath,
+  })
   const score = Math.round((question.averageScore || 0) * 100)
   const hasAnswer = Boolean(displayQuestion.answer)
 
