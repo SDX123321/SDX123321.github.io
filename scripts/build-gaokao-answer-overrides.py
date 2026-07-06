@@ -13,6 +13,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = REPO_ROOT / "src/data"
 AUDIT_PATH = DATA_DIR / "gaokao-processing-audit.json"
 OUT_PATH = DATA_DIR / "gaokao-2026-answer-overrides.json"
+WEB_ANSWER_SOURCES_PATH = DATA_DIR / "gaokao-2026-web-answer-sources.json"
 DATASETS = [
     "gaokao-2026-docx-extracted.json",
     "gaokao-2026-pdf-text-extracted.json",
@@ -342,6 +343,21 @@ def build_answer_maps(records: list[dict]) -> dict[str, dict[int, list[dict]]]:
         for number, answer in maps.items():
             add_candidate(answer_maps, family, number, answer, item["relativePath"], "answer-source-file")
 
+    if WEB_ANSWER_SOURCES_PATH.exists():
+        web_sources = load_json(WEB_ANSWER_SOURCES_PATH)
+        for source in web_sources.get("sources", []):
+            family = source.get("family", "")
+            source_url = source.get("pdfUrl") or source.get("pageUrl") or source.get("id", "")
+            for item in source.get("answers", []):
+                add_candidate(
+                    answer_maps,
+                    family,
+                    number_value(item.get("number")),
+                    item.get("answer", ""),
+                    source_url,
+                    "web-answer-source",
+                )
+
     return answer_maps
 
 
@@ -352,7 +368,8 @@ def choose_candidate(candidates: list[dict]) -> dict | None:
         "embedded-answer-in-prompt": 0,
         "existing-question-answer": 1,
         "answer-source-file": 2,
-        "answer-only-question": 3,
+        "web-answer-source": 3,
+        "answer-only-question": 4,
     }
     return sorted(candidates, key=lambda item: (priority.get(item["method"], 9), len(item["answer"])))[0]
 
@@ -434,7 +451,7 @@ def build_overrides() -> dict:
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "scope": {
             "datasets": DATASETS,
-            "note": "Local answer overrides mined from parsed answers, answer-only files, and answer-source DOCX/PDF files. Applied only when the raw question answer is empty.",
+            "note": "Local answer overrides mined from parsed answers, answer-only files, answer-source DOCX/PDF files, and reviewed web OCR/PDF answer maps. Applied only when the raw question answer is empty.",
         },
         "summary": {
             "questionsScanned": len(records),
