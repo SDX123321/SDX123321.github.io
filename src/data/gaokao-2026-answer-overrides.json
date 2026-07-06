@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T13:09:30.001560+00:00",
+  "generatedAt": "2026-07-06T13:21:34.668889+00:00",
   "scope": {
     "datasets": [
       "gaokao-2026-docx-extracted.json",
@@ -19,12 +19,12 @@
     "questionsScanned": 1320,
     "answerSourceRowsScanned": 79,
     "missingBeforeOverrides": 899,
-    "overrides": 787,
+    "overrides": 794,
     "corrections": 4,
-    "missingAfterOverrides": 116,
+    "missingAfterOverrides": 109,
     "byMethod": {
       "answer-source-file": 124,
-      "web-answer-source": 299,
+      "web-answer-source": 306,
       "existing-question-answer": 245,
       "ocr-answer-source": 23,
       "embedded-answer-in-prompt": 43,
@@ -34,9 +34,9 @@
     },
     "byDataset": {
       "gaokao-2026-docx-extracted.json": 248,
-      "gaokao-2026-pdf-text-extracted.json": 164,
+      "gaokao-2026-pdf-text-extracted.json": 166,
       "gaokao-2026-ocr-extracted.json": 341,
-      "gaokao-2026-residual-extracted.json": 18,
+      "gaokao-2026-residual-extracted.json": 23,
       "jiangsu-gaokao-ocr.json": 16
     }
   },
@@ -3646,6 +3646,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-pdf-7808a41c01077818",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026上海高考学业水平等级性考试-化学.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年上海高考\\2026上海高考学业水平等级性考试-化学.pdf",
+      "subject": "chemistry",
+      "family": "chemistry:shanghai",
+      "number": 14,
+      "answer": "HO-C6H2(CH3)2-COOH (COOH-1, CH3-3/5, OH-4)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://tiku.baidu.com/tikupc/paperdetail/dca0eae2910ef12d2af9e73a",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-pdf-e540d616b2f32269",
       "dataset": "gaokao-2026-pdf-text-extracted.json",
       "source": "2026上海高考学业水平等级性考试-化学.pdf",
@@ -3825,6 +3839,20 @@
       "solution": [],
       "method": "answer-source-file",
       "answerSource": "2026高考试卷（更新中）\\2026年上海高考\\上海高考化学答案.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-3f2eea05de79d935",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026上海高考学业水平等级性考试-化学.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年上海高考\\2026上海高考学业水平等级性考试-化学.pdf",
+      "subject": "chemistry",
+      "family": "chemistry:shanghai",
+      "number": 37,
+      "answer": "0.36",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://tiku.baidu.com/tikupc/paperdetail/dca0eae2910ef12d2af9e73a",
       "confidence": "local-heuristic"
     },
     {
@@ -10836,6 +10864,76 @@
       "solution": [],
       "method": "answer-source-file",
       "answerSource": "2026高考试卷（更新中）\\2026年上海高考\\上海高考物理答案.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-residual-5073394dbff4b28f",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考上海卷物理高考真题（网络+收集版）\\【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:shanghai",
+      "number": 10,
+      "answer": "t1",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://kaosj.com/papers/2026/06/2026-shanghai-gaokao-physics-analysis/",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-residual-7130eb920637a215",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考上海卷物理高考真题（网络+收集版）\\【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:shanghai",
+      "number": 13,
+      "answer": "d=R(1-sin theta)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://kaosj.com/papers/2026/06/2026-shanghai-gaokao-physics-analysis/",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-residual-e27edc27d8b73b49",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考上海卷物理高考真题（网络+收集版）\\【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:shanghai",
+      "number": 14,
+      "answer": "v0min=l*sqrt(g/(2h))",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://kaosj.com/papers/2026/06/2026-shanghai-gaokao-physics-analysis/",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-residual-fa869a4e19b3f968",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考上海卷物理高考真题（网络+收集版）\\【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:shanghai",
+      "number": 18,
+      "answer": "v=pi*D/(2*N*T)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://kaosj.com/papers/2026/06/2026-shanghai-gaokao-physics-analysis/",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-residual-b71fb1836d9e7095",
+      "dataset": "gaokao-2026-residual-extracted.json",
+      "source": "【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考上海卷物理高考真题（网络+收集版）\\【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "subject": "physics",
+      "family": "physics:shanghai",
+      "number": 21,
+      "answer": "a=27*n*(U2^2-U1^2)/(4*pi*B^2*L^2*R)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://kaosj.com/papers/2026/06/2026-shanghai-gaokao-physics-analysis/",
       "confidence": "local-heuristic"
     },
     {

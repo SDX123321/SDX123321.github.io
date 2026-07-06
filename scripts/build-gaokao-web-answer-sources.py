@@ -98,6 +98,31 @@ SOURCES = [
         "parseInlineAnswerBlocks": True,
     },
     {
+        "id": "kaosj-shanghai-physics-2026",
+        "family": "physics:shanghai",
+        "title": "2026 Shanghai physics answer analysis",
+        "pageUrl": "https://kaosj.com/papers/2026/06/2026-shanghai-gaokao-physics-analysis/",
+        "sourceName": "kaosj.com",
+        "manualAnswers": [
+            {"number": 10, "answer": "t1"},
+            {"number": 13, "answer": "d=R(1-sin theta)"},
+            {"number": 14, "answer": "v0min=l*sqrt(g/(2h))"},
+            {"number": 18, "answer": "v=pi*D/(2*N*T)"},
+            {"number": 21, "answer": "a=27*n*(U2^2-U1^2)/(4*pi*B^2*L^2*R)"},
+        ],
+    },
+    {
+        "id": "baidu-shanghai-chemistry-2026",
+        "family": "chemistry:shanghai",
+        "title": "2026 Shanghai chemistry answer analysis",
+        "pageUrl": "https://tiku.baidu.com/tikupc/paperdetail/dca0eae2910ef12d2af9e73a",
+        "sourceName": "Baidu Tiku",
+        "manualAnswers": [
+            {"number": 14, "answer": "HO-C6H2(CH3)2-COOH (COOH-1, CH3-3/5, OH-4)"},
+            {"number": 37, "answer": "0.36"},
+        ],
+    },
+    {
         "id": "gaokzx-national1-english-2026",
         "family": "english:national1",
         "title": "2026年高考全国I卷英语试题及答案",

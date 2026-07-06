@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-06T12:35:39.843991+00:00",
+  "generatedAt": "2026-07-06T13:21:23.558176+00:00",
   "scope": {
     "note": "Web answer maps from public gaokzx.com article image pages and reviewed public PDF answer files. Review source URLs before relying on open-ended answers."
   },
   "summary": {
-    "sources": 22,
-    "answers": 276,
+    "sources": 24,
+    "answers": 283,
     "byFamily": {
       "biology:anhui": 21,
       "chemistry:yunnan": 18,
@@ -16,6 +16,8 @@
       "physics:heilongjiliao": 15,
       "physics:hunan": 15,
       "chemistry:heilongjiliao": 19,
+      "physics:shanghai": 5,
+      "chemistry:shanghai": 2,
       "english:national1": 45,
       "chinese:national1": 0,
       "math:beijing": 21,
@@ -1167,6 +1169,95 @@
           "number": 19,
           "answer": "(1) (2）碳溴键 (溴原子) CH,COOH （3）取代反应 ① ② CH,Br CH,COOH CH,COOCH, +CHOH HSO4 +H2O CH,OH CH,OH HN (5) ①. HN NH",
           "confidence": "web-ocr"
+        }
+      ]
+    },
+    {
+      "id": "kaosj-shanghai-physics-2026",
+      "family": "physics:shanghai",
+      "title": "2026 Shanghai physics answer analysis",
+      "pageUrl": "https://kaosj.com/papers/2026/06/2026-shanghai-gaokao-physics-analysis/",
+      "sourceName": "kaosj.com",
+      "manualAnswers": [
+        {
+          "number": 10,
+          "answer": "t1"
+        },
+        {
+          "number": 13,
+          "answer": "d=R(1-sin theta)"
+        },
+        {
+          "number": 14,
+          "answer": "v0min=l*sqrt(g/(2h))"
+        },
+        {
+          "number": 18,
+          "answer": "v=pi*D/(2*N*T)"
+        },
+        {
+          "number": 21,
+          "answer": "a=27*n*(U2^2-U1^2)/(4*pi*B^2*L^2*R)"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 10,
+          "answer": "t1",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 13,
+          "answer": "d=R(1-sin theta)",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 14,
+          "answer": "v0min=l*sqrt(g/(2h))",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 18,
+          "answer": "v=pi*D/(2*N*T)",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 21,
+          "answer": "a=27*n*(U2^2-U1^2)/(4*pi*B^2*L^2*R)",
+          "confidence": "reviewed-web-text"
+        }
+      ]
+    },
+    {
+      "id": "baidu-shanghai-chemistry-2026",
+      "family": "chemistry:shanghai",
+      "title": "2026 Shanghai chemistry answer analysis",
+      "pageUrl": "https://tiku.baidu.com/tikupc/paperdetail/dca0eae2910ef12d2af9e73a",
+      "sourceName": "Baidu Tiku",
+      "manualAnswers": [
+        {
+          "number": 14,
+          "answer": "HO-C6H2(CH3)2-COOH (COOH-1, CH3-3/5, OH-4)"
+        },
+        {
+          "number": 37,
+          "answer": "0.36"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 14,
+          "answer": "HO-C6H2(CH3)2-COOH (COOH-1, CH3-3/5, OH-4)",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 37,
+          "answer": "0.36",
+          "confidence": "reviewed-web-text"
         }
       ]
     },
