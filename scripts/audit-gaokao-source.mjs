@@ -51,8 +51,9 @@ function detectRole(text) {
   return 'unknown'
 }
 
-function detectStatus(ext, role, matchedExtracted) {
+function detectStatus(ext, role, matchedExtracted, matchedAnswerSource) {
   if (matchedExtracted) return 'structured'
+  if (matchedAnswerSource) return 'answer-source'
   if (ext === '.doc') return 'needs-doc-conversion'
   if (ext === '.docx' && role === 'answer-or-analysis') return 'answer-source'
   if (ext === '.docx') return 'needs-docx-extraction'
@@ -72,9 +73,19 @@ const extracted2026Path = path.join(repoRoot, 'src', 'data', 'gaokao-2026-docx-e
 const extracted2026 = fs.existsSync(extracted2026Path)
   ? JSON.parse(fs.readFileSync(extracted2026Path, 'utf8'))
   : { files: [] }
+const extractedPdfPath = path.join(repoRoot, 'src', 'data', 'gaokao-2026-pdf-text-extracted.json')
+const extractedPdf = fs.existsSync(extractedPdfPath)
+  ? JSON.parse(fs.readFileSync(extractedPdfPath, 'utf8'))
+  : { files: [] }
 const extractedNames = new Set([
   ...extracted.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
   ...extracted2026.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
+  ...extractedPdf.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
+])
+const answerSourceNames = new Set([
+  ...extractedPdf.skipped
+    .filter(file => file.status === 'answer-map-only')
+    .map(file => file.source),
 ])
 const files = walk(sourceRoot)
   .map(file => {
@@ -86,6 +97,7 @@ const files = walk(sourceRoot)
     const subject = detectSubject(searchableText)
     const role = detectRole(searchableText)
     const matchedExtracted = extractedNames.has(fileName)
+    const matchedAnswerSource = answerSourceNames.has(fileName)
     return {
       name: fileName,
       relativePath,
@@ -93,7 +105,7 @@ const files = walk(sourceRoot)
       subjectKey: subject?.key || 'unknown',
       subjectName: subject?.name || '未知',
       role,
-      status: detectStatus(ext, role, matchedExtracted),
+      status: detectStatus(ext, role, matchedExtracted, matchedAnswerSource),
     }
   })
   .filter(Boolean)

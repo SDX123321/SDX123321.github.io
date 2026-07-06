@@ -170,7 +170,7 @@ async function seedSubjectProfiles() {
   }
 }
 
-async function seedStaticSources(index, extracted, docx2026, ocr) {
+async function seedStaticSources(index, extracted, docx2026, pdfText2026, ocr) {
   let count = 0
   for (const source of sources) {
     await upsertSource({
@@ -211,6 +211,15 @@ async function seedStaticSources(index, extracted, docx2026, ocr) {
     metadata: { generatedAt: docx2026.generatedAt, summary: docx2026.summary, scope: docx2026.scope },
   })
   await upsertSource({
+    sourceKey: 'local_gaokao_2026_pdf_text_extracted',
+    name: '2026 高考 PDF 文本层抽取结果',
+    detail: 'src/data/gaokao-2026-pdf-text-extracted.json',
+    status: 'extracted-needs-review',
+    sourceType: 'local-extract',
+    relativePath: 'src/data/gaokao-2026-pdf-text-extracted.json',
+    metadata: { generatedAt: pdfText2026.generatedAt, summary: pdfText2026.summary, scope: pdfText2026.scope },
+  })
+  await upsertSource({
     sourceKey: 'local_gaokao_ocr_2026_jiangsu_math',
     name: ocr.source?.filename || '2026 江苏数学 OCR',
     detail: ocr.source?.note,
@@ -219,7 +228,7 @@ async function seedStaticSources(index, extracted, docx2026, ocr) {
     relativePath: ocr.source?.relativePath,
     metadata: { generatedAt: ocr.generatedAt, summary: ocr.summary, pages: ocr.pages },
   })
-  return count + 4
+  return count + 5
 }
 
 async function seedIndexPapers(index) {
@@ -279,7 +288,7 @@ async function seedExtractedQuestions(extracted) {
       subjectKey: file.subject,
       subjectName: file.subjectName,
       paperName: file.source,
-      paperKind: 'real-extracted',
+      paperKind: file.relativePath?.toLowerCase().endsWith('.pdf') ? 'real-pdf-text' : 'real-extracted',
       status: file.questions?.some(question => question.quality === 'matched') ? 'matched' : 'review',
       metadata: {
         relativePath: file.relativePath,
@@ -290,6 +299,7 @@ async function seedExtractedQuestions(extracted) {
     papers += 1
 
     for (const item of file.questions || []) {
+      const sourceType = file.relativePath?.toLowerCase().endsWith('.pdf') ? 'real-pdf-text' : 'real-docx'
       const questionId = await upsertQuestion({
         questionKey: hashKey('extract_question', [file.year, file.subject, file.source, item.number, item.prompt]),
         paperId,
@@ -304,7 +314,7 @@ async function seedExtractedQuestions(extracted) {
         answer: item.answer,
         solution: item.solution,
         flags: item.flags,
-        sourceType: 'real-docx',
+        sourceType,
         metadata: {
           source: file.source,
           relativePath: file.relativePath,
@@ -468,17 +478,19 @@ async function main() {
   const index = await loadJson('jiangsu-gaokao-index.json')
   const extracted = await loadJson('jiangsu-gaokao-extracted.json')
   const docx2026 = await loadJson('gaokao-2026-docx-extracted.json')
+  const pdfText2026 = await loadJson('gaokao-2026-pdf-text-extracted.json')
   const ocr = await loadJson('jiangsu-gaokao-ocr.json')
 
   await ensureSchema()
   await query('BEGIN')
   try {
     await seedSubjectProfiles()
-    const sourceCount = await seedStaticSources(index, extracted, docx2026, ocr)
+    const sourceCount = await seedStaticSources(index, extracted, docx2026, pdfText2026, ocr)
     const indexPaperCount = await seedIndexPapers(index)
     const overviewPaperCount = await seedYearOverviewPapers()
     const extractedResult = await seedExtractedQuestions(extracted)
     const docx2026Result = await seedExtractedQuestions(docx2026)
+    const pdfText2026Result = await seedExtractedQuestions(pdfText2026)
     const ocrResult = await seedOcrQuestions(ocr)
     const practiceResult = await seedPracticeQuestions()
     const trendNoteCount = await seedTrendNotes()
@@ -486,10 +498,11 @@ async function main() {
     const summary = {
       subjects: subjects.length,
       sources: sourceCount,
-      papers: indexPaperCount + overviewPaperCount + extractedResult.papers + docx2026Result.papers + ocrResult.papers + practiceResult.papers,
-      questions: extractedResult.questions + docx2026Result.questions + ocrResult.questions + practiceResult.questions,
+      papers: indexPaperCount + overviewPaperCount + extractedResult.papers + docx2026Result.papers + pdfText2026Result.papers + ocrResult.papers + practiceResult.papers,
+      questions: extractedResult.questions + docx2026Result.questions + pdfText2026Result.questions + ocrResult.questions + practiceResult.questions,
       extractedQuestions: extractedResult.questions,
       docx2026Questions: docx2026Result.questions,
+      pdfText2026Questions: pdfText2026Result.questions,
       ocrQuestions: ocrResult.questions,
       practiceQuestions: practiceResult.questions,
       trendNotes: trendNoteCount,
