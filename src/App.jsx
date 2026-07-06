@@ -5,6 +5,9 @@ import ThemeToggle from './features/theme/ThemeToggle'
 import PWAManager from './features/pwa/PWAManager'
 import ErrorBoundary from './components/ErrorBoundary'
 import { runMigration } from './lib/storage'
+import { AuthProvider } from './features/account/AuthContext'
+import AccountWidget from './features/account/AccountWidget'
+import StudyTracker from './features/account/StudyTracker'
 
 const HomePage = lazy(() => import('./routes/HomePage'))
 const CourseLayout = lazy(() => import('./routes/courses/CourseLayout'))
@@ -42,6 +45,8 @@ function RootLayout() {
     <>
       <ThemeToggle />
       <PWAManager />
+      <AccountWidget />
+      <StudyTracker />
       <Outlet />
     </>
   )
@@ -91,7 +96,9 @@ export default function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
   )

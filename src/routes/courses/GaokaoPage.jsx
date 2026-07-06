@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
 import {
   coverage,
   genePatterns,
@@ -12,6 +13,7 @@ import {
 import extractedQuestions from '../../data/jiangsu-gaokao-extracted.json'
 import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
 import ocrQuestions from '../../data/jiangsu-gaokao-ocr.json'
+import { useAuth } from '../../features/account/AuthContext'
 import '../../styles/courses/gaokao.css'
 
 const difficultyLabels = {
@@ -195,16 +197,50 @@ function OcrQuestionCard({ question }) {
   )
 }
 
+function SubjectYearCard({ year, cell }) {
+  return (
+    <article className="subject-year-card">
+      <strong>{year}</strong>
+      <span>资料 {cell?.total || 0} 份</span>
+      <small>可抽取 {cell?.byStatus?.extractable || 0} · 需转换 {cell?.byStatus?.['needs-conversion'] || 0} · OCR {cell?.byStatus?.['needs-ocr-check'] || 0}</small>
+    </article>
+  )
+}
+
 export default function GaokaoPage() {
+  const params = useParams()
+  const subjectSlug = (params['*'] || '').replace(/^\/+|\/+$/g, '').split('/')[0]
+  const activeSubject = subjects.find(subject => subject.key === subjectSlug)
+  const isSubjectPage = Boolean(subjectSlug)
+  const subjectNotFound = isSubjectPage && !activeSubject
+  const pageNavLinks = useMemo(() => {
+    if (!activeSubject) return navLinks
+    const links = [
+      { id: 'subject-overview', label: `${activeSubject.name}概览`, keywords: `${activeSubject.name} 高考 概览` },
+      { id: 'subject-trend', label: '命题趋势', keywords: `${activeSubject.name} 趋势 高频考点` },
+      { id: 'subject-years', label: '年份资料', keywords: `${activeSubject.name} 年份 资料` },
+      { id: 'subject-extracts', label: '真实样本', keywords: `${activeSubject.name} 题干 解析` },
+      { id: 'subject-practice', label: '扩展训练', keywords: `${activeSubject.name} 练习 题解` },
+      { id: 'subject-advice', label: '复习建议', keywords: `${activeSubject.name} 建议 易错` },
+    ]
+    if (activeSubject.key === 'math') {
+      links.splice(3, 0, { id: 'subject-gene', label: '数学基因', keywords: '数学 出题基因 OCR 迁移' })
+    }
+    return links
+  }, [activeSubject])
+
   const [filters, setFilters] = useState(() => loadJson('gaokao_jiangsu_filters', {
     subject: 'all',
     difficulty: 'all',
   }))
   const [completed, setCompleted] = useState(() => new Set(loadJson('gaokao_jiangsu_done', [])))
+  const { syncStudyEvent } = useAuth()
 
   useEffect(() => {
-    document.title = '江苏高考真题基因库 - 期末复习'
-  }, [])
+    document.title = activeSubject
+      ? `${activeSubject.name}高考专题 - 期末复习`
+      : '江苏高考真题基因库 - 期末复习'
+  }, [activeSubject])
 
   useEffect(() => {
     localStorage.setItem('gaokao_jiangsu_filters', JSON.stringify(filters))
@@ -223,10 +259,18 @@ export default function GaokaoPage() {
     group.className = 'nav-group'
     const title = document.createElement('div')
     title.className = 'nav-group-title'
-    title.textContent = '高中专题导航'
+    title.textContent = activeSubject ? `${activeSubject.name}专题导航` : '高中专题导航'
     group.appendChild(title)
 
-    navLinks.forEach(link => {
+    if (activeSubject) {
+      const overview = document.createElement('a')
+      overview.href = '/courses/gaokao/'
+      overview.textContent = '返回九科总览'
+      overview.dataset.keywords = '九科 总览 高考'
+      group.appendChild(overview)
+    }
+
+    pageNavLinks.forEach(link => {
       const item = document.createElement('a')
       item.href = `#${link.id}`
       item.textContent = link.label
@@ -249,12 +293,12 @@ export default function GaokaoPage() {
         group.querySelector(`a[href="#${entry.target.id}"]`)?.classList.add('active')
       })
     }, { rootMargin: '-20% 0px -65% 0px' })
-    navLinks.forEach(link => {
+    pageNavLinks.forEach(link => {
       const target = document.getElementById(link.id)
       if (target) observer.observe(target)
     })
     return () => observer.disconnect()
-  }, [])
+  }, [activeSubject, pageNavLinks])
 
   const filteredQuestions = useMemo(() => {
     return practiceQuestions.filter(question => {
@@ -274,11 +318,45 @@ export default function GaokaoPage() {
       .slice(0, 12)
   }, [])
 
+  const subjectExtractedSamples = useMemo(() => {
+    if (!activeSubject) return []
+    return extractedQuestions.files
+      .filter(file => file.subject === activeSubject.key)
+      .flatMap(file => file.questions.map(question => ({ file, question })))
+      .filter(item => item.question.prompt.length >= 20)
+      .sort((left, right) => (
+        (extractedQualityOrder[left.question.quality] ?? 9) - (extractedQualityOrder[right.question.quality] ?? 9)
+      ))
+      .slice(0, 12)
+  }, [activeSubject])
+
+  const subjectPracticeQuestions = useMemo(() => {
+    if (!activeSubject) return []
+    return practiceQuestions.filter(question => question.subject === activeSubject.key)
+  }, [activeSubject])
+
+  const subjectYearRows = useMemo(() => {
+    if (!activeSubject) return []
+    return gaokaoIndex.yearSummaries.map(summary => ({
+      year: summary.year,
+      cell: gaokaoIndex.matrix[summary.year][activeSubject.key],
+    }))
+  }, [activeSubject])
+
   const completeQuestion = id => {
     setCompleted(prev => {
       const next = new Set(prev)
       next.add(id)
       return next
+    })
+    const question = practiceQuestions.find(item => item.id === id)
+    syncStudyEvent({
+      eventType: 'practice_done',
+      course: 'gaokao',
+      subject: question?.subject || activeSubject?.key || null,
+      pagePath: window.location.pathname,
+      objectId: id,
+      payload: { sourceType: question?.sourceType || null, difficulty: question?.difficulty || null },
     })
   }
 
@@ -289,6 +367,147 @@ export default function GaokaoPage() {
     { label: '需 OCR 检查', value: `${gaokaoIndex.totals.needsOcrCheck} 个 PDF` },
   ]
   const extractSummary = extractedQuestions.summary
+
+  if (subjectNotFound) {
+    return (
+      <div className="gaokao-page">
+        <section className="gaokao-section">
+          <div className="section-heading">
+            <span>Not Found</span>
+            <h2>学科未找到</h2>
+          </div>
+          <p className="extract-intro">当前路径没有对应的高考学科，请返回九科总览重新选择。</p>
+          <Link className="subject-back-link" to="/courses/gaokao/">返回九科总览</Link>
+        </section>
+      </div>
+    )
+  }
+
+  if (activeSubject) {
+    return (
+      <div className="gaokao-page subject-page" style={{ '--subject-accent': activeSubject.accent }}>
+        <section id="subject-overview" className="gaokao-hero subject-hero">
+          <div>
+            <span className="eyebrow">高中内容 · 江苏高考 · {activeSubject.name}</span>
+            <h1>{activeSubject.name}高考专题</h1>
+            <p>{activeSubject.trend}</p>
+            <Link className="subject-back-link" to="/courses/gaokao/">返回九科总览</Link>
+          </div>
+          <div className="hero-metrics" aria-label={`${activeSubject.name}专题统计`}>
+            <div><strong>{subjectYearRows.reduce((sum, item) => sum + (item.cell?.total || 0), 0)}</strong><span>资料索引</span></div>
+            <div><strong>{subjectExtractedSamples.length}</strong><span>真实样本</span></div>
+            <div><strong>{subjectPracticeQuestions.length}</strong><span>扩展训练</span></div>
+            <div><strong>{activeSubject.highFrequency.length}</strong><span>高频能力点</span></div>
+          </div>
+        </section>
+
+        <section id="subject-trend" className="gaokao-section">
+          <div className="section-heading">
+            <span>Trend</span>
+            <h2>命题趋势与高频能力</h2>
+          </div>
+          <div className="subject-focus-grid">
+            <article>
+              <h3>高频能力点</h3>
+              <div className="tag-cloud">
+                {activeSubject.highFrequency.map(item => <span key={item}>{item}</span>)}
+              </div>
+            </article>
+            <article>
+              <h3>常见失分点</h3>
+              <ul className="compact-list">
+                {activeSubject.easyMistakes.map(item => <li key={item}>{item}</li>)}
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="subject-years" className="gaokao-section">
+          <div className="section-heading">
+            <span>Years</span>
+            <h2>年份资料</h2>
+          </div>
+          <div className="subject-year-grid">
+            {subjectYearRows.map(item => <SubjectYearCard key={item.year} year={item.year} cell={item.cell} />)}
+          </div>
+        </section>
+
+        {activeSubject.key === 'math' && (
+          <section id="subject-gene" className="gaokao-section">
+            <div className="section-heading">
+              <span>Question Gene</span>
+              <h2>数学出题基因与 2026 OCR 样本</h2>
+            </div>
+            <div className="prep-grid">
+              {genePatterns.filter(block => block.title.includes('数学')).map(block => (
+                <article key={block.title}>
+                  <h3>{block.title}</h3>
+                  <ul>{block.points.map(point => <li key={point}>{point}</li>)}</ul>
+                </article>
+              ))}
+            </div>
+            <div className="ocr-grid subject-ocr-grid">
+              {ocrQuestions.questions.slice(0, 6).map(question => (
+                <OcrQuestionCard key={question.number} question={question} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section id="subject-extracts" className="gaokao-section">
+          <div className="section-heading">
+            <span>Extracted</span>
+            <h2>真实抽取样本</h2>
+          </div>
+          {subjectExtractedSamples.length > 0 ? (
+            <div className="extract-grid">
+              {subjectExtractedSamples.map(({ file, question }) => (
+                <ExtractedQuestionCard
+                  key={`${file.year}-${file.subject}-${file.source}-${question.number}`}
+                  file={file}
+                  question={question}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="extract-intro">该科目的可展示 DOCX 样本仍在清洗中；旧 DOC、扫描件或特殊排版会继续标为待转换/待复核。</p>
+          )}
+        </section>
+
+        <section id="subject-practice" className="gaokao-section">
+          <div className="section-heading">
+            <span>Practice</span>
+            <h2>扩展训练</h2>
+          </div>
+          {subjectPracticeQuestions.length > 0 ? (
+            <div className="question-grid">
+              {subjectPracticeQuestions.map(question => (
+                <QuestionCard
+                  key={question.id}
+                  question={question}
+                  isDone={completed.has(question.id)}
+                  onDone={completeQuestion}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="extract-intro">该科扩展训练题会按真实题型和教材顺序继续补充；当前先展示趋势、资料和真实样本。</p>
+          )}
+        </section>
+
+        <section id="subject-advice" className="gaokao-section">
+          <div className="section-heading">
+            <span>Advice</span>
+            <h2>复习建议</h2>
+          </div>
+          <div className="subject-advice">{activeSubject.advice}</div>
+          <p className="extract-intro">
+            本学科页面只显示与 {activeSubject.name} 相关的资料与题目；总览页仍保留九科矩阵、全局 OCR 和来源说明。
+          </p>
+        </section>
+      </div>
+    )
+  }
 
   return (
     <div className="gaokao-page">

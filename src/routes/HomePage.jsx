@@ -10,18 +10,17 @@ import FireworkCanvas from '../features/ux/FireworkCanvas'
 import { useGsapAnimations } from '../hooks/useGsapAnimations'
 import useScrollMemory from '../hooks/useScrollMemory'
 import { loadBusuanzi } from '../lib/cdnScripts'
+import { subjects as gaokaoSubjects } from '../data/jiangsu-gaokao'
 
-const HIGH_SCHOOL_COURSES = [
-  {
-    path: 'gaokao',
-    icon: 'book',
-    title: '江苏高考真题基因库',
-    desc: '整理近十年江苏高考与新高考全国一卷资料，按科目、年份、题型和命题趋势做互动式学习页。',
-    tags: ['高中内容', '江苏高考', '十年真题', '全科分析'],
-    style: { borderLeft: '3px solid #2563eb' },
-    iconStyle: { background: 'linear-gradient(135deg,#2563eb,#dc2626)' },
-  },
-]
+const HIGH_SCHOOL_COURSES = gaokaoSubjects.map(subject => ({
+  path: `gaokao/${subject.key}`,
+  icon: subject.icon,
+  title: `${subject.name}高考专题`,
+  desc: subject.trend,
+  tags: ['江苏高考', '十年真题', ...subject.highFrequency.slice(0, 2)],
+  style: { borderLeft: `3px solid ${subject.accent}` },
+  iconStyle: { background: `linear-gradient(135deg,${subject.accent},#2563eb)` },
+}))
 
 const UNIVERSITY_COURSES = [
   {
@@ -188,12 +187,82 @@ function SvgIcon({ name }) {
         <path d="M8 11v5a2 2 0 0 0 2 2h4" />
       </>
     ),
+    'book-open': (
+      <>
+        <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5z" />
+        <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5z" />
+      </>
+    ),
+    function: (
+      <>
+        <path d="M5 19c3 0 3-14 6-14" />
+        <path d="M9 9h6" />
+        <path d="M14 5h4" />
+        <path d="M14 19h4" />
+      </>
+    ),
+    languages: (
+      <>
+        <path d="M4 5h9" />
+        <path d="M9 3v2" />
+        <path d="M6 9c1.2 2.8 3.5 4.8 7 6" />
+        <path d="M12 9c-.9 2.3-2.7 4.2-6 6" />
+        <path d="M15 19l3-7 3 7" />
+        <path d="M16 17h4" />
+      </>
+    ),
+    atom: (
+      <>
+        <circle cx="12" cy="12" r="1.4" />
+        <ellipse cx="12" cy="12" rx="8" ry="3.2" />
+        <ellipse cx="12" cy="12" rx="3.2" ry="8" transform="rotate(60 12 12)" />
+        <ellipse cx="12" cy="12" rx="3.2" ry="8" transform="rotate(120 12 12)" />
+      </>
+    ),
+    flask: (
+      <>
+        <path d="M9 3h6" />
+        <path d="M10 3v5l-5 9a3 3 0 0 0 2.6 4.5h8.8A3 3 0 0 0 19 17l-5-9V3" />
+        <path d="M8 15h8" />
+      </>
+    ),
+    leaf: (
+      <>
+        <path d="M5 19c8 0 14-6 14-14-8 0-14 6-14 14z" />
+        <path d="M5 19c3-5 7-8 14-14" />
+      </>
+    ),
+    landmark: (
+      <>
+        <path d="M4 9h16" />
+        <path d="M5 9l7-5 7 5" />
+        <path d="M7 10v7" />
+        <path d="M12 10v7" />
+        <path d="M17 10v7" />
+        <path d="M4 20h16" />
+      </>
+    ),
+    scroll: (
+      <>
+        <path d="M8 4h10a2 2 0 0 1 2 2v12" />
+        <path d="M8 4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10" />
+        <path d="M8 8h8" />
+        <path d="M8 12h7" />
+      </>
+    ),
+    map: (
+      <>
+        <path d="M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2z" />
+        <path d="M9 4v14" />
+        <path d="M15 6v14" />
+      </>
+    ),
   }
 
   return <svg {...common}>{paths[name] || paths.book}</svg>
 }
 
-function CourseSection({ title, description, courses }) {
+function CourseSection({ title, description, courses, action }) {
   return (
     <section className="course-section">
       <div className="course-section-head">
@@ -201,6 +270,7 @@ function CourseSection({ title, description, courses }) {
           <span>{title}</span>
           <p>{description}</p>
         </div>
+        {action && <Link to={action.to} className="course-section-action">{action.label}</Link>}
       </div>
       <div className="cards">
         {courses.map(course => (
@@ -375,6 +445,7 @@ export default function HomePage() {
           title="高中内容"
           description="高考真题、命题趋势、题型迁移和互动训练集中放在这里。"
           courses={HIGH_SCHOOL_COURSES}
+          action={{ to: '/courses/gaokao/', label: '九科总览' }}
         />
 
         <CourseSection

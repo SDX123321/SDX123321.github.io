@@ -1,0 +1,198 @@
+.account-entry {
+  position: fixed;
+  top: 18px;
+  right: 72px;
+  z-index: 300;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  font: inherit;
+  font-size: .86rem;
+  font-weight: 700;
+}
+
+.account-entry span {
+  padding: 2px 7px;
+  border-radius: 999px;
+  color: var(--warning);
+  background: var(--warning-bg);
+  font-size: .68rem;
+}
+
+.account-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(0, 0, 0, .58);
+}
+
+.account-panel {
+  position: relative;
+  width: min(620px, 94vw);
+  max-height: 88vh;
+  overflow: auto;
+  padding: 26px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
+}
+
+.account-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg2);
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.account-head span {
+  color: var(--accent);
+  font-size: .78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.account-head h2 {
+  margin: 8px 0;
+  font-size: 1.45rem;
+  letter-spacing: 0;
+}
+
+.account-head p,
+.account-message,
+.account-recent p {
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.account-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.account-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.account-tabs button,
+.account-submit {
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg2);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.account-tabs button.active,
+.account-submit {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.account-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--text2);
+  font-size: .84rem;
+  font-weight: 700;
+}
+
+.account-form input {
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg2);
+  color: var(--text);
+  font: inherit;
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.account-stat {
+  min-height: 96px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg2);
+}
+
+.account-stat strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--accent);
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.account-stat span {
+  color: var(--text2);
+  font-size: .8rem;
+}
+
+.account-recent {
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg2);
+}
+
+.account-recent ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--text2);
+  line-height: 1.8;
+}
+
+.account-logout {
+  width: 100%;
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+@media (max-width: 640px) {
+  .account-entry {
+    top: 64px;
+    right: 12px;
+  }
+
+  .account-panel {
+    padding: 22px 16px;
+  }
+
+  .account-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

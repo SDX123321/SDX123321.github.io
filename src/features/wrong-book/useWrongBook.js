@@ -1,11 +1,13 @@
 import { useState, useCallback } from 'react'
 import { KEYS, getLS, setLS } from '../../lib/storage'
+import { useAuth } from '../account/AuthContext'
 
 /**
  * Hook for managing wrong quiz answers.
  * Replaces wrong-book.js tracking logic.
  */
 export default function useWrongBook() {
+  const { syncStudyEvent } = useAuth()
   const [wrongs, setWrongs] = useState(() => getLS(KEYS.WRONG_ANSWERS, []))
 
   const addWrong = useCallback((entry) => {
@@ -14,7 +16,14 @@ export default function useWrongBook() {
       setLS(KEYS.WRONG_ANSWERS, next)
       return next
     })
-  }, [])
+    syncStudyEvent({
+      eventType: 'wrong_added',
+      course: entry.page || null,
+      pagePath: window.location.pathname,
+      objectId: entry.question || null,
+      payload: entry,
+    })
+  }, [syncStudyEvent])
 
   const clearAll = useCallback(() => {
     setWrongs([])

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
+import { useAuth } from '../account/AuthContext'
 
 export default function ChapterProgress() {
+  const { syncStudyEvent } = useAuth()
   const [pageId] = useState(() => {
     const p = window.location.pathname
     return p.replace(/[^a-zA-Z0-9一-鿿]/g, '_').substring(0, 30)
@@ -32,6 +34,15 @@ export default function ChapterProgress() {
         s[key] = chk.querySelector('input').checked
         saveDone(s)
         h2.style.opacity = s[key] ? '.5' : '1'
+        if (s[key]) {
+          syncStudyEvent({
+            eventType: 'chapter_done',
+            course: pageId,
+            pagePath: window.location.pathname,
+            objectId: key,
+            payload: { heading: h2.textContent.replace(/\s+/g, ' ').trim() },
+          })
+        }
         updateProgress()
       })
     })
@@ -62,7 +73,7 @@ export default function ChapterProgress() {
     return () => {
       bar.remove(); label.remove()
     }
-  }, [pageId])
+  }, [pageId, syncStudyEvent])
 
   return null
 }
