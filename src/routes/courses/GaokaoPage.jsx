@@ -14,6 +14,7 @@ import extractedQuestions from '../../data/jiangsu-gaokao-extracted.json'
 import extracted2026Docx from '../../data/gaokao-2026-docx-extracted.json'
 import extracted2026PdfText from '../../data/gaokao-2026-pdf-text-extracted.json'
 import extracted2026Ocr from '../../data/gaokao-2026-ocr-extracted.json'
+import extracted2026Residual from '../../data/gaokao-2026-residual-extracted.json'
 import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
 import ocrQuestions from '../../data/jiangsu-gaokao-ocr.json'
 import {
@@ -57,6 +58,7 @@ const extractedLibraries = [
   extracted2026Docx,
   extracted2026PdfText,
   extracted2026Ocr,
+  extracted2026Residual,
 ]
 
 function loadJson(key, fallback) {

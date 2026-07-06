@@ -1,0 +1,498 @@
+{
+  "generatedAt": "2026-07-06T08:28:11.215473+00:00",
+  "sourceRootLabel": "本地 2026 高考试卷资料目录",
+  "scope": {
+    "statuses": [
+      "needs-docx-extraction",
+      "needs-image-review",
+      "needs-pdf-ocr"
+    ],
+    "note": "Residual non-standard 2026 Gaokao sources: fragments, image-only DOCX, and duplicate scan PDF."
+  },
+  "summary": {
+    "files": 4,
+    "questions": 26,
+    "reviewQuestions": 26,
+    "matchedQuestions": 0,
+    "skipped": 2
+  },
+  "files": [
+    {
+      "year": 2026,
+      "subject": "english",
+      "subjectName": "英语",
+      "source": "全国一卷语法填空.docx",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\全国一卷语法填空.docx",
+      "role": "original",
+      "sourceType": "real-fragment",
+      "note": "DOCX fragment converted into one cloze item.",
+      "questions": [
+        {
+          "id": "gaokao-2026-residual-32d5e6c57b9be68c",
+          "number": 1,
+          "questionType": "语法填空片段",
+          "prompt": "2026年高考英语全国一卷语法填空\nDajis typically take place on specific dates of the lunar calendar, for example, on dates with five or seven as the last digit. It is also common for them 1. ________ (hold) on traditional Chinese holidays such as the Spring Festival, also known as the Chinese New Year, and Mid-Autumn Festival, as well as other local festivals. The exact dates and 2. ________ (frequent) of dajis vary from region to region.\nDajis evolved from the folk custom of trading goods, 3. ________ can be traced back to the Han Dynasty (202 B.C.–A.D. 220). In the old days, due to inconvenient transportation and underdeveloped communication, it was challenging for households 4. ________ (exchange) items to meet their needs for daily 5. ________ (necessity). As a solution, people made agreements to gather at a specific location on a particular day. They would trade their surplus items for the goods they needed. In addition to 6. ________ (be) venues for buying and selling, dajis are an occasion for people to socialize and enjoy entertainment.\nResidents from surrounding areas flock to these markets. They follow enticing aromas to food stalls, where they indulge in bowls of steamed dumplings or hot noodle soup. They engage in casual conversations with the stall owners, 7. ________ (share) stories of their daily lives. Afterward, they purchase some fresh fruit and vegetables from local farmers, priced far 8. ________ (low) than those in supermarkets, and embark on their journey back home.\nWang Yang, a 30-year-old Beijing professional who was born and raised in a rural area of Pingdingshan, Henan Province, said one of his fondest childhood memories 9. ________ (be) going to dajis with his family around the Spring Festival holiday and buying candies and new clothes. \"There were also performances like folk operas and dances, and even game machines carried on trucks for us to play. It was family quality time for pure fun,\" he told Beijing Review, 10. ________ well-known English-language magazine in China.",
+          "answer": "1. to be held\n2. frequency\n3. which\n4. to exchange\n5. necessities\n6. being\n7. sharing\n8. lower\n9. was\n10. a",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_tail",
+            "fragment_source",
+            "solution_not_found"
+          ]
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "subject": "english",
+      "subjectName": "英语",
+      "source": "全国一卷阅读理解D篇.docx",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\全国一卷阅读理解D篇.docx",
+      "role": "original",
+      "sourceType": "real-fragment",
+      "note": "Source contains passage material but no numbered questions.",
+      "questions": [
+        {
+          "id": "gaokao-2026-residual-17bd935d6d43a480",
+          "number": 1,
+          "questionType": "阅读材料片段",
+          "prompt": "Pondering artistic beauty encourages ‘big picture’ thinking\nA psychological experiment conducted at Kettle's Yard suggests that actively considering the beauty of art increases abstract thinking and “transformative” emotion – helping us escape the “mental trappings” of day-to-day living.\nSince the dawn of philosophy, thinkers from Plato to Kant have considered how beauty affects human experience, and whether it has the power to transform our state of mind.\nNow, a new study from the University of Cambridge suggests that stopping to contemplate the beauty of artistic objects in a gallery or museum boosts our ability to think in abstract ways and consider the “bigger picture” when it comes to our lives.\nResearchers say the findings offer empirical evidence that engaging with artistic beauty helps us escape the “mental trappings of daily life,” such as current anxieties and to-do lists, and induce “psychological distancing”: the process of zooming out on your thoughts to gain clarity.\nA team of Cambridge psychologists conducted an experiment using the University’s modern art gallery, Kettle’s Yard, as a “living laboratory” to compare the cognitive effects of merely seeing art with actively judging how beautiful it is.\nResearchers found that study participants who focused on the beauty of objects in an exhibition of ceramics were more likely to experience elevated psychological states enabling them to think “beyond the here and now”, and more likely to report feeling enlightened, moved, or transformed.\nThis was compared to participants who were simply asked to look intently at the artistic objects to match them with a series of line drawings. The findings are published in the journal Empirical Studies of the Arts.\nThe study, among the first to explore how aesthetic experiences in a gallery or museum can affect cognitive processing, reinforces the importance of art creation as well as access to artistic spaces, say researchers.\n“Many philosophers throughout history have suggested that engaging with aesthetic beauty invokes a special kind of psychological state,” said Prof Simone Schnall, senior author of the study and Professor of Experimental Social Psychology at Cambridge.\n“Our research indicates that engaging with the beauty of art can enhance abstract thinking and promote a different mindset to our everyday patterns of thought, shifting us into a more expansive state of mind.”\n“This is known as psychological distancing, when one snaps out of the mental trappings of daily life and focuses more on the overall picture.”\n“Visiting an art museum is not just a pleasant way to spend an afternoon, it may actually change how we think about our lives”\nProf Simone Schnall\nFor the latest study, 187 people were recruited to visit Kettle’s Yard gallery during an exhibition of handmade clay objects by pottery artist Lucie Rie.\n“Ceramics were ideal for our purposes,” said Schnall. “A glorious painting by an Old Master would be too striking. We needed art that is subtle in form, requiring a focused contemplation of the nature of beauty.”\nParticipants were randomly split into two groups: the ‘beauty’ group was asked to actively consider and then rate the beauty of each ceramic object they viewed, while the second group just matched a line drawing of the object with the artwork itself.\nAll participants were then tested on how they process information, and if it’s in a more practical or abstract way.\nFor example, does ‘writing a letter’ mean literally putting pen to paper or sharing your thoughts? Is ‘voting’ marking a ballot or influencing an election? Is ‘locking a door’ inserting a key or securing a house?\n“These tests are designed to gauge whether a person is thinking in an immediate, procedural way, as we often do in our day-to-day lives, or is attuned to the deeper meaning and bigger picture of the actions they take,” said Dr Elzė Sigutė Mikalonytė, lead author of the study and a researcher at Cambridge’s Department of Psychology.\nAcross all participants, those in the beauty group scored almost 14% higher on average than the control group in abstract thinking. While they were told the study was about cognitive processes, participants were asked about interests, with around half saying they had an artistic hobby.\nAmong those, the effect was greater: those with an artistic hobby in the ‘beauty’ group scored over 25% higher on average for abstract thinking than those with an artistic hobby in the control group.\nEmotional states of participants were also measured by asking about their feelings while completing the gallery task. Across all participants, those in the beauty group reported an average of 23% higher levels of “transformative and self-transcendent feelings” – such as feeling moved, enlightened and inspired – than the control group.\n“Our findings offer empirical support for a long-standing philosophical idea that beauty appreciation can help people detach from their immediate practical concerns and adopt a broader, more abstract perspective,” said Mikalonytė.\nImportantly, however, the beauty group did not report feeling any happier than the control group, suggesting that it was the engagement with beauty that influenced abstract thinking, rather than any overall positivity from the experience.\nThe latest study is part of a wider project led by Schnall exploring the effects of aesthetic experiences on cognition. The project, supported by the Templeton Religion Trust, aims to address whether art can contribute to human flourishing and positive values.\n“People today are often tethered to their devices, and we usually think in very concrete terms when we’re doing something on a screen,” added Schnall.\n“It’s becoming much rarer to zone out and just let the mind wander, but that’s when we think in ways that broaden our horizons. Admiring the beauty of art may be the ideal way to trigger the abstract cognitive processes increasingly lost in a world of screens and smartphones.”",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_not_found",
+            "passage_only",
+            "questions_not_in_source"
+          ]
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "subject": "english",
+      "subjectName": "英语",
+      "source": "全国二卷英语 语法填空（网络）.docx",
+      "relativePath": "2026高考试卷（更新中）\\二卷\\全国二卷英语 语法填空（网络）.docx",
+      "role": "original",
+      "sourceType": "real-ocr",
+      "note": "Image-only DOCX converted into one OCR cloze item.",
+      "questions": [
+        {
+          "id": "gaokao-2026-residual-3830b3d278d05818",
+          "number": 1,
+          "questionType": "语法填空图片片段",
+          "prompt": "",
+          "answer": "1. entirely\n2. instructor\n3. and\n4. feet\n5. am supposed\n6. which\n7. descriptive\n8. one\n9. being\n10. to meet",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_ocr_image",
+            "docx_image_ocr",
+            "fragment_source",
+            "needs_review",
+            "solution_not_found"
+          ]
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "subject": "physics",
+      "subjectName": "物理",
+      "source": "2026高考湖南物理试题（高清完整版）.pdf",
+      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
+      "role": "original",
+      "status": "ocr-structured",
+      "pages": [
+        {
+          "page": 1,
+          "image": "C:\\Users\\zzz\\Desktop\\site\\tmp\\gaokao-residual-ocr\\f0a0ada4b1e7-page1.png",
+          "lines": 61
+        },
+        {
+          "page": 2,
+          "image": "C:\\Users\\zzz\\Desktop\\site\\tmp\\gaokao-residual-ocr\\f0a0ada4b1e7-page2.png",
+          "lines": 59
+        },
+        {
+          "page": 3,
+          "image": "C:\\Users\\zzz\\Desktop\\site\\tmp\\gaokao-residual-ocr\\f0a0ada4b1e7-page3.png",
+          "lines": 63
+        },
+        {
+          "page": 4,
+          "image": "C:\\Users\\zzz\\Desktop\\site\\tmp\\gaokao-residual-ocr\\f0a0ada4b1e7-page4.png",
+          "lines": 52
+        },
+        {
+          "page": 5,
+          "image": "C:\\Users\\zzz\\Desktop\\site\\tmp\\gaokao-residual-ocr\\f0a0ada4b1e7-page5.png",
+          "lines": 90
+        },
+        {
+          "page": 6,
+          "image": "C:\\Users\\zzz\\Desktop\\site\\tmp\\gaokao-residual-ocr\\f0a0ada4b1e7-page6.png",
+          "lines": 23
+        },
+        {
+          "page": 7,
+          "image": "C:\\Users\\zzz\\Desktop\\site\\tmp\\gaokao-residual-ocr\\f0a0ada4b1e7-page7.png",
+          "lines": 27
+        },
+        {
+          "page": 8,
+          "image": "C:\\Users\\zzz\\Desktop\\site\\tmp\\gaokao-residual-ocr\\f0a0ada4b1e7-page8.png",
+          "lines": 25
+        }
+      ],
+      "lines": 400,
+      "questions": [
+        {
+          "id": "gaokao-2026-ocr-3c149f0ffcec97b4",
+          "number": 1,
+          "questionType": "选择题",
+          "prompt": "某舰载机起飞时，在第2s内的-t图像女\n小为\nA.10m/s²\nB.\n20m/s²\nC.\n30m/s2\nD.\n40m/s²",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.978
+        },
+        {
+          "id": "gaokao-2026-ocr-83835c0c17e642c2",
+          "number": 2,
+          "questionType": "选择题",
+          "prompt": "关于原子核衰变，下列说法正确的是\nA.原子核发生α衰变时，电荷数增大\nB.原子核发生α衰变时，质量数增大\nC.衰变产生的α粒子穿透能力强，可以\nD．理论研究表明，2Rn（氢核）可能在-\n方程为2Rn→2He+2Pb",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.973
+        },
+        {
+          "id": "gaokao-2026-ocr-51b81bd03c17c731",
+          "number": 3,
+          "questionType": "选择题",
+          "prompt": "郭守敬望远镜是我国首个天文领域大科学\n数据表明，某行星绕一恒星做匀速圆周运\nn倍。不考虑其他星体的影响，引力常量\nA. 3πn²\nGT\n3πn3\nC.\nGT2\n物理试题第1页\n准考证号\n通高中学业水平选择性考试\n物理\n选涂其他答案标号。回答非选择题时，将答案写在\n题4分，共28分。在每小题给出的四个选项中，\n-t图像如图所示，该段时间内舰载机加速度的大\n↑u/(m's\")\n50\n30\nt/s\n角的是\n数增大\n数增大\n强，可以穿透几厘米厚的铅板\n)可能在一次衰变过程中放出两个α粒子，则其衰变\n页域大科学装置，积累了大量的观测数据。分析观测\n速圆周运动的周期为T，轨道半径为该恒星半径的\n引力常量为G，则该恒星的平均密度为\n鼎\nD.\n题第1页（共8页）",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.955
+        },
+        {
+          "id": "gaokao-2026-ocr-d6d9f8f99d10d8e4",
+          "number": 4,
+          "questionType": "选择题",
+          "prompt": "如图，均匀介质中有且仅有一个点波源产生\nB (4,0)在xy平面内。某时刻，A处质点位\n正确的是\nA.若波源在(0,0)处，波长可能为1m\nB.若波源在（0，0)处，波长可能为2m\nC.若波源在（0，3)处，波长可能为3m\nD.若波源在（0，3)处，波长可能为4m",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.966
+        },
+        {
+          "id": "gaokao-2026-ocr-5b146d547aa7fc47",
+          "number": 5,
+          "questionType": "选择题",
+          "prompt": "如图，电阻R的阻值为10Ω，电流表为理想\nb端分别接入d、e端，电流表示数为1.0A\n表示数为1.5A。则单个电池组的电动势和内\nA.15V，5Ω\nB.15V，10Ω\nC.30V，5Ω\nD.30V，10Ω",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.959
+        },
+        {
+          "id": "gaokao-2026-ocr-c13b0c51b0363cbe",
+          "number": 6,
+          "questionType": "选择题",
+          "prompt": "如图，三个足够大的金属板A、B、C平行方\nd2，d<d2。α点到A、B板的距离相等，\n接地，B板带电。关于a、b两点的电场强\n确的是\nA.E。>Eb\nB.E。<E,\nC. 9。>Pb\nD. Φ。<b",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.913
+        },
+        {
+          "id": "gaokao-2026-ocr-603e0298ae69f561",
+          "number": 7,
+          "questionType": "选择题",
+          "prompt": "如图，一心形玩具气球内密封一定质量的理\n球，心形气球体积始终不变。在心形气球内\n强，整个系统导热良好。初始时，小气球的\n慢升高时，忽略温度变化对气球材料性质的\nA.小气球外部气体压强不变\nB.小气球内部气体分子数与外部相等\nC.小气球内部气体体积不变\nD.小气球内部气体体积变大\n物理试题第2页\n波源产生简谐横波在xy平面内传播，A（4，3)、\n处质点位于波峰，B处质点位于波谷。下列说法\n↑y/m\nA(4,3)\n3\n为1m\n为2m\n为3m\niB(4,0)\nx/m\n为4m\n流表为理想电表，两个电池组完全相同。若将a、\n数为1.0A：若将a、c端分别接入d、e端，电流\n电动势和内阻分别为\n电池组电池组\n、C平行放置，B板到A、C板的距离分别为d、\n离相等，b点到B、C板的距离相等。A、C板均\n的电场强度E。、E,和电势。、，下列关系正\na\n质量的理想气体和一个充有同种气体的弹性小气\n必形气球内，小气球内部气体压强大于外部气体压\n小气球的体积为心形气球体积的一半。当温度缓\n料性质的影响，下列说法正确的是\n外\n部\n相等\n内部\n多项符合题目要求。全部选对的得5分，",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.968
+        },
+        {
+          "id": "gaokao-2026-ocr-d0c16f6d4436d660",
+          "number": 8,
+          "questionType": "选择题",
+          "prompt": "如图，一块高功率芯片上方紧贴着一个均热\n平纯铜空腔，空腔内部注有微量的水。在\n工作过程中，水从高温芯片处吸收热量汽\n水蒸气在低温冷凝端放出热量变回液态水\n回流到底部。下列说法正确的是\nA.空腔内高温处所有水分子的运动速率都\nB.一定量的水吸收热量变成相同温度的水\nC.该均热板可以从高温物体吸热，向低温\nD.该均热板可以从低温物体吸热，向高温",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.993
+        },
+        {
+          "id": "gaokao-2026-ocr-43901d3729eac195",
+          "number": 9,
+          "questionType": "填空题",
+          "prompt": "如图，某同学将两个相同的球形氨气球用等\n一起做水平匀速运动。运动过程中，球心\n绳所构成的平面与水平面的夹角为0（0<\n为F。气球受到空气阻力的大小与相对空\n气始终相对于地面静止，忽略气球形状的\n向运动速度缓慢增大，下列说法正确的是\nA.9增大\nB.0减小",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.958
+        },
+        {
+          "id": "gaokao-2026-ocr-42098f329e7ec149",
+          "number": 10,
+          "questionType": "填空题",
+          "prompt": "某小组设计了一磁悬浮装置。如图，环形道\n，半径为R的环形细管道，管道任意处磁场\n带正电小球在环形管道中以某一速率做匀\n动，此时小球与管道间无弹力，重力加速度\n列说法正确的是\nA.从管道上方俯视，小球沿顺时针方向做\nB.小球做圆周运动的周期为π\nR\nVg\nC.小球做圆周运动的半个周期内洛伦兹力\nD.若小球的绕行方向不变，速率为其做匀\n的弹力大小为√5mg\n物理试题第3页\n5分，共15分。在每小题给出的四个选项中，有\n得5分，选对但不全的得3分，有选错的得0分。\n着一个均热板散热器。均热板是一个完全密封的扁\n冷凝端\n的水。在正常\n收热量汽化，\n4空腔\n回液态水，并\n芯片\n运动速率都比低温处水分子的运动速率大\n同温度的水蒸气，内能变大\n热，向低温物体放热，不对外界做功\n热，向高温物体放热，而不产生其他影响\n氨气球用等长的轻绳系在一起，拉着绳使气球随人\n中，球心始终在绳的延长线上且球心连线水平，两\n为θ（9<90，两球间的弹力\n与相对空气的速率成正比，空\n球形状的变化。该同学沿原方\n正确的是\nC.F增大\nD.F减小\n图，环形通电线圈固定在水平面上，其上方固定一\n意处磁场方向与竖直方向夹角为45°。质量为m的\n速率做匀速圆周运\n重力加速度为g。下\n寸针方向做圆周运动\nR\ng\n内洛伦兹力的冲量大小为m√（2+π²）gR\n率为其做匀速圆周运动速率的2倍，则小球与管道间\n题第3页（共8页）",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.969
+        },
+        {
+          "id": "gaokao-2026-ocr-93d1098101ea01d9",
+          "number": 11,
+          "questionType": "填空题",
+          "prompt": "(8分)\n某同学借助视频分析软件进行“用单摆测量\n（1）准备好单摆，用支架将手机竖直放置。\n（2）打开手机录像，将单摆拉离平衡位置4\n（3）将录制的视频导入软件进行分析，得到\n可知此单摆的周期T为\nS。\n0",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.954
+        },
+        {
+          "id": "gaokao-2026-ocr-01a0c59f960dbdf0",
+          "number": 0,
+          "questionType": "选择题",
+          "prompt": "3元0.6/π\n图1\n（4）如图2，用刻度尺测量单摆摆长，该同学\n单摆悬点对齐，读出\n（填“a”“b”或“\n（5）重力加速度g=\n（用题中给出的\n（6）该同学发现所得实验结果小于当地重力\n（填“高于”或“低于”）悬点。",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.986
+        },
+        {
+          "id": "gaokao-2026-ocr-2d2146ae75940c4c",
+          "number": 12,
+          "questionType": "填空题",
+          "prompt": "(9分)\n某探究小组用霍尔元件设计了一个测量微小\n（1）将螺旋测微器通过铜杆连接霍尔元件。\n极相对放置的磁体间隙中，并处于两磁体中心竖\n图如图1所示；霍尔元件上的导线与外部工作电\nN\n崔尔元件\nS\nC\nS\nN\n铜杆\n图1\n物理试题第4页\n分。\n用单摆测量重力加速度”的实验，步骤如下：\n竖直放置。\n平衡位置4°摆角由静止释放。\n分析，得到摆球的-t图像，拟合后如图1所示，\nis\n图2\n长，该同学将刻度尺竖直放置，刻度尺0刻度线与\n“b”或“c”）位置的读数，该读数即为摆长l。\n中给出的字母“T”和“I”表示）。\n于当地重力加速度，可能的原因是刻度尺0刻度线\n个测量微小位移的实验装置。\n霍尔元件。霍尔元件伸入两块磁感应强度相同、同\n磁体中心竖直线上。以中心竖直线为z轴，其示意\n外部工作电路连接，其示意图如图2所示。\n霍尔元件\n电源\nmA\n图2\n九师联盟九师培优\n（2）将电压表接在霍尔元件的\n（填“a\n测量其霍尔电压，电压表指针如图3所示，此时\n40\n60\n20\n80\nnhV\n图3\n（3）旋转螺旋测微器的旋钮，使霍尔元件沿\n应强度为0，此时的螺旋测微器读数如图4所示\n（4）保持电流不变，旋转螺旋测微器的旋钮\n得到10组数据如下表所示。\nz/mm\nU/mV\n1\n11.670\n9\n15\n2\n11.960\n16\n3",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.965
+        },
+        {
+          "id": "gaokao-2026-ocr-244a4e2e07bc7a1e",
+          "number": 12,
+          "questionType": "填空题",
+          "prompt": "302\n14\n25\n4",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.999
+        },
+        {
+          "id": "gaokao-2026-ocr-1d9d02a195ee78d4",
+          "number": 12,
+          "questionType": "填空题",
+          "prompt": "633\n35\n13\n5",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.998
+        },
+        {
+          "id": "gaokao-2026-ocr-d5e277d2bbbc0b42",
+          "number": 12,
+          "questionType": "填空题",
+          "prompt": "952\n42\n6",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.999
+        },
+        {
+          "id": "gaokao-2026-ocr-41fec6dcf37c0f39",
+          "number": 13,
+          "questionType": "填空题",
+          "prompt": "270\n48\n12\n7",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.999
+        },
+        {
+          "id": "gaokao-2026-ocr-a25796735eb28458",
+          "number": 13,
+          "questionType": "填空题",
+          "prompt": "594\n57\n11\n8",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.994
+        },
+        {
+          "id": "gaokao-2026-ocr-596a2ff68985dad1",
+          "number": 13,
+          "questionType": "填空题",
+          "prompt": "930\n67\n9",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 1.0
+        },
+        {
+          "id": "gaokao-2026-ocr-7d33d9a53e51dbbd",
+          "number": 14,
+          "questionType": "填空题",
+          "prompt": "246\n74\n10\n10",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.999
+        },
+        {
+          "id": "gaokao-2026-ocr-3c7842eb3bb08ef5",
+          "number": 14,
+          "questionType": "填空题",
+          "prompt": "585\n81\n（5）在图5中描出第4、5组测量数据的坐\n（6）用此装置测量微小位移。取下螺旋测\n体在z轴方向移动，其位移与霍尔元件的位移\n表示数为20mV，移动后电压表示数为60mV\n为\nmm（保留2位小数）。\n物理试题第5页\n（填“a、b”或“c、d”）两端，闭合开关S;\n斤示，此时电压为\nmV。\n40\n35\n0\n30\n图4\n尔元件沿z轴移动至霍尔电压为0处，该处磁感\n图4所示，该读数为\nmm.\n器的旋钮，读出霍尔元件在不同位置的霍尔电压，\nz/mm\n15\n14\n13\n12\n11\n10\n0\n20\n40\n60\n80\n100U/mV\n图5\n数据的坐标点，并作出z-U图像。\n下螺旋测微器，将待测物体与铜杆连接，待测物\n件的位移相等。某次测量中待测物体移动前电压\n为60mV，根据图像，此过程中物体位移的大小\n13.（10分）\n车载摄像头需要有较大的拍摄角度。一摄像\n图，将摄像头嵌入均匀透明介质，介质截面为矩\n过空气与介质间界面的折射，可将实际拍摄角度\n（1）若希望几乎贴着介质表面入射的光线1\n摄角度扩大为180°，求介质的折射率：\n（2）若介质折射率为1.8，从侧后方向入射\n一次全反射，然后恰好射入摄像头，求光线2的\n光线1\n介质\n120°\n摄像头\n物理试题第6页\n度。一摄像头由于结构限制，拍摄角度为120°。如\n质截面为矩形。只考虑该截面内光线传播情况，通\n标拍摄角度扩大。\n村的光线1能够以图示路径恰好射入摄像头，即拍\n方向入射的光线2能够以图示路径折射之后发生\n求光线2的入射角0的正弦值。\n120°\n光线2\n摄像头",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.988
+        },
+        {
+          "id": "gaokao-2026-ocr-f8bfdb19d0558d4a",
+          "number": 14,
+          "questionType": "填空题",
+          "prompt": "（14分）\n某小组制作了一储能器，其两端电压U与其\nU=kq（k为常量）。将该储能器接入如图所示日\n足够长的平行金属导轨固定于水平面上，电阻不\n强磁场，磁感应强度为B。质量为㎡的导体棒垂\n源电动势为E，内阻不计。定值电阻阻值为R。\n匀速运动，再于t时刻切换开关与b或c连接。\n触良好，忽略摩擦。\n（1）求t时刻导体棒加速度a。的大小;\n（2）若t时刻开关与b连接，储能器接入电\n（此时电路中电流不为0），求导体棒速度的大小\n（3）若t时刻开关与c连接，求从时刻起至\n的焦耳热Q。\n储能器\n物理试题第7页\n电压U与其储存的电荷量9间的函数关系近似为\n如图所示电路，a、b、c为固定的三个触点。两\n，电阻不计，间距为L。导轨间有竖直向下的匀\n导体棒垂直导轨放置，接入电路的阻值为r。电\n值为R。t时刻开关S与a连接，直到导体棒做\nc连接。运动过程中导体棒与导轨始终垂直且接\n小；\n器接入电路前电压为0，当储能器电压为U。时\n度的大小；\n时刻起到导体棒静止的过程中，导体棒上产生\n储能器",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.976
+        },
+        {
+          "id": "gaokao-2026-ocr-eb26f70dd4fdfcd5",
+          "number": 15,
+          "questionType": "解答题",
+          "prompt": "（16分）\n如图，长为L的轻杆竖直放置，上端固定\n上某固定点，杆可绕该点无摩擦转动。小球内\n微扰动后，小球和杆从静止开始一起运动，当\n加速度为g，不计空气阻力。\n（1）求小球接触地面瞬间的速度的大小\n（2）求小球接触地面瞬间的速度与水平面\n（3）小球与地面碰撞前后，竖直方向分速\n相等。碰撞后瞬间，智能弹射装置工作，小球\n方向均与小球分裂前瞬间的速度方向成9角\n比为k，弹射装置释放的能量为E。\n（i）求E与k的关系；\n（ii）当E最小时，若分裂后两部分第一\n的间距d。\n物理试题第8页\n上端固定一质量为m的小球，下端连接于水平地面\n力。小球内部安装了质量不计的智能弹射装置。受轻\n运动，当两者间弹力为0时，小球脱离轻杆，重力\n度的大小；\n与水平面夹角α的正切值；\n方向分速度大小相等、方向相反，水平方向分速度\n作，小球在极短时间内分裂成两部分，两部分速度\n向成θ角（θ已知，且0<θ<α）。设两部分质量之\n部分第一次落地时刻相同，求两部分第一次落地点\n题第8页（共8页）",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "ocr_scan",
+            "needs_review"
+          ],
+          "averageScore": 0.982
+        }
+      ],
+      "sourceType": "real-ocr"
+    }
+  ],
+  "skipped": [
+    {
+      "source": "必看更新资料.docx",
+      "relativePath": "2026高考试卷（更新中）\\必看更新资料.docx",
+      "subject": "unknown",
+      "subjectName": "未知",
+      "role": "original",
+      "status": "non-question-source",
+      "reason": "Promotional update note, not an exam question or answer source."
+    },
+    {
+      "source": "2026年高考真题和答案（文综）.png",
+      "relativePath": "补充\\2026年高考真题和答案（文综）.png",
+      "subject": "unknown",
+      "subjectName": "未知",
+      "role": "answer-or-analysis",
+      "status": "answer-source",
+      "reason": "Answer image retained as a source artifact; no standalone question prompt."
+    }
+  ]
+}

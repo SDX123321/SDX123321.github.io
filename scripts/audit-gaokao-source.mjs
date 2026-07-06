@@ -81,12 +81,20 @@ const extractedOcrPath = path.join(repoRoot, 'src', 'data', 'gaokao-2026-ocr-ext
 const extractedOcr = fs.existsSync(extractedOcrPath)
   ? JSON.parse(fs.readFileSync(extractedOcrPath, 'utf8'))
   : { files: [] }
+const extractedResidualPath = path.join(repoRoot, 'src', 'data', 'gaokao-2026-residual-extracted.json')
+const extractedResidual = fs.existsSync(extractedResidualPath)
+  ? JSON.parse(fs.readFileSync(extractedResidualPath, 'utf8'))
+  : { files: [], skipped: [] }
 const extractedNames = new Set([
   ...extracted.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
   ...extracted2026.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
   ...extractedPdf.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
   ...extractedOcr.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
+  ...extractedResidual.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
 ])
+const residualStatusByName = new Map(
+  extractedResidual.skipped.map(file => [file.source, file.status]),
+)
 const answerSourceNames = new Set([
   ...extractedPdf.skipped
     .filter(file => file.status === 'answer-map-only')
@@ -103,6 +111,7 @@ const files = walk(sourceRoot)
     const role = detectRole(searchableText)
     const matchedExtracted = extractedNames.has(fileName)
     const matchedAnswerSource = answerSourceNames.has(fileName)
+    const residualStatus = residualStatusByName.get(fileName)
     return {
       name: fileName,
       relativePath,
@@ -110,7 +119,7 @@ const files = walk(sourceRoot)
       subjectKey: subject?.key || 'unknown',
       subjectName: subject?.name || '未知',
       role,
-      status: detectStatus(ext, role, matchedExtracted, matchedAnswerSource),
+      status: residualStatus || detectStatus(ext, role, matchedExtracted, matchedAnswerSource),
     }
   })
   .filter(Boolean)

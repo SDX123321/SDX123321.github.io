@@ -1,15 +1,13 @@
 {
-  "generatedAt": "2026-07-06T08:17:33.633Z",
+  "generatedAt": "2026-07-06T08:29:32.193Z",
   "sourceRootLabel": "本地 2026 高考试卷资料目录",
   "scope": "包含路径或文件名带 2026 的资料；排除 1990-2025 历史合集，避免父目录年份误判。",
   "totals": {
     "files": 150,
     "byStatus": {
-      "structured": 121,
-      "answer-source": 23,
-      "needs-docx-extraction": 4,
-      "needs-pdf-ocr": 1,
-      "needs-image-review": 1
+      "structured": 125,
+      "answer-source": 24,
+      "non-question-source": 1
     },
     "bySubject": {
       "biology": {
@@ -40,8 +38,7 @@
         "total": 17,
         "byStatus": {
           "answer-source": 4,
-          "needs-docx-extraction": 3,
-          "structured": 10
+          "structured": 13
         }
       },
       "geography": {
@@ -72,8 +69,7 @@
         "total": 25,
         "byStatus": {
           "answer-source": 7,
-          "needs-pdf-ocr": 1,
-          "structured": 17
+          "structured": 18
         }
       },
       "politics": {
@@ -87,9 +83,8 @@
         "subjectName": "未知",
         "total": 4,
         "byStatus": {
-          "answer-source": 2,
-          "needs-docx-extraction": 1,
-          "needs-image-review": 1
+          "answer-source": 3,
+          "non-question-source": 1
         }
       }
     }
@@ -447,33 +442,6 @@
       "status": "answer-source"
     },
     {
-      "name": "全国一卷语法填空.docx",
-      "relativePath": "2026高考试卷（更新中）\\一卷\\全国一卷语法填空.docx",
-      "ext": ".docx",
-      "subjectKey": "english",
-      "subjectName": "英语",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "全国一卷阅读理解D篇.docx",
-      "relativePath": "2026高考试卷（更新中）\\一卷\\全国一卷阅读理解D篇.docx",
-      "ext": ".docx",
-      "subjectKey": "english",
-      "subjectName": "英语",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "全国二卷英语 语法填空（网络）.docx",
-      "relativePath": "2026高考试卷（更新中）\\二卷\\全国二卷英语 语法填空（网络）.docx",
-      "ext": ".docx",
-      "subjectKey": "english",
-      "subjectName": "英语",
-      "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
       "name": "2026年高考《英语》真题试卷（北京卷）.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026年北京高考\\2026年高考《英语》真题试卷（北京卷）.pdf",
       "ext": ".pdf",
@@ -501,6 +469,24 @@
       "status": "structured"
     },
     {
+      "name": "全国一卷语法填空.docx",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\全国一卷语法填空.docx",
+      "ext": ".docx",
+      "subjectKey": "english",
+      "subjectName": "英语",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "全国一卷阅读理解D篇.docx",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\全国一卷阅读理解D篇.docx",
+      "ext": ".docx",
+      "subjectKey": "english",
+      "subjectName": "英语",
+      "role": "original",
+      "status": "structured"
+    },
+    {
       "name": "2026高考英语全国二卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\二卷\\2026高考英语全国二卷.pdf",
       "ext": ".pdf",
@@ -513,6 +499,15 @@
       "name": "2026高考英语新课标二卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\二卷\\2026高考英语新课标二卷.pdf",
       "ext": ".pdf",
+      "subjectKey": "english",
+      "subjectName": "英语",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "全国二卷英语 语法填空（网络）.docx",
+      "relativePath": "2026高考试卷（更新中）\\二卷\\全国二卷英语 语法填空（网络）.docx",
+      "ext": ".docx",
       "subjectKey": "english",
       "subjectName": "英语",
       "role": "original",
@@ -1230,15 +1225,6 @@
       "status": "answer-source"
     },
     {
-      "name": "2026高考湖南物理试题（高清完整版）.pdf",
-      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
-      "ext": ".pdf",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "original",
-      "status": "needs-pdf-ocr"
-    },
-    {
       "name": "2026云南卷物理解读.docx",
       "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026云南卷物理解读.docx",
       "ext": ".docx",
@@ -1392,6 +1378,15 @@
       "status": "structured"
     },
     {
+      "name": "2026高考湖南物理试题（高清完整版）.pdf",
+      "relativePath": "补充\\2026高考湖南物理试题（高清完整版）.pdf",
+      "ext": ".pdf",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "original",
+      "status": "structured"
+    },
+    {
       "name": "2026年上海高考【政治】回忆.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026年上海高考\\2026年上海高考【政治】回忆.pdf",
       "ext": ".pdf",
@@ -1419,6 +1414,15 @@
       "status": "answer-source"
     },
     {
+      "name": "2026年高考真题和答案（文综）.png",
+      "relativePath": "补充\\2026年高考真题和答案（文综）.png",
+      "ext": ".png",
+      "subjectKey": "unknown",
+      "subjectName": "未知",
+      "role": "answer-or-analysis",
+      "status": "answer-source"
+    },
+    {
       "name": "2026新高考一卷试题及答案（参考）.docx",
       "relativePath": "补充\\一卷\\2026新高考一卷试题及答案（参考）.docx",
       "ext": ".docx",
@@ -1434,16 +1438,7 @@
       "subjectKey": "unknown",
       "subjectName": "未知",
       "role": "original",
-      "status": "needs-docx-extraction"
-    },
-    {
-      "name": "2026年高考真题和答案（文综）.png",
-      "relativePath": "补充\\2026年高考真题和答案（文综）.png",
-      "ext": ".png",
-      "subjectKey": "unknown",
-      "subjectName": "未知",
-      "role": "answer-or-analysis",
-      "status": "needs-image-review"
+      "status": "non-question-source"
     }
   ]
 }

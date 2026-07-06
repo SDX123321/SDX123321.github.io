@@ -170,7 +170,7 @@ async function seedSubjectProfiles() {
   }
 }
 
-async function seedStaticSources(index, extracted, docx2026, pdfText2026, auditOcr2026, ocr) {
+async function seedStaticSources(index, extracted, docx2026, pdfText2026, auditOcr2026, residual2026, ocr) {
   let count = 0
   for (const source of sources) {
     await upsertSource({
@@ -229,6 +229,15 @@ async function seedStaticSources(index, extracted, docx2026, pdfText2026, auditO
     metadata: { generatedAt: auditOcr2026.generatedAt, summary: auditOcr2026.summary, scope: auditOcr2026.scope },
   })
   await upsertSource({
+    sourceKey: 'local_gaokao_2026_residual_extracted',
+    name: '2026 高考非标准残余文件抽取结果',
+    detail: 'src/data/gaokao-2026-residual-extracted.json',
+    status: 'extracted-needs-review',
+    sourceType: 'local-extract',
+    relativePath: 'src/data/gaokao-2026-residual-extracted.json',
+    metadata: { generatedAt: residual2026.generatedAt, summary: residual2026.summary, scope: residual2026.scope, skipped: residual2026.skipped },
+  })
+  await upsertSource({
     sourceKey: 'local_gaokao_ocr_2026_jiangsu_math',
     name: ocr.source?.filename || '2026 江苏数学 OCR',
     detail: ocr.source?.note,
@@ -237,7 +246,7 @@ async function seedStaticSources(index, extracted, docx2026, pdfText2026, auditO
     relativePath: ocr.source?.relativePath,
     metadata: { generatedAt: ocr.generatedAt, summary: ocr.summary, pages: ocr.pages },
   })
-  return count + 6
+  return count + 7
 }
 
 async function seedIndexPapers(index) {
@@ -308,7 +317,7 @@ async function seedExtractedQuestions(extracted) {
     papers += 1
 
     for (const item of file.questions || []) {
-      const sourceType = file.relativePath?.toLowerCase().endsWith('.pdf') ? 'real-pdf-text' : 'real-docx'
+      const sourceType = file.sourceType || (file.relativePath?.toLowerCase().endsWith('.pdf') ? 'real-pdf-text' : 'real-docx')
       const questionId = await upsertQuestion({
         questionKey: hashKey('extract_question', [file.year, file.subject, file.source, item.number, item.prompt]),
         paperId,
@@ -316,7 +325,7 @@ async function seedExtractedQuestions(extracted) {
         subjectKey: file.subject,
         subjectName: file.subjectName,
         questionNumber: item.number,
-        questionType: null,
+        questionType: item.questionType || null,
         difficulty: null,
         quality: item.quality || 'review',
         prompt: item.prompt,
@@ -543,19 +552,21 @@ async function main() {
   const docx2026 = await loadJson('gaokao-2026-docx-extracted.json')
   const pdfText2026 = await loadJson('gaokao-2026-pdf-text-extracted.json')
   const auditOcr2026 = await loadJson('gaokao-2026-ocr-extracted.json')
+  const residual2026 = await loadJson('gaokao-2026-residual-extracted.json')
   const ocr = await loadJson('jiangsu-gaokao-ocr.json')
 
   await ensureSchema()
   await query('BEGIN')
   try {
     await seedSubjectProfiles()
-    const sourceCount = await seedStaticSources(index, extracted, docx2026, pdfText2026, auditOcr2026, ocr)
+    const sourceCount = await seedStaticSources(index, extracted, docx2026, pdfText2026, auditOcr2026, residual2026, ocr)
     const indexPaperCount = await seedIndexPapers(index)
     const overviewPaperCount = await seedYearOverviewPapers()
     const extractedResult = await seedExtractedQuestions(extracted)
     const docx2026Result = await seedExtractedQuestions(docx2026)
     const pdfText2026Result = await seedExtractedQuestions(pdfText2026)
     const auditOcr2026Result = await seedAuditOcrQuestions(auditOcr2026)
+    const residual2026Result = await seedExtractedQuestions(residual2026)
     const ocrResult = await seedOcrQuestions(ocr)
     const practiceResult = await seedPracticeQuestions()
     const trendNoteCount = await seedTrendNotes()
@@ -563,12 +574,13 @@ async function main() {
     const summary = {
       subjects: subjects.length,
       sources: sourceCount,
-      papers: indexPaperCount + overviewPaperCount + extractedResult.papers + docx2026Result.papers + pdfText2026Result.papers + auditOcr2026Result.papers + ocrResult.papers + practiceResult.papers,
-      questions: extractedResult.questions + docx2026Result.questions + pdfText2026Result.questions + auditOcr2026Result.questions + ocrResult.questions + practiceResult.questions,
+      papers: indexPaperCount + overviewPaperCount + extractedResult.papers + docx2026Result.papers + pdfText2026Result.papers + auditOcr2026Result.papers + residual2026Result.papers + ocrResult.papers + practiceResult.papers,
+      questions: extractedResult.questions + docx2026Result.questions + pdfText2026Result.questions + auditOcr2026Result.questions + residual2026Result.questions + ocrResult.questions + practiceResult.questions,
       extractedQuestions: extractedResult.questions,
       docx2026Questions: docx2026Result.questions,
       pdfText2026Questions: pdfText2026Result.questions,
       auditOcr2026Questions: auditOcr2026Result.questions,
+      residual2026Questions: residual2026Result.questions,
       ocrQuestions: ocrResult.questions,
       practiceQuestions: practiceResult.questions,
       trendNotes: trendNoteCount,
