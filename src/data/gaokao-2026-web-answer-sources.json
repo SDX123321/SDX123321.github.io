@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-06T11:47:15.065472+00:00",
+  "generatedAt": "2026-07-06T11:58:02.450970+00:00",
   "scope": {
     "note": "Web answer maps from public gaokzx.com article image pages and reviewed public PDF answer files. Review source URLs before relying on open-ended answers."
   },
   "summary": {
-    "sources": 15,
-    "answers": 247,
+    "sources": 16,
+    "answers": 252,
     "byFamily": {
       "biology:anhui": 19,
       "chemistry:yunnan": 18,
@@ -20,7 +20,8 @@
       "chinese:national1": 0,
       "math:beijing": 21,
       "math:tianjin": 2,
-      "history:guangdong": 4
+      "history:guangdong": 4,
+      "physics:shanjinqingning": 5
     }
   },
   "sources": [
@@ -1629,6 +1630,64 @@
         {
           "number": 20,
           "answer": "（1）史料价值：材料一是日本方面的文献，直接反映日本对唐朝先进文化的仰慕和学习态度，是探究唐朝对日本文化吸引力的重要证据；材料二是文学史料，虽有艺术加工，但可侧面佐证唐朝与日本的文化交流及两国文人的深厚情谊，需与其他史料互证；材料三是官方正史记载，记录唐朝官方对新罗的评价及交往，可用于研究唐朝与新罗的政治、文化关系及文化认同。（2）内容提要：唐朝国力强盛，文化高度发达，对周边国家形成强大文化辐射力。日本通过遣唐使、留学生和僧侣全面学习唐朝文化，在制度、文字、建筑、服饰、佛教等方面受到深刻影响；新罗也积极吸收唐朝官制、科举、儒学、佛教、历法、文学等。唐朝通过册封、朝贡、互市和佛教传播等方式，在东亚建立起以中华文化为核心的儒家文化圈或汉字文化圈，推动东亚文明共同进步。",
+          "confidence": "reviewed-web-text"
+        }
+      ]
+    },
+    {
+      "id": "sjds-shanjinqingning-physics-open-2026",
+      "family": "physics:shanjinqingning",
+      "title": "2026年高考陕晋青宁卷物理非选择题参考答案",
+      "pageUrl": "https://sjds.net/752628.html",
+      "sourceName": "四季读书网题干 + 本地纯答案版人工复核",
+      "manualAnswers": [
+        {
+          "number": 11,
+          "answer": "（1）B；（2）0.305 m/s；（3）1.28 m/s²。"
+        },
+        {
+          "number": 12,
+          "answer": "（1）①D；②增大；③423 Ω。（2）①A；②√(R₁R₂)。"
+        },
+        {
+          "number": 13,
+          "answer": "（1）p₁=p₀-ρgh₁=9.80×10⁴ Pa，p₂=p₁+ρgh₂=p₀+ρg(h₂-h₁)=1.01×10⁵ Pa。（2）ΔV=V₂-p₁V₁/p₀=1314 mL=1.314×10⁻³ m³。"
+        },
+        {
+          "number": 14,
+          "answer": "（1）μ₁=√2/10。（2）AB段机械能损失为2.88×10³ J，动量变化量大小为720 kg·m/s。（3）乙到达B点时与甲的距离为40 m。"
+        },
+        {
+          "number": 15,
+          "answer": "（1）0.6或0.8。（2）再次射入磁场后到达挡板P上的y坐标为2L/5或4L/5。（3）U>2mv₀²/q时，无粒子能到达O点，均无法打到P右侧面；0≤U≤16mv₀²/(17q)时，仅一个粒子能进入磁场，1个撞击点；16mv₀²/(17q)<U<2mv₀²/q时，两粒子均能进入且撞击点不同，2个撞击点；U=2mv₀²/q时，两粒子轨迹重合，1个撞击点。"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 11,
+          "answer": "（1）B；（2）0.305 m/s；（3）1.28 m/s²。",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 12,
+          "answer": "（1）①D；②增大；③423 Ω。（2）①A；②√(R₁R₂)。",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 13,
+          "answer": "（1）p₁=p₀-ρgh₁=9.80×10⁴ Pa，p₂=p₁+ρgh₂=p₀+ρg(h₂-h₁)=1.01×10⁵ Pa。（2）ΔV=V₂-p₁V₁/p₀=1314 mL=1.314×10⁻³ m³。",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 14,
+          "answer": "（1）μ₁=√2/10。（2）AB段机械能损失为2.88×10³ J，动量变化量大小为720 kg·m/s。（3）乙到达B点时与甲的距离为40 m。",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 15,
+          "answer": "（1）0.6或0.8。（2）再次射入磁场后到达挡板P上的y坐标为2L/5或4L/5。（3）U>2mv₀²/q时，无粒子能到达O点，均无法打到P右侧面；0≤U≤16mv₀²/(17q)时，仅一个粒子能进入磁场，1个撞击点；16mv₀²/(17q)<U<2mv₀²/q时，两粒子均能进入且撞击点不同，2个撞击点；U=2mv₀²/q时，两粒子轨迹重合，1个撞击点。",
           "confidence": "reviewed-web-text"
         }
       ]

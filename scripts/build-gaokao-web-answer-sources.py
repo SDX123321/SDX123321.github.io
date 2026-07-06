@@ -153,6 +153,29 @@ SOURCES = [
             },
         ],
     },
+    {
+        "id": "sjds-shanjinqingning-physics-open-2026",
+        "family": "physics:shanjinqingning",
+        "title": "2026\u5e74\u9ad8\u8003\u9655\u664b\u9752\u5b81\u5377\u7269\u7406\u975e\u9009\u62e9\u9898\u53c2\u8003\u7b54\u6848",
+        "pageUrl": "https://sjds.net/752628.html",
+        "sourceName": "\u56db\u5b63\u8bfb\u4e66\u7f51\u9898\u5e72 + \u672c\u5730\u7eaf\u7b54\u6848\u7248\u4eba\u5de5\u590d\u6838",
+        "manualAnswers": [
+            {"number": 11, "answer": "（1）B；（2）0.305 m/s；（3）1.28 m/s²。"},
+            {"number": 12, "answer": "（1）①D；②增大；③423 Ω。（2）①A；②√(R₁R₂)。"},
+            {
+                "number": 13,
+                "answer": "（1）p₁=p₀-ρgh₁=9.80×10⁴ Pa，p₂=p₁+ρgh₂=p₀+ρg(h₂-h₁)=1.01×10⁵ Pa。（2）ΔV=V₂-p₁V₁/p₀=1314 mL=1.314×10⁻³ m³。",
+            },
+            {
+                "number": 14,
+                "answer": "（1）μ₁=√2/10。（2）AB段机械能损失为2.88×10³ J，动量变化量大小为720 kg·m/s。（3）乙到达B点时与甲的距离为40 m。",
+            },
+            {
+                "number": 15,
+                "answer": "（1）0.6或0.8。（2）再次射入磁场后到达挡板P上的y坐标为2L/5或4L/5。（3）U>2mv₀²/q时，无粒子能到达O点，均无法打到P右侧面；0≤U≤16mv₀²/(17q)时，仅一个粒子能进入磁场，1个撞击点；16mv₀²/(17q)<U<2mv₀²/q时，两粒子均能进入且撞击点不同，2个撞击点；U=2mv₀²/q时，两粒子轨迹重合，1个撞击点。",
+            },
+        ],
+    },
 ]
 
 
