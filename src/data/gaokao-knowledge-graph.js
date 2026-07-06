@@ -35,11 +35,16 @@ export const knowledgeEdges = [
 
 export const questionKnowledgeMap = {
   'math-gene-derivative-01': ['math.derivative'],
+  'math-geometry-conic-01': ['math.geometry'],
+  'math-probability-stopping-01': ['math.probability'],
   'chinese-reading-01': ['chinese.evidence-chain'],
+  'chinese-argument-writing-01': ['chinese.argument-writing'],
   'english-seven-five-01': ['english.discourse', 'english.rewrite'],
   'physics-experiment-01': ['physics.graph', 'physics.modeling'],
   'chemistry-equilibrium-01': ['chemistry.equilibrium'],
+  'chemistry-experiment-evaluation-01': ['chemistry.experiment'],
   'biology-experiment-01': ['biology.experiment'],
+  'biology-genetics-01': ['biology.genetics'],
   'politics-material-01': ['politics.material', 'politics.governance'],
   'history-evidence-01': ['history.evidence', 'history.argument'],
   'geography-region-01': ['geography.region', 'geography.measure'],
@@ -111,6 +116,14 @@ export function getQuestionKnowledgeIds(question) {
   return subjectFallback[question.subject] || []
 }
 
+function isGeneratedPracticeQuestion(question) {
+  const sourceType = String(question.sourceType || '')
+  return question.quality === 'generated'
+    || sourceType === 'ai-practice'
+    || sourceType.includes('原创题')
+    || sourceType.includes('迁移题')
+}
+
 function summarizeAccountWeaknesses(accountWeaknesses = []) {
   const nodeStats = {}
   accountWeaknesses.forEach(item => {
@@ -159,7 +172,8 @@ export function recommendPracticeQuestions(questions, attempts, limit = 6, accou
     const knowledgeIds = getQuestionKnowledgeIds(question)
     const attempt = attempts?.[question.id]
     const weakHit = knowledgeIds.filter(id => weakIds.includes(id)).length
-    const priority = (attempt?.result === 'wrong' ? 4 : 0) + weakHit * 3 + (attempt ? 0 : 1)
+    const generatedDrillBonus = weakHit > 0 && isGeneratedPracticeQuestion(question) ? 2 : 0
+    const priority = (attempt?.result === 'wrong' ? 4 : 0) + weakHit * 3 + generatedDrillBonus + (attempt ? 0 : 1)
     return { question, knowledgeIds, priority }
   })
   return scored
