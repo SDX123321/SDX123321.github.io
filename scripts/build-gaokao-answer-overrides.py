@@ -443,12 +443,13 @@ def build_answer_maps(records: list[dict]) -> dict[str, dict[int, list[dict]]]:
             family = source.get("family", "")
             source_url = source.get("pdfUrl") or source.get("pageUrl") or source.get("id", "")
             for item in source.get("answers", []):
+                item_source = item.get("sourceUrl") or "; ".join(item.get("sourceUrls", [])) or source_url
                 add_candidate(
                     answer_maps,
                     family,
                     number_value(item.get("number")),
                     item.get("answer", ""),
-                    source_url,
+                    item_source,
                     "web-answer-source",
                 )
 

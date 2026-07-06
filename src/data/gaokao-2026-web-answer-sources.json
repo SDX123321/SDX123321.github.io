@@ -4,8 +4,8 @@
     "note": "Web answer maps from public gaokzx.com article image pages and reviewed public PDF answer files. Review source URLs before relying on open-ended answers."
   },
   "summary": {
-    "sources": 33,
-    "answers": 303,
+    "sources": 34,
+    "answers": 304,
     "byFamily": {
       "biology:anhui": 21,
       "chemistry:yunnan": 18,
@@ -18,6 +18,7 @@
       "chemistry:heilongjiliao": 19,
       "physics:shanghai": 5,
       "chemistry:shanghai": 2,
+      "chinese:shanghai": 1,
       "english:national1": 48,
       "chinese:national1": 10,
       "math:beijing": 21,
@@ -1268,6 +1269,34 @@
           "number": 21,
           "answer": "a=27*n*(U2^2-U1^2)/(4*pi*B^2*L^2*R)",
           "confidence": "reviewed-web-text"
+        }
+      ]
+    },
+    {
+      "id": "reviewed-shanghai-chinese-memorization-2026",
+      "family": "chinese:shanghai",
+      "title": "2026 Shanghai Chinese memorization references",
+      "pageUrl": "https://www.renrendoc.com/paper/525914766.html",
+      "sourceName": "Reviewed public question text and classical text references",
+      "manualAnswers": [
+        {
+          "number": 1,
+          "answer": "虽覆一篑；诵明月之诗，歌窈窕之章；天朗气清，惠风和畅"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 1,
+          "answer": "虽覆一篑；诵明月之诗，歌窈窕之章；天朗气清，惠风和畅",
+          "confidence": "reviewed-web-text",
+          "sourceUrls": [
+            "https://www.renrendoc.com/paper/525914766.html",
+            "https://www.gushiwen.cn/mingju/juv_8f501f53a62b.aspx",
+            "https://m.gushiwen.cn/mingju/juv_c82e3d3b0b7f.aspx",
+            "https://m.gushiwen.cn/mingju/juv_164309f134cd.aspx"
+          ]
         }
       ]
     },

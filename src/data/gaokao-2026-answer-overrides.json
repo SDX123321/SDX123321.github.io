@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T14:21:16.715407+00:00",
+  "generatedAt": "2026-07-06T14:57:43.527844+00:00",
   "scope": {
     "datasets": [
       "gaokao-2026-docx-extracted.json",
@@ -25,12 +25,12 @@
     "questionsScanned": 1285,
     "answerSourceRowsScanned": 79,
     "missingBeforeOverrides": 864,
-    "overrides": 819,
+    "overrides": 820,
     "corrections": 4,
-    "missingAfterOverrides": 49,
+    "missingAfterOverrides": 48,
     "byMethod": {
       "answer-source-file": 124,
-      "web-answer-source": 321,
+      "web-answer-source": 322,
       "existing-question-answer": 245,
       "ocr-answer-source": 23,
       "embedded-answer-in-prompt": 43,
@@ -40,7 +40,7 @@
     },
     "byDataset": {
       "gaokao-2026-docx-extracted.json": 248,
-      "gaokao-2026-pdf-text-extracted.json": 172,
+      "gaokao-2026-pdf-text-extracted.json": 173,
       "gaokao-2026-ocr-extracted.json": 357,
       "gaokao-2026-residual-extracted.json": 23,
       "jiangsu-gaokao-ocr.json": 19
@@ -4148,6 +4148,20 @@
       "confidence": "local-heuristic",
       "replacesAnswer": "D",
       "answerSourceMethod": "web-answer-source"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-aa32e8b336f0b2d2",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026年上海高考语文试卷（不完全版）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年上海高考\\2026年上海高考语文试卷（不完全版）.pdf",
+      "subject": "chinese",
+      "family": "chinese:shanghai",
+      "number": 1,
+      "answer": "虽覆一篑；诵明月之诗，歌窈窕之章；天朗气清，惠风和畅",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.renrendoc.com/paper/525914766.html; https://www.gushiwen.cn/mingju/juv_8f501f53a62b.aspx; https://m.gushiwen.cn/mingju/juv_c82e3d3b0b7f.aspx; https://m.gushiwen.cn/mingju/juv_164309f134cd.aspx",
+      "confidence": "local-heuristic"
     },
     {
       "questionId": "gaokao-2026-pdf-831022e9c691bbf5",
