@@ -67,8 +67,25 @@ function isNumericExtractionFragment(item) {
   return /^[\d\s.,，。:：;；\-+*/()（）[\]{}<>《》=≈~～^_\\|√π%°]+$/u.test(compactPrompt)
 }
 
+function questionNumberValue(value) {
+  const number = typeof value === 'number'
+    ? value
+    : /^\s*\d+\s*$/u.test(String(value ?? ''))
+      ? Number.parseInt(String(value).trim(), 10)
+      : Number.NaN
+  return Number.isInteger(number) && number >= 1 && number <= 100 ? number : null
+}
+
+function hasQuestionNumber(item) {
+  return questionNumberValue(item?.number) !== null
+}
+
+function isUnnumberedExtractionFragment(item) {
+  return !hasQuestionNumber(item)
+}
+
 function shouldImportExtractedQuestion(item) {
-  return !isNumericExtractionFragment(item)
+  return !isNumericExtractionFragment(item) && !isUnnumberedExtractionFragment(item)
 }
 
 function isOcrAnswerSourceFile(file) {
@@ -396,7 +413,7 @@ async function seedExtractedQuestions(extracted) {
         year: file.year,
         subjectKey: file.subject,
         subjectName: file.subjectName,
-        questionNumber: item.number,
+        questionNumber: questionNumberValue(item.number),
         questionType: item.questionType || null,
         difficulty: null,
         quality: item.quality || 'review',
@@ -458,7 +475,7 @@ async function seedOcrQuestions(ocr) {
       year: source.year || 2026,
       subjectKey: subject.key,
       subjectName: subject.name,
-      questionNumber: item.number,
+      questionNumber: questionNumberValue(item.number),
       questionType: item.type,
       difficulty: null,
       quality: 'review',
@@ -528,7 +545,7 @@ async function seedAuditOcrQuestions(auditOcr) {
         year: file.year || 2026,
         subjectKey: file.subject,
         subjectName: file.subjectName,
-        questionNumber: item.number,
+        questionNumber: questionNumberValue(item.number),
         questionType: item.questionType || null,
         difficulty: null,
         quality: 'review',

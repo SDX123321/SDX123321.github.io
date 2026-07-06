@@ -66,6 +66,14 @@ def is_numeric_extraction_fragment(question: dict) -> bool:
     return bool(re.fullmatch(r"[\d\s.,，。:：;；\-+*/()（）\[\]{}<>《》=≈~～^_\\|√π%°]+", prompt))
 
 
+def is_unnumbered_extraction_fragment(question: dict) -> bool:
+    return number_value(question.get("number")) is None
+
+
+def should_import_extracted_question(question: dict) -> bool:
+    return not (is_numeric_extraction_fragment(question) or is_unnumbered_extraction_fragment(question))
+
+
 def normalize_answer(answer: str) -> str:
     answer = clean_text(answer)
     answer = re.sub(r"^(答案|参考答案)[:：]?", "", answer).strip()
@@ -179,7 +187,7 @@ def load_question_records(include_ocr_answer_sources: bool = False) -> list[dict
                 continue
             subject = file_item.get("subject") or file_item.get("subjectKey") or "unknown"
             for question in file_item.get("questions") or []:
-                if is_numeric_extraction_fragment(question):
+                if not should_import_extracted_question(question):
                     continue
                 records.append({
                     "dataset": dataset,
