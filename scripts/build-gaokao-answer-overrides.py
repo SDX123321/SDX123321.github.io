@@ -14,6 +14,9 @@ DATA_DIR = REPO_ROOT / "src/data"
 AUDIT_PATH = DATA_DIR / "gaokao-processing-audit.json"
 OUT_PATH = DATA_DIR / "gaokao-2026-answer-overrides.json"
 WEB_ANSWER_SOURCES_PATH = DATA_DIR / "gaokao-2026-web-answer-sources.json"
+FAMILY_ANSWER_ALIASES = {
+    "math:数学江苏卷": ["math:全国数学I卷试题逐题规范解答"],
+}
 DATASETS = [
     "gaokao-2026-docx-extracted.json",
     "gaokao-2026-pdf-text-extracted.json",
@@ -358,7 +361,26 @@ def build_answer_maps(records: list[dict]) -> dict[str, dict[int, list[dict]]]:
                     "web-answer-source",
                 )
 
+    apply_family_answer_aliases(answer_maps)
     return answer_maps
+
+
+def apply_family_answer_aliases(answer_maps: dict[str, dict[int, list[dict]]]) -> None:
+    for target_family, source_families in FAMILY_ANSWER_ALIASES.items():
+        for source_family in source_families:
+            for number, source_candidates in answer_maps.get(source_family, {}).items():
+                base_candidate = choose_candidate([
+                    item for item in source_candidates
+                    if item.get("method") != "family-alias-answer"
+                ])
+                if not base_candidate:
+                    continue
+                answer_maps[target_family][number].append({
+                    "answer": base_candidate["answer"],
+                    "solution": base_candidate.get("solution") or [],
+                    "source": f"{base_candidate.get('source', '')} via {source_family}".strip(),
+                    "method": "family-alias-answer",
+                })
 
 
 def choose_candidate(candidates: list[dict]) -> dict | None:
@@ -368,8 +390,9 @@ def choose_candidate(candidates: list[dict]) -> dict | None:
         "embedded-answer-in-prompt": 0,
         "existing-question-answer": 1,
         "answer-source-file": 2,
-        "web-answer-source": 3,
-        "answer-only-question": 4,
+        "family-alias-answer": 3,
+        "web-answer-source": 4,
+        "answer-only-question": 5,
     }
     return sorted(candidates, key=lambda item: (priority.get(item["method"], 9), len(item["answer"])))[0]
 
@@ -451,7 +474,8 @@ def build_overrides() -> dict:
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "scope": {
             "datasets": DATASETS,
-            "note": "Local answer overrides mined from parsed answers, answer-only files, answer-source DOCX/PDF files, and reviewed web OCR/PDF answer maps. Applied only when the raw question answer is empty.",
+            "note": "Local answer overrides mined from parsed answers, answer-only files, answer-source DOCX/PDF files, reviewed family answer aliases, and reviewed web OCR/PDF answer maps. Applied only when the raw question answer is empty.",
+            "familyAnswerAliases": FAMILY_ANSWER_ALIASES,
         },
         "summary": {
             "questionsScanned": len(records),
