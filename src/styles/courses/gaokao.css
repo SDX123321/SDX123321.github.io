@@ -135,10 +135,111 @@
   margin-bottom: 18px;
 }
 
+.coverage-strip.index-strip {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 12px;
+}
+
 .coverage-strip strong {
   display: block;
   margin-bottom: 8px;
   color: var(--text);
+}
+
+.index-note {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text2);
+  background: var(--bg2);
+  font-size: .82rem;
+  line-height: 1.7;
+}
+
+.index-table-wrap {
+  overflow-x: auto;
+  margin: 14px 0 22px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg2);
+}
+
+.index-table {
+  width: 100%;
+  min-width: 940px;
+  border-collapse: collapse;
+  font-size: .78rem;
+}
+
+.index-table th,
+.index-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.index-table tr:last-child th,
+.index-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.index-table th:last-child,
+.index-table td:last-child {
+  border-right: 0;
+}
+
+.index-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  color: var(--text);
+  background: var(--card);
+  font-weight: 800;
+}
+
+.index-table tbody th {
+  color: var(--text);
+  background: var(--card);
+}
+
+.index-table tbody th span,
+.index-table td span {
+  display: block;
+  margin-top: 3px;
+  color: var(--text3);
+}
+
+.index-table td strong {
+  display: inline-flex;
+  min-width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(255, 255, 255, .08);
+}
+
+.index-table td.index-ready strong {
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+.index-table td.index-convert strong {
+  color: var(--warning);
+  background: var(--warning-bg);
+}
+
+.index-table td.index-ocr strong {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.index-table td.index-empty {
+  opacity: .55;
 }
 
 .year-grid {

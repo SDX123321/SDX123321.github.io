@@ -1,0 +1,3998 @@
+{
+  "generatedAt": "2026-07-06T05:24:04.874Z",
+  "sourceRootLabel": "本地高考资料目录",
+  "years": [
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "subjects": [
+    {
+      "key": "chinese",
+      "name": "语文"
+    },
+    {
+      "key": "math",
+      "name": "数学"
+    },
+    {
+      "key": "english",
+      "name": "英语"
+    },
+    {
+      "key": "physics",
+      "name": "物理"
+    },
+    {
+      "key": "chemistry",
+      "name": "化学"
+    },
+    {
+      "key": "biology",
+      "name": "生物"
+    },
+    {
+      "key": "politics",
+      "name": "政治"
+    },
+    {
+      "key": "history",
+      "name": "历史"
+    },
+    {
+      "key": "geography",
+      "name": "地理"
+    }
+  ],
+  "totals": {
+    "files": 745,
+    "extractable": 429,
+    "needsConversion": 241,
+    "needsOcrCheck": 13,
+    "audio": 62,
+    "coveredCells": 84
+  },
+  "yearSummaries": [
+    {
+      "year": 2017,
+      "files": 48,
+      "coveredSubjects": 9,
+      "totalSubjects": 9
+    },
+    {
+      "year": 2018,
+      "files": 48,
+      "coveredSubjects": 9,
+      "totalSubjects": 9
+    },
+    {
+      "year": 2019,
+      "files": 48,
+      "coveredSubjects": 9,
+      "totalSubjects": 9
+    },
+    {
+      "year": 2020,
+      "files": 48,
+      "coveredSubjects": 9,
+      "totalSubjects": 9
+    },
+    {
+      "year": 2021,
+      "files": 95,
+      "coveredSubjects": 9,
+      "totalSubjects": 9
+    },
+    {
+      "year": 2022,
+      "files": 95,
+      "coveredSubjects": 9,
+      "totalSubjects": 9
+    },
+    {
+      "year": 2023,
+      "files": 102,
+      "coveredSubjects": 9,
+      "totalSubjects": 9
+    },
+    {
+      "year": 2024,
+      "files": 123,
+      "coveredSubjects": 9,
+      "totalSubjects": 9
+    },
+    {
+      "year": 2025,
+      "files": 123,
+      "coveredSubjects": 9,
+      "totalSubjects": 9
+    },
+    {
+      "year": 2026,
+      "files": 15,
+      "coveredSubjects": 3,
+      "totalSubjects": 9
+    }
+  ],
+  "matrix": {
+    "2017": {
+      "chinese": {
+        "subject": "语文",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2017年高考语文试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\自主命题卷·语文（2008-2025）\\江苏自主命题·语文（2008-2020）\\2017年高考语文试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考语文试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\自主命题卷·语文（2008-2025）\\江苏自主命题·语文（2008-2020）\\2017年高考语文试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考语文试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（江苏）语文高考真题\\2017年高考语文试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考语文试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（江苏）语文高考真题\\2017年高考语文试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "math": {
+        "subject": "数学",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2017年高考数学试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（江苏）数学高考真题\\2017年高考数学试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考数学试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（江苏）数学高考真题\\2017年高考数学试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考数学试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本3：数学（按年份分类）2008-2025\\2017·高考数学真题\\2017年高考数学试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考数学试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本3：数学（按年份分类）2008-2025\\2017·高考数学真题\\2017年高考数学试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "english": {
+        "subject": "英语",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 2,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2017年高考英语试卷（江苏）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2017年高考英语试卷（江苏）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考英语试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2017年高考英语试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考英语试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2017年高考英语试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考英语试卷（江苏）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本3：英语（按年份分类）2008-2025\\2017·高考英语真题\\2017年高考英语试卷（江苏）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "physics": {
+        "subject": "物理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2017年高考物理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2017年高考物理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考物理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2017年高考物理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考物理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2017·高考物理真题\\2017年高考物理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考物理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2017·高考物理真题\\2017年高考物理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "chemistry": {
+        "subject": "化学",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2017年高考化学试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2017年高考化学试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考化学试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2017年高考化学试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考化学试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2017年高考化学试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考化学试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2017年高考化学试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "biology": {
+        "subject": "生物",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2017年高考生物试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2017年高考生物试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考生物试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2017年高考生物试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考生物试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2017年高考生物试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考生物试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2017年高考生物试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "politics": {
+        "subject": "政治",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2017年高考政治试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2017年高考政治试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考政治试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2017年高考政治试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考政治试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2017年高考政治试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考政治试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2017年高考政治试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "history": {
+        "subject": "历史",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2017年高考历史试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2017年高考历史试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2017年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考历史试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2017年高考历史试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2017年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "geography": {
+        "subject": "地理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2017年高考地理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2017年高考地理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考地理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2017年高考地理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考地理试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2017·地理高考真题\\2017年高考地理试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2017年高考地理试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2017·地理高考真题\\2017年高考地理试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      }
+    },
+    "2018": {
+      "chinese": {
+        "subject": "语文",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2018年高考语文试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\自主命题卷·语文（2008-2025）\\江苏自主命题·语文（2008-2020）\\2018年高考语文试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考语文试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\自主命题卷·语文（2008-2025）\\江苏自主命题·语文（2008-2020）\\2018年高考语文试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考语文试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（江苏）语文高考真题\\2018年高考语文试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考语文试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（江苏）语文高考真题\\2018年高考语文试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "math": {
+        "subject": "数学",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2018年高考数学试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（江苏）数学高考真题\\2018年高考数学试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考数学试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（江苏）数学高考真题\\2018年高考数学试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考数学试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本3：数学（按年份分类）2008-2025\\2018·高考数学真题\\2018年高考数学试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考数学试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本3：数学（按年份分类）2008-2025\\2018·高考数学真题\\2018年高考数学试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "english": {
+        "subject": "英语",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 2,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2018年高考英语试卷（江苏）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2018年高考英语试卷（江苏）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考英语试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2018年高考英语试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考英语试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2018年高考英语试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考英语试卷（江苏）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本3：英语（按年份分类）2008-2025\\2018·高考英语真题\\2018年高考英语试卷（江苏）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "physics": {
+        "subject": "物理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2018年高考物理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2018年高考物理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考物理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2018年高考物理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考物理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2018·高考物理真题\\2018年高考物理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考物理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2018·高考物理真题\\2018年高考物理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "chemistry": {
+        "subject": "化学",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2018年高考化学试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2018年高考化学试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考化学试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2018年高考化学试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考化学试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2018年高考化学试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考化学试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2018年高考化学试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "biology": {
+        "subject": "生物",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2018年高考生物试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2018年高考生物试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考生物试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2018年高考生物试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考生物试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2018年高考生物试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考生物试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2018年高考生物试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "politics": {
+        "subject": "政治",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2018年高考政治试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2018年高考政治试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考政治试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2018年高考政治试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考政治试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2018年高考政治试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考政治试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2018年高考政治试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "history": {
+        "subject": "历史",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2018年高考历史试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2018年高考历史试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2018年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考历史试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2018年高考历史试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2018年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "geography": {
+        "subject": "地理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2018年高考地理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2018年高考地理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考地理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2018年高考地理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考地理试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2018·地理高考真题\\2018年高考地理试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2018年高考地理试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2018·地理高考真题\\2018年高考地理试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      }
+    },
+    "2019": {
+      "chinese": {
+        "subject": "语文",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2019年高考语文试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\自主命题卷·语文（2008-2025）\\江苏自主命题·语文（2008-2020）\\2019年高考语文试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考语文试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\自主命题卷·语文（2008-2025）\\江苏自主命题·语文（2008-2020）\\2019年高考语文试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考语文试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（江苏）语文高考真题\\2019年高考语文试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考语文试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（江苏）语文高考真题\\2019年高考语文试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "math": {
+        "subject": "数学",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2019年高考数学试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（江苏）数学高考真题\\2019年高考数学试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考数学试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（江苏）数学高考真题\\2019年高考数学试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考数学试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本3：数学（按年份分类）2008-2025\\2019·高考数学真题\\2019年高考数学试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考数学试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本3：数学（按年份分类）2008-2025\\2019·高考数学真题\\2019年高考数学试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "english": {
+        "subject": "英语",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 2,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2019年高考英语试卷（江苏）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2019年高考英语试卷（江苏）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考英语试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2019年高考英语试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考英语试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2019年高考英语试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考英语试卷（江苏）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本3：英语（按年份分类）2008-2025\\2019·高考英语真题\\2019年高考英语试卷（江苏）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "physics": {
+        "subject": "物理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2019年高考物理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2019年高考物理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考物理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2019年高考物理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考物理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2019·高考物理真题\\2019年高考物理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考物理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2019·高考物理真题\\2019年高考物理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "chemistry": {
+        "subject": "化学",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2019年高考化学试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2019年高考化学试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考化学试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2019年高考化学试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考化学试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2019年高考化学试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考化学试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2019年高考化学试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "biology": {
+        "subject": "生物",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2019年高考生物试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2019年高考生物试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考生物试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2019年高考生物试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考生物试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2019年高考生物试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考生物试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2019年高考生物试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "politics": {
+        "subject": "政治",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2019年高考政治试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2019年高考政治试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考政治试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2019年高考政治试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考政治试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2019年高考政治试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考政治试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2019年高考政治试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "history": {
+        "subject": "历史",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2019年高考历史试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2019年高考历史试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2019年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考历史试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2019年高考历史试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2019年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "geography": {
+        "subject": "地理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2019年高考地理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2019年高考地理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考地理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2019年高考地理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考地理试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2019·地理高考真题\\2019年高考地理试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2019年高考地理试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2019·地理高考真题\\2019年高考地理试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      }
+    },
+    "2020": {
+      "chinese": {
+        "subject": "语文",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2020年高考语文试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\自主命题卷·语文（2008-2025）\\江苏自主命题·语文（2008-2020）\\2020年高考语文试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考语文试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\自主命题卷·语文（2008-2025）\\江苏自主命题·语文（2008-2020）\\2020年高考语文试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考语文试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（江苏）语文高考真题\\2020年高考语文试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考语文试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（江苏）语文高考真题\\2020年高考语文试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "math": {
+        "subject": "数学",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2020年高考数学试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（江苏）数学高考真题\\2020年高考数学试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考数学试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（江苏）数学高考真题\\2020年高考数学试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考数学试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本3：数学（按年份分类）2008-2025\\2020·高考数学真题\\2020年高考数学试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考数学试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本3：数学（按年份分类）2008-2025\\2020·高考数学真题\\2020年高考数学试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "english": {
+        "subject": "英语",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 2,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2020年高考英语试卷（江苏）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2020年高考英语试卷（江苏）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考英语试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2020年高考英语试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考英语试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（江苏）英语高考真题\\2020年高考英语试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考英语试卷（江苏）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本3：英语（按年份分类）2008-2025\\2020·高考英语真题\\2020年高考英语试卷（江苏）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "physics": {
+        "subject": "物理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2020年高考物理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2020年高考物理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考物理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2020年高考物理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考物理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2020·高考物理真题\\2020年高考物理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考物理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2020·高考物理真题\\2020年高考物理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "chemistry": {
+        "subject": "化学",
+        "total": 6,
+        "byStatus": {
+          "extractable": 3,
+          "needs-conversion": 3,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2020年高考化学试卷（江苏）（空白卷）   .docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2020年高考化学试卷（江苏）（空白卷）   .docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考化学试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2020年高考化学试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考化学试卷（江苏）（空白卷）   .docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2020年高考化学试卷（江苏）（空白卷）   .docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考化学试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2020年高考化学试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "biology": {
+        "subject": "生物",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2020年高考生物试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2020年高考生物试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考生物试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2020年高考生物试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考生物试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2020年高考生物试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考生物试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2020年高考生物试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "politics": {
+        "subject": "政治",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2020年高考政治试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2020年高考政治试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考政治试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2020年高考政治试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考政治试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2020年高考政治试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考政治试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2020年高考政治试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "history": {
+        "subject": "历史",
+        "total": 6,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 6,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2020年高考历史试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2020年高考历史试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2020年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考历史试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2020年高考历史试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2020年高考历史试卷（江苏）（解析卷卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "geography": {
+        "subject": "地理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2020年高考地理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2020年高考地理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考地理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2020年高考地理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考地理试卷（江苏）（空白卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2020·地理高考真题\\2020年高考地理试卷（江苏）（空白卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2020年高考地理试卷（江苏）（解析卷）   .doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2020·地理高考真题\\2020年高考地理试卷（江苏）（解析卷）   .doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      }
+    },
+    "2021": {
+      "chinese": {
+        "subject": "语文",
+        "total": 18,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 18,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2021年高考语文试卷（新高考Ⅰ卷）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\全国卷·语文（2008-2025）\\2021年高考语文试卷（新高考Ⅰ卷）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2021年高考语文试卷（新高考Ⅰ卷）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\全国卷·语文（2008-2025）\\2021年高考语文试卷（新高考Ⅰ卷）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2021年高考语文试卷（新高考Ⅰ卷）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（山东）语文高考真题\\2021年高考语文试卷（新高考Ⅰ卷）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2021年高考语文试卷（新高考Ⅰ卷）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（山东）语文高考真题\\2021年高考语文试卷（新高考Ⅰ卷）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "math": {
+        "subject": "数学",
+        "total": 18,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 18,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2021年高考数学试卷（新高考Ⅰ卷）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本1：数学（按试卷类型分类）2008-2025\\全国卷·数学（2008-2025）\\2021年高考数学试卷（新高考Ⅰ卷）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2021年高考数学试卷（新高考Ⅰ卷）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本1：数学（按试卷类型分类）2008-2025\\全国卷·数学（2008-2025）\\2021年高考数学试卷（新高考Ⅰ卷）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2021年高考数学试卷（新高考Ⅰ卷）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（山东）数学高考真题\\2021年高考数学试卷（新高考Ⅰ卷）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2021年高考数学试卷（新高考Ⅰ卷）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（山东）数学高考真题\\2021年高考数学试卷（新高考Ⅰ卷）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "english": {
+        "subject": "英语",
+        "total": 27,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 18,
+          "needs-ocr-check": 0,
+          "audio": 9,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2021年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2021年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2021年高考英语试卷（新高考Ⅰ卷）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2021年高考英语试卷（新高考Ⅰ卷）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2021年高考英语试卷（新高考Ⅰ卷）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2021年高考英语试卷（新高考Ⅰ卷）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2021年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（山东）英语高考真题\\2021年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "physics": {
+        "subject": "物理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 4,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2021年高考物理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2021年高考物理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考物理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2021年高考物理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考物理试卷（江苏）（空白卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2021·高考物理真题\\2021年高考物理试卷（江苏）（空白卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考物理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2021·高考物理真题\\2021年高考物理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "chemistry": {
+        "subject": "化学",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2021年高考化学试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2021年高考化学试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考化学试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2021年高考化学试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考化学试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2021年高考化学试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考化学试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2021年高考化学试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "biology": {
+        "subject": "生物",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2021年高考生物试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2021年高考生物试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考生物试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2021年高考生物试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考生物试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2021年高考生物试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考生物试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2021年高考生物试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "politics": {
+        "subject": "政治",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2021年高考政治试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2021年高考政治试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考政治试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2021年高考政治试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考政治试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2021年高考政治试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考政治试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2021年高考政治试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "history": {
+        "subject": "历史",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2021年高考历史试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2021年高考历史试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考历史试卷（江苏）（解析卷卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2021年高考历史试卷（江苏）（解析卷卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考历史试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2021年高考历史试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考历史试卷（江苏）（解析卷卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2021年高考历史试卷（江苏）（解析卷卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "geography": {
+        "subject": "地理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 2,
+          "needs-conversion": 2,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2021年高考地理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2021年高考地理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考地理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2021年高考地理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考地理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2021·地理高考真题\\2021年高考地理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2021年高考地理试卷（江苏）（解析卷）.doc",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2021·地理高考真题\\2021年高考地理试卷（江苏）（解析卷）.doc",
+            "ext": ".doc",
+            "status": "needs-conversion",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      }
+    },
+    "2022": {
+      "chinese": {
+        "subject": "语文",
+        "total": 18,
+        "byStatus": {
+          "extractable": 18,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2022年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\全国卷·语文（2008-2025）\\2022年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2022年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\全国卷·语文（2008-2025）\\2022年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2022年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（山东）语文高考真题\\2022年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2022年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（山东）语文高考真题\\2022年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "math": {
+        "subject": "数学",
+        "total": 18,
+        "byStatus": {
+          "extractable": 18,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2022年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本1：数学（按试卷类型分类）2008-2025\\全国卷·数学（2008-2025）\\2022年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2022年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本1：数学（按试卷类型分类）2008-2025\\全国卷·数学（2008-2025）\\2022年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2022年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（山东）数学高考真题\\2022年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2022年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（山东）数学高考真题\\2022年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "english": {
+        "subject": "英语",
+        "total": 27,
+        "byStatus": {
+          "extractable": 18,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 9,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2022年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2022年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2022年高考英语试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2022年高考英语试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2022年高考英语试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2022年高考英语试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2022年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（山东）英语高考真题\\2022年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "physics": {
+        "subject": "物理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 4,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2022年高考物理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2022年高考物理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考物理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2022年高考物理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考物理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2022·高考物理真题\\2022年高考物理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考物理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2022·高考物理真题\\2022年高考物理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "chemistry": {
+        "subject": "化学",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2022年高考化学试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2022年高考化学试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考化学试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2022年高考化学试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考化学试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2022年高考化学试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考化学试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2022年高考化学试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "biology": {
+        "subject": "生物",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2022年高考生物试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2022年高考生物试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考生物试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2022年高考生物试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考生物试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2022年高考生物试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考生物试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2022年高考生物试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "politics": {
+        "subject": "政治",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2022年高考政治试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2022年高考政治试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考政治试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2022年高考政治试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考政治试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2022年高考政治试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考政治试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2022年高考政治试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "history": {
+        "subject": "历史",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2022年高考历史试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2022年高考历史试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考历史试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2022年高考历史试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考历史试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2022年高考历史试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考历史试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2022年高考历史试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "geography": {
+        "subject": "地理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 4,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2022年高考地理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2022年高考地理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考地理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2022年高考地理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考地理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2022·地理高考真题\\2022年高考地理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2022年高考地理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2022·地理高考真题\\2022年高考地理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      }
+    },
+    "2023": {
+      "chinese": {
+        "subject": "语文",
+        "total": 20,
+        "byStatus": {
+          "extractable": 20,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2023年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\全国卷·语文（2008-2025）\\2023年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2023年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\全国卷·语文（2008-2025）\\2023年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2023年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（山东）语文高考真题\\2023年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2023年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（山东）语文高考真题\\2023年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "math": {
+        "subject": "数学",
+        "total": 20,
+        "byStatus": {
+          "extractable": 20,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2023年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本1：数学（按试卷类型分类）2008-2025\\全国卷·数学（2008-2025）\\2023年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2023年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本1：数学（按试卷类型分类）2008-2025\\全国卷·数学（2008-2025）\\2023年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2023年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（山东）数学高考真题\\2023年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2023年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（山东）数学高考真题\\2023年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "english": {
+        "subject": "英语",
+        "total": 30,
+        "byStatus": {
+          "extractable": 20,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 10,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2023年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2023年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2023年高考英语试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2023年高考英语试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2023年高考英语试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2023年高考英语试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2023年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（山东）英语高考真题\\2023年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "physics": {
+        "subject": "物理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 4,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2023年高考物理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2023年高考物理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考物理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2023年高考物理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考物理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2023·高考物理真题\\2023年高考物理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考物理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2023·高考物理真题\\2023年高考物理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "chemistry": {
+        "subject": "化学",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2023年高考化学试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2023年高考化学试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考化学试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2023年高考化学试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考化学试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2023年高考化学试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考化学试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2023年高考化学试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "biology": {
+        "subject": "生物",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2023年高考生物试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2023年高考生物试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考生物试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2023年高考生物试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考生物试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2023年高考生物试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考生物试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2023年高考生物试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "politics": {
+        "subject": "政治",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2023年高考政治试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2023年高考政治试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考政治试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2023年高考政治试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考政治试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2023年高考政治试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考政治试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2023年高考政治试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "history": {
+        "subject": "历史",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2023年高考历史试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2023年高考历史试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考历史试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2023年高考历史试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考历史试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2023年高考历史试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考历史试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2023年高考历史试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "geography": {
+        "subject": "地理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 4,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2023年高考地理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2023年高考地理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考地理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2023年高考地理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考地理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2023·地理高考真题\\2023年高考地理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2023年高考地理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2023·地理高考真题\\2023年高考地理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      }
+    },
+    "2024": {
+      "chinese": {
+        "subject": "语文",
+        "total": 26,
+        "byStatus": {
+          "extractable": 26,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2024年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\全国卷·语文（2008-2025）\\2024年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2024年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\全国卷·语文（2008-2025）\\2024年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2024年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（山东）语文高考真题\\2024年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2024年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（山东）语文高考真题\\2024年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "math": {
+        "subject": "数学",
+        "total": 26,
+        "byStatus": {
+          "extractable": 26,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2024年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本1：数学（按试卷类型分类）2008-2025\\全国卷·数学（2008-2025）\\2024年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2024年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本1：数学（按试卷类型分类）2008-2025\\全国卷·数学（2008-2025）\\2024年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2024年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（山东）数学高考真题\\2024年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2024年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（山东）数学高考真题\\2024年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "english": {
+        "subject": "英语",
+        "total": 39,
+        "byStatus": {
+          "extractable": 26,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 13,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2024年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2024年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2024年高考英语试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2024年高考英语试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2024年高考英语试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2024年高考英语试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2024年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（山东）英语高考真题\\2024年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "physics": {
+        "subject": "物理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 4,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2024年高考物理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2024年高考物理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考物理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2024年高考物理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考物理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2024·高考物理真题\\2024年高考物理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考物理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2024·高考物理真题\\2024年高考物理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "chemistry": {
+        "subject": "化学",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2024年高考化学试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2024年高考化学试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考化学试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2024年高考化学试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考化学试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2024年高考化学试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考化学试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2024年高考化学试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "biology": {
+        "subject": "生物",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2024年高考生物试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2024年高考生物试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考生物试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2024年高考生物试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考生物试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2024年高考生物试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考生物试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2024年高考生物试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "politics": {
+        "subject": "政治",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2024年高考政治试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2024年高考政治试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考政治试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2024年高考政治试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考政治试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2024年高考政治试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考政治试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2024年高考政治试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "history": {
+        "subject": "历史",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2024年高考历史试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2024年高考历史试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考历史试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2024年高考历史试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考历史试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2024年高考历史试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考历史试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2024年高考历史试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "geography": {
+        "subject": "地理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 4,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2024年高考地理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2024年高考地理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考地理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2024年高考地理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考地理试卷（江苏）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2024·地理高考真题\\2024年高考地理试卷（江苏）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2024年高考地理试卷（江苏）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2024·地理高考真题\\2024年高考地理试卷（江苏）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      }
+    },
+    "2025": {
+      "chinese": {
+        "subject": "语文",
+        "total": 26,
+        "byStatus": {
+          "extractable": 26,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2025年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\全国卷·语文（2008-2025）\\2025年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2025年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本1：语文（按试卷类型分类）2008-2025\\全国卷·语文（2008-2025）\\2025年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2025年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（山东）语文高考真题\\2025年高考语文试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2025年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考语文《全国高考真题大合集》1990-2025\\【新】2008-2025·高考语文真题\\版本2：语文（按省份分类）2008-2025\\2008-2025·（山东）语文高考真题\\2025年高考语文试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "math": {
+        "subject": "数学",
+        "total": 26,
+        "byStatus": {
+          "extractable": 26,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2025年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本1：数学（按试卷类型分类）2008-2025\\全国卷·数学（2008-2025）\\2025年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2025年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本1：数学（按试卷类型分类）2008-2025\\全国卷·数学（2008-2025）\\2025年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2025年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（山东）数学高考真题\\2025年高考数学试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2025年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考数学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考数学真题\\版本2：数学（按省份分类）2008-2025\\2008-2025·（山东）数学高考真题\\2025年高考数学试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "english": {
+        "subject": "英语",
+        "total": 39,
+        "byStatus": {
+          "extractable": 26,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 13,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2025年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2025年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2025年高考英语试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2025年高考英语试卷（新高考Ⅰ卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2025年高考英语试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本1：英语（按试卷类型分类）2008-2025\\全国卷·英语（2008-2025）\\2025年高考英语试卷（新高考Ⅰ卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2025年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考英语《全国高考真题大合集》1990-2025\\【新】2008-2025·高考英语真题\\版本2：英语（按省份分类）2008-2025\\2008-2025·（山东）英语高考真题\\2025年高考英语试卷（新高考Ⅰ卷）听力音频.mp3",
+            "ext": ".mp3",
+            "status": "audio",
+            "role": "original",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "physics": {
+        "subject": "物理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 4,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2025年高考物理试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2025年高考物理试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考物理试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本2：物理（按省份分类）2008-2025\\2008-2025·（江苏）物理高考真题\\2025年高考物理试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考物理试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2025·高考物理真题\\2025年高考物理试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考物理试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考物理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考物理真题\\版本3：物理（按年份分类）2008-2025\\2025·高考物理真题\\2025年高考物理试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "chemistry": {
+        "subject": "化学",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2025年高考化学试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2025年高考化学试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考化学试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本1：化学（按试卷类型分类）2008-2025\\自主命题卷·化学（2008-2025）\\江苏自主命题·化学（2008-2025）\\2025年高考化学试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考化学试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2025年高考化学试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考化学试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考化学《全国高考真题大合集》1990-2025\\【新】2008-2025·高考化学真题\\版本2：化学（按省份分类）2008-2025\\2008-2025·（江苏）化学高考真题\\2025年高考化学试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "biology": {
+        "subject": "生物",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2025年高考生物试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2025年高考生物试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考生物试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本1：生物（按试卷类型分类）2008-2025\\自主命题卷·生物（2008-2025）\\江苏自主命题·生物（2008-2025）\\2025年高考生物试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考生物试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2025年高考生物试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考生物试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考生物《全国高考真题大合集》1990-2025\\【新】2008-2025·高考生物真题\\版本2：生物（按省份分类）2008-2025\\2008-2025·（江苏）生物高考真题\\2025年高考生物试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "politics": {
+        "subject": "政治",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2025年高考政治试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2025年高考政治试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考政治试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本1：政治（按试卷类型分类）2008-2025\\自主命题卷·政治（2008-2025）\\江苏自主命题·政治（2008-2025）\\2025年高考政治试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考政治试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2025年高考政治试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考政治试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考政治《全国高考真题大合集》1990-2025\\【新】2008-2025·高考政治真题\\版本2：政治（按省份分类）2008-2025\\2008-2025·（江苏）政治高考真题\\2025年高考政治试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "history": {
+        "subject": "历史",
+        "total": 6,
+        "byStatus": {
+          "extractable": 6,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2025年高考历史试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2025年高考历史试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考历史试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本1：历史（按试卷类型分类）2008-2025\\自主命题卷·历史（2008-2025）\\江苏自主命题·历史（2008-2025）\\2025年高考历史试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考历史试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2025年高考历史试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考历史试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考历史《全国高考真题大合集》1990-2025\\【新】2008-2025·高考历史真题\\版本2：历史（按省份分类）2008-2025\\2008-2025·（江苏）历史高考真题\\2025年高考历史试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "geography": {
+        "subject": "地理",
+        "total": 4,
+        "byStatus": {
+          "extractable": 4,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2025年高考地理试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2025年高考地理试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考地理试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本2：地理（按省份分类）2008-2025\\2008-2025·（江苏）地理高考真题\\2025年高考地理试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考地理试卷（江苏卷）（空白卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2025·地理高考真题\\2025年高考地理试卷（江苏卷）（空白卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "original",
+            "paperKind": "jiangsu"
+          },
+          {
+            "name": "2025年高考地理试卷（江苏卷）（解析卷）.docx",
+            "relativePath": "《所有全国高考真题大合集》1990-2025\\高考地理《全国高考真题大合集》1990-2025\\【新】2008-2025·高考地理真题\\版本3：地理（按年份分类）2008-2025\\2025·地理高考真题\\2025年高考地理试卷（江苏卷）（解析卷）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "jiangsu"
+          }
+        ]
+      }
+    },
+    "2026": {
+      "chinese": {
+        "subject": "语文",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 0,
+          "needs-ocr-check": 4,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2026全国高考语文一卷.pdf",
+            "relativePath": "2026高考试卷（更新中）\\一卷\\2026全国高考语文一卷.pdf",
+            "ext": ".pdf",
+            "status": "needs-ocr-check",
+            "role": "original",
+            "paperKind": "other"
+          },
+          {
+            "name": "2026全国高考语文一卷答案.pdf",
+            "relativePath": "2026高考试卷（更新中）\\一卷\\2026全国高考语文一卷答案.pdf",
+            "ext": ".pdf",
+            "status": "needs-ocr-check",
+            "role": "analysis",
+            "paperKind": "other"
+          },
+          {
+            "name": "2026全国高考语文一卷.pdf",
+            "relativePath": "补充\\一卷\\2026全国高考语文一卷.pdf",
+            "ext": ".pdf",
+            "status": "needs-ocr-check",
+            "role": "original",
+            "paperKind": "other"
+          },
+          {
+            "name": "2026全国高考语文一卷答案.pdf",
+            "relativePath": "补充\\一卷\\2026全国高考语文一卷答案.pdf",
+            "ext": ".pdf",
+            "status": "needs-ocr-check",
+            "role": "analysis",
+            "paperKind": "other"
+          }
+        ]
+      },
+      "math": {
+        "subject": "数学",
+        "total": 7,
+        "byStatus": {
+          "extractable": 2,
+          "needs-conversion": 0,
+          "needs-ocr-check": 5,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+            "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+            "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+            "ext": ".docx",
+            "status": "extractable",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+            "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+            "ext": ".pdf",
+            "status": "needs-ocr-check",
+            "role": "analysis",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2026高考数学江苏卷.pdf",
+            "relativePath": "2026高考试卷（更新中）\\2026年江苏高考\\2026高考数学江苏卷.pdf",
+            "ext": ".pdf",
+            "status": "needs-ocr-check",
+            "role": "original",
+            "paperKind": "jiangsu"
+          }
+        ]
+      },
+      "english": {
+        "subject": "英语",
+        "total": 4,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 0,
+          "needs-ocr-check": 4,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": [
+          {
+            "name": "2026年高考全国一卷英语卷.pdf",
+            "relativePath": "2026高考试卷（更新中）\\一卷\\2026年高考全国一卷英语卷.pdf",
+            "ext": ".pdf",
+            "status": "needs-ocr-check",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2026年高考英语新课标一卷（网络）.pdf",
+            "relativePath": "2026高考试卷（更新中）\\一卷\\2026年高考英语新课标一卷（网络）.pdf",
+            "ext": ".pdf",
+            "status": "needs-ocr-check",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2026年高考全国一卷英语卷.pdf",
+            "relativePath": "补充\\一卷\\2026年高考全国一卷英语卷.pdf",
+            "ext": ".pdf",
+            "status": "needs-ocr-check",
+            "role": "original",
+            "paperKind": "common-i"
+          },
+          {
+            "name": "2026年高考英语新课标一卷（网络）.pdf",
+            "relativePath": "补充\\一卷\\2026年高考英语新课标一卷（网络）.pdf",
+            "ext": ".pdf",
+            "status": "needs-ocr-check",
+            "role": "original",
+            "paperKind": "common-i"
+          }
+        ]
+      },
+      "physics": {
+        "subject": "物理",
+        "total": 0,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": []
+      },
+      "chemistry": {
+        "subject": "化学",
+        "total": 0,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": []
+      },
+      "biology": {
+        "subject": "生物",
+        "total": 0,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": []
+      },
+      "politics": {
+        "subject": "政治",
+        "total": 0,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": []
+      },
+      "history": {
+        "subject": "历史",
+        "total": 0,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": []
+      },
+      "geography": {
+        "subject": "地理",
+        "total": 0,
+        "byStatus": {
+          "extractable": 0,
+          "needs-conversion": 0,
+          "needs-ocr-check": 0,
+          "audio": 0,
+          "unknown": 0
+        },
+        "samples": []
+      }
+    }
+  }
+}

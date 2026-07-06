@@ -9,6 +9,7 @@ import {
   subjects,
   years,
 } from '../../data/jiangsu-gaokao'
+import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
 import '../../styles/courses/gaokao.css'
 
 const difficultyLabels = {
@@ -63,6 +64,23 @@ function SvgIcon({ name }) {
 
 function statusClass(status) {
   return `status-pill status-${status}`
+}
+
+function indexCellClass(cell) {
+  if (!cell || cell.total === 0) return 'index-empty'
+  if (cell.byStatus.extractable > 0) return 'index-ready'
+  if (cell.byStatus['needs-conversion'] > 0) return 'index-convert'
+  if (cell.byStatus['needs-ocr-check'] > 0) return 'index-ocr'
+  return 'index-other'
+}
+
+function formatGeneratedAt(value) {
+  if (!value) return '未知'
+  try {
+    return new Date(value).toLocaleString('zh-CN', { hour12: false })
+  } catch {
+    return value
+  }
 }
 
 function QuestionCard({ question, isDone, onDone }) {
@@ -172,6 +190,13 @@ export default function GaokaoPage() {
     })
   }
 
+  const indexCoverage = [
+    { label: '候选资料', value: `${gaokaoIndex.totals.files} 个文件` },
+    { label: '可直接抽取', value: `${gaokaoIndex.totals.extractable} 个 DOCX` },
+    { label: '需转换', value: `${gaokaoIndex.totals.needsConversion} 个旧 DOC` },
+    { label: '需 OCR 检查', value: `${gaokaoIndex.totals.needsOcrCheck} 个 PDF` },
+  ]
+
   return (
     <div className="gaokao-page">
       <section id="overview" className="gaokao-hero">
@@ -188,7 +213,7 @@ export default function GaokaoPage() {
           <div><strong>10</strong><span>年份范围</span></div>
           <div><strong>9</strong><span>覆盖科目</span></div>
           <div><strong>{practiceQuestions.length}</strong><span>完整题解</span></div>
-          <div><strong>{years.filter(item => item.status === 'available').length}</strong><span>可分析年份</span></div>
+          <div><strong>{gaokaoIndex.totals.coveredCells}/90</strong><span>资料格覆盖</span></div>
         </div>
       </section>
 
@@ -212,6 +237,48 @@ export default function GaokaoPage() {
               <span>{item.value}</span>
             </article>
           ))}
+        </div>
+        <div className="coverage-strip index-strip">
+          {indexCoverage.map(item => (
+            <article key={item.label}>
+              <strong>{item.label}</strong>
+              <span>{item.value}</span>
+            </article>
+          ))}
+        </div>
+        <div className="index-note">
+          索引生成时间：{formatGeneratedAt(gaokaoIndex.generatedAt)}。脚本只记录文件名和相对路径，不把本地绝对路径写入网页数据。
+        </div>
+        <div className="index-table-wrap" aria-label="江苏高考资料索引表">
+          <table className="index-table">
+            <thead>
+              <tr>
+                <th>年份</th>
+                {gaokaoIndex.subjects.map(subject => <th key={subject.key}>{subject.name}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {gaokaoIndex.yearSummaries.map(summary => (
+                <tr key={summary.year}>
+                  <th>
+                    <strong>{summary.year}</strong>
+                    <span>{summary.coveredSubjects}/{summary.totalSubjects} 科</span>
+                  </th>
+                  {gaokaoIndex.subjects.map(subject => {
+                    const cell = gaokaoIndex.matrix[summary.year][subject.key]
+                    return (
+                      <td key={subject.key} className={indexCellClass(cell)}>
+                        <strong>{cell.total}</strong>
+                        <span>抽 {cell.byStatus.extractable}</span>
+                        <span>转 {cell.byStatus['needs-conversion']}</span>
+                        <span>OCR {cell.byStatus['needs-ocr-check']}</span>
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
         <div className="year-grid">
           {years.map(item => (
@@ -316,7 +383,8 @@ export default function GaokaoPage() {
         </div>
         <p>
           访问与整理日期：{sourceDate}。本页优先使用本地资料目录作为证据来源；
-          数学迁移规则使用个人 Skill gaokao-question-gene。后续逐题入库时，会继续区分“真实原题”“解析摘录”“AI 迁移题”。
+          数学迁移规则使用个人 Skill gaokao-question-gene。资料索引由 `scripts/build-gaokao-index.mjs`
+          从本地目录生成；后续逐题入库时，会继续区分“真实原题”“解析摘录”“AI 迁移题”。
         </p>
         <div className="source-list">
           {sources.map(source => (
