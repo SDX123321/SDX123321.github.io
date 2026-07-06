@@ -1,24 +1,24 @@
 {
-  "generatedAt": "2026-07-06T13:21:23.558176+00:00",
+  "generatedAt": "2026-07-06T13:38:53.433798+00:00",
   "scope": {
     "note": "Web answer maps from public gaokzx.com article image pages and reviewed public PDF answer files. Review source URLs before relying on open-ended answers."
   },
   "summary": {
-    "sources": 24,
-    "answers": 283,
+    "sources": 26,
+    "answers": 289,
     "byFamily": {
       "biology:anhui": 21,
       "chemistry:yunnan": 18,
       "history:hunan": 38,
       "history:henan": 20,
-      "geography:guangdong": 16,
+      "geography:guangdong": 19,
       "history:yunnan": 15,
       "physics:heilongjiliao": 15,
       "physics:hunan": 15,
       "chemistry:heilongjiliao": 19,
       "physics:shanghai": 5,
       "chemistry:shanghai": 2,
-      "english:national1": 45,
+      "english:national1": 48,
       "chinese:national1": 0,
       "math:beijing": 21,
       "math:tianjin": 2,
@@ -739,6 +739,46 @@
           "number": 16,
           "answer": "C",
           "confidence": "web-ocr"
+        }
+      ]
+    },
+    {
+      "id": "baidu-guangdong-geography-open-2026",
+      "family": "geography:guangdong",
+      "title": "2026年高考真题 地理（广东卷）开放题答案",
+      "pageUrl": "https://tiku.baidu.com/tikupc/paperdetail/461f30dfd5bbfd0a795673f3",
+      "sourceName": "百度题库",
+      "manualAnswers": [
+        {
+          "number": 17,
+          "answer": "原因：矿井废弃后，地下水位回升淹没含黄铁矿的煤层；黄铁矿与水、空气发生氧化反应，生成可溶性铁盐，使地下水成为富铁水体。过程：地表水沿岩溶管道、矿井、裂隙等下渗汇入采煤通道，形成富铁水体；受地势东高西低的影响，富铁水体自东向西向泉眼流动，泉眼位于断层破裂带，泉水由此溢出地表。"
+        },
+        {
+          "number": 18,
+          "answer": "（1）不同中草药对气象要素需求差异显著，多观测点可精准监测区域内气象条件差异，为不同品种中草药匹配适宜种植区；丘陵地形导致局地小气候复杂，水热条件空间分布差异大，多观测点有利于因地制宜布局种植品种；暴雨、干旱、低温冻害等气象灾害对中草药产量与品质影响大，多观测点可提前防范，减少损失，保障药材稳产提质；精准气象数据可优化灌溉、施肥、采收等农事管理，提升中药材品质与产量。（2）科技条件、政策与资金、基础设施与服务、品牌与市场、就业与人才、文化传承、产业结构优化升级等区位条件得以改善；理由分别为气象观测与数据分析提升科学管理，政校企合作提供支持，基础设施完善，特色品牌拓宽市场，文旅融合创造就业并吸引人才，中医药与旅游融合促进文化传承，由单一种植拓展旅游文创等新业态。（3）该镇拥有多样的地质资源与优质银杏资源，提升旅游资源独特性与观赏性；地质与文旅融合度高，可推动观光、研学融合发展，延长产业链、吸引游客、实现产业转型升级；国家地质文化镇知名度高，品牌效应强。"
+        },
+        {
+          "number": 19,
+          "answer": "（1）三叠系、侏罗系。（2）滑坡所在处为背斜构造，背斜顶部受张力作用，岩石破碎，易被风化侵蚀；后经流水等外力长期侵蚀、下切，最终形成谷地。（3）粉砂岩与粉砂质泥岩交错分布，粉砂质泥岩更软，易受风化侵蚀，形成差异侵蚀；粉砂质泥岩吸湿性较强，易吸收雨水软化，重量增加，易发生重力崩塌；较软岩层易在上覆岩层挤压下发生蠕动形变，形成结构性失稳。（4）连续多日降水，水分沿裂隙下渗，在地下深处积聚；顶部温度低于裂隙内，裂隙中的空气受热膨胀上升；水汽沿裂隙向上运动冒出地表，在裂隙出口处遇冷凝结，形成水汽升腾现象。"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 17,
+          "answer": "原因：矿井废弃后，地下水位回升淹没含黄铁矿的煤层；黄铁矿与水、空气发生氧化反应，生成可溶性铁盐，使地下水成为富铁水体。过程：地表水沿岩溶管道、矿井、裂隙等下渗汇入采煤通道，形成富铁水体；受地势东高西低的影响，富铁水体自东向西向泉眼流动，泉眼位于断层破裂带，泉水由此溢出地表。",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 18,
+          "answer": "（1）不同中草药对气象要素需求差异显著，多观测点可精准监测区域内气象条件差异，为不同品种中草药匹配适宜种植区；丘陵地形导致局地小气候复杂，水热条件空间分布差异大，多观测点有利于因地制宜布局种植品种；暴雨、干旱、低温冻害等气象灾害对中草药产量与品质影响大，多观测点可提前防范，减少损失，保障药材稳产提质；精准气象数据可优化灌溉、施肥、采收等农事管理，提升中药材品质与产量。（2）科技条件、政策与资金、基础设施与服务、品牌与市场、就业与人才、文化传承、产业结构优化升级等区位条件得以改善；理由分别为气象观测与数据分析提升科学管理，政校企合作提供支持，基础设施完善，特色品牌拓宽市场，文旅融合创造就业并吸引人才，中医药与旅游融合促进文化传承，由单一种植拓展旅游文创等新业态。（3）该镇拥有多样的地质资源与优质银杏资源，提升旅游资源独特性与观赏性；地质与文旅融合度高，可推动观光、研学融合发展，延长产业链、吸引游客、实现产业转型升级；国家地质文化镇知名度高，品牌效应强。",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 19,
+          "answer": "（1）三叠系、侏罗系。（2）滑坡所在处为背斜构造，背斜顶部受张力作用，岩石破碎，易被风化侵蚀；后经流水等外力长期侵蚀、下切，最终形成谷地。（3）粉砂岩与粉砂质泥岩交错分布，粉砂质泥岩更软，易受风化侵蚀，形成差异侵蚀；粉砂质泥岩吸湿性较强，易吸收雨水软化，重量增加，易发生重力崩塌；较软岩层易在上覆岩层挤压下发生蠕动形变，形成结构性失稳。（4）连续多日降水，水分沿裂隙下渗，在地下深处积聚；顶部温度低于裂隙内，裂隙中的空气受热膨胀上升；水汽沿裂隙向上运动冒出地表，在裂隙出口处遇冷凝结，形成水汽升腾现象。",
+          "confidence": "reviewed-web-text"
         }
       ]
     },
@@ -1507,6 +1547,46 @@
           "number": 50,
           "answer": "D",
           "confidence": "web-ocr"
+        }
+      ]
+    },
+    {
+      "id": "qisuen-national1-english-cloze-2026",
+      "family": "english:national1",
+      "title": "2026新高考I卷英语完形填空答案",
+      "pageUrl": "https://qisuen.cn/resource/detail?id=134771",
+      "sourceName": "奇速英语",
+      "manualAnswers": [
+        {
+          "number": 51,
+          "answer": "A"
+        },
+        {
+          "number": 52,
+          "answer": "B"
+        },
+        {
+          "number": 53,
+          "answer": "D"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 51,
+          "answer": "A",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 52,
+          "answer": "B",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 53,
+          "answer": "D",
+          "confidence": "reviewed-web-text"
         }
       ]
     },
