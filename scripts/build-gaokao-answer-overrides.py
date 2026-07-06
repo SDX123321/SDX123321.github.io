@@ -49,6 +49,7 @@ INLINE_CHOICE_RE = re.compile(r"(?<!\d)(?P<number>\d{1,2})[.．、]\s*(?:\(\d+\s
 ANSWER_BLOCK_RE = re.compile(r"【答案】\s*(?P<answer>.*?)(?=【解析】|【详解】|【分析】|\n【解析】|\n【详解】|\n【分析】|$)", re.S)
 SHORT_ANSWER_RE = re.compile(r"^[A-G]{1,7}$|^[A-D](?:[、,，]\s*[A-D])+$")
 ANSWER_SKIP_RE = re.compile(r"注意事项|答题卡|考生|2B|铅笔|涂改液|试卷和答题卡|作答|姓名|考场号|座位号|考试结束")
+OPEN_ENDED_WRITING_ANSWER = "开放性写作题，无唯一标准答案；请围绕材料要求立意、选材并展开论证。"
 
 
 def load_json(path: Path) -> dict:
@@ -157,6 +158,29 @@ def clean_answer_lines(lines: list[str]) -> str:
             continue
         cleaned.append(line)
     return "\n".join(cleaned).strip()
+
+
+def is_open_ended_writing_question(record: dict) -> bool:
+    if record.get("subject") != "chinese":
+        return False
+    prompt = clean_text(record.get("question", {}).get("prompt", ""))
+    if not prompt:
+        return False
+    return (
+        "根据要求写作" in prompt
+        or ("写一篇" in prompt and re.search(r"不少于\s*800\s*字", prompt))
+        or ("自拟标题" in prompt and "不得抄袭" in prompt)
+    )
+
+
+def extract_writing_solution(prompt: str) -> list[str]:
+    if "试题分析" not in prompt:
+        return []
+    analysis = clean_text(prompt.split("试题分析")[-1])
+    if not analysis:
+        return []
+    # OCR sources can duplicate pages; keep the source analysis useful without flooding cards.
+    return [f"试题分析：{analysis[:900]}"]
 
 
 def infer_subject(source: str, relative: str, fallback: str = "") -> str:
@@ -506,6 +530,7 @@ def choose_candidate(candidates: list[dict]) -> dict | None:
         "family-alias-answer": 4,
         "web-answer-source": 5,
         "answer-only-question": 6,
+        "open-ended-writing": 7,
     }
     return sorted(candidates, key=lambda item: (priority.get(item["method"], 9), len(item["answer"])))[0]
 
@@ -605,6 +630,13 @@ def build_overrides() -> dict:
                     "solution": [],
                     "source": record["file"].get("source", ""),
                     "method": "answer-only-question",
+                })
+            if is_open_ended_writing_question(record):
+                candidates.append({
+                    "answer": OPEN_ENDED_WRITING_ANSWER,
+                    "solution": extract_writing_solution(question.get("prompt", "")),
+                    "source": record["file"].get("source", ""),
+                    "method": "open-ended-writing",
                 })
             if target_can_use_family_answer(record):
                 candidates.extend(answer_maps.get(record["family"], {}).get(number, []))

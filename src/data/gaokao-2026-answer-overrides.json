@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T15:07:31.718876+00:00",
+  "generatedAt": "2026-07-06T15:16:06.361485+00:00",
   "scope": {
     "datasets": [
       "gaokao-2026-docx-extracted.json",
@@ -25,9 +25,9 @@
     "questionsScanned": 1283,
     "answerSourceRowsScanned": 79,
     "missingBeforeOverrides": 862,
-    "overrides": 820,
+    "overrides": 822,
     "corrections": 4,
-    "missingAfterOverrides": 46,
+    "missingAfterOverrides": 44,
     "byMethod": {
       "answer-source-file": 124,
       "web-answer-source": 322,
@@ -36,12 +36,13 @@
       "embedded-answer-in-prompt": 43,
       "answer-only-question": 18,
       "correct-existing-answer": 4,
+      "open-ended-writing": 2,
       "family-alias-answer": 41
     },
     "byDataset": {
       "gaokao-2026-docx-extracted.json": 248,
-      "gaokao-2026-pdf-text-extracted.json": 173,
-      "gaokao-2026-ocr-extracted.json": 357,
+      "gaokao-2026-pdf-text-extracted.json": 174,
+      "gaokao-2026-ocr-extracted.json": 358,
       "gaokao-2026-residual-extracted.json": 23,
       "jiangsu-gaokao-ocr.json": 19
     }
@@ -4164,6 +4165,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-pdf-65ec47f5392d7cf9",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026年上海高考语文试卷（不完全版）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年上海高考\\2026年上海高考语文试卷（不完全版）.pdf",
+      "subject": "chinese",
+      "family": "chinese:shanghai",
+      "number": 23,
+      "answer": "开放性写作题，无唯一标准答案；请围绕材料要求立意、选材并展开论证。",
+      "solution": [],
+      "method": "open-ended-writing",
+      "answerSource": "2026年上海高考语文试卷（不完全版）.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-pdf-831022e9c691bbf5",
       "dataset": "gaokao-2026-pdf-text-extracted.json",
       "source": "2026年语文新高考二卷.pdf",
@@ -6749,6 +6764,22 @@
       "solution": [],
       "method": "family-alias-answer",
       "answerSource": "https://www.gzywtk.com/tmshow/32154.html via chinese:national1",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-bcc02d8eed971a55",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026全国高考语文1卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026全国高考语文1卷.pdf",
+      "subject": "chinese",
+      "family": "chinese:全国语文1卷",
+      "number": 23,
+      "answer": "开放性写作题，无唯一标准答案；请围绕材料要求立意、选材并展开论证。",
+      "solution": [
+        "试题分析：源：中国考试] 切入点，上承语言文字运用第21题，有利于学生思维的连 思想情感的载体、展现社会生活变化的窗口。再将青年的成 本生命体验紧密联结；四个“你”字提出明确的限制性写作要 变化承载着的成长印记和意义。 真实体验，促使其主动审视个人成长轨迹，激发写作的内在 语理解的变化，自然关联认知发展、情感成长和价值塑造、 在考查学生发现具体问题并“深耕”的能力以及探索性、创新 要求写出个人独特的理解变化过程及其意义，考查学生的"
+      ],
+      "method": "open-ended-writing",
+      "answerSource": "2026全国高考语文1卷.pdf",
       "confidence": "local-heuristic"
     },
     {
