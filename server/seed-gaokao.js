@@ -102,11 +102,17 @@ function isAnswerAnalysisExtractionFragment(item) {
   return /\b(?:Yours|Yours sincerely),?\s+Li Hua\s*$/iu.test(compactPrompt)
 }
 
+function isMixedOcrQuestionFragment(item) {
+  const compactPrompt = getQuestionPrompt(item).replace(/\s+/g, ' ').trim()
+  return ['V(NaOH)', '16.(15', '17.(14', 'CH2Cl2'].every(marker => compactPrompt.includes(marker))
+}
+
 function shouldImportExtractedQuestion(item) {
   return !isNumericExtractionFragment(item)
     && !isUnnumberedExtractionFragment(item)
     && !isPassageOnlyExtractionFragment(item)
     && !isAnswerAnalysisExtractionFragment(item)
+    && !isMixedOcrQuestionFragment(item)
 }
 
 function isOcrAnswerSourceFile(file) {

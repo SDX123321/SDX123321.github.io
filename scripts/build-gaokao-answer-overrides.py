@@ -90,12 +90,18 @@ def is_answer_analysis_extraction_fragment(question: dict) -> bool:
     return bool(re.search(r"\b(?:Yours|Yours sincerely),?\s+Li Hua\s*$", prompt, re.I))
 
 
+def is_mixed_ocr_question_fragment(question: dict) -> bool:
+    prompt = clean_text(question.get("prompt", ""))
+    return all(marker in prompt for marker in ["V(NaOH)", "16.(15", "17.(14", "CH2Cl2"])
+
+
 def should_import_extracted_question(question: dict) -> bool:
     return not (
         is_numeric_extraction_fragment(question)
         or is_unnumbered_extraction_fragment(question)
         or is_passage_only_extraction_fragment(question)
         or is_answer_analysis_extraction_fragment(question)
+        or is_mixed_ocr_question_fragment(question)
     )
 
 
