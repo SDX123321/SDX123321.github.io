@@ -8,6 +8,7 @@ import { ensureSchema, pool, query } from './db.js'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const DATA_DIR = path.resolve(__dirname, '../src/data')
+let answerOverrideMap = new Map()
 
 function hashKey(prefix, parts) {
   const hash = crypto
@@ -25,6 +26,30 @@ function asJson(value, fallback) {
 async function loadJson(filename) {
   const content = await fs.readFile(path.join(DATA_DIR, filename), 'utf8')
   return JSON.parse(content)
+}
+
+function loadAnswerOverrides(data) {
+  answerOverrideMap = new Map((data.overrides || []).map(override => [override.questionId, override]))
+}
+
+function cleanOverrideText(value) {
+  return typeof value === 'string' ? value.replace(/\u0000/g, '') : value
+}
+
+function applyAnswerOverride(item) {
+  if (!item?.id || item.answer) return item
+  const override = answerOverrideMap.get(item.id)
+  if (!override?.answer) return item
+  return {
+    ...item,
+    answer: cleanOverrideText(override.answer),
+    solution: Array.isArray(item.solution) && item.solution.length > 0 ? item.solution : (override.solution || []).map(cleanOverrideText),
+    flags: [
+      ...(item.flags || []),
+      'answer_override',
+      `answer_override_${override.method}`,
+    ],
+  }
 }
 
 async function upsertSource(source) {
@@ -170,7 +195,7 @@ async function seedSubjectProfiles() {
   }
 }
 
-async function seedStaticSources(index, extracted, docx2026, pdfText2026, auditOcr2026, residual2026, ocr) {
+async function seedStaticSources(index, extracted, docx2026, pdfText2026, auditOcr2026, residual2026, answerOverrides, ocr) {
   let count = 0
   for (const source of sources) {
     await upsertSource({
@@ -238,6 +263,15 @@ async function seedStaticSources(index, extracted, docx2026, pdfText2026, auditO
     metadata: { generatedAt: residual2026.generatedAt, summary: residual2026.summary, scope: residual2026.scope, skipped: residual2026.skipped },
   })
   await upsertSource({
+    sourceKey: 'local_gaokao_2026_answer_overrides',
+    name: '2026 高考本地答案补全覆盖表',
+    detail: 'src/data/gaokao-2026-answer-overrides.json',
+    status: 'answer-enriched',
+    sourceType: 'local-answer-overrides',
+    relativePath: 'src/data/gaokao-2026-answer-overrides.json',
+    metadata: { generatedAt: answerOverrides.generatedAt, summary: answerOverrides.summary, scope: answerOverrides.scope },
+  })
+  await upsertSource({
     sourceKey: 'local_gaokao_ocr_2026_jiangsu_math',
     name: ocr.source?.filename || '2026 江苏数学 OCR',
     detail: ocr.source?.note,
@@ -246,7 +280,7 @@ async function seedStaticSources(index, extracted, docx2026, pdfText2026, auditO
     relativePath: ocr.source?.relativePath,
     metadata: { generatedAt: ocr.generatedAt, summary: ocr.summary, pages: ocr.pages },
   })
-  return count + 7
+  return count + 8
 }
 
 async function seedIndexPapers(index) {
@@ -316,7 +350,8 @@ async function seedExtractedQuestions(extracted) {
     })
     papers += 1
 
-    for (const item of file.questions || []) {
+    for (const rawItem of file.questions || []) {
+      const item = applyAnswerOverride(rawItem)
       const sourceType = file.sourceType || (file.relativePath?.toLowerCase().endsWith('.pdf') ? 'real-pdf-text' : 'real-docx')
       const questionId = await upsertQuestion({
         questionKey: hashKey('extract_question', [file.year, file.subject, file.source, item.number, item.prompt]),
@@ -371,7 +406,8 @@ async function seedOcrQuestions(ocr) {
   })
 
   let questions = 0
-  for (const item of ocr.questions || []) {
+  for (const rawItem of ocr.questions || []) {
+    const item = applyAnswerOverride(rawItem)
     const questionId = await upsertQuestion({
       questionKey: hashKey('ocr_question', [source.year, source.province, subject.key, item.number, item.prompt]),
       paperId,
@@ -423,7 +459,8 @@ async function seedAuditOcrQuestions(auditOcr) {
     })
     papers += 1
 
-    for (const item of file.questions || []) {
+    for (const rawItem of file.questions || []) {
+      const item = applyAnswerOverride(rawItem)
       const questionId = await upsertQuestion({
         questionKey: item.id || hashKey('audit_ocr_question', [file.year, file.subject, file.source, item.number, item.prompt]),
         paperId,
@@ -553,13 +590,15 @@ async function main() {
   const pdfText2026 = await loadJson('gaokao-2026-pdf-text-extracted.json')
   const auditOcr2026 = await loadJson('gaokao-2026-ocr-extracted.json')
   const residual2026 = await loadJson('gaokao-2026-residual-extracted.json')
+  const answerOverrides = await loadJson('gaokao-2026-answer-overrides.json')
   const ocr = await loadJson('jiangsu-gaokao-ocr.json')
+  loadAnswerOverrides(answerOverrides)
 
   await ensureSchema()
   await query('BEGIN')
   try {
     await seedSubjectProfiles()
-    const sourceCount = await seedStaticSources(index, extracted, docx2026, pdfText2026, auditOcr2026, residual2026, ocr)
+    const sourceCount = await seedStaticSources(index, extracted, docx2026, pdfText2026, auditOcr2026, residual2026, answerOverrides, ocr)
     const indexPaperCount = await seedIndexPapers(index)
     const overviewPaperCount = await seedYearOverviewPapers()
     const extractedResult = await seedExtractedQuestions(extracted)
@@ -581,6 +620,8 @@ async function main() {
       pdfText2026Questions: pdfText2026Result.questions,
       auditOcr2026Questions: auditOcr2026Result.questions,
       residual2026Questions: residual2026Result.questions,
+      answerOverrides: answerOverrides.summary?.overrides || 0,
+      missingAfterAnswerOverrides: answerOverrides.summary?.missingAfterOverrides ?? null,
       ocrQuestions: ocrResult.questions,
       practiceQuestions: practiceResult.questions,
       trendNotes: trendNoteCount,

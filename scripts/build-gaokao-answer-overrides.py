@@ -1,0 +1,461 @@
+import hashlib
+import importlib.util
+import json
+import re
+from collections import Counter, defaultdict
+from datetime import datetime, timezone
+from pathlib import Path
+
+from pypdf import PdfReader
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = REPO_ROOT / "src/data"
+AUDIT_PATH = DATA_DIR / "gaokao-processing-audit.json"
+OUT_PATH = DATA_DIR / "gaokao-2026-answer-overrides.json"
+DATASETS = [
+    "gaokao-2026-docx-extracted.json",
+    "gaokao-2026-pdf-text-extracted.json",
+    "gaokao-2026-ocr-extracted.json",
+    "gaokao-2026-residual-extracted.json",
+    "jiangsu-gaokao-ocr.json",
+]
+
+BASE_SPEC = importlib.util.spec_from_file_location(
+    "gaokao_docx_base",
+    REPO_ROOT / "scripts/extract-gaokao-docx.py",
+)
+BASE = importlib.util.module_from_spec(BASE_SPEC)
+BASE_SPEC.loader.exec_module(BASE)
+
+NUMBERED_RE = re.compile(r"^(?P<number>\d{1,2})[.．、]\s*(?P<body>.*)$")
+INLINE_CHOICE_RE = re.compile(r"(?<!\d)(?P<number>\d{1,2})[.．、]\s*(?:\(\d+\s*分\)\s*)?(?P<answer>[A-D]{1,4}|[A-G]{1,7})(?=\s|$|[。；;，,])")
+ANSWER_BLOCK_RE = re.compile(r"【答案】\s*(?P<answer>.*?)(?=【解析】|【详解】|【分析】|\n【解析】|\n【详解】|\n【分析】|$)", re.S)
+SHORT_ANSWER_RE = re.compile(r"^[A-G]{1,7}$|^[A-D](?:[、,，]\s*[A-D])+$")
+ANSWER_SKIP_RE = re.compile(r"注意事项|答题卡|考生|2B|铅笔|涂改液|试卷和答题卡|作答|姓名|考场号|座位号|考试结束")
+
+
+def load_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def stable_key(parts: list[str]) -> str:
+    digest = hashlib.sha1("\u241f".join(parts).encode("utf-8")).hexdigest()[:16]
+    return f"gaokao-answer-{digest}"
+
+
+def clean_text(text: str) -> str:
+    text = text.encode("utf-8", "ignore").decode("utf-8", "ignore")
+    text = text.replace("\x00", "")
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+
+def normalize_answer(answer: str) -> str:
+    answer = clean_text(answer)
+    answer = re.sub(r"^(答案|参考答案)[:：]?", "", answer).strip()
+    if not answer or re.fullmatch(r"#+", answer):
+        return ""
+    return answer
+
+
+def clean_answer_lines(lines: list[str]) -> str:
+    cleaned = []
+    for line in lines:
+        line = clean_text(line)
+        if not line:
+            continue
+        if re.search(r"第\s*\d+\s*页|学科\s*网|股份有限公司|参考答案|考试时间|满分", line) or ANSWER_SKIP_RE.search(line):
+            continue
+        cleaned.append(line)
+    return "\n".join(cleaned).strip()
+
+
+def infer_subject(source: str, relative: str, fallback: str = "") -> str:
+    text = f"{source} {relative}"
+    if fallback and fallback != "unknown":
+        return fallback
+    subject_terms = [
+        ("chinese", ["语文"]),
+        ("math", ["数学"]),
+        ("english", ["英语", "外语"]),
+        ("physics", ["物理"]),
+        ("chemistry", ["化学"]),
+        ("biology", ["生物"]),
+        ("politics", ["政治"]),
+        ("history", ["历史"]),
+        ("geography", ["地理"]),
+    ]
+    for key, terms in subject_terms:
+        if any(term in text for term in terms):
+            return key
+    return fallback or "unknown"
+
+
+def family_for(subject: str, source: str, relative: str = "") -> str:
+    text = f"{source} {relative}"
+    subject = infer_subject(source, relative, subject)
+    if re.search(r"新高考\s*(?:I|Ⅰ|1|一)|全国\s*(?:I|Ⅰ|1|一)|新课标\s*(?:I|Ⅰ|1|一)|一卷|全国1|全国一", text, re.I):
+        region = "national1"
+    elif re.search(r"新高考\s*(?:II|Ⅱ|2|二)|全国\s*(?:II|Ⅱ|2|二)|新课标\s*(?:II|Ⅱ|2|二)|二卷|全国2|全国二", text, re.I):
+        region = "national2"
+    elif "上海" in text:
+        region = "shanghai-spring" if "春季" in text or "春季招生" in text else "shanghai"
+    elif "湖南" in text:
+        region = "hunan"
+    elif "云南" in text:
+        region = "yunnan"
+    elif "广东" in text:
+        region = "guangdong"
+    elif "北京" in text:
+        region = "beijing"
+    elif "天津" in text:
+        region = "tianjin"
+    elif "安徽" in text:
+        region = "anhui"
+    elif "河南" in text:
+        region = "henan"
+    elif "陕西" in text or "陕晋青宁" in text:
+        region = "shanjinqingning"
+    elif "黑吉辽蒙" in text or "黑吉辽" in text:
+        region = "heilongjiliao"
+    else:
+        base = re.sub(r"\.[^.]+$", "", source)
+        base = re.sub(r"(原卷版|解析版|答案版|纯答案版|网络|收集版|高清|完整版|试卷|真题|答案|解析|教师版|参考|回忆|2026|年|高考|普通高等学校招生全国统一考试|精品)", "", base)
+        base = re.sub(r"\W+", "", base)
+        region = base[:20] or "unknown"
+    return f"{subject}:{region}"
+
+
+def number_value(value) -> int | None:
+    try:
+        number = int(value)
+        return number if 1 <= number <= 100 else None
+    except Exception:
+        return None
+
+
+def load_question_records() -> list[dict]:
+    records = []
+    for dataset in DATASETS:
+        data = load_json(DATA_DIR / dataset)
+        if "files" in data:
+            files = data.get("files") or []
+        else:
+            source = data.get("source") or {}
+            files = [{
+                "source": source.get("filename", dataset),
+                "relativePath": source.get("relativePath", ""),
+                "subject": source.get("subject", "math"),
+                "subjectName": source.get("subjectName", "数学"),
+                "questions": data.get("questions") or [],
+            }]
+        for file_item in files:
+            subject = file_item.get("subject") or file_item.get("subjectKey") or "unknown"
+            for question in file_item.get("questions") or []:
+                records.append({
+                    "dataset": dataset,
+                    "file": file_item,
+                    "question": question,
+                    "questionId": question.get("id") or stable_key([dataset, file_item.get("source", ""), str(question.get("number")), question.get("prompt", "")[:80]]),
+                    "number": number_value(question.get("number")),
+                    "subject": subject,
+                    "family": family_for(subject, file_item.get("source", ""), file_item.get("relativePath", "")),
+                })
+    return records
+
+
+def extract_answer_from_prompt(prompt: str) -> str:
+    match = ANSWER_BLOCK_RE.search(prompt or "")
+    if match:
+        answer = normalize_answer(match.group("answer"))
+        if answer:
+            return answer
+    match = re.search(r"(?:故选|答案为|选)\s*([A-D]{1,4})(?:[。．.，,]|$)", prompt or "")
+    if match:
+        return match.group(1)
+    return ""
+
+
+def is_answer_only_file(file_item: dict) -> bool:
+    source = file_item.get("source", "")
+    return "纯答案版" in source or "答案版" in source or re.search(r"答案(?:\)|）|$)", source)
+
+
+def is_short_answer_prompt(prompt: str) -> bool:
+    prompt = clean_text(prompt)
+    return len(prompt) <= 120 and bool(SHORT_ANSWER_RE.search(prompt))
+
+
+def add_candidate(answer_maps, family, number, answer, source, method, solution=None):
+    if not family or not number or not answer:
+        return
+    answer = normalize_answer(answer)
+    if not answer:
+        return
+    answer_maps[family][number].append({
+        "answer": answer,
+        "solution": solution or [],
+        "source": source,
+        "method": method,
+    })
+
+
+def parse_numbered_answers_from_lines(lines: list[str]) -> dict[int, str]:
+    answer_map: dict[int, str] = {}
+
+    content_start = 0
+    for index, raw in enumerate(lines):
+        line = clean_text(raw)
+        if re.search(r"(^|\s)(一|二|三|四|五|六|七)[、\s]|第一部分|选择题|阅读[ⅠⅡI ]|空间科技|硝普钠|听力", line):
+            if "注意事项" not in line:
+                content_start = index
+                break
+    scoped_lines = lines[content_start:]
+
+    joined = " ".join(clean_text(line) for line in scoped_lines)
+    for match in INLINE_CHOICE_RE.finditer(joined):
+        number = int(match.group("number"))
+        answer_map.setdefault(number, match.group("answer"))
+
+    current_number = None
+    current_lines: list[str] = []
+    for raw in scoped_lines:
+        line = clean_text(raw)
+        if not line:
+            continue
+        if re.search(r"第\s*\d+\s*页|学科\s*网|股份有限公司|参考答案|考试时间|满分", line) or ANSWER_SKIP_RE.search(line):
+            continue
+        match = NUMBERED_RE.match(line)
+        if match:
+            if current_number is not None and current_number not in answer_map:
+                answer = clean_answer_lines(current_lines)
+                if answer:
+                    answer_map[current_number] = answer
+            current_number = int(match.group("number"))
+            current_lines = [match.group("body")]
+            continue
+        if current_number is not None and len(current_lines) < 12:
+            current_lines.append(line)
+    if current_number is not None and current_number not in answer_map:
+        answer = clean_answer_lines(current_lines)
+        if answer:
+            answer_map[current_number] = answer
+    return answer_map
+
+
+def letter_sequence(text: str) -> list[str]:
+    return list(re.sub(r"[^A-G]", "", text.upper()))
+
+
+def add_sequence(answer_map: dict[int, str], start: int, sequence: list[str]) -> None:
+    for offset, answer in enumerate(sequence):
+        answer_map.setdefault(start + offset, answer)
+
+
+def parse_english_answers(lines: list[str], family: str) -> dict[int, str]:
+    answer_map: dict[int, str] = {}
+    text = "\n".join(lines)
+
+    listening = re.search(r"听力[：:]\s*([A-G\s]+?)(?=\d|阅读|$)", text, re.S)
+    if listening:
+        add_sequence(answer_map, 1, letter_sequence(listening.group(1))[:20])
+
+    if "national1" in family:
+        start_by_part = {"A": 21, "B": 24, "C": 28, "D": 32}
+        for part, start in start_by_part.items():
+            match = re.search(rf"{part}\s*篇\s*[:：]\s*([A-G]+)", text, re.I)
+            if match:
+                add_sequence(answer_map, start, letter_sequence(match.group(1)))
+    else:
+        reading = re.search(r"阅读[：:]\s*([A-G\s]+?)(?=七选五|完型|完形|语法|$)", text, re.S)
+        if reading:
+            add_sequence(answer_map, 21, letter_sequence(reading.group(1))[:15])
+
+    seven = re.search(r"七选五\s*[:：]?\s*([A-G\s]+)", text)
+    if seven:
+        add_sequence(answer_map, 36, letter_sequence(seven.group(1))[:5])
+
+    cloze = re.search(r"完[型形]填?空?\s*[:：]?\s*([A-G\s]+?)(?=语法|$)", text, re.S)
+    if cloze:
+        add_sequence(answer_map, 41, letter_sequence(cloze.group(1))[:15])
+
+    grammar = re.findall(r"(?<!\d)(?:5[6-9]|6[0-5]|[1-9]|10)[.．、]\s*([A-Za-z][A-Za-z\s-]{0,40})", text)
+    if grammar:
+        start = 56 if any(str(number) in text for number in range(56, 66)) else 1
+        for offset, answer in enumerate(grammar[:10]):
+            answer_map.setdefault(start + offset, normalize_answer(answer))
+    return answer_map
+
+
+def read_answer_source_text(item: dict) -> list[str]:
+    source_path = BASE.DEFAULT_SOURCE_ROOT / item["relativePath"]
+    if item["ext"] == ".docx":
+        return BASE.docx_paragraphs(source_path)
+    if item["ext"] == ".pdf":
+        reader = PdfReader(str(source_path))
+        lines = []
+        for page in reader.pages:
+            text = page.extract_text() or ""
+            lines.extend(text.splitlines())
+        return lines
+    return []
+
+
+def build_answer_maps(records: list[dict]) -> dict[str, dict[int, list[dict]]]:
+    answer_maps: dict[str, dict[int, list[dict]]] = defaultdict(lambda: defaultdict(list))
+
+    for record in records:
+        question = record["question"]
+        file_item = record["file"]
+        number = record["number"]
+        if not number:
+            continue
+        answer = question.get("answer") or ""
+        solution = question.get("solution") if isinstance(question.get("solution"), list) else []
+        if answer:
+            add_candidate(answer_maps, record["family"], number, answer, file_item.get("source", ""), "existing-question-answer", solution)
+        elif is_answer_only_file(file_item) and is_short_answer_prompt(question.get("prompt", "")):
+            add_candidate(answer_maps, record["family"], number, question.get("prompt", ""), file_item.get("source", ""), "answer-only-question")
+
+        prompt_answer = extract_answer_from_prompt(question.get("prompt", ""))
+        if prompt_answer:
+            add_candidate(answer_maps, record["family"], number, prompt_answer, file_item.get("source", ""), "embedded-answer-in-prompt")
+
+    audit = load_json(AUDIT_PATH)
+    seen_sources = set()
+    for item in audit.get("files", []):
+        if item.get("status") != "answer-source":
+            continue
+        if item["relativePath"] in seen_sources:
+            continue
+        seen_sources.add(item["relativePath"])
+        try:
+            lines = read_answer_source_text(item)
+        except Exception:
+            continue
+        subject = infer_subject(item["name"], item["relativePath"], item.get("subjectKey", "unknown"))
+        family = family_for(subject, item["name"], item["relativePath"])
+        maps = parse_numbered_answers_from_lines(lines)
+        if subject == "english":
+            maps = {**maps, **parse_english_answers(lines, family)}
+        for number, answer in maps.items():
+            add_candidate(answer_maps, family, number, answer, item["relativePath"], "answer-source-file")
+
+    return answer_maps
+
+
+def choose_candidate(candidates: list[dict]) -> dict | None:
+    if not candidates:
+        return None
+    priority = {
+        "embedded-answer-in-prompt": 0,
+        "existing-question-answer": 1,
+        "answer-source-file": 2,
+        "answer-only-question": 3,
+    }
+    return sorted(candidates, key=lambda item: (priority.get(item["method"], 9), len(item["answer"])))[0]
+
+
+def target_can_use_family_answer(record: dict) -> bool:
+    question = record["question"]
+    prompt = question.get("prompt", "")
+    file_item = record["file"]
+    if "passage_only" in (question.get("flags") or []):
+        return False
+    if record["subject"] == "english":
+        number = record["number"] or 0
+        if number <= 20:
+            return bool(re.search(r"\bA[.．、]", prompt) and re.search(r"\bB[.．、]", prompt))
+        if 21 <= number <= 55:
+            return bool(re.search(r"\bA[.．、]", prompt) or "七选五" in prompt or "完形" in prompt)
+        return "语法" in file_item.get("source", "") or "____" in prompt or "________" in prompt
+    return True
+
+
+def build_overrides() -> dict:
+    records = load_question_records()
+    answer_maps = build_answer_maps(records)
+    overrides = []
+    by_method = Counter()
+    by_dataset = Counter()
+
+    for record in records:
+        question = record["question"]
+        if question.get("answer"):
+            continue
+        number = record["number"]
+        if not number:
+            continue
+
+        candidates = []
+        prompt_answer = extract_answer_from_prompt(question.get("prompt", ""))
+        if prompt_answer:
+            candidates.append({
+                "answer": prompt_answer,
+                "solution": [],
+                "source": record["file"].get("source", ""),
+                "method": "embedded-answer-in-prompt",
+            })
+        if is_answer_only_file(record["file"]) and is_short_answer_prompt(question.get("prompt", "")):
+            candidates.append({
+                "answer": question.get("prompt", ""),
+                "solution": [],
+                "source": record["file"].get("source", ""),
+                "method": "answer-only-question",
+            })
+        if target_can_use_family_answer(record):
+            candidates.extend(answer_maps.get(record["family"], {}).get(number, []))
+
+        chosen = choose_candidate(candidates)
+        if not chosen:
+            continue
+
+        override = {
+            "questionId": record["questionId"],
+            "dataset": record["dataset"],
+            "source": record["file"].get("source", ""),
+            "relativePath": record["file"].get("relativePath", ""),
+            "subject": record["subject"],
+            "family": record["family"],
+            "number": number,
+            "answer": normalize_answer(chosen["answer"]),
+            "solution": chosen.get("solution") or [],
+            "method": chosen["method"],
+            "answerSource": chosen["source"],
+            "confidence": "local-heuristic",
+        }
+        overrides.append(override)
+        by_method[override["method"]] += 1
+        by_dataset[override["dataset"]] += 1
+
+    before_missing = sum(1 for record in records if not record["question"].get("answer"))
+    return {
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "scope": {
+            "datasets": DATASETS,
+            "note": "Local answer overrides mined from parsed answers, answer-only files, and answer-source DOCX/PDF files. Applied only when the raw question answer is empty.",
+        },
+        "summary": {
+            "questionsScanned": len(records),
+            "missingBeforeOverrides": before_missing,
+            "overrides": len(overrides),
+            "missingAfterOverrides": before_missing - len({item["questionId"] for item in overrides}),
+            "byMethod": dict(by_method),
+            "byDataset": dict(by_dataset),
+        },
+        "overrides": overrides,
+    }
+
+
+def main() -> None:
+    data = build_overrides()
+    OUT_PATH.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"Built {data['summary']['overrides']} answer overrides")
+    print(f"Missing before: {data['summary']['missingBeforeOverrides']}")
+    print(f"Missing after: {data['summary']['missingAfterOverrides']}")
+    print(f"Wrote {OUT_PATH}")
+
+
+if __name__ == "__main__":
+    main()

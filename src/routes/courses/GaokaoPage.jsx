@@ -15,6 +15,7 @@ import extracted2026Docx from '../../data/gaokao-2026-docx-extracted.json'
 import extracted2026PdfText from '../../data/gaokao-2026-pdf-text-extracted.json'
 import extracted2026Ocr from '../../data/gaokao-2026-ocr-extracted.json'
 import extracted2026Residual from '../../data/gaokao-2026-residual-extracted.json'
+import answerOverrides from '../../data/gaokao-2026-answer-overrides.json'
 import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
 import ocrQuestions from '../../data/jiangsu-gaokao-ocr.json'
 import {
@@ -60,6 +61,20 @@ const extractedLibraries = [
   extracted2026Ocr,
   extracted2026Residual,
 ]
+
+const answerOverrideById = new Map((answerOverrides.overrides || []).map(override => [override.questionId, override]))
+
+function applyAnswerOverride(question) {
+  if (!question?.id || question.answer) return question
+  const override = answerOverrideById.get(question.id)
+  if (!override?.answer) return question
+  return {
+    ...question,
+    answer: override.answer,
+    solution: Array.isArray(question.solution) && question.solution.length > 0 ? question.solution : (override.solution || []),
+    flags: [...(question.flags || []), 'answer_override', `answer_override_${override.method}`],
+  }
+}
 
 function loadJson(key, fallback) {
   try {
@@ -285,9 +300,10 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt }) {
 }
 
 function ExtractedQuestionCard({ file, question }) {
-  const flags = question.flags || []
-  const hasAnswer = Boolean(question.answer)
-  const hasSolution = Array.isArray(question.solution) && question.solution.length > 0
+  const displayQuestion = applyAnswerOverride(question)
+  const flags = displayQuestion.flags || []
+  const hasAnswer = Boolean(displayQuestion.answer)
+  const hasSolution = Array.isArray(displayQuestion.solution) && displayQuestion.solution.length > 0
 
   return (
     <article className={`extract-card extract-${question.quality}`}>
@@ -300,18 +316,18 @@ function ExtractedQuestionCard({ file, question }) {
       {file.analysisSource && (
         <p className="analysis-source">解析来源：{file.analysisSource}</p>
       )}
-      <pre className="question-prompt">{question.prompt}</pre>
+      <pre className="question-prompt">{displayQuestion.prompt}</pre>
       {hasAnswer && (
         <div className="extract-answer">
           <strong>参考答案</strong>
-          <span>{question.answer}</span>
+          <span>{displayQuestion.answer}</span>
         </div>
       )}
       {hasSolution && (
         <div className="extract-solution">
           <strong>解析摘录</strong>
           <ol>
-            {question.solution.map((step, index) => <li key={`${question.number}-${index}`}>{step}</li>)}
+            {displayQuestion.solution.map((step, index) => <li key={`${question.number}-${index}`}>{step}</li>)}
           </ol>
         </div>
       )}
@@ -330,7 +346,9 @@ function ExtractedQuestionCard({ file, question }) {
 }
 
 function OcrQuestionCard({ question }) {
+  const displayQuestion = applyAnswerOverride(question)
   const score = Math.round((question.averageScore || 0) * 100)
+  const hasAnswer = Boolean(displayQuestion.answer)
 
   return (
     <article className="ocr-card">
@@ -341,9 +359,15 @@ function OcrQuestionCard({ question }) {
         <span>置信度 {score}%</span>
       </div>
       <h3>扫描卷 OCR · 第 {question.number} 题</h3>
-      <pre className="question-prompt">{question.prompt}</pre>
+      <pre className="question-prompt">{displayQuestion.prompt}</pre>
+      {hasAnswer && (
+        <div className="extract-answer">
+          <strong>参考答案</strong>
+          <span>{displayQuestion.answer}</span>
+        </div>
+      )}
       <div className="extract-flags">
-        {question.flags.map(flag => <span key={flag}>{flag}</span>)}
+        {(displayQuestion.flags || []).map(flag => <span key={flag}>{flag}</span>)}
       </div>
       <p className="extract-note">
         该题来自 2026 江苏数学 PDF 扫描识别。题干顺序已按双栏版面整理，公式、根号、上下标和图形信息仍需人工复核。
@@ -576,6 +600,7 @@ export default function GaokaoPage() {
     questions: extractedLibraries.reduce((total, library) => total + (library.summary?.questions || 0), 0),
     matchedQuestions: extractedLibraries.reduce((total, library) => total + (library.summary?.matchedQuestions || 0), 0),
     reviewQuestions: extractedLibraries.reduce((total, library) => total + (library.summary?.reviewQuestions || 0), 0),
+    answerOverrides: answerOverrides.summary?.overrides || 0,
   }
 
   if (subjectNotFound) {
@@ -912,6 +937,7 @@ export default function GaokaoPage() {
           <span>来源文件 {combinedExtractSummary.files} 份</span>
           <span>抽取题干 {combinedExtractSummary.questions} 题</span>
           <span>已匹配解析 {combinedExtractSummary.matchedQuestions ?? 0} 题</span>
+          <span>本地补答 {combinedExtractSummary.answerOverrides} 题</span>
           <span>需核验 {combinedExtractSummary.reviewQuestions} 题</span>
         </div>
         <p className="extract-intro">
