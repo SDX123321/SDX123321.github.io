@@ -20,6 +20,7 @@ import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
 import ocrQuestions from '../../data/jiangsu-gaokao-ocr.json'
 import {
   getQuestionKnowledgeIds,
+  getSubjectKnowledgeLayout,
   knowledgeEdges,
   knowledgeNodes,
   recommendPracticeQuestions,
@@ -206,8 +207,83 @@ function mergeAccountWeaknesses(rows = [], knowledgeIds = [], result) {
   ))
 }
 
-function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses }) {
+const knowledgeNodeById = new Map(knowledgeNodes.map(node => [node.id, node]))
+
+function buildKnowledgeQuestionCounts(questions = []) {
+  return questions.reduce((counts, question) => {
+    getQuestionKnowledgeIds(question).forEach(id => {
+      counts[id] = (counts[id] || 0) + 1
+    })
+    return counts
+  }, {})
+}
+
+function formatAccuracy(stat) {
+  return stat?.total ? `${Math.round((stat.correct / stat.total) * 100)}%` : '未作答'
+}
+
+function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions = [] }) {
   const { nodeStats } = useMemo(() => summarizeKnowledgeAttempts(attempts, accountWeaknesses), [attempts, accountWeaknesses])
+  const questionCounts = useMemo(() => buildKnowledgeQuestionCounts(questions), [questions])
+  const layout = activeSubject ? getSubjectKnowledgeLayout(activeSubject.key) : null
+
+  const nodeClass = id => {
+    const stat = nodeStats[id]
+    if (!stat) return 'is-idle'
+    if (stat.wrong > 0 && stat.correct / stat.total < 0.7) return 'is-weak'
+    return 'is-strong'
+  }
+
+  if (activeSubject && layout) {
+    return (
+      <div className={`subject-knowledge-map subject-knowledge-${layout.pattern}`}>
+        <div className="subject-knowledge-head">
+          <div>
+            <h3>{layout.title}</h3>
+            <p>{layout.lead}</p>
+          </div>
+          <div className="knowledge-stage-rail" aria-label="复习流程">
+            {layout.stages.map(stage => <span key={stage}>{stage}</span>)}
+          </div>
+        </div>
+        <div className="knowledge-lanes">
+          {layout.lanes.map((lane, laneIndex) => (
+            <article key={lane.label} className="knowledge-lane" style={{ '--lane-index': laneIndex }}>
+              <div className="knowledge-lane-head">
+                <span>{lane.label}</span>
+                <p>{lane.hint}</p>
+              </div>
+              <div className="knowledge-node-stack">
+                {lane.nodes.map(nodeId => {
+                  const node = knowledgeNodeById.get(nodeId)
+                  const stat = nodeStats[nodeId]
+                  const questionCount = questionCounts[nodeId] || 0
+                  return (
+                    <div key={nodeId} className={`knowledge-node-card ${nodeClass(nodeId)}`}>
+                      <div className="knowledge-node-title">
+                        <strong>{node?.label || nodeId}</strong>
+                        <span>{node?.group || '知识点'}</span>
+                      </div>
+                      <p>{node?.description}</p>
+                      <div className="knowledge-node-metrics">
+                        <span>{questionCount} 题</span>
+                        <span>{stat ? `错 ${stat.wrong} 次` : '暂无错题'}</span>
+                        <span>正确率 {formatAccuracy(stat)}</span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              <div className="knowledge-type-row">
+                {lane.questionTypes.map(type => <span key={type}>{type}</span>)}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   const visibleSubjects = activeSubject ? [activeSubject] : subjects
   const visibleNodes = visibleSubjects.flatMap(subject => (
     knowledgeNodes.filter(node => node.subject === subject.key).slice(0, activeSubject ? 8 : 3)
@@ -226,13 +302,6 @@ function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses }) {
         positions.set(node.id, { x: 292 + nodeIndex * 194, y, label: node.label, node })
       })
   })
-
-  const nodeClass = id => {
-    const stat = nodeStats[id]
-    if (!stat) return 'is-idle'
-    if (stat.wrong > 0 && stat.correct / stat.total < 0.7) return 'is-weak'
-    return 'is-strong'
-  }
 
   return (
     <div className="knowledge-graph-wrap">
@@ -281,11 +350,17 @@ function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }
   const hasAccountStats = (accountWeaknesses || []).length > 0
   const { weakNodes } = useMemo(() => summarizeKnowledgeAttempts(attempts, accountWeaknesses), [attempts, accountWeaknesses])
   const recommendations = useMemo(() => (
-    recommendPracticeQuestions(questions, attempts, 6, accountWeaknesses)
+    recommendPracticeQuestions(questions, attempts, 9, accountWeaknesses)
   ), [attempts, questions, accountWeaknesses])
   const visibleWeakNodes = activeSubject
     ? weakNodes.filter(item => item.node?.subject === activeSubject.key)
     : weakNodes
+  const groupedRecommendations = recommendations.reduce((groups, item) => {
+    const nodeId = item.targetWeakIds[0] || item.knowledgeIds[0] || 'general'
+    if (!groups[nodeId]) groups[nodeId] = []
+    groups[nodeId].push(item)
+    return groups
+  }, {})
 
   return (
     <div className="weakness-panel">
@@ -308,16 +383,27 @@ function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }
       <article>
         <h3>对应推荐题</h3>
         {recommendations.length > 0 ? (
-          <div className="recommend-list">
-            {recommendations.map(({ question, knowledgeIds }) => (
-              <button
-                type="button"
-                key={question.id}
-                onClick={() => document.getElementById(`practice-${question.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-              >
-                <strong>{question.title}</strong>
-                <span>{knowledgeIds.map(id => knowledgeNodes.find(node => node.id === id)?.label || id).join(' / ')}</span>
-              </button>
+          <div className="recommend-groups">
+            {Object.entries(groupedRecommendations).map(([nodeId, items]) => (
+              <div key={nodeId} className="recommend-group">
+                <div className="recommend-group-head">
+                  <strong>{knowledgeNodeById.get(nodeId)?.label || '综合补练'}</strong>
+                  <span>{items.length} 题</span>
+                </div>
+                <div className="recommend-list">
+                  {items.slice(0, 3).map(({ question, knowledgeIds, questionType, reasons }) => (
+                    <button
+                      type="button"
+                      key={question.id}
+                      onClick={() => document.getElementById(`practice-${question.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                    >
+                      <strong>{question.title}</strong>
+                      <span>{questionType} · {knowledgeIds.map(id => knowledgeNodeById.get(id)?.label || id).join(' / ')}</span>
+                      <em>{reasons.join(' · ')}</em>
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         ) : (
@@ -799,7 +885,7 @@ export default function GaokaoPage() {
             <span>Knowledge Graph</span>
             <h2>{activeSubject.name}知识图谱与薄弱点</h2>
           </div>
-          <KnowledgeGraph activeSubject={activeSubject} attempts={attempts} accountWeaknesses={accountWeaknesses} />
+          <KnowledgeGraph activeSubject={activeSubject} attempts={attempts} accountWeaknesses={accountWeaknesses} questions={subjectPracticeQuestions} />
           <WeaknessPanel attempts={attempts} questions={subjectPracticeQuestions} activeSubject={activeSubject} accountWeaknesses={accountWeaknesses} />
         </section>
 
@@ -1039,7 +1125,7 @@ export default function GaokaoPage() {
           <span>Knowledge Graph</span>
           <h2>九科知识图谱与薄弱点推荐</h2>
         </div>
-        <KnowledgeGraph attempts={attempts} accountWeaknesses={accountWeaknesses} />
+        <KnowledgeGraph attempts={attempts} accountWeaknesses={accountWeaknesses} questions={questionLibrary} />
         <WeaknessPanel attempts={attempts} questions={questionLibrary} accountWeaknesses={accountWeaknesses} />
       </section>
 
