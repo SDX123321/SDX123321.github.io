@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-06T08:29:32.193Z",
+  "generatedAt": "2026-07-06T08:36:03.069Z",
   "sourceRootLabel": "本地 2026 高考试卷资料目录",
   "scope": "包含路径或文件名带 2026 的资料；排除 1990-2025 历史合集，避免父目录年份误判。",
   "totals": {
     "files": 150,
     "byStatus": {
-      "structured": 125,
-      "answer-source": 24,
+      "structured": 126,
+      "answer-source": 23,
       "non-question-source": 1
     },
     "bySubject": {
@@ -68,8 +68,8 @@
         "subjectName": "物理",
         "total": 25,
         "byStatus": {
-          "answer-source": 7,
-          "structured": 18
+          "answer-source": 6,
+          "structured": 19
         }
       },
       "politics": {
@@ -168,7 +168,7 @@
       "ext": ".pdf",
       "subjectKey": "chemistry",
       "subjectName": "化学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -204,7 +204,7 @@
       "ext": ".pdf",
       "subjectKey": "chemistry",
       "subjectName": "化学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -411,7 +411,7 @@
       "ext": ".pdf",
       "subjectKey": "english",
       "subjectName": "英语",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "answer-source"
     },
     {
@@ -438,7 +438,7 @@
       "ext": ".pdf",
       "subjectKey": "english",
       "subjectName": "英语",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "answer-source"
     },
     {
@@ -816,7 +816,7 @@
       "ext": ".docx",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -834,7 +834,7 @@
       "ext": ".docx",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -852,7 +852,7 @@
       "ext": ".docx",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -861,7 +861,7 @@
       "ext": ".pdf",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -879,7 +879,7 @@
       "ext": ".docx",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -888,7 +888,7 @@
       "ext": ".pdf",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -906,7 +906,7 @@
       "ext": ".docx",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -915,7 +915,7 @@
       "ext": ".pdf",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -933,7 +933,7 @@
       "ext": ".pdf",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -942,7 +942,7 @@
       "ext": ".jpg",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -951,7 +951,7 @@
       "ext": ".jpg",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1077,7 +1077,7 @@
       "ext": ".pdf",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1086,7 +1086,7 @@
       "ext": ".jpg",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1095,7 +1095,7 @@
       "ext": ".jpg",
       "subjectKey": "math",
       "subjectName": "数学",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1162,21 +1162,12 @@
       "status": "structured"
     },
     {
-      "name": "【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
-      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考上海卷物理高考真题（网络+收集版）\\【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
-      "ext": ".docx",
-      "subjectKey": "physics",
-      "subjectName": "物理",
-      "role": "answer-or-analysis",
-      "status": "answer-source"
-    },
-    {
       "name": "2026届上海市普通高中高三下学期学业水平等级性考试物理试卷（网络回忆版）（纯答案版）.docx",
       "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考上海卷物理高考真题（网络+收集版）\\2026届上海市普通高中高三下学期学业水平等级性考试物理试卷（网络回忆版）（纯答案版）.docx",
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "answer-source"
     },
     {
@@ -1185,7 +1176,7 @@
       "ext": ".pdf",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "answer-source"
     },
     {
@@ -1248,7 +1239,16 @@
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
+      "status": "structured"
+    },
+    {
+      "name": "【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考上海卷物理高考真题（网络+收集版）\\【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "ext": ".docx",
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1257,7 +1257,7 @@
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1266,7 +1266,7 @@
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1275,7 +1275,7 @@
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1284,7 +1284,7 @@
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1293,7 +1293,7 @@
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1302,7 +1302,7 @@
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1311,7 +1311,7 @@
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1320,7 +1320,7 @@
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1338,7 +1338,7 @@
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1347,7 +1347,7 @@
       "ext": ".pdf",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1356,7 +1356,7 @@
       "ext": ".docx",
       "subjectKey": "physics",
       "subjectName": "物理",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "structured"
     },
     {
@@ -1419,7 +1419,7 @@
       "ext": ".png",
       "subjectKey": "unknown",
       "subjectName": "未知",
-      "role": "answer-or-analysis",
+      "role": "original",
       "status": "answer-source"
     },
     {

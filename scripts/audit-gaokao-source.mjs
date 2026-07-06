@@ -44,7 +44,11 @@ function detectSubject(text) {
   return SUBJECTS.find(subject => subject.terms.some(term => text.includes(term))) || null
 }
 
-function detectRole(text) {
+function detectRole(fileName, relativePath) {
+  if (/(原卷版|原卷|空白卷)/u.test(fileName)) return 'original'
+  if (/(答案|解析|详解|教师版|参考|读后续写|作文|翻译)/u.test(fileName) && !/(试卷|真题|原卷|回忆)/u.test(fileName)) return 'answer-or-analysis'
+  if (/(试卷|真题|原卷|回忆|空白卷)/u.test(fileName)) return 'original'
+  const text = `${fileName} ${relativePath}`
   if (/(原卷版|原卷|空白卷)/u.test(text)) return 'original'
   if (ANALYSIS_RE.test(text)) return 'answer-or-analysis'
   if (ORIGINAL_RE.test(text)) return 'original'
@@ -108,7 +112,7 @@ const files = walk(sourceRoot)
     const ext = path.extname(fileName).toLowerCase()
     const searchableText = `${fileName} ${relativePath}`
     const subject = detectSubject(searchableText)
-    const role = detectRole(searchableText)
+    const role = detectRole(fileName, relativePath)
     const matchedExtracted = extractedNames.has(fileName)
     const matchedAnswerSource = answerSourceNames.has(fileName)
     const residualStatus = residualStatusByName.get(fileName)

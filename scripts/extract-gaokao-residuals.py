@@ -30,7 +30,18 @@ OCR_BASE = importlib.util.module_from_spec(OCR_SPEC)
 OCR_SPEC.loader.exec_module(OCR_BASE)
 
 ANSWER_TOKEN_RE = re.compile(r"^(?P<number>\d{1,2})[.、．]\s*(?P<answer>.+)$")
+NUMBERED_PARAGRAPH_RE = re.compile(r"^(?P<number>\d{1,2})[.、．]\s*(?P<body>.*)$")
 BLANK_RE = re.compile(r"\b\d{1,2}\s*[._]{2,}|\b\d{1,2}\s*$")
+KNOWN_RESIDUAL_NAMES = {
+    "全国一卷语法填空.docx",
+    "全国一卷阅读理解D篇.docx",
+    "全国二卷英语 语法填空（网络）.docx",
+    "2026高考湖南物理试题（高清完整版）.pdf",
+    "必看更新资料.docx",
+    "2026年高考真题和答案（文综）.png",
+    "【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+    "2026届上海市普通高中高三下学期学业水平等级性考试物理试卷（网络回忆版）（纯答案版）.docx",
+}
 
 
 def normalize_answer_token(answer: str) -> str:
@@ -139,6 +150,68 @@ def extract_passage_only(item: dict, source_root: Path) -> dict:
     }], "real-fragment", "Source contains passage material but no numbered questions.")
 
 
+def split_numbered_docx_questions(paragraphs: list[str]) -> list[dict]:
+    questions = []
+    current = None
+    for paragraph in paragraphs:
+        match = NUMBERED_PARAGRAPH_RE.match(paragraph)
+        if match:
+            number = int(match.group("number"))
+            body = match.group("body").strip()
+            if current and number == current["number"]:
+                if body:
+                    current["promptLines"].append(body)
+                continue
+            if current:
+                questions.append(current)
+            current = {"number": number, "promptLines": [body] if body else []}
+            continue
+        if current and len(current["promptLines"]) < 24:
+            current["promptLines"].append(paragraph)
+    if current:
+        questions.append(current)
+    return questions
+
+
+def parse_numbered_docx_answers(paragraphs: list[str]) -> dict[int, str]:
+    answer_map: dict[int, str] = {}
+    for paragraph in paragraphs:
+        match = NUMBERED_PARAGRAPH_RE.match(paragraph)
+        if not match:
+            continue
+        number = int(match.group("number"))
+        answer = normalize_answer_token(match.group("body"))
+        answer_map[number] = answer
+    return answer_map
+
+
+def extract_numbered_docx(item: dict, source_root: Path, answer_item: dict | None) -> dict:
+    paragraphs = BASE.docx_paragraphs(source_root / item["relativePath"])
+    answer_map: dict[int, str] = {}
+    if answer_item:
+        answer_map = parse_numbered_docx_answers(BASE.docx_paragraphs(source_root / answer_item["relativePath"]))
+    questions = []
+    for raw in split_numbered_docx_questions(paragraphs):
+        prompt = normalize_text(raw["promptLines"])
+        answer = answer_map.get(raw["number"], "")
+        flags = ["solution_not_found"]
+        if answer:
+            flags.append("answer_from_pair")
+        else:
+            flags.append("answer_not_found")
+        questions.append({
+            "id": stable_id([item["relativePath"], str(raw["number"]), prompt[:80]]),
+            "number": raw["number"],
+            "questionType": None,
+            "prompt": prompt,
+            "answer": answer,
+            "solution": [],
+            "quality": "review",
+            "flags": sorted(flags),
+        })
+    return question_file(item, questions, "real-docx", "Numbered DOCX paper parsed with paired answer map.")
+
+
 def docx_media_images(path: Path, dest: Path) -> list[Path]:
     images: list[Path] = []
     with zipfile.ZipFile(path) as package:
@@ -221,18 +294,28 @@ def build(args: argparse.Namespace) -> dict:
     audit = json.loads(args.audit.read_text(encoding="utf-8"))
     residuals = [
         item for item in audit["files"]
-        if item["status"] in {"needs-docx-extraction", "needs-pdf-ocr", "needs-image-review"}
+        if item["status"] in {"needs-docx-extraction", "needs-pdf-ocr", "needs-image-review"} or item["name"] in KNOWN_RESIDUAL_NAMES
     ]
     files = []
     skipped = []
     ocr = None
+    shanghai_physics_answer = next((
+        item for item in residuals
+        if item["subjectKey"] == "physics" and "纯答案版" in item["name"]
+    ), None)
 
     for item in residuals:
         name = item["name"]
+        if item is shanghai_physics_answer:
+            skipped.append(skipped_item(item, "answer-source", "Pure answer DOCX paired with the Shanghai physics paper."))
+            continue
+        if item["subjectKey"] == "physics" and "上海" in item["relativePath"] and item["ext"] == ".docx":
+            files.append(extract_numbered_docx(item, args.source_root, shanghai_physics_answer))
+            continue
         if name == "必看更新资料.docx":
             skipped.append(skipped_item(item, "non-question-source", "Promotional update note, not an exam question or answer source."))
             continue
-        if item["status"] == "needs-image-review" and item["role"] == "answer-or-analysis":
+        if item["ext"] in {".jpg", ".jpeg", ".png"} and ("答案" in name or item["role"] == "answer-or-analysis"):
             skipped.append(skipped_item(item, "answer-source", "Answer image retained as a source artifact; no standalone question prompt."))
             continue
         if name == "全国一卷语法填空.docx":

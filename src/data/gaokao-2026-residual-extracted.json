@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T08:28:11.215473+00:00",
+  "generatedAt": "2026-07-06T08:36:02.424961+00:00",
   "sourceRootLabel": "本地 2026 高考试卷资料目录",
   "scope": {
     "statuses": [
@@ -10,11 +10,11 @@
     "note": "Residual non-standard 2026 Gaokao sources: fragments, image-only DOCX, and duplicate scan PDF."
   },
   "summary": {
-    "files": 4,
-    "questions": 26,
-    "reviewQuestions": 26,
+    "files": 5,
+    "questions": 50,
+    "reviewQuestions": 50,
     "matchedQuestions": 0,
-    "skipped": 2
+    "skipped": 3
   },
   "files": [
     {
@@ -92,6 +92,330 @@
             "docx_image_ocr",
             "fragment_source",
             "needs_review",
+            "solution_not_found"
+          ]
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "subject": "physics",
+      "subjectName": "物理",
+      "source": "【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考上海卷物理高考真题（网络+收集版）\\【试卷】2026届上海市普通高中高三下学期学业水平等级性考试物理试卷.docx",
+      "role": "original",
+      "sourceType": "real-docx",
+      "note": "Numbered DOCX paper parsed with paired answer map.",
+      "questions": [
+        {
+          "id": "gaokao-2026-residual-a5fea261fdf335b4",
+          "number": 1,
+          "questionType": null,
+          "prompt": "标注“多选”的试题，每小题应选两个及以上的选项，但不可全选；未特别标注的选择类试题，每小题只能选一个选项。",
+          "answer": "B",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-4892f2dcd0b7977d",
+          "number": 2,
+          "questionType": null,
+          "prompt": "在列式计算、逻辑推理以及回答问题过程中，须给出必要的图示、文字说明、公式、演算等。",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_not_found",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-25c99985fa70ff65",
+          "number": 3,
+          "questionType": null,
+          "prompt": "除特殊说明外，本卷所用重力加速度大小均取。\n一 空间科技（15分）\n近年来，我国在空间科技领域取得了举世瞩目的成就，中国空间站全面建成并进入常态化运营，深空探测任务不断取得新突破。从航天器携带的核燃料电池，到空间站的轨道维持与调整，再到卫星在近地空间的电磁环境分析，无一不蕴含着丰富的物理学原理。",
+          "answer": "C",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-43dbd050038d7828",
+          "number": 1,
+          "questionType": null,
+          "prompt": "航天器中一种可能的铀核裂变方程为________。\nA． B． C． D．",
+          "answer": "B",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-cfc075f3db8ff1a2",
+          "number": 2,
+          "questionType": null,
+          "prompt": "若某核反应发生前，所有参与反应物质的总静止质量为；反应完成后，所有生成物的总静止质量为。已知真空中的光速为，则该核反应过程中释放的核能________。",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_not_found",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-23055531c3019c02",
+          "number": 3,
+          "questionType": null,
+          "prompt": "假设在某段时间内，某空间站轨道高度先后进行了两次自然衰减，第一次下降了小高度，第二次也下降了小高度。若这两次下降过程中，空间站引力势能的变化量绝对值分别为、，则二者的大小关系为________。\nA． B． C．",
+          "answer": "C",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-f713939630c566a6",
+          "number": 4,
+          "questionType": null,
+          "prompt": "某空间站绕地球做匀速圆周运动，其运动的轨道半径为，空间站自身质量为，则该空间站的动能为________。（已知地球质量为，引力常量为）",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_not_found",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-e2c2aa21bed84529",
+          "number": 5,
+          "questionType": null,
+          "prompt": "地球磁场会对运行在近地空间的带电物体产生影响。某人造地球卫星在赤道正上方自西向东飞行。若将该卫星视作一个高速运动的“正电子”（带正电荷），则在此位置其受到地球磁场力的方向为________。\nA．向上 B．向下 C．向西 D．向东\n二 光刻技术（18分）\n光刻是半导体芯片生产流程中最复杂、最关键的工艺步骤，耗时长、成本高。半导体芯片生产的难点和关键点在于如何在硅片上制作出目标电路图样，这一过程通过光刻来实现，光刻的工艺水平直接决定芯片的制程水平和性能水平。一般芯片在生产中需要进行20-30次的光刻，耗时占到IC生产环节的50%左右，占芯片生产成本的1/3。浦济之光是一种很好的光刻材料，你认识吗？在诸如硅片的基底表面覆盖一层具有高度光敏感性的光刻胶，再用特定光（一般是紫外光、深紫外光、极紫外光）透过包含目标图案信息的掩模版照射在基底表面，被光线照射到的光刻胶会发生反应，因此，在显影后被照到的区域会产生与未被照到的区域不同的效果。",
+          "answer": "A",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-9c387c7f4c619657",
+          "number": 6,
+          "questionType": null,
+          "prompt": "【多选】在杨氏双缝干涉实验中，观察到屏幕上形成了明暗相间的干涉条纹。若要使相邻的明纹（或暗纹）的间距减小，可以减小下列哪些物理量（ ）\nA．入射光的波长 B．双缝间距 C．入射光的光强 D．双缝到屏幕的距离",
+          "answer": "AD",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-ebccce9264a71888",
+          "number": 7,
+          "questionType": null,
+          "prompt": "（1）粒子发射器的带电粒子平行于平行板进入平行板电容器，电容器与电源E，定值电阻R串联组成闭合电路；已知电路稳定时，电容器的两端电压为，两板间距为。则电容器两板间的电场强度\n（2）【多选】实验中观测到带电粒子射到b点右侧，若要使带电粒子通过电容后落在b点，下列操作可行的是（ ）\nA．增大电阻的阻值 B．减小电阻的阻值\nC．将电容器向上移动 D．将电容器向下移动\nE．将电容器右极板向左移动 F．将电容器右极板向右移动\n（3）带电粒子刚进入电容器的时刻为，刚离开电容器的时刻为；比较、时刻该粒子的电势能与的大小关系以及、时刻该粒子所处位置的电势与的高低关系。",
+          "answer": "①. ②. CE ③. ④.",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-d2d9cf64b4e57ddf",
+          "number": 8,
+          "questionType": null,
+          "prompt": "已知普朗克常量为，真空中的光速为，某光子的波长为。\n（1）该光子的能量为________。\n（2）若有一质量为的氦原子，要使其德布罗意波长小于上述光子的波长，则氦原子的速度至少为________。\n三 电吉他（13分）\n电吉他是现代科学技术的产物，从外形到音响都与传统的吉他有着明显的差别。琴体使用新硬木制成，配有音量、音高调节器（琴钮）以及颤音结构（摇杆）等装置。配合效果器的使用，电吉他有很强的表现力，在现代音乐中有很重要的位置。多用于歌曲伴奏，作为很好的伴奏乐器。",
+          "answer": "①. ②.",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-64c5531f967ebf9e",
+          "number": 9,
+          "questionType": null,
+          "prompt": "电吉他拾音器内部结构包含一块磁铁，可使金属琴弦磁化；当琴弦振动时，会在拾音器的线圈中产生感应电流。关于琴弦上传播的机械波传入空气中形成的声波，下列说法正确的是（ ）\nA．频率不变，波长不变 B．频率不变，波长改变\nC．频率改变，波长不变 D．频率改变，波长改变",
+          "answer": "B",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-5073394dbff4b28f",
+          "number": 10,
+          "questionType": null,
+          "prompt": "某LC振荡电路由电容器C与自感线圈L串联组成；已知某一时刻，电容器的上极板带正电，且此时电容器正在充电。规定电路中逆时针的电流方向为正方向；电路中的电流随时间的变化如图所示，在图中四个时刻中，哪一时刻符合上述电路状态________",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_not_found",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-8555cfdfd6d5aefb",
+          "number": 11,
+          "questionType": null,
+          "prompt": "某实验中，测得某线圈的磁通量随时间的变化图像如图所示。\n（1）从图像中读取磁通量变化的周期与磁通量最大值________。\n（2）若该线圈共有500匝，求线圈中产生的感应电动势的最大值\n四 点火装置（13分）\n压燃点火（Compression Ignition）是柴油发动机的核心点火方式。该技术利用柴油自燃温度低（约）、黏度大且不易蒸发的特性，通过高压缩比（通常压缩比在16至23之间，将纯空气压缩至超过柴油自燃温度后喷入柴油实现自燃，全程无需火花塞装置。该技术也被应用于马自达SKYACTIV-X汽油发动机，采用SPCCI火花控制压燃技术实现超稀薄燃烧，该发动机采用高压燃油喷射系统（燃油压力超过100 MPa）并实现了高压缩比（如16∶1），其空燃比可达36.8∶1。",
+          "answer": "①. ②.",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-1a25af9037e5a9d2",
+          "number": 12,
+          "questionType": null,
+          "prompt": "如图所示为压缩点火装置，密闭气缸的底部放置了一小块浸有乙醚的硝化棉。气缸内的气体看作理想气体。\n（1）【多选】若缓慢推动活塞压缩气缸内的气体，硝化棉不会被点燃：此过程气缸内的气体温度保持不变。下列P-V图与T-P图中，哪些符合上述过程（ ）\nA． B． C． D．\n（2）若快速猛推活塞压缩气缸内气体，硝化棉会被点燃；这是因为（ ）\nA．气体从环境中吸收的热量更少 B．气体释放到环境中的热量更少\nC．气体从环境中吸收的热量更多 D．气体释放到环境中的热量更多\n（3）若在温度不变的情况下，将气缸内气体的体积压缩到原来的一半以下；下列物理量会发生变化（ ）\nA．气体的内能 B．气体分子的热运动剧烈程度\nC．单位体积内的气体分子个数 D．气体分子间的平均作用力",
+          "answer": "①. AD ②. B ③. C",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-7130eb920637a215",
+          "number": 13,
+          "questionType": null,
+          "prompt": "一束光射向该点火装置的均匀中空厚壁圆筒，在外表面发生折射，入射角为，在内表面恰好发生全反射，已知圆筒外表面半径为，求圆筒厚壁的厚度？\n五 跳跃松鼠（20分）\n松鼠是松鼠科物种的统称，有63属285种。松鼠的体形细长，后肢更长；前后肢间无皮翼，四肢强健；眼大而明亮，耳朵长，耳尖有一束毛，冬季尤其显著；夏毛一般为黑褐色或赤棕色，冬毛多呈灰色、烟灰色或灰褐色，腹毛为白色；指、趾端有尖锐的钩爪，尾毛多而且蓬松，常朝向背部反卷。松鼠雌性个体比雄性个体稍重一些。因为松鼠的样子像老鼠，而且大多数喜欢啃食松果之类的坚果，习惯生活在树木尤其是松树上，故名松鼠。",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_not_found",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-e27edc27d8b73b49",
+          "number": 14,
+          "questionType": null,
+          "prompt": "一只松鼠在树枝间跳跃，要从这个树枝节点以一定水平初速度跳到另外一个树枝节点上：已知两个节点的水平距离为，竖直方向的高度为，不考虑空气阻力，求松鼠要完成这次跳跃所需的最小初速度？",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_not_found",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-ea6b5b788da44786",
+          "number": 15,
+          "questionType": null,
+          "prompt": "又一只松鼠在一根与水方向夹角为的倾斜树枝上，从静止开始沿树枝向上左匀加速直线运动；已知它在内沿树枝运动了【计算结果，保留2位有效数字。】。\n（1）求松鼠的加速度；\n（2）已知松鼠的质量为，求次过程中树枝对松鼠的作用力。",
+          "answer": "（1），方向沿树枝向上；（2），方向斜向上",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-a1a9a02e9d116a6b",
+          "number": 16,
+          "questionType": null,
+          "prompt": "生物学家通过研究发现：当松鼠受到的平均作用力小于自身重力的15倍时，不会受到永久性伤害。某次实验中，一只质量为的松鼠从静止开始下落，其速度随位移的变化关系如图所示。\n（1）求松鼠下落10 m的过程中，空气阻力对它做的功；\n（2）若松鼠与地面的作用时间为90 ms，请通过计算论证该松鼠落地后是否会受到永久性伤害？\n六 电磁测速（21分）\n单极测速发电机是电机学领域的一种测速元件，采用电磁感应原理工作。其原理为圆柱式或圆盘式电枢在恒定匀强磁场中旋转产生感应电势，输出特性与转速呈线性关系。该装置通常采用圆筒式空芯转子与永磁结构，结合电刷引流装置优化性能。该发电机通过无换向器设计实现无纹波直流电压输出，避免换向火花干扰，且输出电压对称性佳。其瞬态响应好、灵敏度高，适用于动态测速场景。由于无齿槽结构，最高转速仅受轴承限制。根据《湖南大学学报（自然科学版）》相关研究，该装置在稳态和瞬态测速中均表现出优良特性，可应用于现代快速驱动系统的动态参数测量。",
+          "answer": "（1）；（2）否，论证见解析",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-76f53a633882c730",
+          "number": 17,
+          "questionType": null,
+          "prompt": "某齿轮式电磁转速传感器的结构如下：金属齿轮的每个齿上都固定有可被磁化的小磁铁，齿轮旁放置一个条形永磁铁，永磁铁上饶有闭合线圈。已知初始时刻，齿轮的一个金属齿正对着永磁铁；当齿轮转动时，金属齿会周期性地靠近、远离永磁铁，导致穿过线圈的磁通量周期性的发生变化。则在磁通量变化的一个周期内，A、B的电势关系是（ ）\nA． B．\nC．先，后 D．先，后",
+          "answer": "D",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-fa869a4e19b3f968",
+          "number": 18,
+          "questionType": null,
+          "prompt": "已知上述齿轮式传感器中，感应电动势变化的周期为2T，齿轮共有N个齿，车轮的直径为D。若该齿轮与汽车的车轮属于同轴转动，求汽车的速度？",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_not_found",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-0b7ac6c9d627ca18",
+          "number": 19,
+          "questionType": null,
+          "prompt": "现经过半波整流器后，电压传感器的示数如图所示，求有效电压U？",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_not_found",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-b2a50b556c2550c0",
+          "number": 20,
+          "questionType": null,
+          "prompt": "现将传感器改为圆柱笼式结构：半径为R的轻质金属圆柱笼，其侧面曲面上等间距的固定有三根完全相同的金属细条（金属条夹角为120°）。在圆柱笼的一侧，有一个垂直于圆柱轴线的小范围匀强磁场区域，有且只有一根金属条会在磁场区域内。当圆柱笼绕中心轴转到时，每根金属细条进入磁场区域时都会切割磁感线产生感应电动势。\n（1）某一时刻，恰好有一根金属细条完全处于磁场中，此时测得圆柱笼两个圆形端面之间的电势差为。求该金属细条产生的感应电动势大小？\n（2）已知磁场的磁感应强度为，金属细条的长度为，电阻为，电路其余部分电阻不计。求此时该金属细条受到的安培力大小？\n（3）若汽车从某一时刻左匀加速运动，测得相邻两次电压脉冲峰值分别为和。则下一次电压脉冲的峰值最接近下列哪个选项（ ）\nA． B． C． D．",
+          "answer": "①. ②. ③. D",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_from_pair",
+            "solution_not_found"
+          ]
+        },
+        {
+          "id": "gaokao-2026-residual-b71fb1836d9e7095",
+          "number": 21,
+          "questionType": null,
+          "prompt": "已知圆柱笼的半径为年轮的半径为，结合上一问测得的相邻脉冲峰值电压和，求汽车的加速度大小？",
+          "answer": "",
+          "solution": [],
+          "quality": "review",
+          "flags": [
+            "answer_not_found",
             "solution_not_found"
           ]
         }
@@ -477,6 +801,24 @@
   ],
   "skipped": [
     {
+      "source": "2026届上海市普通高中高三下学期学业水平等级性考试物理试卷（网络回忆版）（纯答案版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考物理真题与答案解析》\\2026年高考上海卷物理高考真题（网络+收集版）\\2026届上海市普通高中高三下学期学业水平等级性考试物理试卷（网络回忆版）（纯答案版）.docx",
+      "subject": "physics",
+      "subjectName": "物理",
+      "role": "original",
+      "status": "answer-source",
+      "reason": "Pure answer DOCX paired with the Shanghai physics paper."
+    },
+    {
+      "source": "2026年高考真题和答案（文综）.png",
+      "relativePath": "补充\\2026年高考真题和答案（文综）.png",
+      "subject": "unknown",
+      "subjectName": "未知",
+      "role": "original",
+      "status": "answer-source",
+      "reason": "Answer image retained as a source artifact; no standalone question prompt."
+    },
+    {
       "source": "必看更新资料.docx",
       "relativePath": "2026高考试卷（更新中）\\必看更新资料.docx",
       "subject": "unknown",
@@ -484,15 +826,6 @@
       "role": "original",
       "status": "non-question-source",
       "reason": "Promotional update note, not an exam question or answer source."
-    },
-    {
-      "source": "2026年高考真题和答案（文综）.png",
-      "relativePath": "补充\\2026年高考真题和答案（文综）.png",
-      "subject": "unknown",
-      "subjectName": "未知",
-      "role": "answer-or-analysis",
-      "status": "answer-source",
-      "reason": "Answer image retained as a source artifact; no standalone question prompt."
     }
   ]
 }
