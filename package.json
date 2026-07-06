@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "api": "node server/index.js",
+    "db:setup": "node -e \"import('./server/db.js').then(async m=>{await m.ensureSchema(); await m.pool.end(); console.log('database schema ready')})\"",
+    "db:seed:gaokao": "node server/seed-gaokao.js",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",

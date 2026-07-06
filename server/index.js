@@ -43,6 +43,14 @@ const eventSchema = z.object({
   payload: z.record(z.any()).default({}),
 })
 
+const questionQuerySchema = z.object({
+  subject: z.string().max(64).optional(),
+  year: z.coerce.number().int().min(1900).max(2100).optional(),
+  quality: z.string().max(64).optional(),
+  sourceType: z.string().max(64).optional(),
+  limit: z.coerce.number().int().min(1).max(100).default(30),
+})
+
 function hashToken(token) {
   return crypto.createHash('sha256').update(token).digest('hex')
 }
@@ -192,6 +200,112 @@ async function incrementSnapshot(userId, field, recentPath) {
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true })
+})
+
+app.get('/api/gaokao/summary', async (req, res) => {
+  const [profiles, papers, questions, bySource, byQuality, lastImport] = await Promise.all([
+    query('SELECT COUNT(*)::int AS count FROM gaokao_subject_profiles'),
+    query('SELECT COUNT(*)::int AS count FROM gaokao_papers'),
+    query('SELECT COUNT(*)::int AS count FROM gaokao_questions'),
+    query(`
+      SELECT source_type AS "sourceType", COUNT(*)::int AS count
+      FROM gaokao_questions
+      GROUP BY source_type
+      ORDER BY source_type
+    `),
+    query(`
+      SELECT quality, COUNT(*)::int AS count
+      FROM gaokao_questions
+      GROUP BY quality
+      ORDER BY quality
+    `),
+    query(`
+      SELECT import_key AS "importKey", summary, created_at AS "createdAt"
+      FROM gaokao_import_runs
+      ORDER BY created_at DESC
+      LIMIT 1
+    `),
+  ])
+  res.json({
+    subjects: profiles.rows[0]?.count || 0,
+    papers: papers.rows[0]?.count || 0,
+    questions: questions.rows[0]?.count || 0,
+    bySource: bySource.rows,
+    byQuality: byQuality.rows,
+    lastImport: lastImport.rows[0] || null,
+  })
+})
+
+app.get('/api/gaokao/subjects', async (req, res) => {
+  const { rows } = await query(`
+    SELECT
+      profile.subject_key AS "subjectKey",
+      profile.subject_name AS "subjectName",
+      profile.accent,
+      profile.icon,
+      profile.route,
+      profile.trend,
+      profile.advice,
+      profile.high_frequency AS "highFrequency",
+      profile.easy_mistakes AS "easyMistakes",
+      COALESCE(paper_counts.count, 0)::int AS "paperCount",
+      COALESCE(question_counts.count, 0)::int AS "questionCount"
+    FROM gaokao_subject_profiles profile
+    LEFT JOIN (
+      SELECT subject_key, COUNT(*) AS count
+      FROM gaokao_papers
+      GROUP BY subject_key
+    ) paper_counts ON paper_counts.subject_key = profile.subject_key
+    LEFT JOIN (
+      SELECT subject_key, COUNT(*) AS count
+      FROM gaokao_questions
+      GROUP BY subject_key
+    ) question_counts ON question_counts.subject_key = profile.subject_key
+    ORDER BY profile.subject_key
+  `)
+  res.json({ subjects: rows })
+})
+
+app.get('/api/gaokao/questions', authUser, async (req, res) => {
+  const parsed = questionQuerySchema.safeParse(req.query)
+  if (!parsed.success) return res.status(400).json({ error: 'invalid_input' })
+  const filters = parsed.data
+  const where = []
+  const params = []
+  function addFilter(sql, value) {
+    params.push(value)
+    where.push(sql.replace('?', `$${params.length}`))
+  }
+  if (filters.subject) addFilter('subject_key = ?', filters.subject)
+  if (filters.year) addFilter('year = ?', filters.year)
+  if (filters.quality) addFilter('quality = ?', filters.quality)
+  if (filters.sourceType) addFilter('source_type = ?', filters.sourceType)
+  params.push(filters.limit)
+  const limitParam = `$${params.length}`
+  const { rows } = await query(`
+    SELECT
+      id,
+      question_key AS "questionKey",
+      year,
+      subject_key AS "subjectKey",
+      subject_name AS "subjectName",
+      question_number AS "questionNumber",
+      question_type AS "questionType",
+      difficulty,
+      quality,
+      prompt,
+      answer,
+      solution,
+      flags,
+      source_type AS "sourceType",
+      metadata,
+      updated_at AS "updatedAt"
+    FROM gaokao_questions
+    ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
+    ORDER BY year NULLS LAST, subject_key, question_number NULLS LAST, updated_at DESC
+    LIMIT ${limitParam}
+  `, params)
+  res.json({ questions: rows })
 })
 
 app.post('/api/auth/register', async (req, res) => {
