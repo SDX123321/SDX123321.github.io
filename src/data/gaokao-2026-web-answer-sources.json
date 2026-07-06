@@ -4,15 +4,15 @@
     "note": "Web answer maps from public gaokzx.com article image pages and reviewed public PDF answer files. Review source URLs before relying on open-ended answers."
   },
   "summary": {
-    "sources": 34,
-    "answers": 304,
+    "sources": 35,
+    "answers": 305,
     "byFamily": {
       "biology:anhui": 21,
       "chemistry:yunnan": 18,
       "history:hunan": 38,
       "history:henan": 20,
       "geography:guangdong": 19,
-      "history:yunnan": 15,
+      "history:yunnan": 16,
       "physics:heilongjiliao": 15,
       "physics:hunan": 15,
       "chemistry:heilongjiliao": 19,
@@ -880,6 +880,21 @@
           "number": 16,
           "answer": "B",
           "confidence": "web-ocr"
+        }
+      ]
+    },
+    {
+      "id": "gov-yunnan-history-early-writing-2026",
+      "family": "history:yunnan",
+      "title": "早期汉字题事实核验：甲骨文是中国已发现古代文字中时代最早、体系较为完整的文字",
+      "pageUrl": "https://www.gov.cn/xinwen/2019-10/18/content_5442026.htm",
+      "sourceName": "中国政府网",
+      "answers": [
+        {
+          "number": 1,
+          "answer": "A",
+          "sourceUrl": "https://www.gov.cn/xinwen/2019-10/18/content_5442026.htm",
+          "confidence": "reviewed-web-text"
         }
       ]
     },

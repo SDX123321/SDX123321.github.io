@@ -50,6 +50,7 @@ ANSWER_BLOCK_RE = re.compile(r"【答案】\s*(?P<answer>.*?)(?=【解析】|【
 SHORT_ANSWER_RE = re.compile(r"^[A-G]{1,7}$|^[A-D](?:[、,，]\s*[A-D])+$")
 ANSWER_SKIP_RE = re.compile(r"注意事项|答题卡|考生|2B|铅笔|涂改液|试卷和答题卡|作答|姓名|考场号|座位号|考试结束")
 OPEN_ENDED_WRITING_ANSWER = "开放性写作题，无唯一标准答案；请围绕材料要求立意、选材并展开论证。"
+INCOMPLETE_SOURCE_ANSWER = "回忆版或不完全版题干、选项、图表信息缺失，无法可靠确定标准答案；待完整试卷或权威答案补全。"
 
 
 def load_json(path: Path) -> dict:
@@ -181,6 +182,24 @@ def extract_writing_solution(prompt: str) -> list[str]:
         return []
     # OCR sources can duplicate pages; keep the source analysis useful without flooding cards.
     return [f"试题分析：{analysis[:900]}"]
+
+
+def is_incomplete_source_question(record: dict) -> bool:
+    source = record.get("file", {}).get("source", "")
+    subject = record.get("subject")
+    prompt = clean_text(record.get("question", {}).get("prompt", ""))
+    if not prompt:
+        return False
+    if subject in {"biology", "politics"} and "回忆" in source:
+        return True
+    if subject == "geography" and "回忆" in source:
+        return bool(re.search(r"本人答案|我的答案|未知选项|不记得|忘记|争议题目|仅供参考|QAQ|具体年代|恕我", prompt))
+    if subject == "physics" and "如图所示" in prompt:
+        return True
+    if subject == "chinese" and "不完全版" in source:
+        missing_context_markers = r"转码|加点|下点|画线|下列|方框|虚词|句读|译成|不正确的一项"
+        return len(prompt) < 160 and bool(re.search(missing_context_markers, prompt))
+    return False
 
 
 def infer_subject(source: str, relative: str, fallback: str = "") -> str:
@@ -531,6 +550,7 @@ def choose_candidate(candidates: list[dict]) -> dict | None:
         "web-answer-source": 5,
         "answer-only-question": 6,
         "open-ended-writing": 7,
+        "incomplete-source": 8,
     }
     return sorted(candidates, key=lambda item: (priority.get(item["method"], 9), len(item["answer"])))[0]
 
@@ -637,6 +657,13 @@ def build_overrides() -> dict:
                     "solution": extract_writing_solution(question.get("prompt", "")),
                     "source": record["file"].get("source", ""),
                     "method": "open-ended-writing",
+                })
+            if is_incomplete_source_question(record):
+                candidates.append({
+                    "answer": INCOMPLETE_SOURCE_ANSWER,
+                    "solution": [],
+                    "source": record["file"].get("source", ""),
+                    "method": "incomplete-source",
                 })
             if target_can_use_family_answer(record):
                 candidates.extend(answer_maps.get(record["family"], {}).get(number, []))
