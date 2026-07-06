@@ -84,8 +84,29 @@ function isUnnumberedExtractionFragment(item) {
   return !hasQuestionNumber(item)
 }
 
+function hasQuestionFlag(item, flag) {
+  return Array.isArray(item?.flags) && item.flags.includes(flag)
+}
+
+function isPassageOnlyExtractionFragment(item) {
+  return hasQuestionFlag(item, 'passage_only')
+}
+
+function isAnswerAnalysisExtractionFragment(item) {
+  const compactPrompt = getQuestionPrompt(item).replace(/\s+/g, ' ').trim()
+  if (!compactPrompt || hasQuestionOptions(item)) return false
+  if (/^写作词数应为\s*\d+\s*(?:个)?左右\s*[:：;；。.]?$/u.test(compactPrompt)) return true
+  if (compactPrompt.length < 80 && compactPrompt.includes('词数') && compactPrompt.includes('注意')) return true
+  if (/^(?:母本筛选|叙事重构|难度适配|留白定向)\s*[:：]/u.test(compactPrompt)) return true
+  if (/写作思路指导|高分写作技巧|参考范文/u.test(compactPrompt)) return true
+  return /\b(?:Yours|Yours sincerely),?\s+Li Hua\s*$/iu.test(compactPrompt)
+}
+
 function shouldImportExtractedQuestion(item) {
-  return !isNumericExtractionFragment(item) && !isUnnumberedExtractionFragment(item)
+  return !isNumericExtractionFragment(item)
+    && !isUnnumberedExtractionFragment(item)
+    && !isPassageOnlyExtractionFragment(item)
+    && !isAnswerAnalysisExtractionFragment(item)
 }
 
 function isOcrAnswerSourceFile(file) {

@@ -70,8 +70,32 @@ def is_unnumbered_extraction_fragment(question: dict) -> bool:
     return number_value(question.get("number")) is None
 
 
+def is_passage_only_extraction_fragment(question: dict) -> bool:
+    return "passage_only" in (question.get("flags") or [])
+
+
+def is_answer_analysis_extraction_fragment(question: dict) -> bool:
+    prompt = clean_text(question.get("prompt", ""))
+    if not prompt or question.get("options"):
+        return False
+    if re.match(r"^写作词数应为\s*\d+\s*(?:个)?左右\s*[:：;；。.]?$", prompt):
+        return True
+    if len(prompt) < 80 and "词数" in prompt and "注意" in prompt:
+        return True
+    if re.match(r"^(?:母本筛选|叙事重构|难度适配|留白定向)\s*[:：]", prompt):
+        return True
+    if re.search(r"写作思路指导|高分写作技巧|参考范文", prompt):
+        return True
+    return bool(re.search(r"\b(?:Yours|Yours sincerely),?\s+Li Hua\s*$", prompt, re.I))
+
+
 def should_import_extracted_question(question: dict) -> bool:
-    return not (is_numeric_extraction_fragment(question) or is_unnumbered_extraction_fragment(question))
+    return not (
+        is_numeric_extraction_fragment(question)
+        or is_unnumbered_extraction_fragment(question)
+        or is_passage_only_extraction_fragment(question)
+        or is_answer_analysis_extraction_fragment(question)
+    )
 
 
 def normalize_answer(answer: str) -> str:
