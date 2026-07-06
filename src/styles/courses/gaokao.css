@@ -453,7 +453,8 @@
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
-.gaokao-question {
+.gaokao-question,
+.extract-card {
   padding: 18px;
 }
 
@@ -527,6 +528,75 @@
   margin-top: 8px;
 }
 
+.extract-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.extract-summary span {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text2);
+  background: var(--bg2);
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.extract-intro {
+  margin: 0 0 16px;
+  color: var(--text2);
+  line-height: 1.75;
+}
+
+.extract-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.extract-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg2);
+}
+
+.extract-card.extract-candidate {
+  border-left: 4px solid var(--success);
+}
+
+.extract-card.extract-review {
+  border-left: 4px solid var(--warning);
+}
+
+.extract-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.extract-flags span {
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: var(--warning);
+  background: var(--warning-bg);
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.extract-note {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--text2);
+  background: rgba(255, 255, 255, .05);
+  line-height: 1.7;
+  font-size: .86rem;
+}
+
 .source-list {
   display: grid;
   gap: 10px;
@@ -585,6 +655,10 @@
   }
 
   .question-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .extract-grid {
     grid-template-columns: 1fr;
   }
 }

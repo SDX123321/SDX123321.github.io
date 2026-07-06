@@ -9,6 +9,7 @@ import {
   subjects,
   years,
 } from '../../data/jiangsu-gaokao'
+import extractedQuestions from '../../data/jiangsu-gaokao-extracted.json'
 import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
 import '../../styles/courses/gaokao.css'
 
@@ -24,6 +25,11 @@ const statusLabels = {
   partial: '待清洗',
   review: '需复核',
   ocr: '需 OCR',
+}
+
+const extractedQualityLabels = {
+  candidate: '可读候选',
+  review: '需核验',
 }
 
 function loadJson(key, fallback) {
@@ -113,6 +119,28 @@ function QuestionCard({ question, isDone, onDone }) {
   )
 }
 
+function ExtractedQuestionCard({ file, question }) {
+  return (
+    <article className={`extract-card extract-${question.quality}`}>
+      <div className="question-topline">
+        <span>{file.year}</span>
+        <span>{file.subjectName}</span>
+        <span>{extractedQualityLabels[question.quality]}</span>
+      </div>
+      <h3>{file.source} · 第 {question.number} 题</h3>
+      <pre className="question-prompt">{question.prompt}</pre>
+      {question.flags.length > 0 && (
+        <div className="extract-flags">
+          {question.flags.map(flag => <span key={flag}>{flag}</span>)}
+        </div>
+      )}
+      <p className="extract-note">
+        题解状态：待匹配解析卷并复核公式/图表。当前只作为真实题干抽取样本，不替代最终完整题解。
+      </p>
+    </article>
+  )
+}
+
 export default function GaokaoPage() {
   const [filters, setFilters] = useState(() => loadJson('gaokao_jiangsu_filters', {
     subject: 'all',
@@ -181,6 +209,13 @@ export default function GaokaoPage() {
       return true
     })
   }, [filters])
+
+  const extractedSamples = useMemo(() => {
+    return extractedQuestions.files
+      .flatMap(file => file.questions.map(question => ({ file, question })))
+      .filter(item => item.question.prompt.length >= 20)
+      .slice(0, 12)
+  }, [])
 
   const completeQuestion = id => {
     setCompleted(prev => {
@@ -339,6 +374,32 @@ export default function GaokaoPage() {
         </div>
       </section>
 
+      <section id="extracts" className="gaokao-section">
+        <div className="section-heading">
+          <span>Extracted DOCX</span>
+          <h2>真实题干抽取样本</h2>
+        </div>
+        <div className="extract-summary">
+          <span>来源文件 {extractedQuestions.summary.files} 份</span>
+          <span>抽取题干 {extractedQuestions.summary.questions} 题</span>
+          <span>可读候选 {extractedQuestions.summary.candidateQuestions} 题</span>
+          <span>需核验 {extractedQuestions.summary.reviewQuestions} 题</span>
+        </div>
+        <p className="extract-intro">
+          这一栏来自真实 DOCX 试卷抽取。含公式、图片、复杂表格的题目可能会丢失部分内容，因此带有质量标记；
+          待解析卷匹配完成后，才会进入“完整题干与详细题解”的正式练习区。
+        </p>
+        <div className="extract-grid">
+          {extractedSamples.map(({ file, question }) => (
+            <ExtractedQuestionCard
+              key={`${file.year}-${file.subject}-${file.source}-${question.number}`}
+              file={file}
+              question={question}
+            />
+          ))}
+        </div>
+      </section>
+
       <section id="questions" className="gaokao-section">
         <div className="section-heading">
           <span>Practice</span>
@@ -384,7 +445,7 @@ export default function GaokaoPage() {
         <p>
           访问与整理日期：{sourceDate}。本页优先使用本地资料目录作为证据来源；
           数学迁移规则使用个人 Skill gaokao-question-gene。资料索引由 `scripts/build-gaokao-index.mjs`
-          从本地目录生成；后续逐题入库时，会继续区分“真实原题”“解析摘录”“AI 迁移题”。
+          从本地目录生成，DOCX 候选题干由 `scripts/extract-gaokao-docx.py` 抽取；后续逐题入库时，会继续区分“真实原题”“解析摘录”“AI 迁移题”。
         </p>
         <div className="source-list">
           {sources.map(source => (
