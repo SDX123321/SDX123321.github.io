@@ -45,6 +45,28 @@ export const questionKnowledgeMap = {
   'geography-region-01': ['geography.region', 'geography.measure'],
 }
 
+const keywordRules = [
+  { subject: 'chinese', id: 'chinese.argument-writing', keywords: ['作文', '写作', '立意', '材料', '论证', '观点'] },
+  { subject: 'chinese', id: 'chinese.evidence-chain', keywords: ['阅读', '文本', '原文', '理解', '分析', '诗', '文言', '小说', '散文'] },
+  { subject: 'math', id: 'math.derivative', keywords: ['导数', '函数', '单调', '极值', '最值', '切线', '零点', '不等式', '参数'] },
+  { subject: 'math', id: 'math.geometry', keywords: ['圆锥', '椭圆', '双曲线', '抛物线', '直线', '几何', '坐标', '焦点', '向量', '立体'] },
+  { subject: 'math', id: 'math.probability', keywords: ['概率', '统计', '随机', '分布', '期望', '方差', '样本', '频率'] },
+  { subject: 'english', id: 'english.discourse', keywords: ['阅读', '七选五', '完形', '主旨', '段落', '语篇', 'context', 'passage', 'paragraph'] },
+  { subject: 'english', id: 'english.rewrite', keywords: ['改写', '同义', '词义', '语法', '填空', 'writing', 'sentence', 'replace'] },
+  { subject: 'physics', id: 'physics.graph', keywords: ['图像', '图线', '斜率', '坐标', '实验', '误差', '传感器', '读数'] },
+  { subject: 'physics', id: 'physics.modeling', keywords: ['模型', '受力', '电场', '磁场', '能量', '动量', '运动', '电路', '守恒'] },
+  { subject: 'chemistry', id: 'chemistry.experiment', keywords: ['实验', '装置', '试剂', '现象', '除杂', '检验', '滴定', '操作'] },
+  { subject: 'chemistry', id: 'chemistry.equilibrium', keywords: ['平衡', '反应速率', '电离', '水解', '原电池', '电解', '热化学', '浓度'] },
+  { subject: 'biology', id: 'biology.genetics', keywords: ['遗传', '基因', '染色体', '性状', '杂交', '亲本', '子代', '概率'] },
+  { subject: 'biology', id: 'biology.experiment', keywords: ['实验', '变量', '对照', '探究', '处理组', '酶', '细胞', '生态'] },
+  { subject: 'politics', id: 'politics.governance', keywords: ['基层', '治理', '民主', '协商', '政府', '法治', '人大', '政协'] },
+  { subject: 'politics', id: 'politics.material', keywords: ['材料', '说明', '意义', '措施', '哲学', '经济', '文化', '术语'] },
+  { subject: 'history', id: 'history.argument', keywords: ['论述', '评析', '观点', '说明', '影响', '原因', '变化', '趋势'] },
+  { subject: 'history', id: 'history.evidence', keywords: ['史料', '材料', '时期', '制度', '事件', '根据', '反映', '表明'] },
+  { subject: 'geography', id: 'geography.measure', keywords: ['措施', '治理', '保护', '开发', '问题', '影响', '原因', '建议'] },
+  { subject: 'geography', id: 'geography.region', keywords: ['区域', '气候', '地形', '河流', '城市', '农业', '工业', '人口', '交通'] },
+]
+
 const subjectFallback = {
   chinese: ['chinese.evidence-chain'],
   math: ['math.derivative'],
@@ -57,8 +79,36 @@ const subjectFallback = {
   geography: ['geography.region'],
 }
 
+function collectQuestionText(question) {
+  return [
+    question.title,
+    question.prompt,
+    question.answer,
+    question.sourceType,
+    question.questionType,
+    ...(Array.isArray(question.solution) ? question.solution : []),
+    ...(Array.isArray(question.flags) ? question.flags : []),
+  ]
+    .filter(Boolean)
+    .join('\n')
+    .toLowerCase()
+}
+
+function inferKnowledgeIds(question) {
+  const text = collectQuestionText(question)
+  const matches = keywordRules
+    .filter(rule => rule.subject === question.subject)
+    .filter(rule => rule.keywords.some(keyword => text.includes(keyword.toLowerCase())))
+    .map(rule => rule.id)
+  return [...new Set(matches)]
+}
+
 export function getQuestionKnowledgeIds(question) {
-  return questionKnowledgeMap[question.id] || subjectFallback[question.subject] || []
+  const explicit = questionKnowledgeMap[question.id]
+  if (explicit) return explicit
+  const inferred = inferKnowledgeIds(question)
+  if (inferred.length > 0) return inferred
+  return subjectFallback[question.subject] || []
 }
 
 function summarizeAccountWeaknesses(accountWeaknesses = []) {
