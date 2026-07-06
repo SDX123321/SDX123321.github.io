@@ -59,7 +59,7 @@ const questionQuerySchema = z.object({
   year: z.coerce.number().int().min(1900).max(2100).optional(),
   quality: z.string().max(64).optional(),
   sourceType: z.string().max(64).optional(),
-  limit: z.coerce.number().int().min(1).max(100).default(30),
+  limit: z.coerce.number().int().min(1).max(2000).default(300),
 })
 
 function hashToken(token) {
@@ -277,7 +277,7 @@ app.get('/api/gaokao/subjects', async (req, res) => {
   res.json({ subjects: rows })
 })
 
-app.get('/api/gaokao/questions', authUser, async (req, res) => {
+app.get('/api/gaokao/questions', async (req, res) => {
   const parsed = questionQuerySchema.safeParse(req.query)
   if (!parsed.success) return res.status(400).json({ error: 'invalid_input' })
   const filters = parsed.data

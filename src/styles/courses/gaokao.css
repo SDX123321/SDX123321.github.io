@@ -649,6 +649,12 @@
   margin-top: 8px;
 }
 
+.question-empty-detail {
+  margin: 10px 0 0;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
 .extract-summary {
   display: flex;
   flex-wrap: wrap;

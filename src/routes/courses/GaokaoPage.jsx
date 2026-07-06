@@ -28,6 +28,8 @@ import {
 import { useAuth } from '../../features/account/AuthContext'
 import '../../styles/courses/gaokao.css'
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8787'
+
 const difficultyLabels = {
   all: '全部难度',
   easy: '基础',
@@ -82,6 +84,40 @@ function loadJson(key, fallback) {
     return raw ? JSON.parse(raw) : fallback
   } catch {
     return fallback
+  }
+}
+
+function truncateText(value, maxLength) {
+  const text = value ? String(value) : ''
+  return text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text
+}
+
+function normalizeList(value) {
+  if (Array.isArray(value)) return value.filter(Boolean).map(item => String(item))
+  if (!value) return []
+  return [String(value)]
+}
+
+function normalizeDbQuestion(row) {
+  const subject = subjects.find(item => item.key === row.subjectKey)
+  const questionNumber = row.questionNumber ? `第 ${row.questionNumber} 题` : '题目'
+  const sourceType = row.sourceType || '结构化题库'
+  const difficulty = difficultyLabels[row.difficulty] ? row.difficulty : 'medium'
+  const prompt = row.prompt || ''
+  return {
+    id: row.questionKey || `gaokao-db-${row.id}`,
+    year: row.year || '2026',
+    subject: row.subjectKey,
+    sourceType,
+    difficulty,
+    title: `${row.year || '2026'} ${row.subjectName || subject?.name || row.subjectKey || '高考'} ${questionNumber}`,
+    prompt,
+    answer: row.answer || '答案待补全',
+    solution: normalizeList(row.solution),
+    flags: normalizeList(row.flags),
+    quality: row.quality,
+    questionType: row.questionType,
+    updatedAt: row.updatedAt,
   }
 }
 
@@ -276,6 +312,8 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt }) {
   const [open, setOpen] = useState(isDone)
   const knowledgeIds = getQuestionKnowledgeIds(question)
   const knowledgeLabels = knowledgeIds.map(id => knowledgeNodes.find(node => node.id === id)?.label || id)
+  const solution = Array.isArray(question.solution) ? question.solution : []
+  const difficultyLabel = difficultyLabels[question.difficulty] || question.difficulty || '待标注'
 
   return (
     <article id={`practice-${question.id}`} className={`gaokao-question ${isDone ? 'is-complete' : ''} ${attempt ? `attempt-${attempt.result}` : ''}`}>
@@ -283,7 +321,7 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt }) {
         <span>{question.year}</span>
         <span>{subjects.find(item => item.key === question.subject)?.name}</span>
         <span>{question.sourceType}</span>
-        <span className={`difficulty difficulty-${question.difficulty}`}>{difficultyLabels[question.difficulty]}</span>
+        <span className={`difficulty difficulty-${question.difficulty || 'unknown'}`}>{difficultyLabel}</span>
       </div>
       <h3>{question.title}</h3>
       <div className="knowledge-tags">
@@ -309,9 +347,13 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt }) {
       {open && (
         <div className="question-explain">
           <strong>参考答案：{question.answer}</strong>
-          <ol>
-            {question.solution.map(step => <li key={step}>{step}</li>)}
-          </ol>
+          {solution.length > 0 ? (
+            <ol>
+              {solution.map(step => <li key={step}>{step}</li>)}
+            </ol>
+          ) : (
+            <p className="question-empty-detail">解析待补全。</p>
+          )}
         </div>
       )}
     </article>
@@ -434,6 +476,7 @@ export default function GaokaoPage() {
   }))
   const [completed, setCompleted] = useState(() => new Set(loadJson('gaokao_jiangsu_done', [])))
   const [attempts, setAttempts] = useState(() => loadJson('gaokao_knowledge_attempts', {}))
+  const [dbQuestionState, setDbQuestionState] = useState({ status: 'loading', questions: [], error: null })
   const [accountWeaknessState, setAccountWeaknessState] = useState({ userId: null, rows: [] })
   const { user, syncStudyEvent, syncGaokaoAttempt, fetchGaokaoWeaknesses } = useAuth()
   const accountWeaknesses = accountWeaknessState.userId === user?.id ? accountWeaknessState.rows : []
@@ -455,6 +498,29 @@ export default function GaokaoPage() {
   useEffect(() => {
     localStorage.setItem('gaokao_knowledge_attempts', JSON.stringify(attempts))
   }, [attempts])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetch(`${API_BASE}/api/gaokao/questions?limit=2000`, {
+      credentials: 'include',
+      signal: controller.signal,
+    })
+      .then(response => {
+        if (!response.ok) throw new Error(`request_failed_${response.status}`)
+        return response.json()
+      })
+      .then(data => {
+        const questions = (data.questions || [])
+          .map(normalizeDbQuestion)
+          .filter(question => question.id && question.subject && question.prompt)
+        setDbQuestionState({ status: 'ready', questions, error: null })
+      })
+      .catch(error => {
+        if (error.name === 'AbortError') return
+        setDbQuestionState({ status: 'fallback', questions: [], error: error.message })
+      })
+    return () => controller.abort()
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -521,13 +587,18 @@ export default function GaokaoPage() {
     return () => observer.disconnect()
   }, [activeSubject, pageNavLinks])
 
+  const dbQuestions = dbQuestionState.questions
+  const questionLibrary = dbQuestions.length > 0 ? dbQuestions : practiceQuestions
+  const questionLibraryLabel = dbQuestions.length > 0 ? '数据库题库' : '本地训练题'
+  const answeredQuestionCount = questionLibrary.filter(question => question.answer && question.answer !== '答案待补全').length
+
   const filteredQuestions = useMemo(() => {
-    return practiceQuestions.filter(question => {
+    return questionLibrary.filter(question => {
       if (filters.subject !== 'all' && question.subject !== filters.subject) return false
       if (filters.difficulty !== 'all' && question.difficulty !== filters.difficulty) return false
       return true
     })
-  }, [filters])
+  }, [filters, questionLibrary])
 
   const extractedSamples = useMemo(() => {
     return extractedLibraries
@@ -553,8 +624,8 @@ export default function GaokaoPage() {
 
   const subjectPracticeQuestions = useMemo(() => {
     if (!activeSubject) return []
-    return practiceQuestions.filter(question => question.subject === activeSubject.key)
-  }, [activeSubject])
+    return questionLibrary.filter(question => question.subject === activeSubject.key)
+  }, [activeSubject, questionLibrary])
 
   const subjectYearRows = useMemo(() => {
     if (!activeSubject) return []
@@ -570,7 +641,7 @@ export default function GaokaoPage() {
       next.add(id)
       return next
     })
-    const question = practiceQuestions.find(item => item.id === id)
+    const question = questionLibrary.find(item => item.id === id)
     syncStudyEvent({
       eventType: 'practice_done',
       course: 'gaokao',
@@ -607,8 +678,8 @@ export default function GaokaoPage() {
       subjectKey: question.subject,
       result,
       knowledgeNodes: knowledgeIds,
-      promptSnapshot: question.prompt,
-      answerSnapshot: question.answer,
+      promptSnapshot: truncateText(question.prompt, 4000),
+      answerSnapshot: truncateText(question.answer, 2000),
       sourceType: question.sourceType,
       metadata: {
         pagePath: window.location.pathname,
@@ -673,7 +744,7 @@ export default function GaokaoPage() {
           <div className="hero-metrics" aria-label={`${activeSubject.name}专题统计`}>
             <div><strong>{subjectYearRows.reduce((sum, item) => sum + (item.cell?.total || 0), 0)}</strong><span>资料索引</span></div>
             <div><strong>{subjectExtractedSamples.length}</strong><span>真实样本</span></div>
-            <div><strong>{subjectPracticeQuestions.length}</strong><span>扩展训练</span></div>
+            <div><strong>{subjectPracticeQuestions.length}</strong><span>{questionLibraryLabel}</span></div>
             <div><strong>{activeSubject.highFrequency.length}</strong><span>高频能力点</span></div>
           </div>
         </section>
@@ -812,7 +883,7 @@ export default function GaokaoPage() {
         <div className="hero-metrics" aria-label="专题统计">
           <div><strong>10</strong><span>年份范围</span></div>
           <div><strong>9</strong><span>覆盖科目</span></div>
-          <div><strong>{practiceQuestions.length}</strong><span>完整题解</span></div>
+          <div><strong>{questionLibrary.length}</strong><span>题库题目</span></div>
           <div><strong>{gaokaoIndex.totals.coveredCells}/90</strong><span>资料格覆盖</span></div>
         </div>
       </section>
@@ -945,7 +1016,7 @@ export default function GaokaoPage() {
           <h2>九科知识图谱与薄弱点推荐</h2>
         </div>
         <KnowledgeGraph attempts={attempts} accountWeaknesses={accountWeaknesses} />
-        <WeaknessPanel attempts={attempts} questions={practiceQuestions} accountWeaknesses={accountWeaknesses} />
+        <WeaknessPanel attempts={attempts} questions={questionLibrary} accountWeaknesses={accountWeaknesses} />
       </section>
 
       <section id="ocr" className="gaokao-section">
@@ -1019,7 +1090,9 @@ export default function GaokaoPage() {
           <button type="button" onClick={() => setFilters({ subject: 'all', difficulty: 'all' })}>重置</button>
         </div>
         <div className="question-summary">
-          <span>已查看 {completed.size}/{practiceQuestions.length}</span>
+          <span>{questionLibraryLabel}{dbQuestionState.status === 'loading' ? '加载中' : ''}</span>
+          <span>已补答案 {answeredQuestionCount}/{questionLibrary.length}</span>
+          <span>已查看 {completed.size}/{questionLibrary.length}</span>
           <span>当前筛选 {filteredQuestions.length} 题</span>
         </div>
         <div className="question-grid">
