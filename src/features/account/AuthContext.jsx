@@ -148,6 +148,19 @@ export function AuthProvider({ children }) {
     }
   }, [user])
 
+  const fetchGaokaoWeaknesses = useCallback(async () => {
+    if (!user) return []
+    try {
+      const data = await api('/api/gaokao/weaknesses')
+      setApiAvailable(true)
+      return data.weaknesses || []
+    } catch (error) {
+      if (error.status === 401) setUser(null)
+      else setApiAvailable(false)
+      return []
+    }
+  }, [user])
+
   const value = useMemo(() => ({
     user,
     stats,
@@ -162,6 +175,7 @@ export function AuthProvider({ children }) {
     importLocalProgress,
     syncStudyEvent,
     syncGaokaoAttempt,
+    fetchGaokaoWeaknesses,
   }), [
     user,
     stats,
@@ -176,6 +190,7 @@ export function AuthProvider({ children }) {
     importLocalProgress,
     syncStudyEvent,
     syncGaokaoAttempt,
+    fetchGaokaoWeaknesses,
   ])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

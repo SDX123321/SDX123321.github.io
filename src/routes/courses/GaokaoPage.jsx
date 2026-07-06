@@ -133,8 +133,25 @@ function formatGeneratedAt(value) {
   }
 }
 
-function KnowledgeGraph({ activeSubject, attempts }) {
-  const { nodeStats } = useMemo(() => summarizeKnowledgeAttempts(attempts), [attempts])
+function mergeAccountWeaknesses(rows = [], knowledgeIds = [], result) {
+  const now = new Date().toISOString()
+  const byId = new Map(rows.map(row => [row.knowledgeNode, { ...row }]))
+  knowledgeIds.forEach(id => {
+    const current = byId.get(id) || { knowledgeNode: id, total: 0, correct: 0, wrong: 0 }
+    const total = (Number(current.total) || 0) + 1
+    const correct = (Number(current.correct) || 0) + (result === 'correct' ? 1 : 0)
+    const wrong = (Number(current.wrong) || 0) + (result === 'wrong' ? 1 : 0)
+    byId.set(id, { ...current, total, correct, wrong, lastAnsweredAt: now })
+  })
+  return [...byId.values()].sort((left, right) => (
+    (Number(right.wrong) || 0) - (Number(left.wrong) || 0)
+    || (Number(right.total) || 0) - (Number(left.total) || 0)
+    || String(right.lastAnsweredAt || '').localeCompare(String(left.lastAnsweredAt || ''))
+  ))
+}
+
+function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses }) {
+  const { nodeStats } = useMemo(() => summarizeKnowledgeAttempts(attempts, accountWeaknesses), [attempts, accountWeaknesses])
   const visibleSubjects = activeSubject ? [activeSubject] : subjects
   const visibleNodes = visibleSubjects.flatMap(subject => (
     knowledgeNodes.filter(node => node.subject === subject.key).slice(0, activeSubject ? 8 : 3)
@@ -204,11 +221,12 @@ function KnowledgeGraph({ activeSubject, attempts }) {
   )
 }
 
-function WeaknessPanel({ attempts, questions, activeSubject }) {
-  const { weakNodes } = useMemo(() => summarizeKnowledgeAttempts(attempts), [attempts])
+function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }) {
+  const hasAccountStats = (accountWeaknesses || []).length > 0
+  const { weakNodes } = useMemo(() => summarizeKnowledgeAttempts(attempts, accountWeaknesses), [attempts, accountWeaknesses])
   const recommendations = useMemo(() => (
-    recommendPracticeQuestions(questions, attempts, 6)
-  ), [attempts, questions])
+    recommendPracticeQuestions(questions, attempts, 6, accountWeaknesses)
+  ), [attempts, questions, accountWeaknesses])
   const visibleWeakNodes = activeSubject
     ? weakNodes.filter(item => item.node?.subject === activeSubject.key)
     : weakNodes
@@ -217,6 +235,7 @@ function WeaknessPanel({ attempts, questions, activeSubject }) {
     <div className="weakness-panel">
       <article>
         <h3>薄弱环节</h3>
+        {hasAccountStats && <p className="weakness-source">已合并账号做题记录。</p>}
         {visibleWeakNodes.length > 0 ? (
           <div className="weakness-list">
             {visibleWeakNodes.slice(0, 6).map(item => (
@@ -415,7 +434,9 @@ export default function GaokaoPage() {
   }))
   const [completed, setCompleted] = useState(() => new Set(loadJson('gaokao_jiangsu_done', [])))
   const [attempts, setAttempts] = useState(() => loadJson('gaokao_knowledge_attempts', {}))
-  const { syncStudyEvent, syncGaokaoAttempt } = useAuth()
+  const [accountWeaknessState, setAccountWeaknessState] = useState({ userId: null, rows: [] })
+  const { user, syncStudyEvent, syncGaokaoAttempt, fetchGaokaoWeaknesses } = useAuth()
+  const accountWeaknesses = accountWeaknessState.userId === user?.id ? accountWeaknessState.rows : []
 
   useEffect(() => {
     document.title = activeSubject
@@ -434,6 +455,21 @@ export default function GaokaoPage() {
   useEffect(() => {
     localStorage.setItem('gaokao_knowledge_attempts', JSON.stringify(attempts))
   }, [attempts])
+
+  useEffect(() => {
+    let cancelled = false
+    if (!user) {
+      return () => {
+        cancelled = true
+      }
+    }
+    fetchGaokaoWeaknesses().then(rows => {
+      if (!cancelled) setAccountWeaknessState({ userId: user.id, rows })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [fetchGaokaoWeaknesses, user])
 
   useEffect(() => {
     const sidebar = document.querySelector('.sidebar')
@@ -560,6 +596,12 @@ export default function GaokaoPage() {
       next.add(question.id)
       return next
     })
+    if (user) {
+      setAccountWeaknessState(prev => ({
+        userId: user.id,
+        rows: mergeAccountWeaknesses(prev.userId === user.id ? prev.rows : [], knowledgeIds, result),
+      }))
+    }
     syncGaokaoAttempt({
       questionKey: question.id,
       subjectKey: question.subject,
@@ -662,8 +704,8 @@ export default function GaokaoPage() {
             <span>Knowledge Graph</span>
             <h2>{activeSubject.name}知识图谱与薄弱点</h2>
           </div>
-          <KnowledgeGraph activeSubject={activeSubject} attempts={attempts} />
-          <WeaknessPanel attempts={attempts} questions={subjectPracticeQuestions} activeSubject={activeSubject} />
+          <KnowledgeGraph activeSubject={activeSubject} attempts={attempts} accountWeaknesses={accountWeaknesses} />
+          <WeaknessPanel attempts={attempts} questions={subjectPracticeQuestions} activeSubject={activeSubject} accountWeaknesses={accountWeaknesses} />
         </section>
 
         <section id="subject-years" className="gaokao-section">
@@ -902,8 +944,8 @@ export default function GaokaoPage() {
           <span>Knowledge Graph</span>
           <h2>九科知识图谱与薄弱点推荐</h2>
         </div>
-        <KnowledgeGraph attempts={attempts} />
-        <WeaknessPanel attempts={attempts} questions={practiceQuestions} />
+        <KnowledgeGraph attempts={attempts} accountWeaknesses={accountWeaknesses} />
+        <WeaknessPanel attempts={attempts} questions={practiceQuestions} accountWeaknesses={accountWeaknesses} />
       </section>
 
       <section id="ocr" className="gaokao-section">

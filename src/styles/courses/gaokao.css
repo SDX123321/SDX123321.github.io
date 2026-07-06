@@ -899,6 +899,13 @@
   line-height: 1.7;
 }
 
+.weakness-panel .weakness-source {
+  margin: -4px 0 12px;
+  color: var(--accent);
+  font-size: .82rem;
+  font-weight: 700;
+}
+
 .weakness-list,
 .recommend-list {
   display: grid;

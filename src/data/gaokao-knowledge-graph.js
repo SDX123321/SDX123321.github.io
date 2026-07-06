@@ -61,16 +61,35 @@ export function getQuestionKnowledgeIds(question) {
   return questionKnowledgeMap[question.id] || subjectFallback[question.subject] || []
 }
 
-export function summarizeKnowledgeAttempts(attempts) {
+function summarizeAccountWeaknesses(accountWeaknesses = []) {
   const nodeStats = {}
-  Object.values(attempts || {}).forEach(attempt => {
-    const result = attempt.result === 'correct' ? 'correct' : 'wrong'
-    ;(attempt.knowledgeIds || []).forEach(id => {
-      if (!nodeStats[id]) nodeStats[id] = { total: 0, correct: 0, wrong: 0 }
-      nodeStats[id].total += 1
-      nodeStats[id][result] += 1
-    })
+  accountWeaknesses.forEach(item => {
+    const id = item.knowledgeNode
+    if (!id) return
+    const total = Number(item.total) || 0
+    const correct = Number(item.correct) || 0
+    const wrong = Number(item.wrong) || 0
+    if (total <= 0) return
+    nodeStats[id] = { total, correct, wrong }
   })
+  return nodeStats
+}
+
+export function summarizeKnowledgeAttempts(attempts, accountWeaknesses = []) {
+  const accountStats = summarizeAccountWeaknesses(accountWeaknesses)
+  const nodeStats = {}
+  if (Object.keys(accountStats).length > 0) {
+    Object.assign(nodeStats, accountStats)
+  } else {
+    Object.values(attempts || {}).forEach(attempt => {
+      const result = attempt.result === 'correct' ? 'correct' : 'wrong'
+      ;(attempt.knowledgeIds || []).forEach(id => {
+        if (!nodeStats[id]) nodeStats[id] = { total: 0, correct: 0, wrong: 0 }
+        nodeStats[id].total += 1
+        nodeStats[id][result] += 1
+      })
+    })
+  }
   const weakNodes = Object.entries(nodeStats)
     .filter(([, stat]) => stat.wrong > 0)
     .map(([id, stat]) => ({
@@ -83,8 +102,8 @@ export function summarizeKnowledgeAttempts(attempts) {
   return { nodeStats, weakNodes }
 }
 
-export function recommendPracticeQuestions(questions, attempts, limit = 6) {
-  const { weakNodes } = summarizeKnowledgeAttempts(attempts)
+export function recommendPracticeQuestions(questions, attempts, limit = 6, accountWeaknesses = []) {
+  const { weakNodes } = summarizeKnowledgeAttempts(attempts, accountWeaknesses)
   const weakIds = weakNodes.map(item => item.id)
   const scored = questions.map(question => {
     const knowledgeIds = getQuestionKnowledgeIds(question)
