@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-06T13:52:38.369208+00:00",
+  "generatedAt": "2026-07-06T14:21:06.372781+00:00",
   "scope": {
     "note": "Web answer maps from public gaokzx.com article image pages and reviewed public PDF answer files. Review source URLs before relying on open-ended answers."
   },
   "summary": {
-    "sources": 27,
-    "answers": 293,
+    "sources": 33,
+    "answers": 303,
     "byFamily": {
       "biology:anhui": 21,
       "chemistry:yunnan": 18,
@@ -19,7 +19,7 @@
       "physics:shanghai": 5,
       "chemistry:shanghai": 2,
       "english:national1": 48,
-      "chinese:national1": 0,
+      "chinese:national1": 10,
       "math:beijing": 21,
       "math:tianjin": 2,
       "math:shanghai-spring": 7,
@@ -1613,6 +1613,174 @@
         "https://cdn.gaokzx.com/zixunzhan/_1781003020915_121781003021132.png"
       ],
       "answers": []
+    },
+    {
+      "id": "gzywtk-national1-chinese-reading1-2026",
+      "family": "chinese:national1",
+      "title": "2026年高考语文全国I卷阅读一参考答案",
+      "pageUrl": "https://www.gzywtk.com/tmshow/32149.html",
+      "sourceName": "一苇轩(高中语文题库)",
+      "manualAnswers": [
+        {
+          "number": 3,
+          "answer": "A"
+        },
+        {
+          "number": 5,
+          "answer": "示例一：问题：①“全球深渊探索计划”中，中国科学家主要承担什么工作？②“全球性化能生物走廊”的假说是否已经得到证实？理由：①该计划由中国科学家团队牵头负责，所以引出此问题；②这一假说是中国科学家提出的，随着探索计划的实施，外界会关注假说是否已经得到证实。示例二：问题：①“全球深渊探索计划”目前进展如何？②在探索中有哪些重要的发现？理由：①该计划已获批准，所以引出对项目进度的关切；②之前的深渊探索，刷新了人类对海洋生命的认识，随着探索计划的实施，外界会关注有哪些重要的新发现。"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 3,
+          "answer": "A",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 5,
+          "answer": "示例一：问题：①“全球深渊探索计划”中，中国科学家主要承担什么工作？②“全球性化能生物走廊”的假说是否已经得到证实？理由：①该计划由中国科学家团队牵头负责，所以引出此问题；②这一假说是中国科学家提出的，随着探索计划的实施，外界会关注假说是否已经得到证实。示例二：问题：①“全球深渊探索计划”目前进展如何？②在探索中有哪些重要的发现？理由：①该计划已获批准，所以引出对项目进度的关切；②之前的深渊探索，刷新了人类对海洋生命的认识，随着探索计划的实施，外界会关注有哪些重要的新发现。",
+          "confidence": "reviewed-web-text"
+        }
+      ]
+    },
+    {
+      "id": "gzywtk-national1-chinese-reading2-2026",
+      "family": "chinese:national1",
+      "title": "2026年高考语文全国I卷阅读二参考答案",
+      "pageUrl": "https://www.gzywtk.com/tmshow/32150.html",
+      "sourceName": "一苇轩(高中语文题库)",
+      "manualAnswers": [
+        {
+          "number": 8,
+          "answer": "①多细节描写，文中多处描写动作和心理细节，真实地表现了列文对割草的生疏和劳动的辛苦。②多感官结合，通过视觉、听觉与触觉的结合，将列文割草时的专注状态真实展现出来。③严谨的过程展现，对列文割草从笨拙到熟悉的刻画让文章具有真切感。"
+        },
+        {
+          "number": 9,
+          "answer": "示例：他觉得自己很喜欢那些粗面包里粮食的颗粒感。他望向四周，并没有看见季特，而大车下面几个农民和他们送饭来的妻子不知道为着什么缘故爆发出一阵笑声，他也禁不住跟着笑了起来。"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 8,
+          "answer": "①多细节描写，文中多处描写动作和心理细节，真实地表现了列文对割草的生疏和劳动的辛苦。②多感官结合，通过视觉、听觉与触觉的结合，将列文割草时的专注状态真实展现出来。③严谨的过程展现，对列文割草从笨拙到熟悉的刻画让文章具有真切感。",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 9,
+          "answer": "示例：他觉得自己很喜欢那些粗面包里粮食的颗粒感。他望向四周，并没有看见季特，而大车下面几个农民和他们送饭来的妻子不知道为着什么缘故爆发出一阵笑声，他也禁不住跟着笑了起来。",
+          "confidence": "reviewed-web-text"
+        }
+      ]
+    },
+    {
+      "id": "gzywtk-national1-chinese-classical-2026",
+      "family": "chinese:national1",
+      "title": "2026年高考语文全国I卷文言文参考答案",
+      "pageUrl": "https://www.gzywtk.com/tmshow/32151.html",
+      "sourceName": "一苇轩(高中语文题库)",
+      "manualAnswers": [
+        {
+          "number": 13,
+          "answer": "（1）捕鱼本是为了收获，如今您捕到鱼却又放走，这是为什么呢？（2）燕国曾经侵占魏国的八座城池，我请求率军北上攻打燕国，来收复被侵占的土地。"
+        },
+        {
+          "number": 14,
+          "answer": "观点一：能够印证。理由：①西门豹行蓄积于民之政，是要帮助文侯成就王霸之业，离不开令行禁止；②西门豹升城击鼓，百姓立即备好武器粮食而至，正是“民不敢欺”的表现。观点二：不能印证。理由：①材料中未见西门豹治邺施行重典、威化安民的行为；②西门豹升城击鼓聚集百姓，后又顺势带兵攻打燕国，收复失地，这是西门豹不失信于民的表现，并不能证明“民不敢欺”。"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 13,
+          "answer": "（1）捕鱼本是为了收获，如今您捕到鱼却又放走，这是为什么呢？（2）燕国曾经侵占魏国的八座城池，我请求率军北上攻打燕国，来收复被侵占的土地。",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 14,
+          "answer": "观点一：能够印证。理由：①西门豹行蓄积于民之政，是要帮助文侯成就王霸之业，离不开令行禁止；②西门豹升城击鼓，百姓立即备好武器粮食而至，正是“民不敢欺”的表现。观点二：不能印证。理由：①材料中未见西门豹治邺施行重典、威化安民的行为；②西门豹升城击鼓聚集百姓，后又顺势带兵攻打燕国，收复失地，这是西门豹不失信于民的表现，并不能证明“民不敢欺”。",
+          "confidence": "reviewed-web-text"
+        }
+      ]
+    },
+    {
+      "id": "gzywtk-national1-chinese-poem-2026",
+      "family": "chinese:national1",
+      "title": "2026年高考语文全国I卷诗歌参考答案",
+      "pageUrl": "https://www.gzywtk.com/tmshow/32152.html",
+      "sourceName": "一苇轩(高中语文题库)",
+      "manualAnswers": [
+        {
+          "number": 16,
+          "answer": "①歌曲主张的写风方法与本诗写法一脉相承；②歌曲强调，要通过描述能直接感知到的风中的物象与声音来写风，本诗就是如此；③歌曲主张要“用心感受”，本诗则从多个角度写到了风对人内心情感的触发。"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 16,
+          "answer": "①歌曲主张的写风方法与本诗写法一脉相承；②歌曲强调，要通过描述能直接感知到的风中的物象与声音来写风，本诗就是如此；③歌曲主张要“用心感受”，本诗则从多个角度写到了风对人内心情感的触发。",
+          "confidence": "reviewed-web-text"
+        }
+      ]
+    },
+    {
+      "id": "gzywtk-national1-chinese-memorization-2026",
+      "family": "chinese:national1",
+      "title": "2026年高考语文全国I卷名篇名句参考答案",
+      "pageUrl": "https://www.gzywtk.com/tmshow/32153.html",
+      "sourceName": "一苇轩(高中语文题库)",
+      "manualAnswers": [
+        {
+          "number": 17,
+          "answer": "（1）烟柳画桥，风帘翠幕。（2）楼船夜雪瓜洲渡，铁马秋风大散关。（3）示例：舟遥遥以轻飏，风飘飘而吹衣。"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 17,
+          "answer": "（1）烟柳画桥，风帘翠幕。（2）楼船夜雪瓜洲渡，铁马秋风大散关。（3）示例：舟遥遥以轻飏，风飘飘而吹衣。",
+          "confidence": "reviewed-web-text"
+        }
+      ]
+    },
+    {
+      "id": "gzywtk-national1-chinese-language-2026",
+      "family": "chinese:national1",
+      "title": "2026年高考语文全国I卷语言文字运用参考答案",
+      "pageUrl": "https://www.gzywtk.com/tmshow/32154.html",
+      "sourceName": "一苇轩(高中语文题库)",
+      "manualAnswers": [
+        {
+          "number": 18,
+          "answer": "“竞然”改为“竟然”；“幕色”改为“暮色”；“形色匆匆”改为“行色匆匆”；“火曝”改为“火爆”或“火暴”。"
+        },
+        {
+          "number": 20,
+          "answer": "（1）语句③；修改为：甚至因盲目追求打卡而引发安全事故。（2）语句⑤；修改为：拍照就会失去记录生活的意义。"
+        }
+      ],
+      "imageCount": 0,
+      "imageUrls": [],
+      "answers": [
+        {
+          "number": 18,
+          "answer": "“竞然”改为“竟然”；“幕色”改为“暮色”；“形色匆匆”改为“行色匆匆”；“火曝”改为“火爆”或“火暴”。",
+          "confidence": "reviewed-web-text"
+        },
+        {
+          "number": 20,
+          "answer": "（1）语句③；修改为：甚至因盲目追求打卡而引发安全事故。（2）语句⑤；修改为：拍照就会失去记录生活的意义。",
+          "confidence": "reviewed-web-text"
+        }
+      ]
     },
     {
       "id": "gaokzx-beijing-math-answer-2026",

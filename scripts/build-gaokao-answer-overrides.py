@@ -17,7 +17,14 @@ WEB_ANSWER_SOURCES_PATH = DATA_DIR / "gaokao-2026-web-answer-sources.json"
 FAMILY_ANSWER_ALIASES = {
     "math:全国数学I卷试题逐题规范解答": ["math:national1"],
     "math:数学江苏卷": ["math:全国数学I卷试题逐题规范解答"],
+    "chinese:全国语文1卷": ["chinese:national1"],
 }
+PLACEHOLDER_CHINESE_SOURCE = "\u0032\u0030\u0032\u0036\u5e74\u666e\u901a\u9ad8\u7b49\u5b66\u6821\u62db\u751f\u5168\u56fd\u7edf\u4e00\u8003\u8bd5\u8bed\u6587\uff08\u65b0\u0049\uff09\u0020\u002e\u0070\u0064\u0066"
+PLACEHOLDER_CHINESE_MARKERS = (
+    "\u4eba\u5de5\u667a\u80fd\u6280\u672f\u5728\u533b\u7597",
+    "\u79cb\u65e5\u6742\u611f",
+    "\u5168\u6c11\u9605\u8bfb",
+)
 EXISTING_ANSWER_CORRECTION_TARGETS = {
     ("chemistry:heilongjiliao", "2026高考化学黑吉辽蒙卷.pdf"),
 }
@@ -207,6 +214,15 @@ def is_ocr_answer_source_file(file_item: dict) -> bool:
     return any("【答案】" in (question.get("prompt") or "") for question in file_item.get("questions") or [])
 
 
+def is_placeholder_chinese_file(file_item: dict) -> bool:
+    if file_item.get("subject") != "chinese":
+        return False
+    if file_item.get("source") != PLACEHOLDER_CHINESE_SOURCE:
+        return False
+    prompts = "\n".join(question.get("prompt") or "" for question in file_item.get("questions") or [])
+    return any(marker in prompts for marker in PLACEHOLDER_CHINESE_MARKERS)
+
+
 def load_question_records(include_ocr_answer_sources: bool = False) -> list[dict]:
     records = []
     for dataset in DATASETS:
@@ -224,6 +240,8 @@ def load_question_records(include_ocr_answer_sources: bool = False) -> list[dict
             }]
         for file_item in files:
             if dataset == "gaokao-2026-ocr-extracted.json" and is_ocr_answer_source_file(file_item) and not include_ocr_answer_sources:
+                continue
+            if is_placeholder_chinese_file(file_item):
                 continue
             subject = file_item.get("subject") or file_item.get("subjectKey") or "unknown"
             for question in file_item.get("questions") or []:

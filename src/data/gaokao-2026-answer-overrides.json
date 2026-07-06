@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T14:01:53.822224+00:00",
+  "generatedAt": "2026-07-06T14:21:16.715407+00:00",
   "scope": {
     "datasets": [
       "gaokao-2026-docx-extracted.json",
@@ -15,30 +15,33 @@
       ],
       "math:数学江苏卷": [
         "math:全国数学I卷试题逐题规范解答"
+      ],
+      "chinese:全国语文1卷": [
+        "chinese:national1"
       ]
     }
   },
   "summary": {
-    "questionsScanned": 1307,
+    "questionsScanned": 1285,
     "answerSourceRowsScanned": 79,
-    "missingBeforeOverrides": 886,
-    "overrides": 809,
+    "missingBeforeOverrides": 864,
+    "overrides": 819,
     "corrections": 4,
-    "missingAfterOverrides": 81,
+    "missingAfterOverrides": 49,
     "byMethod": {
       "answer-source-file": 124,
-      "web-answer-source": 318,
+      "web-answer-source": 321,
       "existing-question-answer": 245,
       "ocr-answer-source": 23,
       "embedded-answer-in-prompt": 43,
       "answer-only-question": 18,
       "correct-existing-answer": 4,
-      "family-alias-answer": 34
+      "family-alias-answer": 41
     },
     "byDataset": {
       "gaokao-2026-docx-extracted.json": 248,
-      "gaokao-2026-pdf-text-extracted.json": 169,
-      "gaokao-2026-ocr-extracted.json": 350,
+      "gaokao-2026-pdf-text-extracted.json": 172,
+      "gaokao-2026-ocr-extracted.json": 357,
       "gaokao-2026-residual-extracted.json": 23,
       "jiangsu-gaokao-ocr.json": 19
     }
@@ -4567,6 +4570,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-pdf-3cbc89699ca50ce6",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026全国高考语文一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\2026全国高考语文一卷.pdf",
+      "subject": "chinese",
+      "family": "chinese:national1",
+      "number": 8,
+      "answer": "①多细节描写，文中多处描写动作和心理细节，真实地表现了列文对割草的生疏和劳动的辛苦。②多感官结合，通过视觉、听觉与触觉的结合，将列文割草时的专注状态真实展现出来。③严谨的过程展现，对列文割草从笨拙到熟悉的刻画让文章具有真切感。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gzywtk.com/tmshow/32150.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-pdf-55efa9cb8d2d0f18",
       "dataset": "gaokao-2026-pdf-text-extracted.json",
       "source": "2026全国高考语文一卷.pdf",
@@ -4606,6 +4623,20 @@
       "solution": [],
       "method": "answer-source-file",
       "answerSource": "2026高考试卷（更新中）\\一卷\\语文答案（全国一卷）.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-4b6d5db88afd3137",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026全国高考语文一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\2026全国高考语文一卷.pdf",
+      "subject": "chinese",
+      "family": "chinese:national1",
+      "number": 13,
+      "answer": "（1）捕鱼本是为了收获，如今您捕到鱼却又放走，这是为什么呢？（2）燕国曾经侵占魏国的八座城池，我请求率军北上攻打燕国，来收复被侵占的土地。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gzywtk.com/tmshow/32151.html",
       "confidence": "local-heuristic"
     },
     {
@@ -4690,6 +4721,20 @@
       "solution": [],
       "method": "answer-source-file",
       "answerSource": "2026高考试卷（更新中）\\一卷\\语文答案（全国一卷）.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-503da1884e664685",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026全国高考语文一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\2026全国高考语文一卷.pdf",
+      "subject": "chinese",
+      "family": "chinese:national1",
+      "number": 20,
+      "answer": "（1）语句③；修改为：甚至因盲目追求打卡而引发安全事故。（2）语句⑤；修改为：拍照就会失去记录生活的意义。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://www.gzywtk.com/tmshow/32154.html",
       "confidence": "local-heuristic"
     },
     {
@@ -6592,6 +6637,104 @@
       "solution": [],
       "method": "web-answer-source",
       "answerSource": "https://www.gaokzx.com/gk/shitiku/156668.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-1b36b516f67c51cd",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026全国高考语文1卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026全国高考语文1卷.pdf",
+      "subject": "chinese",
+      "family": "chinese:全国语文1卷",
+      "number": 3,
+      "answer": "A",
+      "solution": [],
+      "method": "family-alias-answer",
+      "answerSource": "https://www.gzywtk.com/tmshow/32149.html via chinese:national1",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-81412a7329b21c13",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026全国高考语文1卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026全国高考语文1卷.pdf",
+      "subject": "chinese",
+      "family": "chinese:全国语文1卷",
+      "number": 5,
+      "answer": "示例一：问题：①“全球深渊探索计划”中，中国科学家主要承担什么工作？②“全球性化能生物走廊”的假说是否已经得到证实？理由：①该计划由中国科学家团队牵头负责，所以引出此问题；②这一假说是中国科学家提出的，随着探索计划的实施，外界会关注假说是否已经得到证实。示例二：问题：①“全球深渊探索计划”目前进展如何？②在探索中有哪些重要的发现？理由：①该计划已获批准，所以引出对项目进度的关切；②之前的深渊探索，刷新了人类对海洋生命的认识，随着探索计划的实施，外界会关注有哪些重要的新发现。",
+      "solution": [],
+      "method": "family-alias-answer",
+      "answerSource": "https://www.gzywtk.com/tmshow/32149.html via chinese:national1",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-711cd03a41f1752d",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026全国高考语文1卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026全国高考语文1卷.pdf",
+      "subject": "chinese",
+      "family": "chinese:全国语文1卷",
+      "number": 9,
+      "answer": "示例：他觉得自己很喜欢那些粗面包里粮食的颗粒感。他望向四周，并没有看见季特，而大车下面几个农民和他们送饭来的妻子不知道为着什么缘故爆发出一阵笑声，他也禁不住跟着笑了起来。",
+      "solution": [],
+      "method": "family-alias-answer",
+      "answerSource": "https://www.gzywtk.com/tmshow/32150.html via chinese:national1",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-91836fcf561d18f8",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026全国高考语文1卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026全国高考语文1卷.pdf",
+      "subject": "chinese",
+      "family": "chinese:全国语文1卷",
+      "number": 14,
+      "answer": "观点一：能够印证。理由：①西门豹行蓄积于民之政，是要帮助文侯成就王霸之业，离不开令行禁止；②西门豹升城击鼓，百姓立即备好武器粮食而至，正是“民不敢欺”的表现。观点二：不能印证。理由：①材料中未见西门豹治邺施行重典、威化安民的行为；②西门豹升城击鼓聚集百姓，后又顺势带兵攻打燕国，收复失地，这是西门豹不失信于民的表现，并不能证明“民不敢欺”。",
+      "solution": [],
+      "method": "family-alias-answer",
+      "answerSource": "https://www.gzywtk.com/tmshow/32151.html via chinese:national1",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-1e6908056158cb35",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026全国高考语文1卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026全国高考语文1卷.pdf",
+      "subject": "chinese",
+      "family": "chinese:全国语文1卷",
+      "number": 16,
+      "answer": "①歌曲主张的写风方法与本诗写法一脉相承；②歌曲强调，要通过描述能直接感知到的风中的物象与声音来写风，本诗就是如此；③歌曲主张要“用心感受”，本诗则从多个角度写到了风对人内心情感的触发。",
+      "solution": [],
+      "method": "family-alias-answer",
+      "answerSource": "https://www.gzywtk.com/tmshow/32152.html via chinese:national1",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-bd6581e631d15498",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026全国高考语文1卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026全国高考语文1卷.pdf",
+      "subject": "chinese",
+      "family": "chinese:全国语文1卷",
+      "number": 17,
+      "answer": "（1）烟柳画桥，风帘翠幕。（2）楼船夜雪瓜洲渡，铁马秋风大散关。（3）示例：舟遥遥以轻飏，风飘飘而吹衣。",
+      "solution": [],
+      "method": "family-alias-answer",
+      "answerSource": "https://www.gzywtk.com/tmshow/32153.html via chinese:national1",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-4490a19faef3f13d",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026全国高考语文1卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026全国高考语文1卷.pdf",
+      "subject": "chinese",
+      "family": "chinese:全国语文1卷",
+      "number": 18,
+      "answer": "“竞然”改为“竟然”；“幕色”改为“暮色”；“形色匆匆”改为“行色匆匆”；“火曝”改为“火爆”或“火暴”。",
+      "solution": [],
+      "method": "family-alias-answer",
+      "answerSource": "https://www.gzywtk.com/tmshow/32154.html via chinese:national1",
       "confidence": "local-heuristic"
     },
     {

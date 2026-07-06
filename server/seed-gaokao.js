@@ -9,6 +9,12 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const DATA_DIR = path.resolve(__dirname, '../src/data')
 let answerOverrideMap = new Map()
+const PLACEHOLDER_CHINESE_SOURCE = '\u0032\u0030\u0032\u0036\u5e74\u666e\u901a\u9ad8\u7b49\u5b66\u6821\u62db\u751f\u5168\u56fd\u7edf\u4e00\u8003\u8bd5\u8bed\u6587\uff08\u65b0\u0049\uff09\u0020\u002e\u0070\u0064\u0066'
+const PLACEHOLDER_CHINESE_MARKERS = [
+  '\u4eba\u5de5\u667a\u80fd\u6280\u672f\u5728\u533b\u7597',
+  '\u79cb\u65e5\u6742\u611f',
+  '\u5168\u6c11\u9605\u8bfb',
+]
 
 function hashKey(prefix, parts) {
   const hash = crypto
@@ -123,6 +129,13 @@ function isOcrAnswerSourceFile(file) {
   const sourceText = `${file.source || ''} ${file.relativePath || ''}`
   if (/答案版|解析|教师版/u.test(sourceText)) return true
   return (file.questions || []).some(item => getQuestionPrompt(item).includes('【答案】'))
+}
+
+function isPlaceholderChineseFile(file) {
+  if (file?.subject !== 'chinese') return false
+  if (file?.source !== PLACEHOLDER_CHINESE_SOURCE) return false
+  const prompts = (file.questions || []).map(item => getQuestionPrompt(item)).join('\n')
+  return PLACEHOLDER_CHINESE_MARKERS.some(marker => prompts.includes(marker))
 }
 
 async function deleteQuestionByKey(questionKey) {
@@ -412,6 +425,15 @@ async function seedExtractedQuestions(extracted) {
   let questions = 0
   let skippedFragments = 0
   for (const file of extracted.files || []) {
+    if (isPlaceholderChineseFile(file)) {
+      for (const rawItem of file.questions || []) {
+        const questionKey = hashKey('extract_question', [file.year, file.subject, file.source, rawItem.number, rawItem.prompt])
+        await deleteQuestionByKey(questionKey)
+        skippedFragments += 1
+      }
+      continue
+    }
+
     const paperId = await upsertPaper({
       paperKey: hashKey('extract_paper', [file.year, file.subject, file.source, file.relativePath]),
       year: file.year,
