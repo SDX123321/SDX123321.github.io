@@ -4,14 +4,15 @@
     "note": "Web answer maps from public gaokzx.com article image pages and reviewed public PDF answer files. Review source URLs before relying on open-ended answers."
   },
   "summary": {
-    "sources": 35,
-    "answers": 305,
+    "sources": 36,
+    "answers": 309,
     "byFamily": {
       "biology:anhui": 21,
       "chemistry:yunnan": 18,
       "history:hunan": 38,
       "history:henan": 20,
       "geography:guangdong": 19,
+      "geography:shanghai": 4,
       "history:yunnan": 16,
       "physics:heilongjiliao": 15,
       "physics:hunan": 15,
@@ -895,6 +896,52 @@
           "answer": "A",
           "sourceUrl": "https://www.gov.cn/xinwen/2019-10/18/content_5442026.htm",
           "confidence": "reviewed-web-text"
+        }
+      ]
+    },
+    {
+      "id": "reviewed-shanghai-geography-derived-2026",
+      "family": "geography:shanghai",
+      "title": "2026上海高考地理回忆题：时区、昼长、地带性植被和气候事实核验",
+      "pageUrl": "https://www.timeanddate.com/",
+      "sourceName": "reviewed derivation from public reference facts",
+      "answers": [
+        {
+          "number": 1,
+          "answer": "C",
+          "sourceUrls": [
+            "https://www.timeanddate.com/time/zone/uk/london",
+            "https://www.timeanddate.com/time/zone/china/beijing"
+          ],
+          "confidence": "reviewed-derivation"
+        },
+        {
+          "number": 2,
+          "answer": "C",
+          "sourceUrls": [
+            "https://www.timeanddate.com/sun/australia/melbourne?month=3&year=2026",
+            "https://www.timeanddate.com/sun/mexico/mexico-city?month=10&year=2026",
+            "https://www.timeanddate.com/sun/canada/montreal?month=5&year=2026",
+            "https://www.timeanddate.com/sun/brazil/sao-paulo?month=11&year=2026"
+          ],
+          "confidence": "reviewed-derivation"
+        },
+        {
+          "number": 3,
+          "answer": "D",
+          "sourceUrls": [
+            "https://www.britannica.com/plant/chaparral"
+          ],
+          "confidence": "reviewed-derivation"
+        },
+        {
+          "number": 4,
+          "answer": "B",
+          "sourceUrls": [
+            "https://www.britannica.com/place/Jeddah",
+            "https://www.britannica.com/science/desert-climate"
+          ],
+          "confidence": "reviewed-derivation"
         }
       ]
     },
