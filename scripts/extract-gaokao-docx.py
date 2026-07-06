@@ -278,9 +278,9 @@ def main() -> None:
     parser.add_argument("--source-root", type=Path, default=DEFAULT_SOURCE_ROOT)
     parser.add_argument("--index", type=Path, default=DEFAULT_INDEX)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
-    parser.add_argument("--subjects", default="math,physics,chemistry,biology,geography")
-    parser.add_argument("--years", default="2022,2023,2024,2025")
-    parser.add_argument("--file-limit", type=int, default=12)
+    parser.add_argument("--subjects", default="chinese,math,english,physics,chemistry,biology,politics,history,geography")
+    parser.add_argument("--years", default="2020,2021,2022,2023,2024,2025")
+    parser.add_argument("--file-limit", type=int, default=48)
     parser.add_argument("--questions-per-file", type=int, default=2)
     args = parser.parse_args()
 
