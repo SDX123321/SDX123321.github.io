@@ -36,6 +36,14 @@ SOURCES = [
         "pageUrl": "https://www.gaokzx.com/gk/shitiku/156388.html",
     },
     {
+        "id": "zizzs-hunan-history-2026",
+        "family": "history:hunan",
+        "title": "2026年湖南高考历史试题及答案（全）",
+        "pageUrl": "https://www.zizzs.com/gk/shitiku/222716.html",
+        "imageUrlPattern": r"_00(?:0[1-9]|10)",
+        "sourceName": "自主选拔在线",
+    },
+    {
         "id": "gaokzx-national1-english-2026",
         "family": "english:national1",
         "title": "2026年高考全国I卷英语试题及答案",
@@ -67,14 +75,19 @@ def read_url(url: str) -> bytes:
 def source_image_urls(page_url: str) -> list[str]:
     html = read_url(page_url).decode("utf-8", "ignore")
     urls = []
-    for match in re.finditer(r"(?:https?:)?//cdn\.gaokzx\.com/zixunzhan/_[^\"'<> ]+?\.png", html):
-        url = match.group(0)
-        if url.startswith("//"):
-            url = "https:" + url
-        if not re.search(r"/_\d+_\d+\.png$", url):
-            continue
-        if url not in urls:
-            urls.append(url)
+    patterns = [
+        r"(?:https?:)?//cdn\.gaokzx\.com/zixunzhan/_[^\"'<> ]+?\.(?:png|jpg|jpeg|webp)",
+        r"(?:https?:)?//cdn\.zizzs\.com/zixunzhan/[^\"'<> ]+?\.(?:png|jpg|jpeg|webp)",
+    ]
+    for pattern in patterns:
+        for match in re.finditer(pattern, html, re.I):
+            url = match.group(0)
+            if url.startswith("//"):
+                url = "https:" + url
+            if "cdn.gaokzx.com" in url and not re.search(r"/_\d+_\d+\.(?:png|jpg|jpeg|webp)$", url, re.I):
+                continue
+            if url not in urls:
+                urls.append(url)
     return urls
 
 
@@ -177,6 +190,50 @@ def clean_answer(text: str) -> str:
     text = re.sub(r"^【答案】", "", text)
     text = re.sub(r"^[:：]\s*", "", text)
     return text.strip()
+
+
+def parse_bracket_heading_answers(lines: list[str]) -> dict[int, str]:
+    answers = {}
+    current_number = None
+    current_lines = []
+
+    def flush() -> None:
+        nonlocal current_number, current_lines
+        if current_number is None:
+            return
+        answer = clean_answer(" ".join(current_lines))
+        if answer:
+            answers.setdefault(current_number, answer)
+        current_number = None
+        current_lines = []
+
+    for line in lines:
+        line = re.sub(r"\s+", " ", line).strip()
+        if not line or re.match(r"^第\d+页/共\d+页$", line):
+            continue
+        heading = re.match(r"^【(?P<number>\d{1,2})题答案】", line)
+        if heading:
+            flush()
+            current_number = int(heading.group("number"))
+            current_lines = []
+            continue
+        answer = re.match(r"^【答案】(?P<body>.*)$", line)
+        if answer and current_number is not None:
+            body = answer.group("body").strip()
+            choice = re.match(r"^([A-D])(?:\s|$)", body)
+            if current_number <= 16 and choice:
+                current_lines.append(choice.group(1))
+                flush()
+                continue
+            current_lines.append(body)
+            continue
+        if current_number is not None:
+            if re.match(r"^【(?:解析|详解|分析)】", line):
+                flush()
+                continue
+            current_lines.append(line)
+    flush()
+    return answers
 
 
 def parse_written_answers(lines: list[str]) -> dict[int, str]:
@@ -302,12 +359,15 @@ def build_source(source: dict, ocr: RapidOCR) -> dict:
         }
 
     image_urls = source_image_urls(source["pageUrl"])
+    if source.get("imageUrlPattern"):
+        image_urls = [url for url in image_urls if re.search(source["imageUrlPattern"], url)]
     page_items = [ocr_image(ocr, source["id"], url) for url in image_urls]
     lines = []
     answer_map: dict[int, str] = {}
     for items in page_items:
         answer_map.update(parse_choice_tables(items))
         lines.extend(row_lines(items))
+    answer_map.update(parse_bracket_heading_answers(lines))
     answer_map.update(parse_written_answers(lines))
     if source["family"].startswith("english:"):
         answer_map.update(parse_english_sequences(lines))
@@ -322,7 +382,7 @@ def build_source(source: dict, ocr: RapidOCR) -> dict:
     ]
     return {
         **source,
-        "sourceName": "北京高考在线",
+        "sourceName": source.get("sourceName", "北京高考在线"),
         "imageCount": len(image_urls),
         "imageUrls": image_urls,
         "answers": answers,
