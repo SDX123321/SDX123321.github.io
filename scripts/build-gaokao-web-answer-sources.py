@@ -1,6 +1,7 @@
 import json
 import re
 import urllib.request
+from urllib.parse import quote, urlsplit, urlunsplit
 from collections import Counter
 from datetime import datetime, timezone
 from io import BytesIO
@@ -44,6 +45,23 @@ SOURCES = [
         "sourceName": "自主选拔在线",
     },
     {
+        "id": "zizzs-guangdong-geography-2026",
+        "family": "geography:guangdong",
+        "title": "2026年广东高考地理试题及答案（全）",
+        "pageUrl": "https://www.zizzs.com/gk/shitiku/222652.html",
+        "imageUrlPattern": r"_000[1-9]",
+        "sourceName": "自主选拔在线",
+    },
+    {
+        "id": "zizzs-heilongjiliao-physics-2026",
+        "family": "physics:heilongjiliao",
+        "title": "2026年黑吉辽蒙高考物理试题及答案",
+        "pageUrl": "https://www.zizzs.com/gk/shitiku/222659.html",
+        "imageUrlPattern": r"178245645",
+        "sourceName": "自主选拔在线",
+        "parsePlainNumberedAnswers": True,
+    },
+    {
         "id": "gaokzx-national1-english-2026",
         "family": "english:national1",
         "title": "2026年高考全国I卷英语试题及答案",
@@ -67,6 +85,8 @@ SOURCES = [
 
 
 def read_url(url: str) -> bytes:
+    parts = urlsplit(url)
+    url = urlunsplit((parts.scheme, parts.netloc, quote(parts.path, safe="/%"), quote(parts.query, safe="=&?/%"), parts.fragment))
     request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urllib.request.urlopen(request, timeout=30) as response:
         return response.read()
@@ -236,6 +256,46 @@ def parse_bracket_heading_answers(lines: list[str]) -> dict[int, str]:
     return answers
 
 
+def parse_plain_numbered_answers(lines: list[str]) -> dict[int, str]:
+    answers = {}
+    current_number = None
+    current_lines = []
+
+    def flush() -> None:
+        nonlocal current_number, current_lines
+        if current_number is None:
+            return
+        answer = clean_answer(" ".join(current_lines))
+        if answer:
+            answers.setdefault(current_number, answer)
+        current_number = None
+        current_lines = []
+
+    for line in lines:
+        line = re.sub(r"\s+", " ", line).strip()
+        if not line or re.match(r"^第\d+页", line):
+            continue
+        match = re.match(r"^(?P<number>\d{1,2})[.．]\s*(?P<body>.+)$", line)
+        if match:
+            flush()
+            current_number = int(match.group("number"))
+            body = match.group("body").strip()
+            if current_number <= 10 and re.fullmatch(r"[A-D]{1,4}", body):
+                answers.setdefault(current_number, body)
+                current_number = None
+                current_lines = []
+                continue
+            current_lines = [body]
+            continue
+        if current_number is not None:
+            if re.match(r"^(?:一、|二、|三、|【)", line):
+                flush()
+                continue
+            current_lines.append(line)
+    flush()
+    return answers
+
+
 def parse_written_answers(lines: list[str]) -> dict[int, str]:
     answers = {}
     current_number = None
@@ -368,6 +428,8 @@ def build_source(source: dict, ocr: RapidOCR) -> dict:
         answer_map.update(parse_choice_tables(items))
         lines.extend(row_lines(items))
     answer_map.update(parse_bracket_heading_answers(lines))
+    if source.get("parsePlainNumberedAnswers"):
+        answer_map.update(parse_plain_numbered_answers(lines))
     answer_map.update(parse_written_answers(lines))
     if source["family"].startswith("english:"):
         answer_map.update(parse_english_sequences(lines))
