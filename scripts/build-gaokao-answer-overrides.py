@@ -55,6 +55,13 @@ def clean_text(text: str) -> str:
     return text
 
 
+def is_numeric_extraction_fragment(question: dict) -> bool:
+    prompt = clean_text(question.get("prompt", ""))
+    if not prompt or question.get("options"):
+        return False
+    return bool(re.fullmatch(r"[\d\s.,，。:：;；\-+*/()（）\[\]{}<>《》=≈~～^_\\|√π%°]+", prompt))
+
+
 def normalize_answer(answer: str) -> str:
     answer = clean_text(answer)
     answer = re.sub(r"^(答案|参考答案)[:：]?", "", answer).strip()
@@ -157,6 +164,8 @@ def load_question_records() -> list[dict]:
         for file_item in files:
             subject = file_item.get("subject") or file_item.get("subjectKey") or "unknown"
             for question in file_item.get("questions") or []:
+                if is_numeric_extraction_fragment(question):
+                    continue
                 records.append({
                     "dataset": dataset,
                     "file": file_item,
@@ -402,6 +411,8 @@ def target_can_use_family_answer(record: dict) -> bool:
     prompt = question.get("prompt", "")
     file_item = record["file"]
     if "passage_only" in (question.get("flags") or []):
+        return False
+    if record["subject"] != "english" and is_numeric_extraction_fragment(question):
         return False
     if record["subject"] == "english":
         number = record["number"] or 0

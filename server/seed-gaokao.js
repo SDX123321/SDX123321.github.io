@@ -52,6 +52,28 @@ function applyAnswerOverride(item) {
   }
 }
 
+function getQuestionPrompt(item) {
+  return typeof item?.prompt === 'string' ? item.prompt : ''
+}
+
+function hasQuestionOptions(item) {
+  return Array.isArray(item?.options) && item.options.length > 0
+}
+
+function isNumericExtractionFragment(item) {
+  const compactPrompt = getQuestionPrompt(item).replace(/\s+/g, ' ').trim()
+  if (!compactPrompt || hasQuestionOptions(item)) return false
+  return /^[\d\s.,，。:：;；\-+*/()（）[\]{}<>《》=≈~～^_\\|√π%°]+$/u.test(compactPrompt)
+}
+
+function shouldImportExtractedQuestion(item) {
+  return !isNumericExtractionFragment(item)
+}
+
+async function deleteQuestionByKey(questionKey) {
+  await query('DELETE FROM gaokao_questions WHERE question_key = $1', [questionKey])
+}
+
 async function upsertSource(source) {
   const { rows } = await query(`
     INSERT INTO gaokao_sources (source_key, name, detail, status, source_type, relative_path, metadata)
@@ -333,6 +355,7 @@ async function seedYearOverviewPapers() {
 async function seedExtractedQuestions(extracted) {
   let papers = 0
   let questions = 0
+  let skippedFragments = 0
   for (const file of extracted.files || []) {
     const paperId = await upsertPaper({
       paperKey: hashKey('extract_paper', [file.year, file.subject, file.source, file.relativePath]),
@@ -351,10 +374,16 @@ async function seedExtractedQuestions(extracted) {
     papers += 1
 
     for (const rawItem of file.questions || []) {
+      const questionKey = hashKey('extract_question', [file.year, file.subject, file.source, rawItem.number, rawItem.prompt])
+      if (!shouldImportExtractedQuestion(rawItem)) {
+        await deleteQuestionByKey(questionKey)
+        skippedFragments += 1
+        continue
+      }
       const item = applyAnswerOverride(rawItem)
       const sourceType = file.sourceType || (file.relativePath?.toLowerCase().endsWith('.pdf') ? 'real-pdf-text' : 'real-docx')
       const questionId = await upsertQuestion({
-        questionKey: hashKey('extract_question', [file.year, file.subject, file.source, item.number, item.prompt]),
+        questionKey,
         paperId,
         year: file.year,
         subjectKey: file.subject,
@@ -382,7 +411,7 @@ async function seedExtractedQuestions(extracted) {
       questions += 1
     }
   }
-  return { papers, questions }
+  return { papers, questions, skippedFragments }
 }
 
 async function seedOcrQuestions(ocr) {
@@ -406,10 +435,17 @@ async function seedOcrQuestions(ocr) {
   })
 
   let questions = 0
+  let skippedFragments = 0
   for (const rawItem of ocr.questions || []) {
+    const questionKey = hashKey('ocr_question', [source.year, source.province, subject.key, rawItem.number, rawItem.prompt])
+    if (!shouldImportExtractedQuestion(rawItem)) {
+      await deleteQuestionByKey(questionKey)
+      skippedFragments += 1
+      continue
+    }
     const item = applyAnswerOverride(rawItem)
     const questionId = await upsertQuestion({
-      questionKey: hashKey('ocr_question', [source.year, source.province, subject.key, item.number, item.prompt]),
+      questionKey,
       paperId,
       year: source.year || 2026,
       subjectKey: subject.key,
@@ -435,12 +471,13 @@ async function seedOcrQuestions(ocr) {
     ])
     questions += 1
   }
-  return { papers: 1, questions }
+  return { papers: 1, questions, skippedFragments }
 }
 
 async function seedAuditOcrQuestions(auditOcr) {
   let papers = 0
   let questions = 0
+  let skippedFragments = 0
   for (const file of auditOcr.files || []) {
     const paperId = await upsertPaper({
       paperKey: hashKey('audit_ocr_paper', [file.year, file.subject, file.source, file.relativePath]),
@@ -460,9 +497,15 @@ async function seedAuditOcrQuestions(auditOcr) {
     papers += 1
 
     for (const rawItem of file.questions || []) {
+      const questionKey = rawItem.id || hashKey('audit_ocr_question', [file.year, file.subject, file.source, rawItem.number, rawItem.prompt])
+      if (!shouldImportExtractedQuestion(rawItem)) {
+        await deleteQuestionByKey(questionKey)
+        skippedFragments += 1
+        continue
+      }
       const item = applyAnswerOverride(rawItem)
       const questionId = await upsertQuestion({
-        questionKey: item.id || hashKey('audit_ocr_question', [file.year, file.subject, file.source, item.number, item.prompt]),
+        questionKey,
         paperId,
         year: file.year || 2026,
         subjectKey: file.subject,
@@ -490,7 +533,7 @@ async function seedAuditOcrQuestions(auditOcr) {
       questions += 1
     }
   }
-  return { papers, questions }
+  return { papers, questions, skippedFragments }
 }
 
 async function seedPracticeQuestions() {
@@ -620,6 +663,12 @@ async function main() {
       pdfText2026Questions: pdfText2026Result.questions,
       auditOcr2026Questions: auditOcr2026Result.questions,
       residual2026Questions: residual2026Result.questions,
+      skippedExtractionFragments: (extractedResult.skippedFragments || 0) + (docx2026Result.skippedFragments || 0) + (pdfText2026Result.skippedFragments || 0) + (auditOcr2026Result.skippedFragments || 0) + (residual2026Result.skippedFragments || 0) + (ocrResult.skippedFragments || 0),
+      docx2026SkippedFragments: docx2026Result.skippedFragments || 0,
+      pdfText2026SkippedFragments: pdfText2026Result.skippedFragments || 0,
+      auditOcr2026SkippedFragments: auditOcr2026Result.skippedFragments || 0,
+      residual2026SkippedFragments: residual2026Result.skippedFragments || 0,
+      ocrSkippedFragments: ocrResult.skippedFragments || 0,
       answerOverrides: answerOverrides.summary?.overrides || 0,
       missingAfterAnswerOverrides: answerOverrides.summary?.missingAfterOverrides ?? null,
       ocrQuestions: ocrResult.questions,

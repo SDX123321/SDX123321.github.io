@@ -145,6 +145,18 @@ SOURCES = [
         ],
     },
     {
+        "id": "baidu-shanghai-math-fill-open-2026",
+        "family": "math:shanghai",
+        "title": "2026\u5e74\u9ad8\u8003\u4e0a\u6d77\u5377\u6570\u5b66\u586b\u7a7a\u4e0e\u7edf\u8ba1\u9898\u53c2\u8003\u7b54\u6848",
+        "pageUrl": "https://tiku.baidu.com/tikupc/paperdetail/f03bb5235727a5e9856a6191",
+        "sourceName": "\u767e\u5ea6\u9898\u5e93 + \u672c\u5730\u89e3\u6790\u7248OCR\u4eba\u5de5\u590d\u6838",
+        "manualAnswers": [
+            {"number": 8, "answer": "0.6"},
+            {"number": 12, "answer": "2/3"},
+            {"number": 17, "answer": "（1）颗粒物密度高于二氧化硫密度的概率为7/9。（2）应选用散点图；两变量正相关，相关系数r的取值范围为(0,1)。（3）指数模型y₁=106.55e^(-0.461(x-2014))的预测误差更小。"},
+        ],
+    },
+    {
         "id": "sjds-national1-math-open-2026",
         "family": "math:national1",
         "title": "2026\u5e74\u9ad8\u8003\u5168\u56fdI\u5377\u6570\u5b66\u586b\u7a7a\u4e0e\u89e3\u7b54\u9898\u53c2\u8003\u7b54\u6848",
