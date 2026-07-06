@@ -13,6 +13,7 @@ import {
 import extractedQuestions from '../../data/jiangsu-gaokao-extracted.json'
 import extracted2026Docx from '../../data/gaokao-2026-docx-extracted.json'
 import extracted2026PdfText from '../../data/gaokao-2026-pdf-text-extracted.json'
+import extracted2026Ocr from '../../data/gaokao-2026-ocr-extracted.json'
 import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
 import ocrQuestions from '../../data/jiangsu-gaokao-ocr.json'
 import {
@@ -50,6 +51,13 @@ const extractedQualityOrder = {
   candidate: 1,
   review: 2,
 }
+
+const extractedLibraries = [
+  extractedQuestions,
+  extracted2026Docx,
+  extracted2026PdfText,
+  extracted2026Ocr,
+]
 
 function loadJson(key, fallback) {
   try {
@@ -460,7 +468,8 @@ export default function GaokaoPage() {
   }, [filters])
 
   const extractedSamples = useMemo(() => {
-    return [...extractedQuestions.files, ...extracted2026Docx.files, ...extracted2026PdfText.files]
+    return extractedLibraries
+      .flatMap(library => library.files || [])
       .flatMap(file => file.questions.map(question => ({ file, question })))
       .filter(item => item.question.prompt.length >= 20)
       .sort((left, right) => (
@@ -470,7 +479,8 @@ export default function GaokaoPage() {
 
   const subjectExtractedSamples = useMemo(() => {
     if (!activeSubject) return []
-    return [...extractedQuestions.files, ...extracted2026Docx.files, ...extracted2026PdfText.files]
+    return extractedLibraries
+      .flatMap(library => library.files || [])
       .filter(file => file.subject === activeSubject.key)
       .flatMap(file => file.questions.map(question => ({ file, question })))
       .filter(item => item.question.prompt.length >= 20)
@@ -560,10 +570,10 @@ export default function GaokaoPage() {
     { label: '需 OCR 检查', value: `${gaokaoIndex.totals.needsOcrCheck} 个 PDF` },
   ]
   const combinedExtractSummary = {
-    files: (extractedQuestions.summary.files || 0) + (extracted2026Docx.summary.files || 0) + (extracted2026PdfText.summary.files || 0),
-    questions: (extractedQuestions.summary.questions || 0) + (extracted2026Docx.summary.questions || 0) + (extracted2026PdfText.summary.questions || 0),
-    matchedQuestions: (extractedQuestions.summary.matchedQuestions || 0) + (extracted2026Docx.summary.matchedQuestions || 0) + (extracted2026PdfText.summary.matchedQuestions || 0),
-    reviewQuestions: (extractedQuestions.summary.reviewQuestions || 0) + (extracted2026Docx.summary.reviewQuestions || 0) + (extracted2026PdfText.summary.reviewQuestions || 0),
+    files: extractedLibraries.reduce((total, library) => total + (library.summary?.files || 0), 0),
+    questions: extractedLibraries.reduce((total, library) => total + (library.summary?.questions || 0), 0),
+    matchedQuestions: extractedLibraries.reduce((total, library) => total + (library.summary?.matchedQuestions || 0), 0),
+    reviewQuestions: extractedLibraries.reduce((total, library) => total + (library.summary?.reviewQuestions || 0), 0),
   }
 
   if (subjectNotFound) {
@@ -893,7 +903,7 @@ export default function GaokaoPage() {
 
       <section id="extracts" className="gaokao-section">
         <div className="section-heading">
-          <span>Extracted DOCX</span>
+          <span>Extracted Sources</span>
           <h2>真实题干结构化题库</h2>
         </div>
         <div className="extract-summary">

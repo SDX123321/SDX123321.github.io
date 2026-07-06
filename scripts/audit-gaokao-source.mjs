@@ -77,10 +77,15 @@ const extractedPdfPath = path.join(repoRoot, 'src', 'data', 'gaokao-2026-pdf-tex
 const extractedPdf = fs.existsSync(extractedPdfPath)
   ? JSON.parse(fs.readFileSync(extractedPdfPath, 'utf8'))
   : { files: [] }
+const extractedOcrPath = path.join(repoRoot, 'src', 'data', 'gaokao-2026-ocr-extracted.json')
+const extractedOcr = fs.existsSync(extractedOcrPath)
+  ? JSON.parse(fs.readFileSync(extractedOcrPath, 'utf8'))
+  : { files: [] }
 const extractedNames = new Set([
   ...extracted.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
   ...extracted2026.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
   ...extractedPdf.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
+  ...extractedOcr.files.filter(file => (file.questions || []).length > 0).map(file => file.source),
 ])
 const answerSourceNames = new Set([
   ...extractedPdf.skipped
