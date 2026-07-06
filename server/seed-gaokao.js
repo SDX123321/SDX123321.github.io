@@ -104,7 +104,10 @@ function isAnswerAnalysisExtractionFragment(item) {
 
 function isMixedOcrQuestionFragment(item) {
   const compactPrompt = getQuestionPrompt(item).replace(/\s+/g, ' ').trim()
-  return ['V(NaOH)', '16.(15', '17.(14', 'CH2Cl2'].every(marker => compactPrompt.includes(marker))
+  if (['V(NaOH)', '16.(15', '17.(14', 'CH2Cl2'].every(marker => compactPrompt.includes(marker))) return true
+  return questionNumberValue(item?.number) === 12
+    && ['Kids Work Ethic Early', 'I never thought I could be a writer', 'Have you always wanted to be a __46']
+      .every(marker => compactPrompt.includes(marker))
 }
 
 function shouldImportExtractedQuestion(item) {

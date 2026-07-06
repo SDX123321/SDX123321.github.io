@@ -92,7 +92,16 @@ def is_answer_analysis_extraction_fragment(question: dict) -> bool:
 
 def is_mixed_ocr_question_fragment(question: dict) -> bool:
     prompt = clean_text(question.get("prompt", ""))
-    return all(marker in prompt for marker in ["V(NaOH)", "16.(15", "17.(14", "CH2Cl2"])
+    if all(marker in prompt for marker in ["V(NaOH)", "16.(15", "17.(14", "CH2Cl2"]):
+        return True
+    return question.get("number") == 12 and all(
+        marker in prompt
+        for marker in [
+            "Kids Work Ethic Early",
+            "I never thought I could be a writer",
+            "Have you always wanted to be a __46",
+        ]
+    )
 
 
 def should_import_extracted_question(question: dict) -> bool:
