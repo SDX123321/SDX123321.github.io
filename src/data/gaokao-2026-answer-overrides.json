@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T13:39:05.892974+00:00",
+  "generatedAt": "2026-07-06T13:52:48.939225+00:00",
   "scope": {
     "datasets": [
       "gaokao-2026-docx-extracted.json",
@@ -10,6 +10,9 @@
     ],
     "note": "Local answer overrides mined from parsed answers, OCR answer-source rows, answer-only files, answer-source DOCX/PDF files, reviewed family answer aliases, and reviewed web OCR/PDF answer maps. Applied when the raw question answer is empty, with narrowly scoped corrections for reviewed bad extractions; OCR answer-source reference rows are excluded from importable question coverage.",
     "familyAnswerAliases": {
+      "math:全国数学I卷试题逐题规范解答": [
+        "math:national1"
+      ],
       "math:数学江苏卷": [
         "math:全国数学I卷试题逐题规范解答"
       ]
@@ -19,25 +22,25 @@
     "questionsScanned": 1309,
     "answerSourceRowsScanned": 79,
     "missingBeforeOverrides": 888,
-    "overrides": 800,
+    "overrides": 809,
     "corrections": 4,
-    "missingAfterOverrides": 92,
+    "missingAfterOverrides": 83,
     "byMethod": {
       "answer-source-file": 124,
-      "web-answer-source": 312,
+      "web-answer-source": 318,
       "existing-question-answer": 245,
       "ocr-answer-source": 23,
       "embedded-answer-in-prompt": 43,
       "answer-only-question": 18,
       "correct-existing-answer": 4,
-      "family-alias-answer": 31
+      "family-alias-answer": 34
     },
     "byDataset": {
       "gaokao-2026-docx-extracted.json": 248,
-      "gaokao-2026-pdf-text-extracted.json": 166,
-      "gaokao-2026-ocr-extracted.json": 347,
+      "gaokao-2026-pdf-text-extracted.json": 169,
+      "gaokao-2026-ocr-extracted.json": 350,
       "gaokao-2026-residual-extracted.json": 23,
-      "jiangsu-gaokao-ocr.json": 16
+      "jiangsu-gaokao-ocr.json": 19
     }
   },
   "overrides": [
@@ -5178,6 +5181,48 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-pdf-609ac06ec92c6153",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026全国数学I卷试题逐题规范解答.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026全国数学I卷试题逐题规范解答.pdf",
+      "subject": "math",
+      "family": "math:全国数学I卷试题逐题规范解答",
+      "number": 12,
+      "answer": "√(11/6)",
+      "solution": [],
+      "method": "family-alias-answer",
+      "answerSource": "https://sjds.net/740707.html via math:national1",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-377515b13c00470f",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026全国数学I卷试题逐题规范解答.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026全国数学I卷试题逐题规范解答.pdf",
+      "subject": "math",
+      "family": "math:全国数学I卷试题逐题规范解答",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "family-alias-answer",
+      "answerSource": "https://sjds.net/740707.html via math:national1",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-0238729b3caa6e14",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026全国数学I卷试题逐题规范解答.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026全国数学I卷试题逐题规范解答.pdf",
+      "subject": "math",
+      "family": "math:全国数学I卷试题逐题规范解答",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "family-alias-answer",
+      "answerSource": "https://sjds.net/740707.html via math:national1",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-pdf-8bb45289cfa46d2b",
       "dataset": "gaokao-2026-pdf-text-extracted.json",
       "source": "精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
@@ -9693,6 +9738,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-ocr-ad8711dcb0db3a50",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026高考数学江苏卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年江苏高考\\2026高考数学江苏卷.pdf",
+      "subject": "math",
+      "family": "math:数学江苏卷",
+      "number": 12,
+      "answer": "√(11/6)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-ocr-e152ecca1a406419",
       "dataset": "gaokao-2026-ocr-extracted.json",
       "source": "2026高考数学江苏卷.pdf",
@@ -9704,6 +9763,20 @@
       "solution": [],
       "method": "family-alias-answer",
       "answerSource": "2026全国数学I卷试题逐题规范解答.pdf via math:全国数学I卷试题逐题规范解答",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-4b05408ea1111e22",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026高考数学江苏卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年江苏高考\\2026高考数学江苏卷.pdf",
+      "subject": "math",
+      "family": "math:数学江苏卷",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
       "confidence": "local-heuristic"
     },
     {
@@ -9732,6 +9805,20 @@
       "solution": [],
       "method": "family-alias-answer",
       "answerSource": "2026全国数学I卷试题逐题规范解答.pdf via math:全国数学I卷试题逐题规范解答",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-7d3e33cc2a672f71",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026高考数学江苏卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年江苏高考\\2026高考数学江苏卷.pdf",
+      "subject": "math",
+      "family": "math:数学江苏卷",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
       "confidence": "local-heuristic"
     },
     {
@@ -11397,6 +11484,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-answer-c92d3f3b1bb475bb",
+      "dataset": "jiangsu-gaokao-ocr.json",
+      "source": "2026高考数学江苏卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年江苏高考\\2026高考数学江苏卷.pdf",
+      "subject": "math",
+      "family": "math:数学江苏卷",
+      "number": 12,
+      "answer": "√(11/6)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-answer-b8b53b8f39669403",
       "dataset": "jiangsu-gaokao-ocr.json",
       "source": "2026高考数学江苏卷.pdf",
@@ -11408,6 +11509,20 @@
       "solution": [],
       "method": "family-alias-answer",
       "answerSource": "2026全国数学I卷试题逐题规范解答.pdf via math:全国数学I卷试题逐题规范解答",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-answer-f570fb47e819550a",
+      "dataset": "jiangsu-gaokao-ocr.json",
+      "source": "2026高考数学江苏卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年江苏高考\\2026高考数学江苏卷.pdf",
+      "subject": "math",
+      "family": "math:数学江苏卷",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
       "confidence": "local-heuristic"
     },
     {
@@ -11436,6 +11551,20 @@
       "solution": [],
       "method": "family-alias-answer",
       "answerSource": "2026全国数学I卷试题逐题规范解答.pdf via math:全国数学I卷试题逐题规范解答",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-answer-93677adefb23c261",
+      "dataset": "jiangsu-gaokao-ocr.json",
+      "source": "2026高考数学江苏卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年江苏高考\\2026高考数学江苏卷.pdf",
+      "subject": "math",
+      "family": "math:数学江苏卷",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
       "confidence": "local-heuristic"
     },
     {

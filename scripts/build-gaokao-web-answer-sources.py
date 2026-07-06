@@ -212,9 +212,22 @@ SOURCES = [
         "pageUrl": "https://sjds.net/740707.html",
         "sourceName": "\u56db\u5b63\u8bfb\u4e66\u7f51 + \u672c\u5730\u89e3\u6790\u7248\u4eba\u5de5\u590d\u6838",
         "manualAnswers": [
+            {"number": 12, "answer": "√(11/6)"},
             {"number": 14, "answer": "∛(3/2)"},
             {"number": 15, "answer": "（1）证明见解析。（2）直线DE到平面BCC₁B₁的距离为1。"},
             {"number": 16, "answer": "（1）cos A=1/3。（2）CE=3√5。"},
+            {"number": 17, "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。"},
+        ],
+    },
+    {
+        "id": "sjds-jiangsu-math-open-2026",
+        "family": "math:数学江苏卷",
+        "title": "2026年高考江苏卷数学填空与解答题参考答案",
+        "pageUrl": "https://sjds.net/740707.html",
+        "sourceName": "四季读书网 + 本地解析版人工复核",
+        "manualAnswers": [
+            {"number": 12, "answer": "√(11/6)"},
+            {"number": 14, "answer": "∛(3/2)"},
             {"number": 17, "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。"},
         ],
     },

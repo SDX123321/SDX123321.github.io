@@ -15,6 +15,7 @@ AUDIT_PATH = DATA_DIR / "gaokao-processing-audit.json"
 OUT_PATH = DATA_DIR / "gaokao-2026-answer-overrides.json"
 WEB_ANSWER_SOURCES_PATH = DATA_DIR / "gaokao-2026-web-answer-sources.json"
 FAMILY_ANSWER_ALIASES = {
+    "math:全国数学I卷试题逐题规范解答": ["math:national1"],
     "math:数学江苏卷": ["math:全国数学I卷试题逐题规范解答"],
 }
 EXISTING_ANSWER_CORRECTION_TARGETS = {
@@ -426,10 +427,12 @@ def apply_family_answer_aliases(answer_maps: dict[str, dict[int, list[dict]]]) -
     for target_family, source_families in FAMILY_ANSWER_ALIASES.items():
         for source_family in source_families:
             for number, source_candidates in answer_maps.get(source_family, {}).items():
-                base_candidate = choose_candidate([
+                non_alias_candidates = [
                     item for item in source_candidates
                     if item.get("method") != "family-alias-answer"
-                ])
+                ]
+                web_candidates = [item for item in non_alias_candidates if item.get("method") == "web-answer-source"]
+                base_candidate = choose_candidate(web_candidates or non_alias_candidates)
                 if not base_candidate:
                     continue
                 answer_maps[target_family][number].append({
