@@ -108,19 +108,81 @@ def choose_source_files(index: dict, subjects: set[str], years: set[int], limit:
             if subjects and subject["key"] not in subjects:
                 continue
             cell = index["matrix"][str(year)][subject["key"]]
-            for sample in cell["samples"]:
-                if sample["status"] != "extractable" or sample["role"] != "original":
-                    continue
+            originals = [
+                sample for sample in cell["samples"]
+                if sample["status"] == "extractable" and sample["role"] == "original"
+            ]
+            analyses = [
+                sample for sample in cell["samples"]
+                if sample["status"] == "extractable" and sample["role"] == "analysis"
+            ]
+            for sample in originals[:1]:
+                analysis_sample = find_matching_analysis(sample, analyses)
                 chosen.append({
                     "year": year,
                     "subject": subject["key"],
                     "subjectName": subject["name"],
                     "sample": sample,
+                    "analysisSample": analysis_sample,
                 })
                 break
             if len(chosen) >= limit:
                 return chosen
     return chosen
+
+
+def normalize_pair_name(name: str) -> str:
+    return (
+        name.replace("（空白卷）", "")
+        .replace("（原卷版）", "")
+        .replace("（原卷）", "")
+        .replace("（解析卷）", "")
+        .replace("（解析版）", "")
+        .replace(" ", "")
+    )
+
+
+def find_matching_analysis(original: dict, analyses: list[dict]) -> dict | None:
+    original_key = normalize_pair_name(original["name"])
+    for sample in analyses:
+        if normalize_pair_name(sample["name"]) == original_key:
+            return sample
+    return analyses[0] if analyses else None
+
+
+def extract_answer_and_solution(analysis_question: dict | None) -> tuple[str, list[str], list[str]]:
+    if not analysis_question:
+        return "", [], ["analysis_not_found"]
+
+    lines = [analysis_question["text"], *analysis_question["extra"]]
+    answer = ""
+    solution: list[str] = []
+    flags: list[str] = []
+    in_solution = False
+
+    for line in lines:
+        answer_match = re.search(r"【答案】\s*([^【]+)", line)
+        if answer_match:
+            answer = answer_match.group(1).strip()
+            continue
+        if "【解析】" in line or "【详解】" in line:
+            cleaned = re.sub(r"【解析】|【详解】", "", line).strip()
+            if cleaned:
+                solution.append(cleaned)
+            in_solution = True
+            continue
+        if in_solution:
+            if re.match(r"^(故选|答案选|故答案为|综上)", line) or len(solution) < 8:
+                solution.append(line)
+
+    if not answer:
+        flags.append("answer_not_found")
+    if not solution:
+        flags.append("solution_not_found")
+    if any("[公式]" in item for item in [answer, *solution]):
+        flags.append("analysis_formula_placeholder")
+
+    return answer, solution[:8], sorted(set(flags))
 
 
 def build(args: argparse.Namespace) -> dict:
@@ -134,6 +196,16 @@ def build(args: argparse.Namespace) -> dict:
         path = args.source_root / item["sample"]["relativePath"]
         if not path.exists():
             continue
+        analysis_by_number = {}
+        analysis_sample = item.get("analysisSample")
+        if analysis_sample:
+            analysis_path = args.source_root / analysis_sample["relativePath"]
+            if analysis_path.exists():
+                try:
+                    analysis_questions = split_questions(docx_paragraphs(analysis_path), 80)
+                    analysis_by_number = {question["number"]: question for question in analysis_questions}
+                except Exception:
+                    analysis_by_number = {}
         try:
             paragraphs = docx_paragraphs(path)
             questions = split_questions(paragraphs, args.questions_per_file)
@@ -144,6 +216,8 @@ def build(args: argparse.Namespace) -> dict:
                 "subjectName": item["subjectName"],
                 "source": item["sample"]["name"],
                 "relativePath": item["sample"]["relativePath"],
+                "analysisSource": analysis_sample["name"] if analysis_sample else "",
+                "analysisRelativePath": analysis_sample["relativePath"] if analysis_sample else "",
                 "error": str(exc),
                 "questions": [],
             })
@@ -152,11 +226,15 @@ def build(args: argparse.Namespace) -> dict:
         normalized = []
         for question in questions:
             flags = quality_flags(question)
+            answer, solution, analysis_flags = extract_answer_and_solution(analysis_by_number.get(question["number"]))
+            all_flags = sorted(set([*flags, *analysis_flags]))
             normalized.append({
                 "number": question["number"],
                 "prompt": "\n".join([question["text"], *question["extra"]]).strip(),
-                "quality": "review" if flags else "candidate",
-                "flags": flags,
+                "answer": answer,
+                "solution": solution,
+                "quality": "review" if all_flags else "matched",
+                "flags": all_flags,
             })
         extracted.append({
             "year": item["year"],
@@ -164,6 +242,8 @@ def build(args: argparse.Namespace) -> dict:
             "subjectName": item["subjectName"],
             "source": item["sample"]["name"],
             "relativePath": item["sample"]["relativePath"],
+            "analysisSource": analysis_sample["name"] if analysis_sample else "",
+            "analysisRelativePath": analysis_sample["relativePath"] if analysis_sample else "",
             "questions": normalized,
         })
 
@@ -187,7 +267,7 @@ def build(args: argparse.Namespace) -> dict:
             "files": len(extracted),
             "questions": total_questions,
             "reviewQuestions": review_questions,
-            "candidateQuestions": total_questions - review_questions,
+            "matchedQuestions": total_questions - review_questions,
         },
         "files": extracted,
     }

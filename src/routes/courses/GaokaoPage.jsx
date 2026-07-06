@@ -28,8 +28,15 @@ const statusLabels = {
 }
 
 const extractedQualityLabels = {
+  matched: '已匹配解析',
   candidate: '可读候选',
   review: '需核验',
+}
+
+const extractedQualityOrder = {
+  matched: 0,
+  candidate: 1,
+  review: 2,
 }
 
 function loadJson(key, fallback) {
@@ -120,22 +127,45 @@ function QuestionCard({ question, isDone, onDone }) {
 }
 
 function ExtractedQuestionCard({ file, question }) {
+  const flags = question.flags || []
+  const hasAnswer = Boolean(question.answer)
+  const hasSolution = Array.isArray(question.solution) && question.solution.length > 0
+
   return (
     <article className={`extract-card extract-${question.quality}`}>
       <div className="question-topline">
         <span>{file.year}</span>
         <span>{file.subjectName}</span>
-        <span>{extractedQualityLabels[question.quality]}</span>
+        <span>{extractedQualityLabels[question.quality] || '待整理'}</span>
       </div>
       <h3>{file.source} · 第 {question.number} 题</h3>
+      {file.analysisSource && (
+        <p className="analysis-source">解析来源：{file.analysisSource}</p>
+      )}
       <pre className="question-prompt">{question.prompt}</pre>
-      {question.flags.length > 0 && (
+      {hasAnswer && (
+        <div className="extract-answer">
+          <strong>参考答案</strong>
+          <span>{question.answer}</span>
+        </div>
+      )}
+      {hasSolution && (
+        <div className="extract-solution">
+          <strong>解析摘录</strong>
+          <ol>
+            {question.solution.map((step, index) => <li key={`${question.number}-${index}`}>{step}</li>)}
+          </ol>
+        </div>
+      )}
+      {flags.length > 0 && (
         <div className="extract-flags">
-          {question.flags.map(flag => <span key={flag}>{flag}</span>)}
+          {flags.map(flag => <span key={flag}>{flag}</span>)}
         </div>
       )}
       <p className="extract-note">
-        题解状态：待匹配解析卷并复核公式/图表。当前只作为真实题干抽取样本，不替代最终完整题解。
+        {question.quality === 'matched'
+          ? '题解状态：已从解析卷自动匹配答案与解析，仍需人工复核公式、图片和表格。'
+          : '题解状态：需人工核验。含公式或图表的内容可能在 DOCX 抽取时缺失，暂不作为正式题库条目。'}
       </p>
     </article>
   )
@@ -214,6 +244,9 @@ export default function GaokaoPage() {
     return extractedQuestions.files
       .flatMap(file => file.questions.map(question => ({ file, question })))
       .filter(item => item.question.prompt.length >= 20)
+      .sort((left, right) => (
+        (extractedQualityOrder[left.question.quality] ?? 9) - (extractedQualityOrder[right.question.quality] ?? 9)
+      ))
       .slice(0, 12)
   }, [])
 
@@ -231,6 +264,7 @@ export default function GaokaoPage() {
     { label: '需转换', value: `${gaokaoIndex.totals.needsConversion} 个旧 DOC` },
     { label: '需 OCR 检查', value: `${gaokaoIndex.totals.needsOcrCheck} 个 PDF` },
   ]
+  const extractSummary = extractedQuestions.summary
 
   return (
     <div className="gaokao-page">
@@ -380,14 +414,14 @@ export default function GaokaoPage() {
           <h2>真实题干抽取样本</h2>
         </div>
         <div className="extract-summary">
-          <span>来源文件 {extractedQuestions.summary.files} 份</span>
-          <span>抽取题干 {extractedQuestions.summary.questions} 题</span>
-          <span>可读候选 {extractedQuestions.summary.candidateQuestions} 题</span>
-          <span>需核验 {extractedQuestions.summary.reviewQuestions} 题</span>
+          <span>来源文件 {extractSummary.files} 份</span>
+          <span>抽取题干 {extractSummary.questions} 题</span>
+          <span>已匹配解析 {extractSummary.matchedQuestions ?? 0} 题</span>
+          <span>需核验 {extractSummary.reviewQuestions} 题</span>
         </div>
         <p className="extract-intro">
           这一栏来自真实 DOCX 试卷抽取。含公式、图片、复杂表格的题目可能会丢失部分内容，因此带有质量标记；
-          待解析卷匹配完成后，才会进入“完整题干与详细题解”的正式练习区。
+          已匹配解析的样本会展示答案与解析摘录，但在人工复核前仍不替代正式练习区。
         </p>
         <div className="extract-grid">
           {extractedSamples.map(({ file, question }) => (
