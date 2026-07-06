@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T12:17:06.993737+00:00",
+  "generatedAt": "2026-07-06T12:27:08.713269+00:00",
   "scope": {
     "datasets": [
       "gaokao-2026-docx-extracted.json",
@@ -18,20 +18,20 @@
   "summary": {
     "questionsScanned": 1498,
     "missingBeforeOverrides": 1073,
-    "overrides": 848,
-    "missingAfterOverrides": 239,
+    "overrides": 900,
+    "missingAfterOverrides": 191,
     "byMethod": {
-      "answer-source-file": 122,
-      "web-answer-source": 276,
+      "answer-source-file": 124,
+      "web-answer-source": 326,
       "embedded-answer-in-prompt": 144,
       "existing-question-answer": 257,
       "answer-only-question": 18,
       "family-alias-answer": 31
     },
     "byDataset": {
-      "gaokao-2026-docx-extracted.json": 270,
-      "gaokao-2026-pdf-text-extracted.json": 140,
-      "gaokao-2026-ocr-extracted.json": 397,
+      "gaokao-2026-docx-extracted.json": 282,
+      "gaokao-2026-pdf-text-extracted.json": 158,
+      "gaokao-2026-ocr-extracted.json": 419,
       "gaokao-2026-residual-extracted.json": 25,
       "jiangsu-gaokao-ocr.json": 16
     }
@@ -850,6 +850,62 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-docx-94b344c7c846c7d5",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-27cb395bff233234",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 15,
+      "answer": "（1）证明见解析。（2）直线DE到平面BCC₁B₁的距离为1。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-c28de12e9ac38cfd",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 16,
+      "answer": "（1）cos A=1/3。（2）CE=3√5。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-6f4f5271b67261f9",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-docx-1ae53a72e93a9fc4",
       "dataset": "gaokao-2026-docx-extracted.json",
       "source": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
@@ -889,6 +945,62 @@
       "solution": [],
       "method": "existing-question-answer",
       "answerSource": "2026 高考一卷-数学（高清）.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-3bc89b06b9d2856b",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-df5dcae2d0acda7d",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 15,
+      "answer": "（1）证明见解析。（2）直线DE到平面BCC₁B₁的距离为1。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-13993e199da0ea2f",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 16,
+      "answer": "（1）cos A=1/3。（2）CE=3√5。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-5ab8d98d559171c1",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.docx",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
       "confidence": "local-heuristic"
     },
     {
@@ -934,6 +1046,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-docx-fe3a4b77d1fbf14c",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 14,
+      "answer": "5√3/4",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-docx-aca5559f6bb80b75",
       "dataset": "gaokao-2026-docx-extracted.json",
       "source": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
@@ -959,6 +1085,20 @@
       "solution": [],
       "method": "existing-question-answer",
       "answerSource": "2026 高考二卷-数学（高清）.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-60b4b35b36938f82",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 17,
+      "answer": "（1）证明见解析。（2）△ABC的周长为3+√2。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
       "confidence": "local-heuristic"
     },
     {
@@ -1004,6 +1144,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-docx-6a3d7fe1921384c0",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国2卷数学高考真题（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国2卷数学高考真题（解析版）.docx",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 14,
+      "answer": "5√3/4",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-docx-1e08cc0c093985d3",
       "dataset": "gaokao-2026-docx-extracted.json",
       "source": "精品解析：2026年高考全国2卷数学高考真题（解析版）.docx",
@@ -1029,6 +1183,20 @@
       "solution": [],
       "method": "existing-question-answer",
       "answerSource": "2026 高考二卷-数学（高清）.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-docx-4671931139b83ccc",
+      "dataset": "gaokao-2026-docx-extracted.json",
+      "source": "精品解析：2026年高考全国2卷数学高考真题（解析版）.docx",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国2卷数学高考真题（解析版）.docx",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 17,
+      "answer": "（1）证明见解析。（2）△ABC的周长为3+√2。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
       "confidence": "local-heuristic"
     },
     {
@@ -5270,6 +5438,62 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-pdf-3b9ca0df46d08f93",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026 高考一卷-数学（高清）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026 高考一卷-数学（高清）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-d416a1c4621470e4",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026 高考一卷-数学（高清）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026 高考一卷-数学（高清）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 15,
+      "answer": "（1）证明见解析。（2）直线DE到平面BCC₁B₁的距离为1。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-26f04064efc0754d",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026 高考一卷-数学（高清）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026 高考一卷-数学（高清）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 16,
+      "answer": "（1）cos A=1/3。（2）CE=3√5。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-b69b171cbf657aa5",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026 高考一卷-数学（高清）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026 高考一卷-数学（高清）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-pdf-d079a88ad4514e43",
       "dataset": "gaokao-2026-pdf-text-extracted.json",
       "source": "2026 高考二卷-数学（高清）.pdf",
@@ -5316,6 +5540,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-pdf-dcc48f747b64f247",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026 高考二卷-数学（高清）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026 高考二卷-数学（高清）.pdf",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 14,
+      "answer": "5√3/4",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-pdf-3d97d6d9a8cfb060",
       "dataset": "gaokao-2026-pdf-text-extracted.json",
       "source": "2026 高考二卷-数学（高清）.pdf",
@@ -5327,6 +5565,76 @@
       "solution": [],
       "method": "answer-source-file",
       "answerSource": "2026高考试卷（更新中）\\二卷\\数学二卷解析.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-1acc3ac42c52d388",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "2026 高考二卷-数学（高清）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026 高考二卷-数学（高清）.pdf",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 17,
+      "answer": "（1）证明见解析。（2）△ABC的周长为3+√2。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-8bb45289cfa46d2b",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-28336cbbdf40a971",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 15,
+      "answer": "（1）证明见解析。（2）直线DE到平面BCC₁B₁的距离为1。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-19a84315e130c6b9",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 16,
+      "answer": "（1）cos A=1/3。（2）CE=3√5。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-389dc588fef3d21b",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
       "confidence": "local-heuristic"
     },
     {
@@ -5372,6 +5680,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-pdf-c2f7377e72fb6c09",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "精品解析：2026年高考全国2卷数学高考真题（解析版）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国2卷数学高考真题（解析版）.pdf",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 14,
+      "answer": "5√3/4",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-pdf-ce711e852a9814c1",
       "dataset": "gaokao-2026-pdf-text-extracted.json",
       "source": "精品解析：2026年高考全国2卷数学高考真题（解析版）.pdf",
@@ -5383,6 +5705,20 @@
       "solution": [],
       "method": "answer-source-file",
       "answerSource": "2026高考试卷（更新中）\\二卷\\数学二卷解析.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-fac5def7fec0d4ca",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "精品解析：2026年高考全国2卷数学高考真题（解析版）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年《高考数学真题＆精品解析》（多地方版）\\精品解析：2026年高考全国2卷数学高考真题（解析版）.pdf",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 17,
+      "answer": "（1）证明见解析。（2）△ABC的周长为3+√2。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
       "confidence": "local-heuristic"
     },
     {
@@ -5734,6 +6070,62 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-pdf-c58494ce127f02d6",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-246120b0b9e693e2",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 15,
+      "answer": "（1）证明见解析。（2）直线DE到平面BCC₁B₁的距离为1。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-caf4a08111fa7f04",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 16,
+      "answer": "（1）cos A=1/3。（2）CE=3√5。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-4b2fae6f1fbfcc6d",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\一卷\\数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-pdf-ee5c1d5482a3cd2b",
       "dataset": "gaokao-2026-pdf-text-extracted.json",
       "source": "数学一卷.pdf",
@@ -5840,6 +6232,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-pdf-fb7c127b0c45e369",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "数学二卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\二卷\\数学二卷.pdf",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 14,
+      "answer": "5√3/4",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-pdf-fd53705ee539dd6e",
       "dataset": "gaokao-2026-pdf-text-extracted.json",
       "source": "数学二卷.pdf",
@@ -5851,6 +6257,20 @@
       "solution": [],
       "method": "answer-source-file",
       "answerSource": "2026高考试卷（更新中）\\二卷\\数学二卷解析.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-pdf-a13b8c9bfc91523f",
+      "dataset": "gaokao-2026-pdf-text-extracted.json",
+      "source": "数学二卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\二卷\\数学二卷.pdf",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 17,
+      "answer": "（1）证明见解析。（2）△ABC的周长为3+√2。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
       "confidence": "local-heuristic"
     },
     {
@@ -6162,6 +6582,20 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-ocr-9f516903739023cd",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年安徽高考生物试卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年安徽高考\\2026年安徽高考生物试卷.pdf",
+      "subject": "biology",
+      "family": "biology:anhui",
+      "number": 23,
+      "answer": "（1）灭菌；互利共生；寄生。（2）负相关；缓解菊的种内竞争；接种根孢囊霉后，提高了菊对土壤中水和无机盐的吸收和利用，提高了叶片磷含量和单株生物量，减弱种内竞争。（3）密度制约因素。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://tiku.baidu.com/tikupc/paperdetail/b8c93459b307e87100f69600",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-ocr-03a57e6e77b1880f",
       "dataset": "gaokao-2026-ocr-extracted.json",
       "source": "2026年安徽高考生物试卷.pdf",
@@ -6215,6 +6649,20 @@
       "solution": [],
       "method": "web-answer-source",
       "answerSource": "https://www.gaokzx.com/gk/shitiku/156352.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-3ac67f46f5632cbd",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年安徽高考生物试卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年安徽高考\\2026年安徽高考生物试卷.pdf",
+      "subject": "biology",
+      "family": "biology:anhui",
+      "number": 20,
+      "answer": "（1）pH（酸碱度）；不会；胰蛋白酶会分解细胞膜上的蛋白质，处理时间过长会损伤细胞，导致细胞死亡；处理时间过短则细胞无法充分分散，影响后续培养。（2）②和④；将不含P基因的空质粒导入乳腺癌细胞（或仅导入空质粒的乳腺癌细胞）。（3）抑制；促进。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://tiku.baidu.com/tikupc/paperdetail/b8c93459b307e87100f69600",
       "confidence": "local-heuristic"
     },
     {
@@ -10583,6 +11031,62 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-ocr-c2c024296e6e5f3f",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-63a4fc19c61a7bbb",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 15,
+      "answer": "（1）证明见解析。（2）直线DE到平面BCC₁B₁的距离为1。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-b160affb7e986b9d",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 16,
+      "answer": "（1）cos A=1/3。（2）CE=3√5。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-b309a87c44312d12",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-ocr-70037e9d3fc75322",
       "dataset": "gaokao-2026-ocr-extracted.json",
       "source": "2026年高考数学一卷.pdf",
@@ -10654,6 +11158,62 @@
       ],
       "method": "existing-question-answer",
       "answerSource": "精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-c2c024296e6e5f3f",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-63a4fc19c61a7bbb",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 15,
+      "answer": "（1）证明见解析。（2）直线DE到平面BCC₁B₁的距离为1。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-b160affb7e986b9d",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 16,
+      "answer": "（1）cos A=1/3。（2）CE=3√5。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-b309a87c44312d12",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学一卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学一卷.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
       "confidence": "local-heuristic"
     },
     {
@@ -10887,6 +11447,62 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-ocr-fc3cde2708a7dcbd",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学全国I卷-教师版.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学全国I卷-教师版.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-fdee6f3dc79d9883",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学全国I卷-教师版.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学全国I卷-教师版.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 15,
+      "answer": "（1）证明见解析。（2）直线DE到平面BCC₁B₁的距离为1。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-77a2972030009582",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学全国I卷-教师版.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学全国I卷-教师版.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 16,
+      "answer": "（1）cos A=1/3。（2）CE=3√5。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-69318e8d98a960fc",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学全国I卷-教师版.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学全国I卷-教师版.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-ocr-dd3f4645f3d1ea36",
       "dataset": "gaokao-2026-ocr-extracted.json",
       "source": "2026年高考数学全国I卷-教师版.pdf",
@@ -11087,6 +11703,62 @@
       "confidence": "local-heuristic"
     },
     {
+      "questionId": "gaokao-2026-ocr-596f5f013fc83f68",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学（一卷）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学（一卷）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 14,
+      "answer": "∛(3/2)",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-e9a547668d5f2d90",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学（一卷）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学（一卷）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 15,
+      "answer": "（1）证明见解析。（2）直线DE到平面BCC₁B₁的距离为1。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-e61863467eaded46",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学（一卷）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学（一卷）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 16,
+      "answer": "（1）cos A=1/3。（2）CE=3√5。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-91e5673c825a058a",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026年高考数学（一卷）.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026年高考数学（一卷）.pdf",
+      "subject": "math",
+      "family": "math:national1",
+      "number": 17,
+      "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/740707.html",
+      "confidence": "local-heuristic"
+    },
+    {
       "questionId": "gaokao-2026-ocr-0842e249de90794a",
       "dataset": "gaokao-2026-ocr-extracted.json",
       "source": "2026年高考数学（一卷）.pdf",
@@ -11120,12 +11792,12 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 1,
       "answer": "B",
       "solution": [],
       "method": "existing-question-answer",
-      "answerSource": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "answerSource": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
       "confidence": "local-heuristic"
     },
     {
@@ -11134,12 +11806,12 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 2,
       "answer": "A",
       "solution": [],
       "method": "existing-question-answer",
-      "answerSource": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "answerSource": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
       "confidence": "local-heuristic"
     },
     {
@@ -11148,14 +11820,14 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 3,
-      "answer": "C",
+      "answer": "D",
       "solution": [
-        "因为，，，"
+        "由，得，所以，即；"
       ],
       "method": "existing-question-answer",
-      "answerSource": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "answerSource": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
       "confidence": "local-heuristic"
     },
     {
@@ -11164,14 +11836,14 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 5,
       "answer": "D",
       "solution": [
-        "∵ 抛物线经过点，"
+        "由题意，得棱台的上底面面积为，"
       ],
       "method": "existing-question-answer",
-      "answerSource": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "answerSource": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
       "confidence": "local-heuristic"
     },
     {
@@ -11180,14 +11852,14 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 6,
-      "answer": "B",
+      "answer": "C",
       "solution": [
-        "法1：（1）当时，由，解得，"
+        "情况1：甲、乙两人都在A小组，安排丙、丁：丙、丁中必须有一个在A组，另一个在 B 组."
       ],
       "method": "existing-question-answer",
-      "answerSource": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "answerSource": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
       "confidence": "local-heuristic"
     },
     {
@@ -11196,14 +11868,14 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 7,
-      "answer": "B",
+      "answer": "C",
       "solution": [
-        "由已知，，，，，"
+        "由，得："
       ],
       "method": "existing-question-answer",
-      "answerSource": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "answerSource": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
       "confidence": "local-heuristic"
     },
     {
@@ -11212,14 +11884,14 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 8,
-      "answer": "A",
+      "answer": "D",
       "solution": [
-        "由题意可知：，且随机变量的取值为，，，，，，0，1，2，3，4，5，6."
+        "，则，，即周期为，"
       ],
       "method": "existing-question-answer",
-      "answerSource": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "answerSource": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
       "confidence": "local-heuristic"
     },
     {
@@ -11228,14 +11900,14 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 9,
-      "answer": "ACD",
+      "answer": "BC",
       "solution": [
-        "对于A选项，复数的共轭复数，因此，A选项正确."
+        "由：，化简可得，"
       ],
       "method": "existing-question-answer",
-      "answerSource": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "answerSource": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
       "confidence": "local-heuristic"
     },
     {
@@ -11244,14 +11916,12 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 10,
-      "answer": "BC",
-      "solution": [
-        "不失一般性作图如下，过点作，为垂足，过点作，为垂足，"
-      ],
+      "answer": "B",
+      "solution": [],
       "method": "existing-question-answer",
-      "answerSource": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "answerSource": "2026 高考二卷-数学（高清）.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -11260,14 +11930,14 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 11,
-      "answer": "BCD",
+      "answer": "ABD",
       "solution": [
-        "记直线到的距离分别为，则，，.∵ 直线与三个圆均有两个交点，"
+        "A选项，，则，故准线，A选项正确；"
       ],
       "method": "existing-question-answer",
-      "answerSource": "精品解析：2026年高考全国1卷数学高考真题（原卷版）.docx",
+      "answerSource": "精品解析：2026年高考全国2卷数学高考真题（原卷版）.docx",
       "confidence": "local-heuristic"
     },
     {
@@ -11276,12 +11946,12 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 12,
       "answer": "B",
       "solution": [],
       "method": "existing-question-answer",
-      "answerSource": "2026 高考一卷-数学（高清）.pdf",
+      "answerSource": "2026 高考二卷-数学（高清）.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -11290,14 +11960,68 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 13,
-      "answer": "①.",
-      "solution": [
-        "设函数"
-      ],
+      "answer": "函数 = 2 + 22− − 有两个零点，则 的取值范围为_____. 【答案】 4, + ∞ 【 解析】令 = 2 ,则 > 0 ,且 22− = 4 . 原方程等价于 + 4 = . 因为 = 2 与 一 一对应,两个零点等价于上式有两个正根. 当 > 0 时, + 4 ≥ 4 ,当且仅当 = 2 时取 等号,所以要有两个正根,需 > 4 ,应填: 4, + ∞ .",
+      "solution": [],
+      "method": "answer-source-file",
+      "answerSource": "2026高考试卷（更新中）\\二卷\\数学二卷解析.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-bb40f933417ef6c0",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026高考数学试卷-新高考II卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 14,
+      "answer": "5√3/4",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-232052bc75eaff90",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026高考数学试卷-新高考II卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 15,
+      "answer": "(13 分)某工厂抽取一批电子元件检测，记录第一次出故障的时间(天)，得到频 率分布直方图如下. (1)求第一四分位数和中位数； (2) 为首次故障时间小于 365 的概率估计值: (i) 求 ; (ii) 工厂向某用户出售 100 件电子元件, 为这 100 件产品首次出现故障小于 365 天件数,则 ∼ B 100, ,求 E , D . 【 解析】 方法一:(1)由频率分布直方图可得各组频率依次为",
+      "solution": [],
+      "method": "answer-source-file",
+      "answerSource": "2026高考试卷（更新中）\\二卷\\数学二卷解析.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-e754a98d3a312090",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026高考数学试卷-新高考II卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 16,
+      "answer": "D",
+      "solution": [],
       "method": "existing-question-answer",
-      "answerSource": "精品解析：2026年高考全国1卷数学高考真题（解析版）.pdf",
+      "answerSource": "2026 高考二卷-数学（高清）.pdf",
+      "confidence": "local-heuristic"
+    },
+    {
+      "questionId": "gaokao-2026-ocr-dfd5e4fbfe9fe182",
+      "dataset": "gaokao-2026-ocr-extracted.json",
+      "source": "2026高考数学试卷-新高考II卷.pdf",
+      "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
+      "subject": "math",
+      "family": "math:national2",
+      "number": 17,
+      "answer": "（1）证明见解析。（2）△ABC的周长为3+√2。",
+      "solution": [],
+      "method": "web-answer-source",
+      "answerSource": "https://sjds.net/a/500606.html",
       "confidence": "local-heuristic"
     },
     {
@@ -11306,12 +12030,12 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 18,
       "answer": "C",
       "solution": [],
       "method": "existing-question-answer",
-      "answerSource": "2026 高考一卷-数学（高清）.pdf",
+      "answerSource": "2026 高考二卷-数学（高清）.pdf",
       "confidence": "local-heuristic"
     },
     {
@@ -11320,12 +12044,12 @@
       "source": "2026高考数学试卷-新高考II卷.pdf",
       "relativePath": "2026高考试卷（更新中）\\2026高考数学试卷-新高考II卷.pdf",
       "subject": "math",
-      "family": "math:national1",
+      "family": "math:national2",
       "number": 19,
       "answer": "D",
       "solution": [],
       "method": "existing-question-answer",
-      "answerSource": "2026 高考一卷-数学（高清）.pdf",
+      "answerSource": "2026 高考二卷-数学（高清）.pdf",
       "confidence": "local-heuristic"
     },
     {

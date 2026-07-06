@@ -145,6 +145,43 @@ SOURCES = [
         ],
     },
     {
+        "id": "sjds-national1-math-open-2026",
+        "family": "math:national1",
+        "title": "2026\u5e74\u9ad8\u8003\u5168\u56fdI\u5377\u6570\u5b66\u586b\u7a7a\u4e0e\u89e3\u7b54\u9898\u53c2\u8003\u7b54\u6848",
+        "pageUrl": "https://sjds.net/740707.html",
+        "sourceName": "\u56db\u5b63\u8bfb\u4e66\u7f51 + \u672c\u5730\u89e3\u6790\u7248\u4eba\u5de5\u590d\u6838",
+        "manualAnswers": [
+            {"number": 14, "answer": "∛(3/2)"},
+            {"number": 15, "answer": "（1）证明见解析。（2）直线DE到平面BCC₁B₁的距离为1。"},
+            {"number": 16, "answer": "（1）cos A=1/3。（2）CE=3√5。"},
+            {"number": 17, "answer": "（1）当N=4，p=1/3时，X的分布列为：P(X=1)=1/3，P(X=2)=2/9，P(X=3)=4/27，P(X=4)=8/27。（2）（i）当k≤N-1时，P(X>k)=(1-p)^k。（ii）当k+m≤N-1时，P(X>k+m|X>k)=P(X>m)。"},
+        ],
+    },
+    {
+        "id": "sjds-national2-math-open-2026",
+        "family": "math:national2",
+        "title": "2026\u5e74\u9ad8\u8003\u5168\u56fdII\u5377\u6570\u5b66\u586b\u7a7a\u4e0e\u89e3\u7b54\u9898\u53c2\u8003\u7b54\u6848",
+        "pageUrl": "https://sjds.net/a/500606.html",
+        "sourceName": "\u56db\u5b63\u8bfb\u4e66\u7f51 + \u672c\u5730\u89e3\u6790\u7248\u4eba\u5de5\u590d\u6838",
+        "manualAnswers": [
+            {"number": 14, "answer": "5√3/4"},
+            {"number": 15, "answer": "（1）第一四分位数为370，中位数为381。（2）（i）p̂=0.15。（ii）E(X)=15，D(X)=12.75。"},
+            {"number": 16, "answer": "（1）证明见解析。（2）AD与平面ABC所成角的正弦值为√6/3。"},
+            {"number": 17, "answer": "（1）证明见解析。（2）△ABC的周长为3+√2。"},
+        ],
+    },
+    {
+        "id": "baidu-anhui-biology-open-2026",
+        "family": "biology:anhui",
+        "title": "2026\u5e74\u9ad8\u8003\u5b89\u5fbd\u5377\u751f\u7269\u975e\u9009\u62e9\u9898\u53c2\u8003\u7b54\u6848",
+        "pageUrl": "https://tiku.baidu.com/tikupc/paperdetail/b8c93459b307e87100f69600",
+        "sourceName": "\u767e\u5ea6\u9898\u5e93",
+        "manualAnswers": [
+            {"number": 20, "answer": "（1）pH（酸碱度）；不会；胰蛋白酶会分解细胞膜上的蛋白质，处理时间过长会损伤细胞，导致细胞死亡；处理时间过短则细胞无法充分分散，影响后续培养。（2）②和④；将不含P基因的空质粒导入乳腺癌细胞（或仅导入空质粒的乳腺癌细胞）。（3）抑制；促进。"},
+            {"number": 23, "answer": "（1）灭菌；互利共生；寄生。（2）负相关；缓解菊的种内竞争；接种根孢囊霉后，提高了菊对土壤中水和无机盐的吸收和利用，提高了叶片磷含量和单株生物量，减弱种内竞争。（3）密度制约因素。"},
+        ],
+    },
+    {
         "id": "sohu-guangdong-history-open-2026",
         "family": "history:guangdong",
         "title": "2026\u5e74\u9ad8\u8003\u5e7f\u4e1c\u7701\u5386\u53f2\u5377\u975e\u9009\u62e9\u9898\u53c2\u8003\u7b54\u6848",

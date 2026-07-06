@@ -99,10 +99,10 @@ def infer_subject(source: str, relative: str, fallback: str = "") -> str:
 def family_for(subject: str, source: str, relative: str = "") -> str:
     text = f"{source} {relative}"
     subject = infer_subject(source, relative, subject)
-    if re.search(r"新高考\s*(?:I|Ⅰ|1|一)|全国\s*(?:I|Ⅰ|1|一)|新课标\s*(?:I|Ⅰ|1|一)|一卷|全国1|全国一", text, re.I):
-        region = "national1"
-    elif re.search(r"新高考\s*(?:II|Ⅱ|2|二)|全国\s*(?:II|Ⅱ|2|二)|新课标\s*(?:II|Ⅱ|2|二)|二卷|全国2|全国二", text, re.I):
+    if re.search(r"新高考\s*(?:II|Ⅱ|2|二)|全国\s*(?:II|Ⅱ|2|二)|新课标\s*(?:II|Ⅱ|2|二)|二卷|全国2|全国二", text, re.I):
         region = "national2"
+    elif re.search(r"新高考\s*(?:I|Ⅰ|1|一)|全国\s*(?:I|Ⅰ|1|一)|新课标\s*(?:I|Ⅰ|1|一)|一卷|全国1|全国一", text, re.I):
+        region = "national1"
     elif "上海" in text:
         region = "shanghai-spring" if "春季" in text or "春季招生" in text else "shanghai"
     elif "湖南" in text:
