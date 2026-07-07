@@ -20,6 +20,7 @@ import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
 import ocrQuestions from '../../data/jiangsu-gaokao-ocr.json'
 import {
   getQuestionKnowledgeIds,
+  getKnowledgeQuestionType,
   getSubjectKnowledgeLayout,
   knowledgeEdges,
   knowledgeNodes,
@@ -222,6 +223,146 @@ function formatAccuracy(stat) {
   return stat?.total ? `${Math.round((stat.correct / stat.total) * 100)}%` : '未作答'
 }
 
+function questionRenderKey(question, index, scope) {
+  return [scope, question.id, question.year, question.sourceType, question.number, index].filter(Boolean).join('-')
+}
+
+function practiceAnchorId(question, index, scope) {
+  return `practice-${questionRenderKey(question, index, scope).replace(/[^\w-]/g, '-')}`
+}
+
+function scrollToPracticeQuestion(questionId) {
+  const target = Array.from(document.querySelectorAll('[data-practice-question-id]'))
+    .find(element => element.dataset.practiceQuestionId === String(questionId))
+  target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
+
+function hasCompleteAnswer(question) {
+  return Boolean(question.answer && question.answer !== '答案待补全')
+}
+
+function buildQuestionTaxonomy(questions = [], nodeStats = {}, activeSubject = null) {
+  const groups = new Map()
+  questions.forEach(question => {
+    const knowledgeIds = getQuestionKnowledgeIds(question)
+    const questionType = getKnowledgeQuestionType(question)
+    knowledgeIds.forEach(nodeId => {
+      const current = groups.get(nodeId) || {
+        id: nodeId,
+        node: knowledgeNodeById.get(nodeId),
+        total: 0,
+        answered: 0,
+        typeCounts: {},
+        examples: [],
+      }
+      current.total += 1
+      if (hasCompleteAnswer(question)) current.answered += 1
+      current.typeCounts[questionType] = (current.typeCounts[questionType] || 0) + 1
+      if (current.examples.length < 3) current.examples.push({ question, questionType })
+      groups.set(nodeId, current)
+    })
+  })
+  const subjectOrder = activeSubject
+    ? knowledgeNodes.filter(node => node.subject === activeSubject.key).map(node => node.id)
+    : knowledgeNodes.map(node => node.id)
+  return [...groups.values()]
+    .map(group => ({
+      ...group,
+      stat: nodeStats[group.id],
+      typeEntries: Object.entries(group.typeCounts).sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], 'zh-CN')),
+    }))
+    .sort((left, right) => {
+      const leftWeak = left.stat?.wrong || 0
+      const rightWeak = right.stat?.wrong || 0
+      return rightWeak - leftWeak
+        || subjectOrder.indexOf(left.id) - subjectOrder.indexOf(right.id)
+        || right.total - left.total
+    })
+}
+
+function QuestionTaxonomyPanel({ questions, activeSubject, attempts, accountWeaknesses }) {
+  const { nodeStats } = useMemo(() => summarizeKnowledgeAttempts(attempts, accountWeaknesses), [attempts, accountWeaknesses])
+  const layout = activeSubject ? getSubjectKnowledgeLayout(activeSubject.key) : null
+  const taxonomy = useMemo(() => buildQuestionTaxonomy(questions, nodeStats, activeSubject), [questions, nodeStats, activeSubject])
+  const typeCount = useMemo(() => new Set(taxonomy.flatMap(group => group.typeEntries.map(([type]) => type))).size, [taxonomy])
+  const answeredCount = questions.filter(hasCompleteAnswer).length
+  const visibleGroups = activeSubject ? taxonomy : taxonomy.slice(0, 12)
+
+  return (
+    <div className={`question-taxonomy ${layout ? `question-taxonomy-${layout.pattern}` : 'question-taxonomy-overview'}`}>
+      <div className="taxonomy-summary">
+        <div>
+          <strong>{questions.length}</strong>
+          <span>已归纳题目</span>
+        </div>
+        <div>
+          <strong>{taxonomy.length}</strong>
+          <span>覆盖知识点</span>
+        </div>
+        <div>
+          <strong>{typeCount}</strong>
+          <span>识别题型</span>
+        </div>
+        <div>
+          <strong>{answeredCount}/{questions.length}</strong>
+          <span>答案完整度</span>
+        </div>
+      </div>
+      {visibleGroups.length > 0 ? (
+        <div className="taxonomy-grid">
+          {visibleGroups.map(group => {
+            const stat = group.stat
+            const answerRate = Math.round((group.answered / group.total) * 100)
+            const practiceHint = stat?.wrong > 0
+              ? `先补 ${stat.wrong} 次错题记录`
+              : group.answered < group.total
+                ? '先看有完整答案的题'
+                : '可做同题型迁移'
+            return (
+              <article key={group.id} className={`taxonomy-card ${stat?.wrong > 0 ? 'has-weakness' : ''}`}>
+                <div className="taxonomy-card-head">
+                  <div>
+                    <strong>{group.node?.label || group.id}</strong>
+                    <span>{group.node?.group || '知识点'}</span>
+                  </div>
+                  <em>{practiceHint}</em>
+                </div>
+                <p>{group.node?.description}</p>
+                <div className="taxonomy-metrics">
+                  <span>{group.total} 题</span>
+                  <span>答案 {answerRate}%</span>
+                  <span>正确率 {formatAccuracy(stat)}</span>
+                </div>
+                <div className="taxonomy-types">
+                  {group.typeEntries.map(([type, count]) => (
+                    <span key={type} style={{ '--type-share': `${Math.max(14, Math.round((count / group.total) * 100))}%` }}>
+                      <b>{type}</b><i>{count}</i>
+                    </span>
+                  ))}
+                </div>
+                <div className="taxonomy-examples">
+                  {group.examples.map(({ question, questionType }) => (
+                    <button
+                      type="button"
+                      key={questionRenderKey(question, group.id, questionType)}
+                      onClick={() => scrollToPracticeQuestion(question.id)}
+                    >
+                      <span>{questionType}</span>
+                      <strong>{question.title}</strong>
+                    </button>
+                  ))}
+                </div>
+              </article>
+            )
+          })}
+        </div>
+      ) : (
+        <p className="extract-intro">题库加载后，这里会按知识点和题型自动归纳已有题目。</p>
+      )}
+    </div>
+  )
+}
+
 function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions = [] }) {
   const { nodeStats } = useMemo(() => summarizeKnowledgeAttempts(attempts, accountWeaknesses), [attempts, accountWeaknesses])
   const questionCounts = useMemo(() => buildKnowledgeQuestionCounts(questions), [questions])
@@ -348,6 +489,7 @@ function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions 
 
 function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }) {
   const hasAccountStats = (accountWeaknesses || []).length > 0
+  const localAttemptCount = Object.keys(attempts || {}).length
   const { weakNodes } = useMemo(() => summarizeKnowledgeAttempts(attempts, accountWeaknesses), [attempts, accountWeaknesses])
   const recommendations = useMemo(() => (
     recommendPracticeQuestions(questions, attempts, 9, accountWeaknesses)
@@ -367,6 +509,7 @@ function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }
       <article>
         <h3>薄弱环节</h3>
         {hasAccountStats && <p className="weakness-source">已合并账号做题记录。</p>}
+        {!hasAccountStats && localAttemptCount > 0 && <p className="weakness-source">根据本机 {localAttemptCount} 条做题记录生成。</p>}
         {visibleWeakNodes.length > 0 ? (
           <div className="weakness-list">
             {visibleWeakNodes.slice(0, 6).map(item => (
@@ -383,29 +526,44 @@ function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }
       <article>
         <h3>对应推荐题</h3>
         {recommendations.length > 0 ? (
-          <div className="recommend-groups">
-            {Object.entries(groupedRecommendations).map(([nodeId, items]) => (
-              <div key={nodeId} className="recommend-group">
-                <div className="recommend-group-head">
-                  <strong>{knowledgeNodeById.get(nodeId)?.label || '综合补练'}</strong>
-                  <span>{items.length} 题</span>
+          <>
+            <div className="practice-route">
+              {recommendations.slice(0, 3).map(({ question, questionType, reasons }, index) => (
+                <button
+                  type="button"
+                  key={questionRenderKey(question, index, 'practice-route')}
+                  onClick={() => scrollToPracticeQuestion(question.id)}
+                >
+                  <span>第 {index + 1} 步</span>
+                  <strong>{questionType}</strong>
+                  <em>{reasons[0] || '补齐练习'}</em>
+                </button>
+              ))}
+            </div>
+            <div className="recommend-groups">
+              {Object.entries(groupedRecommendations).map(([nodeId, items]) => (
+                <div key={nodeId} className="recommend-group">
+                  <div className="recommend-group-head">
+                    <strong>{knowledgeNodeById.get(nodeId)?.label || '综合补练'}</strong>
+                    <span>{items.length} 题</span>
+                  </div>
+                  <div className="recommend-list">
+                    {items.slice(0, 3).map(({ question, knowledgeIds, questionType, reasons }) => (
+                      <button
+                        type="button"
+                        key={questionRenderKey(question, nodeId, questionType)}
+                        onClick={() => scrollToPracticeQuestion(question.id)}
+                      >
+                        <strong>{question.title}</strong>
+                        <span>{questionType} · {knowledgeIds.map(id => knowledgeNodeById.get(id)?.label || id).join(' / ')}</span>
+                        <em>{reasons.join(' · ')}</em>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="recommend-list">
-                  {items.slice(0, 3).map(({ question, knowledgeIds, questionType, reasons }) => (
-                    <button
-                      type="button"
-                      key={question.id}
-                      onClick={() => document.getElementById(`practice-${question.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-                    >
-                      <strong>{question.title}</strong>
-                      <span>{questionType} · {knowledgeIds.map(id => knowledgeNodeById.get(id)?.label || id).join(' / ')}</span>
-                      <em>{reasons.join(' · ')}</em>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         ) : (
           <p>当前没有薄弱点记录，先从任意一题开始反馈即可。</p>
         )}
@@ -414,7 +572,7 @@ function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }
   )
 }
 
-function QuestionCard({ question, isDone, onDone, attempt, onAttempt }) {
+function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }) {
   const [open, setOpen] = useState(isDone)
   const knowledgeIds = getQuestionKnowledgeIds(question)
   const knowledgeLabels = knowledgeIds.map(id => knowledgeNodes.find(node => node.id === id)?.label || id)
@@ -422,7 +580,7 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt }) {
   const difficultyLabel = difficultyLabels[question.difficulty] || question.difficulty || '待标注'
 
   return (
-    <article id={`practice-${question.id}`} className={`gaokao-question ${isDone ? 'is-complete' : ''} ${attempt ? `attempt-${attempt.result}` : ''}`}>
+    <article id={anchorId} data-practice-question-id={question.id} className={`gaokao-question ${isDone ? 'is-complete' : ''} ${attempt ? `attempt-${attempt.result}` : ''}`}>
       <div className="question-topline">
         <span>{question.year}</span>
         <span>{subjects.find(item => item.key === question.subject)?.name}</span>
@@ -886,6 +1044,7 @@ export default function GaokaoPage() {
             <h2>{activeSubject.name}知识图谱与薄弱点</h2>
           </div>
           <KnowledgeGraph activeSubject={activeSubject} attempts={attempts} accountWeaknesses={accountWeaknesses} questions={subjectPracticeQuestions} />
+          <QuestionTaxonomyPanel questions={subjectPracticeQuestions} activeSubject={activeSubject} attempts={attempts} accountWeaknesses={accountWeaknesses} />
           <WeaknessPanel attempts={attempts} questions={subjectPracticeQuestions} activeSubject={activeSubject} accountWeaknesses={accountWeaknesses} />
         </section>
 
@@ -914,8 +1073,8 @@ export default function GaokaoPage() {
               ))}
             </div>
             <div className="ocr-grid subject-ocr-grid">
-              {ocrQuestions.questions.slice(0, 6).map(question => (
-                <OcrQuestionCard key={question.number} question={question} />
+              {ocrQuestions.questions.slice(0, 6).map((question, index) => (
+                <OcrQuestionCard key={questionRenderKey(question, index, 'subject-ocr')} question={question} />
               ))}
             </div>
           </section>
@@ -928,9 +1087,9 @@ export default function GaokaoPage() {
           </div>
           {subjectExtractedSamples.length > 0 ? (
             <div className="extract-grid">
-              {subjectExtractedSamples.map(({ file, question }) => (
+              {subjectExtractedSamples.map(({ file, question }, index) => (
                 <ExtractedQuestionCard
-                  key={`${file.year}-${file.subject}-${file.source}-${question.number}`}
+                  key={`${file.year}-${file.subject}-${file.source}-${question.number}-${index}`}
                   file={file}
                   question={question}
                 />
@@ -948,9 +1107,10 @@ export default function GaokaoPage() {
           </div>
           {subjectPracticeQuestions.length > 0 ? (
             <div className="question-grid">
-              {subjectPracticeQuestions.map(question => (
+              {subjectPracticeQuestions.map((question, index) => (
                 <QuestionCard
-                  key={question.id}
+                  key={questionRenderKey(question, index, 'subject-practice')}
+                  anchorId={practiceAnchorId(question, index, 'subject-practice')}
                   question={question}
                   isDone={completed.has(question.id)}
                   onDone={completeQuestion}
@@ -1126,6 +1286,7 @@ export default function GaokaoPage() {
           <h2>九科知识图谱与薄弱点推荐</h2>
         </div>
         <KnowledgeGraph attempts={attempts} accountWeaknesses={accountWeaknesses} questions={questionLibrary} />
+        <QuestionTaxonomyPanel questions={questionLibrary} attempts={attempts} accountWeaknesses={accountWeaknesses} />
         <WeaknessPanel attempts={attempts} questions={questionLibrary} accountWeaknesses={accountWeaknesses} />
       </section>
 
@@ -1145,8 +1306,8 @@ export default function GaokaoPage() {
           涉及公式、图形、选项排版的地方先标记为待复核，不混入正式题解练习。
         </p>
         <div className="ocr-grid">
-          {ocrQuestions.questions.map(question => (
-            <OcrQuestionCard key={question.number} question={question} />
+          {ocrQuestions.questions.map((question, index) => (
+            <OcrQuestionCard key={questionRenderKey(question, index, 'ocr')} question={question} />
           ))}
         </div>
       </section>
@@ -1168,9 +1329,9 @@ export default function GaokaoPage() {
           已匹配解析的样本会展示答案与解析摘录，但在人工复核前仍不替代正式练习区。
         </p>
         <div className="extract-grid">
-          {extractedSamples.map(({ file, question }) => (
+          {extractedSamples.map(({ file, question }, index) => (
             <ExtractedQuestionCard
-              key={`${file.year}-${file.subject}-${file.source}-${question.number}`}
+              key={`${file.year}-${file.subject}-${file.source}-${question.number}-${index}`}
               file={file}
               question={question}
             />
@@ -1206,9 +1367,10 @@ export default function GaokaoPage() {
           <span>当前筛选 {filteredQuestions.length} 题</span>
         </div>
         <div className="question-grid">
-          {filteredQuestions.map(question => (
+          {filteredQuestions.map((question, index) => (
             <QuestionCard
-              key={question.id}
+              key={questionRenderKey(question, index, 'filtered-practice')}
+              anchorId={practiceAnchorId(question, index, 'filtered-practice')}
               question={question}
               isDone={completed.has(question.id)}
               onDone={completeQuestion}

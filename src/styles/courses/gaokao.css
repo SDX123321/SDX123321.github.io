@@ -1067,6 +1067,192 @@
   border-top-color: #d97706;
 }
 
+.question-taxonomy {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.taxonomy-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.taxonomy-summary div {
+  display: grid;
+  gap: 4px;
+  min-height: 70px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg2);
+}
+
+.taxonomy-summary strong {
+  color: var(--text);
+  font-size: 1.22rem;
+}
+
+.taxonomy-summary span {
+  color: var(--text2);
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.taxonomy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.taxonomy-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--subject-accent, var(--accent));
+  border-radius: 8px;
+  background: var(--bg2);
+}
+
+.taxonomy-card.has-weakness {
+  border-left-color: var(--danger);
+}
+
+.taxonomy-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.taxonomy-card-head div {
+  display: grid;
+  gap: 5px;
+}
+
+.taxonomy-card-head strong {
+  color: var(--text);
+  font-size: .98rem;
+}
+
+.taxonomy-card-head span,
+.taxonomy-card-head em,
+.taxonomy-metrics span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.taxonomy-card-head span {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.taxonomy-card-head em {
+  color: var(--text);
+  background: var(--card);
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.taxonomy-card p {
+  margin: 0;
+  color: var(--text2);
+  line-height: 1.65;
+}
+
+.taxonomy-metrics,
+.taxonomy-types,
+.taxonomy-examples {
+  display: grid;
+  gap: 8px;
+}
+
+.taxonomy-metrics {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.taxonomy-metrics span {
+  color: var(--text2);
+  background: var(--card);
+}
+
+.taxonomy-types span {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}
+
+.taxonomy-types span::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--type-share);
+  background: color-mix(in srgb, var(--subject-accent, var(--accent)) 16%, transparent);
+}
+
+.taxonomy-types b,
+.taxonomy-types i {
+  position: relative;
+  z-index: 1;
+}
+
+.taxonomy-types b {
+  color: var(--text);
+  font-size: .8rem;
+}
+
+.taxonomy-types i {
+  color: var(--text2);
+  font-style: normal;
+  font-weight: 800;
+}
+
+.taxonomy-examples button {
+  display: grid;
+  gap: 4px;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--card);
+  text-align: left;
+  cursor: pointer;
+}
+
+.taxonomy-examples button:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.taxonomy-examples span {
+  color: var(--accent);
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.taxonomy-examples strong {
+  color: var(--text);
+  font-size: .84rem;
+  line-height: 1.45;
+}
+
 .weakness-panel {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
@@ -1107,6 +1293,51 @@
 .recommend-group {
   display: grid;
   gap: 8px;
+}
+
+.practice-route {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.practice-route button {
+  display: grid;
+  gap: 4px;
+  min-height: 86px;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--border));
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--accent-bg);
+  text-align: left;
+  cursor: pointer;
+}
+
+.practice-route button:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.practice-route span,
+.practice-route em {
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.practice-route span {
+  color: var(--accent);
+}
+
+.practice-route strong {
+  color: var(--text);
+  font-size: .88rem;
+}
+
+.practice-route em {
+  color: var(--text2);
+  font-style: normal;
 }
 
 .recommend-group-head {
@@ -1187,6 +1418,14 @@
   .weakness-panel {
     grid-template-columns: 1fr;
   }
+
+  .practice-route {
+    grid-template-columns: 1fr;
+  }
+
+  .taxonomy-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 560px) {
@@ -1225,5 +1464,18 @@
   .knowledge-node-title {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .taxonomy-summary,
+  .taxonomy-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .taxonomy-card-head {
+    flex-direction: column;
+  }
+
+  .taxonomy-card-head em {
+    white-space: normal;
   }
 }
