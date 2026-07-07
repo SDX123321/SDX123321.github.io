@@ -522,7 +522,9 @@
 }
 
 .question-grid {
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 1040px;
+  margin-inline: auto;
 }
 
 .gaokao-question,
@@ -626,18 +628,49 @@
 }
 
 .question-explain {
+  display: grid;
+  gap: 16px;
   margin-top: 12px;
-  padding: 14px;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text2);
-  background: rgba(255, 255, 255, .05);
   line-height: 1.75;
 }
 
-.question-explain strong {
-  display: block;
+.standard-answer,
+.detailed-solution,
+.source-solution {
+  display: grid;
+  gap: 10px;
+}
+
+.standard-answer {
+  padding: 12px 14px;
+  border-left: 4px solid var(--accent);
+  background: var(--accent-bg);
+}
+
+.standard-answer span,
+.solution-title span {
+  color: var(--accent);
+  font-size: .76rem;
+  font-weight: 800;
+}
+
+.standard-answer strong,
+.solution-title strong {
   color: var(--text);
-  margin-bottom: 10px;
+}
+
+.standard-answer strong {
+  font-size: .98rem;
+  line-height: 1.7;
+}
+
+.solution-title {
+  display: grid;
+  gap: 4px;
 }
 
 .question-explain ol {
@@ -645,7 +678,68 @@
   padding-left: 20px;
 }
 
-.question-explain li + li {
+.detailed-solution ol {
+  display: grid;
+  gap: 10px;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: solution-step;
+}
+
+.detailed-solution li {
+  position: relative;
+  display: grid;
+  gap: 5px;
+  padding: 12px 12px 12px 42px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg2);
+  counter-increment: solution-step;
+}
+
+.detailed-solution li::before {
+  content: counter(solution-step);
+  position: absolute;
+  left: 12px;
+  top: 14px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--accent);
+  font-size: .75rem;
+  font-weight: 900;
+}
+
+.detailed-solution li > span {
+  color: var(--text);
+  font-weight: 850;
+}
+
+.detailed-solution p {
+  margin: 0;
+  color: var(--text2);
+}
+
+.source-solution {
+  padding-top: 2px;
+}
+
+.source-solution summary {
+  width: fit-content;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: .82rem;
+  font-weight: 800;
+}
+
+.source-solution ol {
+  margin-top: 10px;
+}
+
+.source-solution li + li {
   margin-top: 8px;
 }
 

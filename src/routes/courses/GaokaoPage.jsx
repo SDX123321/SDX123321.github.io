@@ -241,6 +241,73 @@ function hasCompleteAnswer(question) {
   return Boolean(question.answer && question.answer !== '答案待补全')
 }
 
+const subjectSolutionHints = {
+  chinese: '回到材料原文找证据，把选项或观点拆成关键词，再逐一核对是否越界、偷换或遗漏。',
+  math: '先把条件转成式子、图像或参数范围，再检查端点、定义域和等号能否取到。',
+  english: '抓住空前空后、指代词和逻辑连接词，确认选项能同时承接前文并引出后文。',
+  physics: '先明确研究对象和过程，画出受力、运动或能量关系，再代入数据核对量纲。',
+  chemistry: '把现象、反应原理、变量控制和结论边界对应起来，避免只凭颜色或单一现象下结论。',
+  biology: '先区分自变量、因变量和无关变量，再用实验结果或遗传比例反推机制。',
+  politics: '先锁定材料主体和设问角度，再把教材术语落回材料中的具体做法。',
+  history: '先定位时空背景，再用材料证据说明变化、原因、影响或观点是否成立。',
+  geography: '先判断区域条件和过程链条，再把自然因素、人类活动和治理措施对应起来。',
+}
+
+const solutionStepTitles = ['审题定位', '建立方法', '推进推理', '形成结论', '复盘迁移']
+
+function splitAnswerParts(answer) {
+  if (!answer || answer === '答案待补全') return []
+  return String(answer)
+    .split(/(?=（\d+）)|(?=\(\d+\))|；|;/)
+    .map(part => part.trim())
+    .filter(Boolean)
+}
+
+function buildDetailedSolutionSteps(question, knowledgeLabels) {
+  const solution = Array.isArray(question.solution) ? question.solution.filter(Boolean) : []
+  const answerParts = splitAnswerParts(question.answer)
+  const subjectName = subjects.find(item => item.key === question.subject)?.name || '本题'
+  const questionType = getKnowledgeQuestionType(question)
+  const hint = subjectSolutionHints[question.subject] || '先拆条件，再选方法，最后把结论和标准答案逐项核对。'
+  const labels = knowledgeLabels.length > 0 ? knowledgeLabels.join('、') : '题干中的核心概念'
+  const sourceSteps = solution.length > 0 ? solution : answerParts
+
+  const steps = [{
+    title: '审题定位',
+    detail: `${subjectName}题先判断题型为「${questionType}」，核心知识点落在「${labels}」。读题时先标出设问对象、限制条件和要求输出的结论，避免直接套用答案。`,
+  }]
+
+  if (sourceSteps.length > 0) {
+    sourceSteps.forEach((step, index) => {
+      const title = solutionStepTitles[Math.min(index + 1, solutionStepTitles.length - 1)]
+      const answerPart = answerParts[index] ? `本步最后要能对上标准答案中的「${answerParts[index]}」。` : '本步完成后要回到设问，确认没有遗漏小问或条件。'
+      steps.push({
+        title,
+        detail: `依据标准题解，第 ${index + 1} 步可以这样展开：${step} ${answerPart}`,
+      })
+    })
+  } else {
+    steps.push({
+      title: '建立方法',
+      detail: `${hint} 当前题目还没有完整解析，先用标准答案反推需要证明、计算或说明的关键中间量。`,
+    })
+  }
+
+  steps.push({
+    title: '核对答案',
+    detail: hasCompleteAnswer(question)
+      ? `把每个小问的结果逐项对照标准答案「${question.answer}」。若表达题与标准答案不完全一致，优先检查关键词、因果链和条件边界是否完整。`
+      : '标准答案仍待补全，先保留推理链条和疑点，后续补答案时再做逐项校验。',
+  })
+
+  steps.push({
+    title: '迁移提醒',
+    detail: hint,
+  })
+
+  return steps
+}
+
 function buildQuestionTaxonomy(questions = [], nodeStats = {}, activeSubject = null) {
   const groups = new Map()
   questions.forEach(question => {
@@ -573,10 +640,11 @@ function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }
 }
 
 function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }) {
-  const [open, setOpen] = useState(isDone)
+  const [open, setOpen] = useState(false)
   const knowledgeIds = getQuestionKnowledgeIds(question)
   const knowledgeLabels = knowledgeIds.map(id => knowledgeNodes.find(node => node.id === id)?.label || id)
   const solution = Array.isArray(question.solution) ? question.solution : []
+  const detailedSolution = buildDetailedSolutionSteps(question, knowledgeLabels)
   const difficultyLabel = difficultyLabels[question.difficulty] || question.difficulty || '待标注'
 
   return (
@@ -593,8 +661,17 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }
       </div>
       <pre className="question-prompt">{question.prompt}</pre>
       <div className="question-actions">
-        <button type="button" onClick={() => { setOpen(value => !value); onDone(question.id) }}>
-          {open ? '收起题解' : '查看详细题解'}
+        <button
+          type="button"
+          onClick={() => {
+            setOpen(value => {
+              const nextOpen = !value
+              if (nextOpen) onDone(question.id)
+              return nextOpen
+            })
+          }}
+        >
+          {open ? '收起题解' : '查看标准答案与分步思路'}
         </button>
         <button type="button" className={attempt?.result === 'correct' ? 'is-selected' : ''} onClick={() => onAttempt(question, 'correct')}>
           做对了
@@ -610,13 +687,33 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }
       )}
       {open && (
         <div className="question-explain">
-          <strong>参考答案：{question.answer}</strong>
-          {solution.length > 0 ? (
+          <div className="standard-answer">
+            <span>标准答案</span>
+            <strong>{question.answer}</strong>
+          </div>
+          <div className="detailed-solution">
+            <div className="solution-title">
+              <span>解题思路</span>
+              <strong>按标准答案拆解的分步骤路径</strong>
+            </div>
             <ol>
-              {solution.map(step => <li key={step}>{step}</li>)}
+              {detailedSolution.map((step, index) => (
+                <li key={`${step.title}-${index}`}>
+                  <span>{step.title}</span>
+                  <p>{step.detail}</p>
+                </li>
+              ))}
             </ol>
+          </div>
+          {solution.length > 0 ? (
+            <details className="source-solution">
+              <summary>查看原始题解依据</summary>
+              <ol>
+                {solution.map((step, index) => <li key={`${question.id}-source-${index}`}>{step}</li>)}
+              </ol>
+            </details>
           ) : (
-            <p className="question-empty-detail">解析待补全。</p>
+            <p className="question-empty-detail">原始解析待补全，已根据标准答案生成基础思路。</p>
           )}
         </div>
       )}
