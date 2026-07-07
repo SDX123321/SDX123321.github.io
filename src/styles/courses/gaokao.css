@@ -1712,3 +1712,422 @@
     white-space: normal;
   }
 }
+
+/* 高考视觉系统覆盖层：克制纸面感、单栏题目流、低强度动效。 */
+.course-main.gaokao {
+  --gaokao-paper: #fbfaf7;
+  --gaokao-surface: #ffffff;
+  --gaokao-surface-soft: #f5f7fa;
+  --gaokao-ink: #172033;
+  --gaokao-muted: #526071;
+  --gaokao-subtle: #768396;
+  --gaokao-line: #dbe1ea;
+  --gaokao-accent: #1f4f8f;
+  --gaokao-accent-soft: #eaf1fb;
+  --gaokao-mastered: #16745b;
+  --gaokao-mastered-soft: #e8f5ef;
+  --gaokao-review: #9a6514;
+  --gaokao-review-soft: #fff4db;
+  --gaokao-risk: #b42318;
+  --gaokao-risk-soft: #fff0ee;
+  background: var(--gaokao-paper);
+  color: var(--gaokao-ink);
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+}
+
+.course-main.gaokao .gaokao-page {
+  max-width: 1080px;
+  color: var(--gaokao-ink);
+}
+
+.course-main.gaokao .gaokao-hero,
+.course-main.gaokao .gaokao-section,
+.course-main.gaokao .source-alert {
+  border: 1px solid var(--gaokao-line);
+  border-radius: 8px;
+  background: var(--gaokao-surface);
+  box-shadow: 0 10px 28px rgba(23, 32, 51, .06);
+}
+
+.course-main.gaokao .gaokao-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: 24px;
+  padding: 30px;
+}
+
+.course-main.gaokao .subject-hero {
+  border-top: 3px solid var(--subject-accent, var(--gaokao-accent));
+}
+
+.course-main.gaokao .gaokao-hero h1 {
+  max-width: 760px;
+  color: var(--gaokao-ink);
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  font-weight: 800;
+}
+
+.course-main.gaokao .gaokao-hero p,
+.course-main.gaokao .extract-intro,
+.course-main.gaokao .workbench-note,
+.course-main.gaokao .subject-advice,
+.course-main.gaokao .compact-list,
+.course-main.gaokao .weakness-panel p,
+.course-main.gaokao .taxonomy-card p {
+  color: var(--gaokao-muted);
+  font-size: 1rem;
+  line-height: 1.82;
+}
+
+.course-main.gaokao .gaokao-hero .eyebrow,
+.course-main.gaokao .section-heading span {
+  color: var(--gaokao-accent);
+  letter-spacing: .06em;
+}
+
+.course-main.gaokao .section-heading h2 {
+  color: var(--gaokao-ink);
+  font-size: 1.36rem;
+  line-height: 1.35;
+}
+
+.course-main.gaokao .gaokao-section {
+  padding: 24px;
+}
+
+.course-main.gaokao .workbench-note {
+  margin: -4px 0 18px;
+  padding: 11px 13px;
+  border: 1px solid var(--gaokao-line);
+  border-left: 3px solid var(--gaokao-accent);
+  border-radius: 6px;
+  background: var(--gaokao-surface-soft);
+}
+
+.course-main.gaokao .hero-metrics div,
+.course-main.gaokao .coverage-strip article,
+.course-main.gaokao .subject-card,
+.course-main.gaokao .year-card,
+.course-main.gaokao .prep-grid article,
+.course-main.gaokao .subject-focus-grid article,
+.course-main.gaokao .subject-year-card,
+.course-main.gaokao .taxonomy-card,
+.course-main.gaokao .weakness-panel article,
+.course-main.gaokao .gaokao-question,
+.course-main.gaokao .extract-card,
+.course-main.gaokao .ocr-card,
+.course-main.gaokao .question-prompt,
+.course-main.gaokao .reading-material,
+.course-main.gaokao .question-image,
+.course-main.gaokao .standard-answer,
+.course-main.gaokao .detailed-solution,
+.course-main.gaokao .source-solution,
+.course-main.gaokao .extract-answer,
+.course-main.gaokao .extract-solution,
+.course-main.gaokao .subject-knowledge-map {
+  border-color: var(--gaokao-line);
+  border-radius: 8px;
+  background: var(--gaokao-surface);
+  box-shadow: none;
+}
+
+.course-main.gaokao .hero-metrics div,
+.course-main.gaokao .coverage-strip article,
+.course-main.gaokao .subject-year-card,
+.course-main.gaokao .question-prompt,
+.course-main.gaokao .question-image,
+.course-main.gaokao .standard-answer,
+.course-main.gaokao .source-solution,
+.course-main.gaokao .extract-answer,
+.course-main.gaokao .extract-solution,
+.course-main.gaokao .weakness-panel article,
+.course-main.gaokao .practice-route button,
+.course-main.gaokao .recommend-list button,
+.course-main.gaokao .weakness-list div {
+  background: var(--gaokao-surface-soft);
+}
+
+.course-main.gaokao .hero-metrics strong,
+.course-main.gaokao .coverage-strip strong,
+.course-main.gaokao .subject-card h3,
+.course-main.gaokao .subject-card h4,
+.course-main.gaokao .gaokao-question h3,
+.course-main.gaokao .extract-card h3,
+.course-main.gaokao .ocr-card h3,
+.course-main.gaokao .weakness-panel h3,
+.course-main.gaokao .taxonomy-card-head strong {
+  color: var(--gaokao-ink);
+}
+
+.course-main.gaokao .hero-metrics strong,
+.course-main.gaokao .recommend-list em,
+.course-main.gaokao .practice-route span,
+.course-main.gaokao .taxonomy-examples span {
+  color: var(--gaokao-accent);
+}
+
+.course-main.gaokao .question-grid,
+.course-main.gaokao .extract-grid,
+.course-main.gaokao .ocr-grid,
+.course-main.gaokao .subject-ocr-grid,
+.course-main.gaokao .taxonomy-grid,
+.course-main.gaokao .weakness-panel,
+.course-main.gaokao .practice-route,
+.course-main.gaokao .extract-explain,
+.course-main.gaokao .knowledge-lanes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 920px;
+  margin-inline: auto;
+}
+
+.course-main.gaokao .question-grid,
+.course-main.gaokao .extract-grid,
+.course-main.gaokao .ocr-grid {
+  gap: 18px;
+}
+
+.course-main.gaokao .gaokao-question,
+.course-main.gaokao .extract-card,
+.course-main.gaokao .ocr-card {
+  padding: 20px;
+}
+
+.course-main.gaokao .gaokao-question.is-complete {
+  border-color: color-mix(in srgb, var(--gaokao-mastered) 45%, var(--gaokao-line));
+}
+
+.course-main.gaokao .ocr-card,
+.course-main.gaokao .extract-card.extract-review {
+  border-left: 3px solid var(--gaokao-review);
+}
+
+.course-main.gaokao .extract-card.extract-candidate,
+.course-main.gaokao .extract-card.extract-matched {
+  border-left: 3px solid var(--gaokao-mastered);
+}
+
+.course-main.gaokao .question-topline {
+  gap: 8px;
+  color: var(--gaokao-subtle);
+  font-size: .76rem;
+}
+
+.course-main.gaokao .question-topline span,
+.course-main.gaokao .question-summary span,
+.course-main.gaokao .extract-summary span,
+.course-main.gaokao .tag-cloud span,
+.course-main.gaokao .knowledge-tags span,
+.course-main.gaokao .question-display-tags span,
+.course-main.gaokao .question-admin-tags span,
+.course-main.gaokao .extract-flags span,
+.course-main.gaokao .source-list em,
+.course-main.gaokao .taxonomy-card-head span,
+.course-main.gaokao .taxonomy-card-head em,
+.course-main.gaokao .taxonomy-metrics span {
+  border-radius: 6px;
+}
+
+.course-main.gaokao .question-type-badge {
+  border: 1px solid color-mix(in srgb, var(--gaokao-accent) 36%, var(--gaokao-line));
+  color: var(--gaokao-accent);
+  background: var(--gaokao-accent-soft);
+}
+
+.course-main.gaokao .question-display-tags span,
+.course-main.gaokao .knowledge-tags span,
+.course-main.gaokao .taxonomy-card-head span {
+  border: 1px solid color-mix(in srgb, var(--gaokao-accent) 28%, var(--gaokao-line));
+  color: var(--gaokao-accent);
+  background: var(--gaokao-accent-soft);
+}
+
+.course-main.gaokao .question-admin-tags span,
+.course-main.gaokao .extract-flags span {
+  border: 1px dashed color-mix(in srgb, var(--gaokao-review) 50%, var(--gaokao-line));
+  color: var(--gaokao-review);
+  background: var(--gaokao-review-soft);
+}
+
+.course-main.gaokao .difficulty-easy,
+.course-main.gaokao .difficulty-medium,
+.course-main.gaokao .difficulty-hard {
+  border: 1px solid transparent;
+}
+
+.course-main.gaokao .difficulty-easy {
+  color: var(--gaokao-mastered);
+  background: var(--gaokao-mastered-soft);
+}
+
+.course-main.gaokao .difficulty-medium {
+  color: var(--gaokao-review);
+  background: var(--gaokao-review-soft);
+}
+
+.course-main.gaokao .difficulty-hard {
+  color: var(--gaokao-risk);
+  background: var(--gaokao-risk-soft);
+}
+
+.course-main.gaokao .gaokao-question.attempt-correct {
+  border-color: color-mix(in srgb, var(--gaokao-mastered) 48%, var(--gaokao-line));
+}
+
+.course-main.gaokao .gaokao-question.attempt-wrong {
+  border-color: color-mix(in srgb, var(--gaokao-risk) 48%, var(--gaokao-line));
+}
+
+.course-main.gaokao .question-prompt,
+.course-main.gaokao .reading-material pre,
+.course-main.gaokao .extract-solution,
+.course-main.gaokao .detailed-solution li p,
+.course-main.gaokao .source-solution li {
+  color: var(--gaokao-ink);
+  font-size: 1rem;
+  line-height: 1.86;
+}
+
+.course-main.gaokao .question-prompt {
+  margin-top: 14px;
+  padding: 15px;
+}
+
+.course-main.gaokao .reading-material {
+  margin: 16px 0 12px;
+  border-left: 3px solid var(--gaokao-accent);
+  background: #fffdf7;
+}
+
+.course-main.gaokao .reading-material strong {
+  color: var(--gaokao-accent);
+  font-size: .9rem;
+}
+
+.course-main.gaokao .question-actions button,
+.course-main.gaokao .filters button,
+.course-main.gaokao .question-load-state button,
+.course-main.gaokao .subject-back-link,
+.course-main.gaokao .taxonomy-examples button,
+.course-main.gaokao .practice-route button,
+.course-main.gaokao .recommend-list button {
+  border-radius: 6px;
+  transition:
+    background-color .18s ease,
+    border-color .18s ease,
+    color .18s ease,
+    transform .18s ease;
+}
+
+.course-main.gaokao .subject-back-link,
+.course-main.gaokao .question-load-state button {
+  border-color: var(--gaokao-accent);
+  color: var(--gaokao-accent);
+  background: var(--gaokao-accent-soft);
+}
+
+.course-main.gaokao .question-actions button,
+.course-main.gaokao .filters button {
+  border: 1px solid var(--gaokao-accent);
+  color: #fff;
+  background: var(--gaokao-accent);
+}
+
+.course-main.gaokao .question-actions button + button {
+  border-color: var(--gaokao-line);
+  color: var(--gaokao-ink);
+  background: var(--gaokao-surface-soft);
+}
+
+.course-main.gaokao .question-actions button.is-selected {
+  border-color: var(--gaokao-mastered);
+  color: var(--gaokao-mastered);
+  background: var(--gaokao-mastered-soft);
+}
+
+.course-main.gaokao .question-actions button.is-wrong {
+  border-color: var(--gaokao-risk);
+  color: var(--gaokao-risk);
+  background: var(--gaokao-risk-soft);
+}
+
+.course-main.gaokao .subject-back-link:hover,
+.course-main.gaokao .question-load-state button:hover,
+.course-main.gaokao .taxonomy-examples button:hover,
+.course-main.gaokao .practice-route button:hover,
+.course-main.gaokao .recommend-list button:hover {
+  border-color: var(--gaokao-accent);
+  color: var(--gaokao-accent);
+  background: #f8fbff;
+  transform: translateY(-1px);
+}
+
+.course-main.gaokao :is(a, button, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--gaokao-accent) 72%, white);
+  outline-offset: 3px;
+}
+
+.course-main.gaokao .filters select {
+  border-color: var(--gaokao-line);
+  border-radius: 6px;
+  background: var(--gaokao-surface);
+  color: var(--gaokao-ink);
+}
+
+.course-main.gaokao .question-load-state {
+  max-width: 920px;
+}
+
+.course-main.gaokao .question-load-error {
+  color: var(--gaokao-risk);
+}
+
+@media (max-width: 900px) {
+  .course-main.gaokao .gaokao-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .course-main.gaokao .question-grid,
+  .course-main.gaokao .extract-grid,
+  .course-main.gaokao .ocr-grid,
+  .course-main.gaokao .taxonomy-grid,
+  .course-main.gaokao .weakness-panel,
+  .course-main.gaokao .practice-route,
+  .course-main.gaokao .knowledge-lanes {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .course-main.gaokao .gaokao-page {
+    max-width: 100%;
+  }
+
+  .course-main.gaokao .gaokao-hero,
+  .course-main.gaokao .gaokao-section {
+    padding: 18px;
+  }
+
+  .course-main.gaokao .gaokao-question,
+  .course-main.gaokao .extract-card,
+  .course-main.gaokao .ocr-card {
+    padding: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-main.gaokao *,
+  .course-main.gaokao *::before,
+  .course-main.gaokao *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
