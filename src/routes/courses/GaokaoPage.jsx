@@ -1036,6 +1036,208 @@ function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }
   )
 }
 
+function RagKnowledgePanel({ activeSubject, isAdmin = false }) {
+  const [summaryState, setSummaryState] = useState({ status: 'loading', data: null, error: null })
+  const [searchState, setSearchState] = useState({ status: 'idle', matches: [], error: null })
+  const [query, setQuery] = useState('')
+  const [subject, setSubject] = useState(activeSubject?.key || '')
+  const [docKind, setDocKind] = useState('')
+  const [importForm, setImportForm] = useState({
+    sourcePath: '',
+    subjectKey: activeSubject?.key || '',
+    note: '',
+  })
+  const [importState, setImportState] = useState({ status: 'idle', message: '', command: '' })
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetch(`${API_BASE}/api/gaokao/rag/summary`, {
+      credentials: 'include',
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(`request_failed_${response.status}`)
+        return response.json()
+      })
+      .then((data) => setSummaryState({ status: 'ready', data, error: null }))
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          setSummaryState({ status: 'error', data: null, error: error.message })
+        }
+      })
+    return () => controller.abort()
+  }, [])
+
+  const runSearch = useCallback(
+    (event) => {
+      event?.preventDefault()
+      const params = new URLSearchParams({ limit: '12' })
+      if (query.trim()) params.set('q', query.trim())
+      if (subject) params.set('subject', subject)
+      if (docKind) params.set('docKind', docKind)
+      setSearchState((prev) => ({ ...prev, status: 'loading', error: null }))
+      fetch(`${API_BASE}/api/gaokao/rag/search?${params.toString()}`, { credentials: 'include' })
+        .then((response) => {
+          if (!response.ok) throw new Error(`request_failed_${response.status}`)
+          return response.json()
+        })
+        .then((data) =>
+          setSearchState({ status: 'ready', matches: data.matches || [], error: null }),
+        )
+        .catch((error) => setSearchState({ status: 'error', matches: [], error: error.message }))
+    },
+    [docKind, query, subject],
+  )
+
+  const submitImport = useCallback(
+    (event) => {
+      event.preventDefault()
+      if (!importForm.sourcePath.trim()) return
+      setImportState({ status: 'loading', message: '', command: '' })
+      fetch(`${API_BASE}/api/gaokao/rag/imports`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sourcePath: importForm.sourcePath.trim(),
+          subjectKey: importForm.subjectKey || null,
+          note: importForm.note.trim() || null,
+          metadata: { requestedFrom: window.location.pathname },
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) throw new Error(`request_failed_${response.status}`)
+          return response.json()
+        })
+        .then((data) =>
+          setImportState({
+            status: 'ready',
+            message: '已登记，随后运行索引命令即可入库。',
+            command: data.suggestedCommand || '',
+          }),
+        )
+        .catch((error) =>
+          setImportState({ status: 'error', message: `登记失败：${error.message}`, command: '' }),
+        )
+    },
+    [importForm],
+  )
+
+  const summary = summaryState.data || {}
+  const matches = searchState.matches || []
+
+  return (
+    <section id={activeSubject ? 'subject-rag' : 'rag'} className="gaokao-section rag-panel">
+      <div className="section-heading">
+        <span>RAG 知识库</span>
+        <h2>真题与答案检索</h2>
+      </div>
+      <div className="rag-summary-line">
+        <span>文档 {summary.documents ?? 0}</span>
+        <span>切片 {summary.chunks ?? 0}</span>
+        <span>{summaryState.status === 'loading' ? '正在读取索引' : 'PostgreSQL 知识库'}</span>
+      </div>
+      <form className="rag-search-form" onSubmit={runSearch}>
+        <label>
+          关键词
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="输入考点、题干片段或答案关键词"
+          />
+        </label>
+        <label>
+          学科
+          <select value={subject} onChange={(event) => setSubject(event.target.value)}>
+            <option value="">全部</option>
+            {subjects.map((item) => (
+              <option key={item.key} value={item.key}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          类型
+          <select value={docKind} onChange={(event) => setDocKind(event.target.value)}>
+            <option value="">全部资料</option>
+            <option value="paper">试卷</option>
+            <option value="answer">答案/解析</option>
+            <option value="structured_extract">结构化抽取</option>
+            <option value="ocr_extract">OCR 抽取</option>
+          </select>
+        </label>
+        <button type="submit" disabled={searchState.status === 'loading'}>
+          {searchState.status === 'loading' ? '检索中' : '检索'}
+        </button>
+      </form>
+      {searchState.error && <p className="rag-status rag-error">{searchState.error}</p>}
+      {matches.length > 0 && (
+        <div className="rag-results">
+          {matches.map((item) => (
+            <article key={`${item.id}-${item.chunkIndex}`} className="rag-result">
+              <div className="rag-result-meta">
+                <strong>{item.fileName}</strong>
+                <span>{item.year || '年份待定'}</span>
+                <span>
+                  {subjects.find((subjectItem) => subjectItem.key === item.subjectKey)?.name ||
+                    item.subjectKey}
+                </span>
+                <span>{item.docKind}</span>
+              </div>
+              <p>{truncateText(item.chunkText, 360)}</p>
+              {isAdmin && <code>{item.sourcePath}</code>}
+            </article>
+          ))}
+        </div>
+      )}
+      {isAdmin && (
+        <form className="rag-import-form" onSubmit={submitImport}>
+          <div className="rag-import-head">
+            <strong>导入新文件</strong>
+            <span>将文件放入项目目录后登记路径，再运行生成的索引命令。</span>
+          </div>
+          <label>
+            文件夹或文件路径
+            <input
+              value={importForm.sourcePath}
+              onChange={(event) => setImportForm({ ...importForm, sourcePath: event.target.value })}
+              placeholder="例如 files/gaokao/2026 或 src/data/gaokao-new.json"
+            />
+          </label>
+          <label>
+            学科
+            <select
+              value={importForm.subjectKey}
+              onChange={(event) => setImportForm({ ...importForm, subjectKey: event.target.value })}
+            >
+              <option value="">自动识别</option>
+              {subjects.map((item) => (
+                <option key={item.key} value={item.key}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            备注
+            <input
+              value={importForm.note}
+              onChange={(event) => setImportForm({ ...importForm, note: event.target.value })}
+              placeholder="如：2026 新课标一卷答案"
+            />
+          </label>
+          <button type="submit" disabled={importState.status === 'loading'}>
+            {importState.status === 'loading' ? '登记中' : '登记导入'}
+          </button>
+          {importState.message && <p className="rag-status">{importState.message}</p>}
+          {importState.command && <code className="rag-command">{importState.command}</code>}
+        </form>
+      )}
+    </section>
+  )
+}
+
 function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId, isAdmin = false }) {
   const [open, setOpen] = useState(false)
   const knowledgeIds = getQuestionKnowledgeIds(question)
@@ -1387,11 +1589,14 @@ export default function GaokaoPage() {
   const isAdmin = isAdminUser(user)
   const pageNavLinks = useMemo(() => {
     if (!activeSubject) {
-      return navLinks.map((link) => ({
-        ...link,
-        label: visibleMaintenanceText(link.label, isAdmin),
-        keywords: visibleMaintenanceText(link.keywords, isAdmin),
-      }))
+      return [
+        ...navLinks.map((link) => ({
+          ...link,
+          label: visibleMaintenanceText(link.label, isAdmin),
+          keywords: visibleMaintenanceText(link.keywords, isAdmin),
+        })),
+        { id: 'rag', label: 'RAG 知识库', keywords: '真题 答案 检索 RAG' },
+      ]
     }
     const links = [
       {
@@ -1404,6 +1609,11 @@ export default function GaokaoPage() {
         id: 'subject-knowledge',
         label: '知识图谱',
         keywords: `${activeSubject.name} 知识图谱 薄弱点`,
+      },
+      {
+        id: 'subject-rag',
+        label: 'RAG 检索',
+        keywords: `${activeSubject.name} 真题 答案 检索`,
       },
       { id: 'subject-years', label: '年份资料', keywords: `${activeSubject.name} 年份 资料` },
       { id: 'subject-extracts', label: '真实样本', keywords: `${activeSubject.name} 题干 解析` },
@@ -2039,6 +2249,12 @@ export default function GaokaoPage() {
           />
         </section>
 
+        <RagKnowledgePanel
+          key={`rag-${activeSubject.key}`}
+          activeSubject={activeSubject}
+          isAdmin={isAdmin}
+        />
+
         <section id="subject-years" className="gaokao-section">
           <div className="section-heading">
             <span>年份资料</span>
@@ -2217,6 +2433,8 @@ export default function GaokaoPage() {
           “完整题解”区为基于近年命题风格生成的高考风格训练题，用于训练迁移能力。
         </span>
       </section>
+
+      <RagKnowledgePanel key="rag-overview" isAdmin={isAdmin} />
 
       <section id="coverage" className="gaokao-section">
         <div className="section-heading">

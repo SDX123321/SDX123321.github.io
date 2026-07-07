@@ -2088,9 +2088,176 @@
   color: var(--gaokao-risk);
 }
 
+.course-main.gaokao .rag-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.course-main.gaokao .rag-summary-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.course-main.gaokao .rag-summary-line span,
+.course-main.gaokao .rag-result-meta span,
+.course-main.gaokao .rag-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 4px 9px;
+  border: 1px solid var(--gaokao-line);
+  border-radius: 6px;
+  color: var(--gaokao-muted);
+  background: var(--gaokao-surface-soft);
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.course-main.gaokao .rag-search-form,
+.course-main.gaokao .rag-import-form {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(150px, 190px) minmax(150px, 190px) auto;
+  gap: 12px;
+  align-items: end;
+  padding: 14px;
+  border: 1px solid var(--gaokao-line);
+  border-radius: 8px;
+  background: var(--gaokao-surface-soft);
+}
+
+.course-main.gaokao .rag-import-form {
+  grid-template-columns: minmax(260px, 1fr) minmax(150px, 190px) minmax(220px, 1fr) auto;
+}
+
+.course-main.gaokao .rag-search-form label,
+.course-main.gaokao .rag-import-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--gaokao-muted);
+  font-size: .82rem;
+  font-weight: 800;
+}
+
+.course-main.gaokao .rag-search-form input,
+.course-main.gaokao .rag-search-form select,
+.course-main.gaokao .rag-import-form input,
+.course-main.gaokao .rag-import-form select {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 11px;
+  border: 1px solid var(--gaokao-line);
+  border-radius: 6px;
+  color: var(--gaokao-ink);
+  background: var(--gaokao-surface);
+  font: inherit;
+}
+
+.course-main.gaokao .rag-search-form button,
+.course-main.gaokao .rag-import-form button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--gaokao-accent);
+  border-radius: 6px;
+  color: #fff;
+  background: var(--gaokao-accent);
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background-color .18s ease,
+    border-color .18s ease,
+    transform .18s ease;
+}
+
+.course-main.gaokao .rag-search-form button:disabled,
+.course-main.gaokao .rag-import-form button:disabled {
+  cursor: progress;
+  opacity: .72;
+}
+
+.course-main.gaokao .rag-search-form button:hover,
+.course-main.gaokao .rag-import-form button:hover {
+  transform: translateY(-1px);
+}
+
+.course-main.gaokao .rag-results {
+  display: grid;
+  gap: 12px;
+}
+
+.course-main.gaokao .rag-result {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--gaokao-line);
+  border-radius: 8px;
+  background: var(--gaokao-surface);
+}
+
+.course-main.gaokao .rag-result-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.course-main.gaokao .rag-result-meta strong {
+  margin-right: 4px;
+  color: var(--gaokao-ink);
+  font-size: .95rem;
+}
+
+.course-main.gaokao .rag-result p {
+  margin: 0;
+  color: var(--gaokao-ink);
+  line-height: 1.82;
+}
+
+.course-main.gaokao .rag-result code,
+.course-main.gaokao .rag-command {
+  display: block;
+  overflow-x: auto;
+  padding: 9px 10px;
+  border: 1px solid var(--gaokao-line);
+  border-radius: 6px;
+  color: var(--gaokao-muted);
+  background: #f3f5f8;
+  font-size: .82rem;
+}
+
+.course-main.gaokao .rag-import-head {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  color: var(--gaokao-muted);
+  font-size: .88rem;
+}
+
+.course-main.gaokao .rag-import-form .rag-status,
+.course-main.gaokao .rag-import-form .rag-command {
+  grid-column: 1 / -1;
+}
+
+.course-main.gaokao .rag-import-head strong {
+  color: var(--gaokao-ink);
+}
+
+.course-main.gaokao .rag-error {
+  border-color: color-mix(in srgb, var(--gaokao-risk) 36%, var(--gaokao-line));
+  color: var(--gaokao-risk);
+  background: var(--gaokao-risk-soft);
+}
+
 @media (max-width: 900px) {
   .course-main.gaokao .gaokao-hero {
     grid-template-columns: 1fr;
+  }
+
+  .course-main.gaokao .rag-search-form,
+  .course-main.gaokao .rag-import-form {
+    grid-template-columns: 1fr 1fr;
   }
 
   .course-main.gaokao .question-grid,
@@ -2112,6 +2279,11 @@
   .course-main.gaokao .gaokao-hero,
   .course-main.gaokao .gaokao-section {
     padding: 18px;
+  }
+
+  .course-main.gaokao .rag-search-form,
+  .course-main.gaokao .rag-import-form {
+    grid-template-columns: 1fr;
   }
 
   .course-main.gaokao .gaokao-question,
