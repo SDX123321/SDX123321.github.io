@@ -33,7 +33,10 @@ import '../../styles/courses/gaokao.css'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8787'
 const QUESTION_BATCH_SIZE = 120
+const SAMPLE_BATCH_SIZE = 48
 const QUESTION_INDEX_CACHE_KEY = 'gaokao_question_index_cache'
+const EXTRACT_SOURCE_TYPES = ['real-docx', 'real-pdf-text']
+const OCR_SOURCE_TYPES = ['real-ocr']
 
 const difficultyLabels = {
   all: '全部难度',
@@ -193,6 +196,8 @@ function normalizeDbQuestion(row) {
     id: row.questionKey || `gaokao-db-${row.id}`,
     year: row.year || '2026',
     subject: row.subjectKey,
+    subjectName: row.subjectName || subject?.name || row.subjectKey,
+    number: row.questionNumber || null,
     sourceType,
     difficulty,
     title: `${row.year || '2026'} ${row.subjectName || subject?.name || row.subjectKey || '高考'} ${questionNumber}`,
@@ -202,12 +207,46 @@ function normalizeDbQuestion(row) {
     flags: normalizeList(row.flags),
     quality: row.quality,
     questionType: row.questionType,
+    type: row.questionType,
     questionKey: row.questionKey,
     metadata: row.metadata || {},
     images: normalizeQuestionImages(row.metadata?.assets?.images || row.images),
     hasSolution: Boolean(row.hasSolution),
     solutionStatus: row.solutionStatus || row.metadata?.solutionEnrichment?.status || null,
     updatedAt: row.updatedAt,
+  }
+}
+
+function dbQuestionToExtractedItem(question) {
+  const metadata = question.metadata || {}
+  const source = metadata.source || metadata.fileName || metadata.paperName || question.sourceType
+  const file = {
+    year: question.year,
+    subject: question.subject,
+    subjectName: question.subjectName || subjects.find((item) => item.key === question.subject)?.name,
+    source,
+    relativePath: metadata.relativePath || metadata.sourcePath || '',
+    analysisSource: metadata.analysisSource || metadata.answerSource || '',
+  }
+  return {
+    file,
+    question: {
+      ...question,
+      number: question.number || question.questionNumber || '?',
+      type: question.questionType || question.type || question.sourceType,
+      quality: question.quality || 'review',
+    },
+  }
+}
+
+function dbQuestionToOcrQuestion(question) {
+  const metadata = question.metadata || {}
+  return {
+    ...question,
+    number: question.number || question.questionNumber || '?',
+    type: question.questionType || question.type || 'OCR',
+    averageScore: metadata.averageScore || metadata.confidence || 0,
+    quality: question.quality || 'review',
   }
 }
 
@@ -1213,16 +1252,33 @@ export default function GaokaoPage() {
     error: null,
     pageInfo: { nextCursor: null, hasMore: false, totalLoaded: 0, totalCount: null },
   })
+  const [backendMetaState, setBackendMetaState] = useState({
+    status: 'idle',
+    summary: null,
+    subjects: [],
+    error: null,
+  })
+  const [sampleQuestionState, setSampleQuestionState] = useState({
+    status: 'idle',
+    extracted: [],
+    ocr: [],
+    error: null,
+  })
   const [accountWeaknessState, setAccountWeaknessState] = useState({ userId: null, rows: [] })
   const { user, syncStudyEvent, syncGaokaoAttempt, fetchGaokaoWeaknesses } = useAuth()
   const accountWeaknesses =
     accountWeaknessState.userId === user?.id ? accountWeaknessState.rows : []
 
   const fetchQuestionBatch = useCallback(
-    async ({ cursor, signal } = {}) => {
-      const params = new URLSearchParams({ limit: String(QUESTION_BATCH_SIZE) })
-      if (questionQuery.subject) params.set('subject', questionQuery.subject)
-      if (questionQuery.difficulty !== 'all') params.set('difficulty', questionQuery.difficulty)
+    async ({ cursor, limit = QUESTION_BATCH_SIZE, query = questionQuery, signal } = {}) => {
+      const params = new URLSearchParams({ limit: String(limit) })
+      if (query.subject) params.set('subject', query.subject)
+      if (query.difficulty && query.difficulty !== 'all') params.set('difficulty', query.difficulty)
+      if (query.year) params.set('year', String(query.year))
+      if (query.quality) params.set('quality', query.quality)
+      if (query.sourceType) params.set('sourceType', query.sourceType)
+      if (query.hasSolution !== undefined) params.set('hasSolution', String(query.hasSolution))
+      if (query.solutionStatus) params.set('solutionStatus', query.solutionStatus)
       if (cursor) params.set('cursor', cursor)
 
       const response = await fetch(`${API_BASE}/api/gaokao/questions?${params.toString()}`, {
@@ -1334,6 +1390,88 @@ export default function GaokaoPage() {
   }, [fetchQuestionBatch, questionQuery, subjectNotFound])
 
   useEffect(() => {
+    const controller = new AbortController()
+    Promise.all([
+      fetch(`${API_BASE}/api/gaokao/summary`, {
+        credentials: 'include',
+        signal: controller.signal,
+      }).then((response) => {
+        if (!response.ok) throw new Error(`summary_failed_${response.status}`)
+        return response.json()
+      }),
+      fetch(`${API_BASE}/api/gaokao/subjects`, {
+        credentials: 'include',
+        signal: controller.signal,
+      }).then((response) => {
+        if (!response.ok) throw new Error(`subjects_failed_${response.status}`)
+        return response.json()
+      }),
+    ])
+      .then(([summary, subjectPayload]) => {
+        setBackendMetaState({
+          status: 'ready',
+          summary,
+          subjects: subjectPayload.subjects || [],
+          error: null,
+        })
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') return
+        setBackendMetaState({ status: 'fallback', summary: null, subjects: [], error: error.message })
+      })
+    return () => controller.abort()
+  }, [])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    if (subjectNotFound) {
+      return () => controller.abort()
+    }
+
+    const baseQuery = activeSubject ? { subject: activeSubject.key } : {}
+
+    Promise.all([
+      Promise.all(
+        EXTRACT_SOURCE_TYPES.map((sourceType) =>
+          fetchQuestionBatch({
+            limit: SAMPLE_BATCH_SIZE,
+            query: { ...baseQuery, sourceType },
+            signal: controller.signal,
+          }),
+        ),
+      ),
+      Promise.all(
+        OCR_SOURCE_TYPES.map((sourceType) =>
+          fetchQuestionBatch({
+            limit: SAMPLE_BATCH_SIZE,
+            query: { ...baseQuery, sourceType },
+            signal: controller.signal,
+          }),
+        ),
+      ),
+    ])
+      .then(([extractPayloads, ocrPayloads]) => {
+        const extracted = extractPayloads
+          .flatMap((payload) => payload.questions || [])
+          .map(normalizeDbQuestion)
+          .filter((question) => question.id && question.prompt)
+          .map(dbQuestionToExtractedItem)
+        const ocr = ocrPayloads
+          .flatMap((payload) => payload.questions || [])
+          .map(normalizeDbQuestion)
+          .filter((question) => question.id && question.prompt)
+          .map(dbQuestionToOcrQuestion)
+        setSampleQuestionState({ status: 'ready', extracted, ocr, error: null })
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') return
+        setSampleQuestionState({ status: 'fallback', extracted: [], ocr: [], error: error.message })
+      })
+
+    return () => controller.abort()
+  }, [activeSubject, fetchQuestionBatch, subjectNotFound])
+
+  useEffect(() => {
     let cancelled = false
     if (!user) {
       return () => {
@@ -1412,6 +1550,7 @@ export default function GaokaoPage() {
     totalCount: null,
   }
   const totalQuestionCount = questionPageInfo.totalCount ?? questionLibrary.length
+  const overviewQuestionCount = backendMetaState.summary?.questions ?? totalQuestionCount
   const answeredQuestionCount = questionLibrary.filter(
     (question) => question.answer && question.answer !== '答案待补全',
   ).length
@@ -1424,7 +1563,7 @@ export default function GaokaoPage() {
     })
   }, [filters, questionLibrary])
 
-  const extractedSamples = useMemo(() => {
+  const localExtractedSamples = useMemo(() => {
     return extractedLibraryEntries
       .flatMap((entry) =>
         (entry.data.files || []).map((file) => ({ file, dataset: entry.dataset })),
@@ -1443,8 +1582,16 @@ export default function GaokaoPage() {
       )
   }, [])
 
+  const extractedSamples = useMemo(() => {
+    if (sampleQuestionState.extracted.length > 0) return sampleQuestionState.extracted
+    return localExtractedSamples
+  }, [localExtractedSamples, sampleQuestionState.extracted])
+
   const subjectExtractedSamples = useMemo(() => {
     if (!activeSubject) return []
+    if (sampleQuestionState.extracted.length > 0) {
+      return sampleQuestionState.extracted.filter((item) => item.file.subject === activeSubject.key)
+    }
     return extractedLibraryEntries
       .flatMap((entry) =>
         (entry.data.files || []).map((file) => ({ file, dataset: entry.dataset })),
@@ -1462,7 +1609,22 @@ export default function GaokaoPage() {
           (extractedQualityOrder[left.question.quality] ?? 9) -
           (extractedQualityOrder[right.question.quality] ?? 9),
       )
-  }, [activeSubject])
+  }, [activeSubject, sampleQuestionState.extracted])
+
+  const ocrSampleQuestions = useMemo(() => {
+    if (sampleQuestionState.ocr.length > 0) return sampleQuestionState.ocr
+    return ocrQuestions.questions
+  }, [sampleQuestionState.ocr])
+
+  const ocrSummary = useMemo(() => {
+    if (sampleQuestionState.ocr.length === 0) return ocrQuestions.summary
+    return {
+      ...ocrQuestions.summary,
+      questions: sampleQuestionState.ocr.length,
+      reviewQuestions: sampleQuestionState.ocr.filter((question) => question.quality === 'review')
+        .length,
+    }
+  }, [sampleQuestionState.ocr])
 
   const subjectPracticeQuestions = useMemo(() => {
     if (!activeSubject) return []
@@ -1711,7 +1873,7 @@ export default function GaokaoPage() {
                 ))}
             </div>
             <div className="ocr-grid subject-ocr-grid">
-              {ocrQuestions.questions.slice(0, 6).map((question, index) => (
+              {ocrSampleQuestions.slice(0, 6).map((question, index) => (
                 <OcrQuestionCard
                   key={questionRenderKey(question, index, 'subject-ocr')}
                   question={question}
@@ -1828,7 +1990,7 @@ export default function GaokaoPage() {
             <span>覆盖科目</span>
           </div>
           <div>
-            <strong>{totalQuestionCount}</strong>
+            <strong>{overviewQuestionCount}</strong>
             <span>题库题目</span>
           </div>
           <div>
@@ -2005,10 +2167,10 @@ export default function GaokaoPage() {
           <h2>2026 江苏数学扫描卷 OCR</h2>
         </div>
         <div className="extract-summary">
-          <span>PDF 页 {ocrQuestions.summary.pdfPages} 页</span>
-          <span>OCR 行 {ocrQuestions.summary.ocrLines} 行</span>
-          <span>拆分题目 {ocrQuestions.summary.questions} 题</span>
-          <span>全部待复核 {ocrQuestions.summary.reviewQuestions} 题</span>
+          <span>PDF 页 {ocrSummary.pdfPages} 页</span>
+          <span>OCR 行 {ocrSummary.ocrLines} 行</span>
+          <span>拆分题目 {ocrSummary.questions} 题</span>
+          <span>全部待复核 {ocrSummary.reviewQuestions} 题</span>
         </div>
         <p className="extract-intro">
           这部分来自本地 2026 江苏数学扫描 PDF。页面展示的是 OCR
@@ -2016,7 +2178,7 @@ export default function GaokaoPage() {
           涉及公式、图形、选项排版的地方先标记为待复核，不混入正式题解练习。
         </p>
         <div className="ocr-grid">
-          {ocrQuestions.questions.map((question, index) => (
+          {ocrSampleQuestions.map((question, index) => (
             <OcrQuestionCard key={questionRenderKey(question, index, 'ocr')} question={question} />
           ))}
         </div>
