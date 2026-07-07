@@ -53,6 +53,22 @@ async function readJson(filename) {
   return JSON.parse(raw)
 }
 
+async function readExistingJson(filePath) {
+  try {
+    return JSON.parse(await fs.readFile(filePath, 'utf8'))
+  } catch (error) {
+    if (error?.code === 'ENOENT') return null
+    throw error
+  }
+}
+
+function withoutGeneratedAt(value) {
+  if (!value || typeof value !== 'object') return value
+  const { generatedAt, ...rest } = value
+  void generatedAt
+  return rest
+}
+
 function normalizePathKey(value) {
   return String(value || '')
     .replace(/[\\/]+/g, '/')
@@ -481,7 +497,20 @@ async function main() {
     summary,
     questions,
   }
-  await fs.writeFile(MANIFEST_PATH, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
+  const existingManifest = await readExistingJson(MANIFEST_PATH)
+  if (
+    existingManifest &&
+    JSON.stringify(withoutGeneratedAt(existingManifest)) === JSON.stringify(withoutGeneratedAt(manifest))
+  ) {
+    manifest.generatedAt = existingManifest.generatedAt || manifest.generatedAt
+  }
+  const nextManifest = `${JSON.stringify(manifest, null, 2)}\n`
+  if (existingManifest && nextManifest === `${JSON.stringify(existingManifest, null, 2)}\n`) {
+    console.log(JSON.stringify(summary, null, 2))
+    console.log(`Unchanged ${path.relative(ROOT_DIR, MANIFEST_PATH)}`)
+    return
+  }
+  await fs.writeFile(MANIFEST_PATH, nextManifest, 'utf8')
   console.log(JSON.stringify(summary, null, 2))
   console.log(`Wrote ${path.relative(ROOT_DIR, MANIFEST_PATH)}`)
 }
