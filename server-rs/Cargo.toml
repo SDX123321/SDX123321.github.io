@@ -11,6 +11,10 @@ path = "src/main.rs"
 name = "gaokao-enrich-solutions"
 path = "src/bin/gaokao-enrich-solutions.rs"
 
+[[bin]]
+name = "gaokao-cleanup-questions"
+path = "src/bin/gaokao-cleanup-questions.rs"
+
 [dependencies]
 anyhow = "1.0"
 axum = { version = "0.7", features = ["macros"] }

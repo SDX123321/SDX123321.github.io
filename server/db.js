@@ -18,9 +18,13 @@ export async function ensureSchema() {
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       username TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'student',
       created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
       last_login_at TIMESTAMPTZ
     );
+
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'student';
+    UPDATE users SET role = 'admin' WHERE username = 'admin' AND role <> 'admin';
 
     CREATE TABLE IF NOT EXISTS sessions (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -119,6 +123,18 @@ export async function ensureSchema() {
       PRIMARY KEY (question_id, tag_type, tag)
     );
 
+    CREATE TABLE IF NOT EXISTS gaokao_question_cleanup_audit (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      question_id UUID NOT NULL REFERENCES gaokao_questions(id) ON DELETE CASCADE,
+      question_key TEXT NOT NULL,
+      subject_key TEXT,
+      year INTEGER,
+      reason TEXT NOT NULL,
+      evidence JSONB NOT NULL DEFAULT '{}'::jsonb,
+      action TEXT NOT NULL DEFAULT 'soft_deleted',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
     CREATE TABLE IF NOT EXISTS gaokao_subject_profiles (
       subject_key TEXT PRIMARY KEY,
       subject_name TEXT NOT NULL,
@@ -172,6 +188,8 @@ export async function ensureSchema() {
     CREATE INDEX IF NOT EXISTS idx_gaokao_questions_subject_year ON gaokao_questions(subject_key, year);
     CREATE INDEX IF NOT EXISTS idx_gaokao_questions_quality ON gaokao_questions(quality);
     CREATE INDEX IF NOT EXISTS idx_gaokao_questions_source_type ON gaokao_questions(source_type);
+    CREATE INDEX IF NOT EXISTS idx_gaokao_questions_solution_status ON gaokao_questions ((metadata #>> '{solutionEnrichment,status}'));
+    CREATE INDEX IF NOT EXISTS idx_gaokao_questions_cleanup_status ON gaokao_questions ((metadata #>> '{cleanup,status}'));
     CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_time ON gaokao_answer_attempts(user_id, answered_at DESC);
     CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_subject ON gaokao_answer_attempts(user_id, subject_key);
   `)

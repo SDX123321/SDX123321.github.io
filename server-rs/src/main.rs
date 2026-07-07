@@ -67,6 +67,7 @@ impl From<sqlx::Error> for ApiError {
 struct UserOut {
     id: Uuid,
     username: String,
+    role: String,
     #[serde(rename = "created_at")]
     created_at: DateTime<Utc>,
     #[serde(rename = "last_login_at")]
@@ -77,6 +78,7 @@ struct UserOut {
 struct UserSession {
     id: Uuid,
     username: String,
+    role: String,
     created_at: DateTime<Utc>,
     last_login_at: Option<DateTime<Utc>>,
 }
@@ -86,6 +88,7 @@ impl From<UserSession> for UserOut {
         Self {
             id: user.id,
             username: user.username,
+            role: user.role,
             created_at: user.created_at,
             last_login_at: user.last_login_at,
         }
@@ -168,6 +171,8 @@ struct QuestionParams {
     has_solution: Option<bool>,
     #[serde(rename = "solutionStatus")]
     solution_status: Option<String>,
+    #[serde(rename = "includeHidden")]
+    include_hidden: Option<bool>,
     cursor: Option<String>,
     limit: Option<i64>,
 }
@@ -303,7 +308,7 @@ async fn auth_user(state: &SharedState, headers: &HeaderMap) -> Result<UserSessi
     let token = parse_cookie(headers, SESSION_COOKIE).ok_or_else(ApiError::unauthorized)?;
     let token_hash = hash_token(&token);
     let row = sqlx::query(
-        r#"SELECT users.id, users.username, users.created_at, users.last_login_at
+        r#"SELECT users.id, users.username, users.role, users.created_at, users.last_login_at
            FROM sessions JOIN users ON users.id = sessions.user_id
            WHERE sessions.token_hash = $1 AND sessions.expires_at > now()"#,
     )
@@ -314,6 +319,7 @@ async fn auth_user(state: &SharedState, headers: &HeaderMap) -> Result<UserSessi
     Ok(UserSession {
         id: row.try_get("id")?,
         username: row.try_get("username")?,
+        role: row.try_get("role")?,
         created_at: row.try_get("created_at")?,
         last_login_at: row.try_get("last_login_at")?,
     })
@@ -537,8 +543,17 @@ async fn gaokao_subjects(State(state): State<SharedState>) -> Result<Json<Value>
 
 async fn gaokao_questions(
     State(state): State<SharedState>,
+    headers: HeaderMap,
     Query(params): Query<QuestionParams>,
 ) -> Result<Json<Value>, ApiError> {
+    let include_hidden = if params.include_hidden.unwrap_or(false) {
+        auth_user(&state, &headers)
+            .await
+            .map(|user| user.role == "admin")
+            .unwrap_or(false)
+    } else {
+        false
+    };
     let limit = params.limit.unwrap_or(100).clamp(1, 500);
     let offset = params
         .cursor
@@ -547,8 +562,9 @@ async fn gaokao_questions(
         .unwrap_or(0)
         .max(0);
     let cache_key = format!(
-        "gaokao:questions:v2:{}:{}",
+        "gaokao:questions:v3:{}:{}:{}",
         offset,
+        include_hidden,
         serde_json::to_string(&params).unwrap_or_default()
     );
     if let Some(value) = cache_get(&state.redis, &cache_key).await {
@@ -562,11 +578,13 @@ async fn gaokao_questions(
              AND ($4::text IS NULL OR quality = $4)
              AND ($5::text IS NULL OR source_type = $5)
              AND ($6::bool IS NULL OR (($6 = true AND jsonb_array_length(solution) > 0) OR ($6 = false AND jsonb_array_length(solution) = 0)))
-             AND ($7::text IS NULL OR metadata #>> '{solutionEnrichment,status}' = $7)"#,
+             AND ($7::text IS NULL OR metadata #>> '{solutionEnrichment,status}' = $7)
+             AND ($8::bool = true OR COALESCE(metadata #>> '{cleanup,status}', '') <> 'soft_deleted')"#,
     )
     .bind(params.subject.as_deref()).bind(params.year).bind(params.difficulty.as_deref())
     .bind(params.quality.as_deref()).bind(params.source_type.as_deref()).bind(params.has_solution)
     .bind(params.solution_status.as_deref())
+    .bind(include_hidden)
     .fetch_one(&state.db).await?;
     let rows = sqlx::query(
         r#"SELECT id, question_key AS "questionKey", year, subject_key AS "subjectKey",
@@ -581,12 +599,14 @@ async fn gaokao_questions(
              AND ($5::text IS NULL OR source_type = $5)
              AND ($6::bool IS NULL OR (($6 = true AND jsonb_array_length(solution) > 0) OR ($6 = false AND jsonb_array_length(solution) = 0)))
              AND ($7::text IS NULL OR metadata #>> '{solutionEnrichment,status}' = $7)
+             AND ($8::bool = true OR COALESCE(metadata #>> '{cleanup,status}', '') <> 'soft_deleted')
            ORDER BY year NULLS LAST, subject_key, question_number NULLS LAST, updated_at DESC, id
-           LIMIT $8 OFFSET $9"#,
+           LIMIT $9 OFFSET $10"#,
     )
     .bind(params.subject.as_deref()).bind(params.year).bind(params.difficulty.as_deref())
     .bind(params.quality.as_deref()).bind(params.source_type.as_deref()).bind(params.has_solution)
     .bind(params.solution_status.as_deref())
+    .bind(include_hidden)
     .bind(limit).bind(offset).fetch_all(&state.db).await?;
     let questions: Result<Vec<_>, sqlx::Error> = rows.into_iter().map(question_row).collect();
     let questions = questions?;
@@ -603,30 +623,199 @@ async fn gaokao_questions(
 fn question_row(row: sqlx::postgres::PgRow) -> Result<Value, sqlx::Error> {
     let solution: Value = row.try_get("solution")?;
     let metadata: Value = row.try_get("metadata")?;
+    let subject_key: String = row.try_get("subjectKey")?;
+    let question_type: Option<String> = row.try_get("questionType")?;
+    let difficulty: Option<String> = row.try_get("difficulty")?;
+    let source_type: String = row.try_get("sourceType")?;
+    let prompt: String = row.try_get("prompt")?;
+    let flags: Value = row.try_get("flags")?;
+    let question_type_label = infer_question_type(&subject_key, question_type.as_deref(), &prompt);
+    let source_type_label = source_type_label(&source_type);
+    let (materials, stem) = split_reading_material(&subject_key, &prompt, &metadata);
     let solution_status = metadata
         .pointer("/solutionEnrichment/status")
         .and_then(Value::as_str)
         .map(str::to_string);
+    let mut display_tags = vec![question_type_label.clone(), source_type_label.clone()];
+    if let Some(label) = difficulty.as_deref().map(difficulty_label) {
+        display_tags.push(label);
+    }
+    if let Some(status) = solution_status.as_deref().and_then(solution_status_label) {
+        display_tags.push(status);
+    }
+    display_tags.sort();
+    display_tags.dedup();
+
+    let mut admin_tags = value_string_vec(&flags);
+    admin_tags.push(format!("quality:{}", row.try_get::<String, _>("quality")?));
+    admin_tags.push(format!("sourceType:{}", source_type));
+    if let Some(status) = metadata.pointer("/cleanup/status").and_then(Value::as_str) {
+        admin_tags.push(format!("cleanup:{}", status));
+    }
+    if let Some(status) = solution_status.as_deref() {
+        admin_tags.push(format!("solution:{}", status));
+    }
+    admin_tags.sort();
+    admin_tags.dedup();
+
     Ok(json!({
         "id": row.try_get::<Uuid, _>("id")?,
         "questionKey": row.try_get::<String, _>("questionKey")?,
         "year": row.try_get::<Option<i32>, _>("year")?,
-        "subjectKey": row.try_get::<String, _>("subjectKey")?,
+        "subjectKey": subject_key,
         "subjectName": row.try_get::<String, _>("subjectName")?,
         "questionNumber": row.try_get::<Option<i32>, _>("questionNumber")?,
-        "questionType": row.try_get::<Option<String>, _>("questionType")?,
-        "difficulty": row.try_get::<Option<String>, _>("difficulty")?,
+        "questionType": question_type,
+        "questionTypeLabel": question_type_label,
+        "difficulty": difficulty,
         "quality": row.try_get::<String, _>("quality")?,
-        "prompt": row.try_get::<String, _>("prompt")?,
+        "prompt": prompt,
+        "stem": stem,
+        "materials": materials,
         "answer": row.try_get::<Option<String>, _>("answer")?,
         "solution": solution,
-        "flags": row.try_get::<Value, _>("flags")?,
-        "sourceType": row.try_get::<String, _>("sourceType")?,
+        "flags": flags,
+        "sourceType": source_type,
+        "sourceTypeLabel": source_type_label,
+        "displayTags": display_tags,
+        "adminTags": admin_tags,
+        "isHidden": metadata.pointer("/cleanup/status").and_then(Value::as_str) == Some("soft_deleted"),
         "metadata": metadata,
         "hasSolution": solution.as_array().map(|items| !items.is_empty()).unwrap_or(false),
         "solutionStatus": solution_status,
         "updatedAt": row.try_get::<DateTime<Utc>, _>("updatedAt")?,
     }))
+}
+
+fn value_string_vec(value: &Value) -> Vec<String> {
+    match value {
+        Value::Array(items) => items
+            .iter()
+            .filter_map(|item| {
+                item.as_str()
+                    .or_else(|| item.get("tag").and_then(Value::as_str))
+            })
+            .map(str::to_string)
+            .filter(|item| !item.trim().is_empty())
+            .collect(),
+        Value::String(item) if !item.trim().is_empty() => vec![item.to_string()],
+        _ => Vec::new(),
+    }
+}
+
+fn infer_question_type(subject_key: &str, raw: Option<&str>, prompt: &str) -> String {
+    if let Some(value) = raw.map(str::trim).filter(|value| !value.is_empty()) {
+        if value
+            .chars()
+            .any(|ch| ('\u{4e00}'..='\u{9fff}').contains(&ch))
+        {
+            return value.to_string();
+        }
+        let lowered = value.to_ascii_lowercase();
+        if lowered.contains("choice") || lowered == "single" || lowered == "multiple" {
+            return "选择题".to_string();
+        }
+        if lowered.contains("fill") || lowered.contains("blank") {
+            return "填空题".to_string();
+        }
+        if lowered.contains("essay")
+            || lowered.contains("composition")
+            || lowered.contains("writing")
+        {
+            return "写作题".to_string();
+        }
+        if lowered.contains("proof") || lowered.contains("solve") || lowered.contains("answer") {
+            return "解答题".to_string();
+        }
+        if lowered.contains("reading") {
+            return "阅读理解".to_string();
+        }
+    }
+
+    if subject_key == "chinese" {
+        if prompt.contains("作文") || prompt.contains("写作") {
+            return "写作题".to_string();
+        }
+        if prompt.contains("文言文") || prompt.contains("翻译") {
+            return "文言文阅读".to_string();
+        }
+        if prompt.contains("古诗") || prompt.contains("诗歌") {
+            return "古诗文鉴赏".to_string();
+        }
+        if prompt.contains("阅读") || prompt.contains("材料") {
+            return "阅读理解".to_string();
+        }
+    }
+    if prompt.contains("A.") || prompt.contains("A．") || prompt.contains("A、") {
+        return "选择题".to_string();
+    }
+    if prompt.contains("证明") || prompt.contains("求") || prompt.contains("解答") {
+        return "解答题".to_string();
+    }
+    "综合题".to_string()
+}
+
+fn difficulty_label(value: &str) -> String {
+    match value {
+        "easy" => "基础巩固".to_string(),
+        "medium" => "迁移应用".to_string(),
+        "hard" => "综合创新".to_string(),
+        _ => "难度待标注".to_string(),
+    }
+}
+
+fn source_type_label(value: &str) -> String {
+    match value {
+        "real" => "真题入库".to_string(),
+        "real-docx" => "文档抽取".to_string(),
+        "real-pdf-text" => "文本抽取".to_string(),
+        "real-ocr" => "扫描识别".to_string(),
+        "generated" => "变式训练".to_string(),
+        _ => "结构化题库".to_string(),
+    }
+}
+
+fn solution_status_label(value: &str) -> Option<String> {
+    match value {
+        "generated" => Some("已生成分步思路".to_string()),
+        "needs_review" => Some("需教师复核".to_string()),
+        "failed" => Some("题解待补全".to_string()),
+        "skipped" => Some("保留原解析".to_string()),
+        _ => None,
+    }
+}
+
+fn split_reading_material(
+    subject_key: &str,
+    prompt: &str,
+    metadata: &Value,
+) -> (Vec<Value>, String) {
+    if let Some(items) = metadata.get("materials").and_then(Value::as_array) {
+        let materials: Vec<Value> = items.to_vec();
+        if !materials.is_empty() {
+            return (materials, prompt.to_string());
+        }
+    }
+    if subject_key != "chinese" || !(prompt.contains("阅读") || prompt.contains("材料")) {
+        return (Vec::new(), prompt.to_string());
+    }
+    let markers = ["\n（1）", "\n(1)", "\n1．", "\n1.", "\n①"];
+    let split_at = markers
+        .iter()
+        .filter_map(|marker| prompt.find(marker))
+        .filter(|index| *index > 120)
+        .min();
+    if let Some(index) = split_at {
+        let material = prompt[..index].trim();
+        let stem = prompt[index..].trim();
+        if material.len() > 80 && stem.len() > 8 {
+            return (
+                vec![json!({ "title": "阅读材料", "content": material })],
+                stem.to_string(),
+            );
+        }
+    }
+    (Vec::new(), prompt.to_string())
 }
 
 fn rows_to_values(
@@ -715,8 +904,14 @@ async fn register(
     }
     let password_hash =
         bcrypt_hash(input.password, DEFAULT_COST).map_err(|_| ApiError::server())?;
-    let result = sqlx::query("INSERT INTO users (username, password_hash, last_login_at) VALUES ($1, $2, now()) RETURNING id, username, created_at, last_login_at")
-        .bind(input.username.trim()).bind(password_hash).fetch_one(&state.db).await;
+    let username = input.username.trim();
+    let role = if username == "admin" {
+        "admin"
+    } else {
+        "student"
+    };
+    let result = sqlx::query("INSERT INTO users (username, password_hash, role, last_login_at) VALUES ($1, $2, $3, now()) RETURNING id, username, role, created_at, last_login_at")
+        .bind(username).bind(password_hash).bind(role).fetch_one(&state.db).await;
     let row = match result {
         Ok(row) => row,
         Err(sqlx::Error::Database(err)) if err.code().as_deref() == Some("23505") => {
@@ -731,6 +926,7 @@ async fn register(
     let user = UserSession {
         id: row.try_get("id")?,
         username: row.try_get("username")?,
+        role: row.try_get("role")?,
         created_at: row.try_get("created_at")?,
         last_login_at: row.try_get("last_login_at")?,
     };
@@ -754,7 +950,7 @@ async fn login(
     if !validate_auth(&input) {
         return Err(ApiError::bad_request());
     }
-    let row = sqlx::query("SELECT id, username, password_hash, created_at, last_login_at FROM users WHERE username = $1")
+    let row = sqlx::query("SELECT id, username, role, password_hash, created_at, last_login_at FROM users WHERE username = $1")
         .bind(input.username.trim()).fetch_optional(&state.db).await?;
     let Some(row) = row else {
         return Ok((
@@ -779,6 +975,7 @@ async fn login(
     let user = UserSession {
         id: user_id,
         username: row.try_get("username")?,
+        role: row.try_get("role")?,
         created_at: row.try_get("created_at")?,
         last_login_at: Some(Utc::now()),
     };
@@ -891,7 +1088,9 @@ async fn study_event(
 async fn ensure_schema(db: &PgPool) -> anyhow::Result<()> {
     let statements = [
         "CREATE EXTENSION IF NOT EXISTS pgcrypto",
-        "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), username TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), last_login_at TIMESTAMPTZ)",
+        "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), username TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'student', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), last_login_at TIMESTAMPTZ)",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'student'",
+        "UPDATE users SET role = 'admin' WHERE username = 'admin' AND role <> 'admin'",
         "CREATE TABLE IF NOT EXISTS sessions (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, token_hash TEXT NOT NULL UNIQUE, expires_at TIMESTAMPTZ NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
         "CREATE TABLE IF NOT EXISTS study_events (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, event_type TEXT NOT NULL, course TEXT, subject TEXT, page_path TEXT, object_id TEXT, payload JSONB NOT NULL DEFAULT '{}'::jsonb, occurred_at TIMESTAMPTZ NOT NULL DEFAULT now())",
         "CREATE TABLE IF NOT EXISTS study_snapshots (user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE, total_study_seconds INTEGER NOT NULL DEFAULT 0, chapter_done_count INTEGER NOT NULL DEFAULT 0, wrong_count INTEGER NOT NULL DEFAULT 0, practice_done_count INTEGER NOT NULL DEFAULT 0, mastery_item_count INTEGER NOT NULL DEFAULT 0, scroll_position_count INTEGER NOT NULL DEFAULT 0, recent_paths JSONB NOT NULL DEFAULT '[]'::jsonb, current_streak_days INTEGER NOT NULL DEFAULT 0, last_activity_at TIMESTAMPTZ, updated_at TIMESTAMPTZ NOT NULL DEFAULT now())",
@@ -900,6 +1099,7 @@ async fn ensure_schema(db: &PgPool) -> anyhow::Result<()> {
         "CREATE TABLE IF NOT EXISTS gaokao_papers (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), paper_key TEXT NOT NULL UNIQUE, year INTEGER, subject_key TEXT NOT NULL, subject_name TEXT NOT NULL, paper_name TEXT NOT NULL, paper_kind TEXT NOT NULL DEFAULT 'exam', status TEXT NOT NULL DEFAULT 'indexed', metadata JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now())",
         "CREATE TABLE IF NOT EXISTS gaokao_questions (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), question_key TEXT NOT NULL UNIQUE, paper_id UUID REFERENCES gaokao_papers(id) ON DELETE SET NULL, year INTEGER, subject_key TEXT NOT NULL, subject_name TEXT NOT NULL, question_number INTEGER, question_type TEXT, difficulty TEXT, quality TEXT NOT NULL DEFAULT 'indexed', prompt TEXT NOT NULL, answer TEXT, solution JSONB NOT NULL DEFAULT '[]'::jsonb, flags JSONB NOT NULL DEFAULT '[]'::jsonb, source_type TEXT NOT NULL DEFAULT 'real', metadata JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now())",
         "CREATE TABLE IF NOT EXISTS gaokao_question_tags (question_id UUID NOT NULL REFERENCES gaokao_questions(id) ON DELETE CASCADE, tag_type TEXT NOT NULL, tag TEXT NOT NULL, PRIMARY KEY (question_id, tag_type, tag))",
+        "CREATE TABLE IF NOT EXISTS gaokao_question_cleanup_audit (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), question_id UUID NOT NULL REFERENCES gaokao_questions(id) ON DELETE CASCADE, question_key TEXT NOT NULL, subject_key TEXT, year INTEGER, reason TEXT NOT NULL, evidence JSONB NOT NULL DEFAULT '{}'::jsonb, action TEXT NOT NULL DEFAULT 'soft_deleted', created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
         "CREATE TABLE IF NOT EXISTS gaokao_subject_profiles (subject_key TEXT PRIMARY KEY, subject_name TEXT NOT NULL, accent TEXT, icon TEXT, route TEXT, trend TEXT, advice TEXT, high_frequency JSONB NOT NULL DEFAULT '[]'::jsonb, easy_mistakes JSONB NOT NULL DEFAULT '[]'::jsonb, metadata JSONB NOT NULL DEFAULT '{}'::jsonb, updated_at TIMESTAMPTZ NOT NULL DEFAULT now())",
         "CREATE TABLE IF NOT EXISTS gaokao_trend_notes (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), subject_key TEXT, year INTEGER, title TEXT NOT NULL, body TEXT NOT NULL, source_name TEXT, source_url TEXT, metadata JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
         "CREATE TABLE IF NOT EXISTS gaokao_import_runs (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), import_key TEXT NOT NULL UNIQUE, summary JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
@@ -911,6 +1111,7 @@ async fn ensure_schema(db: &PgPool) -> anyhow::Result<()> {
         "CREATE INDEX IF NOT EXISTS idx_gaokao_questions_quality ON gaokao_questions(quality)",
         "CREATE INDEX IF NOT EXISTS idx_gaokao_questions_source_type ON gaokao_questions(source_type)",
         "CREATE INDEX IF NOT EXISTS idx_gaokao_questions_solution_status ON gaokao_questions ((metadata #>> '{solutionEnrichment,status}'))",
+        "CREATE INDEX IF NOT EXISTS idx_gaokao_questions_cleanup_status ON gaokao_questions ((metadata #>> '{cleanup,status}'))",
         "CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_time ON gaokao_answer_attempts(user_id, answered_at DESC)",
         "CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_subject ON gaokao_answer_attempts(user_id, subject_key)",
     ];

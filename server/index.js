@@ -59,6 +59,7 @@ const questionQuerySchema = z.object({
   year: z.coerce.number().int().min(1900).max(2100).optional(),
   quality: z.string().max(64).optional(),
   sourceType: z.string().max(64).optional(),
+  includeHidden: z.coerce.boolean().optional(),
   limit: z.coerce.number().int().min(1).max(2000).default(300),
 })
 
@@ -96,7 +97,7 @@ async function authUser(req, res, next) {
   const token = req.cookies?.[SESSION_COOKIE]
   if (!token) return res.status(401).json({ error: 'not_authenticated' })
   const { rows } = await query(`
-    SELECT users.id, users.username, users.created_at, users.last_login_at
+    SELECT users.id, users.username, users.role, users.created_at, users.last_login_at
     FROM sessions
     JOIN users ON users.id = sessions.user_id
     WHERE sessions.token_hash = $1 AND sessions.expires_at > now()
@@ -104,6 +105,18 @@ async function authUser(req, res, next) {
   if (!rows[0]) return res.status(401).json({ error: 'not_authenticated' })
   req.user = rows[0]
   next()
+}
+
+async function optionalUser(req) {
+  const token = req.cookies?.[SESSION_COOKIE]
+  if (!token) return null
+  const { rows } = await query(`
+    SELECT users.id, users.username, users.role, users.created_at, users.last_login_at
+    FROM sessions
+    JOIN users ON users.id = sessions.user_id
+    WHERE sessions.token_hash = $1 AND sessions.expires_at > now()
+  `, [hashToken(token)])
+  return rows[0] || null
 }
 
 async function getStats(userId) {
@@ -291,6 +304,10 @@ app.get('/api/gaokao/questions', async (req, res) => {
   if (filters.year) addFilter('year = ?', filters.year)
   if (filters.quality) addFilter('quality = ?', filters.quality)
   if (filters.sourceType) addFilter('source_type = ?', filters.sourceType)
+  const user = await optionalUser(req)
+  if (!(filters.includeHidden && user?.role === 'admin')) {
+    where.push("COALESCE(metadata #>> '{cleanup,status}', '') <> 'soft_deleted'")
+  }
   params.push(filters.limit)
   const limitParam = `$${params.length}`
   const { rows } = await query(`
@@ -371,9 +388,10 @@ app.post('/api/auth/register', async (req, res) => {
   const { username, password } = parsed.data
   const passwordHash = await bcrypt.hash(password, 12)
   try {
+    const role = username === 'admin' ? 'admin' : 'student'
     const { rows } = await query(
-      'INSERT INTO users (username, password_hash, last_login_at) VALUES ($1, $2, now()) RETURNING id, username, created_at, last_login_at',
-      [username, passwordHash],
+      'INSERT INTO users (username, password_hash, role, last_login_at) VALUES ($1, $2, $3, now()) RETURNING id, username, role, created_at, last_login_at',
+      [username, passwordHash, role],
     )
     await createSession(rows[0].id, res)
     res.status(201).json({ user: rows[0] })
@@ -394,7 +412,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
   await query('UPDATE users SET last_login_at = now() WHERE id = $1', [user.id])
   await createSession(user.id, res)
-  res.json({ user: { id: user.id, username: user.username, created_at: user.created_at, last_login_at: new Date() } })
+  res.json({ user: { id: user.id, username: user.username, role: user.role, created_at: user.created_at, last_login_at: new Date() } })
 })
 
 app.post('/api/auth/logout', async (req, res) => {

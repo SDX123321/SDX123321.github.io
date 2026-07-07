@@ -52,6 +52,13 @@ const statusLabels = {
   ocr: '需 OCR',
 }
 
+const studentStatusLabels = {
+  available: '可复习',
+  partial: '资料整理',
+  review: '资料整理',
+  ocr: '资料整理',
+}
+
 const extractedQualityLabels = {
   matched: '已匹配解析',
   candidate: '可读候选',
@@ -161,7 +168,8 @@ function normalizeQuestionImages(value) {
     .filter((image) => image?.url)
     .map((image, index) => ({
       ...image,
-      caption: image.caption || (image.scope === 'source-page' ? 'OCR 页面图' : `题目配图 ${index + 1}`),
+      caption:
+        image.caption || (image.scope === 'source-page' ? 'OCR 页面图' : `题目配图 ${index + 1}`),
       alt: image.alt || image.caption || `题目配图 ${index + 1}`,
     }))
 }
@@ -186,12 +194,89 @@ function attachQuestionImages(file, question, dataset) {
   return nextImages.length > 0 ? { ...question, images: nextImages } : question
 }
 
+function isAdminUser(user) {
+  return user?.role === 'admin'
+}
+
+function hasChineseText(value) {
+  return /[\u4e00-\u9fff]/.test(String(value || ''))
+}
+
+function normalizeDisplayTags(row) {
+  const tags = normalizeList(row.displayTags).filter(hasChineseText)
+  if (row.questionTypeLabel && hasChineseText(row.questionTypeLabel))
+    tags.unshift(row.questionTypeLabel)
+  if (row.sourceTypeLabel && hasChineseText(row.sourceTypeLabel)) tags.push(row.sourceTypeLabel)
+  return [...new Set(tags)].filter(Boolean)
+}
+
+function visibleSourceLabel(value) {
+  return hasChineseText(value) ? value : '结构化题库'
+}
+
+function sourceStatusLabel(status, isAdmin) {
+  return (isAdmin ? statusLabels : studentStatusLabels)[status] || '资料整理'
+}
+
+function normalizeAdminTags(row) {
+  const cleanup = row.metadata?.cleanup?.status ? [`cleanup:${row.metadata.cleanup.status}`] : []
+  return [...new Set([...normalizeList(row.adminTags), ...normalizeList(row.flags), ...cleanup])]
+}
+
+function normalizeMaterials(value) {
+  if (!Array.isArray(value)) return []
+  return value
+    .map((item, index) => {
+      if (typeof item === 'string') return { title: `阅读材料 ${index + 1}`, content: item }
+      return {
+        title: item?.title || `阅读材料 ${index + 1}`,
+        content: item?.content || item?.text || '',
+      }
+    })
+    .filter((item) => item.content.trim().length > 0)
+}
+
+function splitChineseReadingPrompt(subject, prompt) {
+  const text = String(prompt || '').trim()
+  if (subject !== 'chinese' || !text || !/(阅读|材料)/.test(text)) {
+    return { materials: [], stem: text }
+  }
+  const markers = ['\n下列', '\n请', '\n（1）', '\n(1)', '\n1．', '\n1.', '\n第1题']
+  const splitAt = markers
+    .map((marker) => text.indexOf(marker))
+    .filter((index) => index > 20)
+    .sort((left, right) => left - right)[0]
+  if (!splitAt) return { materials: [], stem: text }
+  const material = text.slice(0, splitAt).trim()
+  const stem = text.slice(splitAt).trim()
+  if (material.length < 20 || !stem) return { materials: [], stem: text }
+  return { materials: [{ title: '阅读材料', content: material }], stem }
+}
+
+function fallbackQuestionType(question) {
+  const raw = question?.questionTypeLabel || question?.questionType || question?.type || ''
+  if (hasChineseText(raw)) return raw
+  const prompt = question?.prompt || ''
+  if (question?.subject === 'chinese') {
+    if (prompt.includes('作文') || prompt.includes('写作')) return '写作题'
+    if (prompt.includes('文言文')) return '文言文阅读'
+    if (prompt.includes('阅读') || prompt.includes('材料')) return '阅读理解'
+  }
+  if (/A[.．、]/.test(prompt)) return '选择题'
+  if (prompt.includes('证明') || prompt.includes('求')) return '解答题'
+  return '综合题'
+}
+
 function normalizeDbQuestion(row) {
   const subject = subjects.find((item) => item.key === row.subjectKey)
   const questionNumber = row.questionNumber ? `第 ${row.questionNumber} 题` : '题目'
-  const sourceType = row.sourceType || '结构化题库'
+  const sourceType = row.sourceTypeLabel || row.sourceType || '结构化题库'
   const difficulty = difficultyLabels[row.difficulty] ? row.difficulty : 'medium'
   const prompt = row.prompt || ''
+  const materials = normalizeMaterials(row.materials)
+  const stem = row.stem || prompt
+  const questionTypeLabel =
+    row.questionTypeLabel || fallbackQuestionType({ ...row, subject: row.subjectKey, prompt })
   return {
     id: row.questionKey || `gaokao-db-${row.id}`,
     year: row.year || '2026',
@@ -202,12 +287,18 @@ function normalizeDbQuestion(row) {
     difficulty,
     title: `${row.year || '2026'} ${row.subjectName || subject?.name || row.subjectKey || '高考'} ${questionNumber}`,
     prompt,
+    stem,
+    materials,
     answer: row.answer || '答案待补全',
     solution: normalizeList(row.solution),
     flags: normalizeList(row.flags),
     quality: row.quality,
     questionType: row.questionType,
-    type: row.questionType,
+    questionTypeLabel,
+    type: questionTypeLabel,
+    displayTags: normalizeDisplayTags(row),
+    adminTags: normalizeAdminTags(row),
+    isHidden: Boolean(row.isHidden || row.metadata?.cleanup?.status === 'soft_deleted'),
     questionKey: row.questionKey,
     metadata: row.metadata || {},
     images: normalizeQuestionImages(row.metadata?.assets?.images || row.images),
@@ -223,7 +314,8 @@ function dbQuestionToExtractedItem(question) {
   const file = {
     year: question.year,
     subject: question.subject,
-    subjectName: question.subjectName || subjects.find((item) => item.key === question.subject)?.name,
+    subjectName:
+      question.subjectName || subjects.find((item) => item.key === question.subject)?.name,
     source,
     relativePath: metadata.relativePath || metadata.sourcePath || '',
     analysisSource: metadata.analysisSource || metadata.answerSource || '',
@@ -233,7 +325,8 @@ function dbQuestionToExtractedItem(question) {
     question: {
       ...question,
       number: question.number || question.questionNumber || '?',
-      type: question.questionType || question.type || question.sourceType,
+      type:
+        question.questionTypeLabel || question.questionType || question.type || question.sourceType,
       quality: question.quality || 'review',
     },
   }
@@ -244,7 +337,7 @@ function dbQuestionToOcrQuestion(question) {
   return {
     ...question,
     number: question.number || question.questionNumber || '?',
-    type: question.questionType || question.type || 'OCR',
+    type: question.questionTypeLabel || question.questionType || question.type || 'OCR',
     averageScore: metadata.averageScore || metadata.confidence || 0,
     quality: question.quality || 'review',
   }
@@ -908,7 +1001,7 @@ function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }
   )
 }
 
-function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }) {
+function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId, isAdmin = false }) {
   const [open, setOpen] = useState(false)
   const knowledgeIds = getQuestionKnowledgeIds(question)
   const knowledgeLabels = knowledgeIds.map(
@@ -917,6 +1010,17 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }
   const solution = Array.isArray(question.solution) ? question.solution : []
   const detailedSolution = buildDetailedSolutionSteps(question, knowledgeLabels)
   const difficultyLabel = difficultyLabels[question.difficulty] || question.difficulty || '待标注'
+  const questionTypeLabel = question.questionTypeLabel || fallbackQuestionType(question)
+  const sourceDisplay = visibleSourceLabel(question.sourceType)
+  const displayTags = normalizeList(question.displayTags).filter(hasChineseText)
+  const adminTags = normalizeList(question.adminTags)
+  const normalizedMaterials = normalizeMaterials(question.materials)
+  const promptSource = question.stem || question.prompt
+  const readingSplit = normalizedMaterials.length
+    ? { materials: normalizedMaterials, stem: promptSource }
+    : splitChineseReadingPrompt(question.subject, promptSource)
+  const materials = readingSplit.materials
+  const promptText = readingSplit.stem
 
   return (
     <article
@@ -925,21 +1029,42 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }
       className={`gaokao-question ${isDone ? 'is-complete' : ''} ${attempt ? `attempt-${attempt.result}` : ''}`}
     >
       <div className="question-topline">
+        <span className="question-type-badge">{questionTypeLabel}</span>
         <span>{question.year}</span>
         <span>{subjects.find((item) => item.key === question.subject)?.name}</span>
-        <span>{question.sourceType}</span>
+        <span>{sourceDisplay}</span>
         <span className={`difficulty difficulty-${question.difficulty || 'unknown'}`}>
           {difficultyLabel}
         </span>
       </div>
       <h3>{question.title}</h3>
+      {displayTags.length > 0 && (
+        <div className="question-display-tags">
+          {displayTags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
+      )}
+      {isAdmin && adminTags.length > 0 && (
+        <div className="question-admin-tags" aria-label="管理员审计标签">
+          {adminTags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
+      )}
       <div className="knowledge-tags">
         {knowledgeLabels.map((label) => (
           <span key={label}>{label}</span>
         ))}
       </div>
-      <pre className="question-prompt">{question.prompt}</pre>
-      <QuestionImages images={question.images} />
+      {materials.map((material, index) => (
+        <section className="reading-material" key={`${question.id}-material-${index}`}>
+          <strong>{material.title}</strong>
+          <pre>{material.content}</pre>
+        </section>
+      ))}
+      <pre className="question-prompt">{promptText}</pre>
+      <QuestionImages images={question.images} isAdmin={isAdmin} />
       <div className="question-actions">
         <button
           type="button"
@@ -1012,17 +1137,20 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }
   )
 }
 
-function QuestionImages({ images }) {
+function QuestionImages({ images, isAdmin = false }) {
   const normalizedImages = normalizeQuestionImages(images)
   if (normalizedImages.length === 0) return null
   return (
     <div className="question-images" aria-label="题目配图">
       {normalizedImages.map((image, index) => (
-        <figure key={`${image.url}-${image.mediaPath || image.page || index}`} className="question-image">
+        <figure
+          key={`${image.url}-${image.mediaPath || image.page || index}`}
+          className="question-image"
+        >
           <img src={image.url} alt={image.alt} loading="lazy" decoding="async" />
           <figcaption>
             <span>{image.caption}</span>
-            {image.needsReview && <em>待复核</em>}
+            {image.needsReview && isAdmin && <em>待复核</em>}
           </figcaption>
         </figure>
       ))}
@@ -1030,9 +1158,10 @@ function QuestionImages({ images }) {
   )
 }
 
-function ExtractedQuestionCard({ file, question }) {
+function ExtractedQuestionCard({ file, question, isAdmin = false }) {
   const displayQuestion = applyAnswerOverride(question)
   const [open, setOpen] = useState(false)
+  const readingSplit = splitChineseReadingPrompt(file.subject, displayQuestion.prompt)
   const flags = displayQuestion.flags || []
   const hasAnswer = Boolean(displayQuestion.answer)
   const hasSolution = Array.isArray(displayQuestion.solution) && displayQuestion.solution.length > 0
@@ -1041,16 +1170,25 @@ function ExtractedQuestionCard({ file, question }) {
   return (
     <article className={`extract-card extract-${question.quality}`}>
       <div className="question-topline">
+        <span className="question-type-badge">{fallbackQuestionType(displayQuestion)}</span>
         <span>{file.year}</span>
         <span>{file.subjectName}</span>
-        <span>{extractedQualityLabels[question.quality] || '待整理'}</span>
+        {isAdmin && <span>{extractedQualityLabels[question.quality] || '待整理'}</span>}
       </div>
       <h3>
         {file.source} · 第 {question.number} 题
       </h3>
-      {file.analysisSource && <p className="analysis-source">解析来源：{file.analysisSource}</p>}
-      <pre className="question-prompt">{displayQuestion.prompt}</pre>
-      <QuestionImages images={displayQuestion.images} />
+      {isAdmin && file.analysisSource && (
+        <p className="analysis-source">解析来源：{file.analysisSource}</p>
+      )}
+      {readingSplit.materials.map((material, index) => (
+        <section className="reading-material" key={`${question.number}-extract-material-${index}`}>
+          <strong>{material.title}</strong>
+          <pre>{material.content}</pre>
+        </section>
+      ))}
+      <pre className="question-prompt">{readingSplit.stem}</pre>
+      <QuestionImages images={displayQuestion.images} isAdmin={isAdmin} />
       {hasExplanation && (
         <>
           <div className="question-actions extract-actions">
@@ -1080,23 +1218,25 @@ function ExtractedQuestionCard({ file, question }) {
           )}
         </>
       )}
-      {flags.length > 0 && (
+      {isAdmin && flags.length > 0 && (
         <div className="extract-flags">
           {flags.map((flag) => (
             <span key={flag}>{flag}</span>
           ))}
         </div>
       )}
-      <p className="extract-note">
-        {question.quality === 'matched'
-          ? '题解状态：已从解析卷自动匹配答案与解析，仍需人工复核公式、图片和表格。'
-          : '题解状态：需人工核验。含公式或图表的内容可能在 DOCX 抽取时缺失，暂不作为正式题库条目。'}
-      </p>
+      {isAdmin && (
+        <p className="extract-note">
+          {question.quality === 'matched'
+            ? '题解状态：已从解析卷自动匹配答案与解析，仍需人工复核公式、图片和表格。'
+            : '题解状态：需人工核验。含公式或图表的内容可能在 DOCX 抽取时缺失，暂不作为正式题库条目。'}
+        </p>
+      )}
     </article>
   )
 }
 
-function OcrQuestionCard({ question }) {
+function OcrQuestionCard({ question, isAdmin = false }) {
   const displayQuestion = applyAnswerOverride(question, {
     dataset: 'jiangsu-gaokao-ocr.json',
     source: ocrQuestions.source?.filename,
@@ -1111,14 +1251,14 @@ function OcrQuestionCard({ question }) {
   return (
     <article className="ocr-card">
       <div className="question-topline">
+        <span className="question-type-badge">{fallbackQuestionType(displayQuestion)}</span>
         <span>2026</span>
         <span>江苏数学</span>
-        <span>{question.type}</span>
-        <span>置信度 {score}%</span>
+        {isAdmin && <span>置信度 {score}%</span>}
       </div>
       <h3>扫描卷 OCR · 第 {question.number} 题</h3>
       <pre className="question-prompt">{displayQuestion.prompt}</pre>
-      <QuestionImages images={displayQuestion.images} />
+      <QuestionImages images={displayQuestion.images} isAdmin={isAdmin} />
       {hasExplanation && (
         <>
           <div className="question-actions extract-actions">
@@ -1148,15 +1288,19 @@ function OcrQuestionCard({ question }) {
           )}
         </>
       )}
-      <div className="extract-flags">
-        {(displayQuestion.flags || []).map((flag) => (
-          <span key={flag}>{flag}</span>
-        ))}
-      </div>
-      <p className="extract-note">
-        该题来自 2026 江苏数学 PDF
-        扫描识别。题干顺序已按双栏版面整理，公式、根号、上下标和图形信息仍需人工复核。
-      </p>
+      {isAdmin && (
+        <>
+          <div className="extract-flags">
+            {(displayQuestion.flags || []).map((flag) => (
+              <span key={flag}>{flag}</span>
+            ))}
+          </div>
+          <p className="extract-note">
+            该题来自 2026 江苏数学 PDF
+            扫描识别。题干顺序已按双栏版面整理，公式、根号、上下标和图形信息仍需人工复核。
+          </p>
+        </>
+      )}
     </article>
   )
 }
@@ -1266,6 +1410,7 @@ export default function GaokaoPage() {
   })
   const [accountWeaknessState, setAccountWeaknessState] = useState({ userId: null, rows: [] })
   const { user, syncStudyEvent, syncGaokaoAttempt, fetchGaokaoWeaknesses } = useAuth()
+  const isAdmin = isAdminUser(user)
   const accountWeaknesses =
     accountWeaknessState.userId === user?.id ? accountWeaknessState.rows : []
 
@@ -1279,6 +1424,7 @@ export default function GaokaoPage() {
       if (query.sourceType) params.set('sourceType', query.sourceType)
       if (query.hasSolution !== undefined) params.set('hasSolution', String(query.hasSolution))
       if (query.solutionStatus) params.set('solutionStatus', query.solutionStatus)
+      if (isAdmin) params.set('includeHidden', 'true')
       if (cursor) params.set('cursor', cursor)
 
       const response = await fetch(`${API_BASE}/api/gaokao/questions?${params.toString()}`, {
@@ -1288,7 +1434,7 @@ export default function GaokaoPage() {
       if (!response.ok) throw new Error(`request_failed_${response.status}`)
       return response.json()
     },
-    [questionQuery],
+    [isAdmin, questionQuery],
   )
 
   const loadMoreQuestions = useCallback(() => {
@@ -1417,7 +1563,12 @@ export default function GaokaoPage() {
       })
       .catch((error) => {
         if (error.name === 'AbortError') return
-        setBackendMetaState({ status: 'fallback', summary: null, subjects: [], error: error.message })
+        setBackendMetaState({
+          status: 'fallback',
+          summary: null,
+          subjects: [],
+          error: error.message,
+        })
       })
     return () => controller.abort()
   }, [])
@@ -1741,7 +1892,7 @@ export default function GaokaoPage() {
       <div className="gaokao-page">
         <section className="gaokao-section">
           <div className="section-heading">
-            <span>Not Found</span>
+            <span>路径提示</span>
             <h2>学科未找到</h2>
           </div>
           <p className="extract-intro">当前路径没有对应的高考学科，请返回九科总览重新选择。</p>
@@ -1792,7 +1943,7 @@ export default function GaokaoPage() {
 
         <section id="subject-trend" className="gaokao-section">
           <div className="section-heading">
-            <span>Trend</span>
+            <span>趋势洞察</span>
             <h2>命题趋势与高频能力</h2>
           </div>
           <div className="subject-focus-grid">
@@ -1817,7 +1968,7 @@ export default function GaokaoPage() {
 
         <section id="subject-knowledge" className="gaokao-section">
           <div className="section-heading">
-            <span>Knowledge Graph</span>
+            <span>知识网络</span>
             <h2>{activeSubject.name}知识图谱与薄弱点</h2>
           </div>
           <KnowledgeGraph
@@ -1842,7 +1993,7 @@ export default function GaokaoPage() {
 
         <section id="subject-years" className="gaokao-section">
           <div className="section-heading">
-            <span>Years</span>
+            <span>年份资料</span>
             <h2>年份资料</h2>
           </div>
           <div className="subject-year-grid">
@@ -1855,7 +2006,7 @@ export default function GaokaoPage() {
         {activeSubject.key === 'math' && (
           <section id="subject-gene" className="gaokao-section">
             <div className="section-heading">
-              <span>Question Gene</span>
+              <span>命题基因</span>
               <h2>数学出题基因与 2026 OCR 样本</h2>
             </div>
             <div className="prep-grid">
@@ -1877,6 +2028,7 @@ export default function GaokaoPage() {
                 <OcrQuestionCard
                   key={questionRenderKey(question, index, 'subject-ocr')}
                   question={question}
+                  isAdmin={isAdmin}
                 />
               ))}
             </div>
@@ -1885,7 +2037,7 @@ export default function GaokaoPage() {
 
         <section id="subject-extracts" className="gaokao-section">
           <div className="section-heading">
-            <span>Extracted</span>
+            <span>真实样本</span>
             <h2>结构化题库</h2>
           </div>
           {subjectExtractedSamples.length > 0 ? (
@@ -1895,19 +2047,20 @@ export default function GaokaoPage() {
                   key={`${file.year}-${file.subject}-${file.source}-${question.number}-${index}`}
                   file={file}
                   question={question}
+                  isAdmin={isAdmin}
                 />
               ))}
             </div>
           ) : (
             <p className="extract-intro">
-              该科目的可展示 DOCX 样本仍在清洗中；旧 DOC、扫描件或特殊排版会继续标为待转换/待复核。
+              该科目的可展示 DOCX 样本仍在清洗中；旧 DOC、扫描件或特殊排版会继续留在后台清理队列。
             </p>
           )}
         </section>
 
         <section id="subject-practice" className="gaokao-section">
           <div className="section-heading">
-            <span>Practice</span>
+            <span>专项训练</span>
             <h2>扩展训练</h2>
           </div>
           {subjectPracticeQuestions.length > 0 ? (
@@ -1928,6 +2081,7 @@ export default function GaokaoPage() {
                     onDone={completeQuestion}
                     attempt={attempts[question.id]}
                     onAttempt={recordAttempt}
+                    isAdmin={isAdmin}
                   />
                 ))}
               </div>
@@ -1955,7 +2109,7 @@ export default function GaokaoPage() {
 
         <section id="subject-advice" className="gaokao-section">
           <div className="section-heading">
-            <span>Advice</span>
+            <span>复习建议</span>
             <h2>复习建议</h2>
           </div>
           <div className="subject-advice">{activeSubject.advice}</div>
@@ -2010,7 +2164,7 @@ export default function GaokaoPage() {
 
       <section id="coverage" className="gaokao-section">
         <div className="section-heading">
-          <span>Coverage</span>
+          <span>资料矩阵</span>
           <h2>十年资料矩阵</h2>
         </div>
         <div className="coverage-strip">
@@ -2073,7 +2227,9 @@ export default function GaokaoPage() {
             <article key={item.year} className={`year-card year-${item.status}`}>
               <div className="year-card-head">
                 <strong>{item.year}</strong>
-                <span className={statusClass(item.status)}>{statusLabels[item.status]}</span>
+                <span className={statusClass(item.status)}>
+                  {sourceStatusLabel(item.status, isAdmin)}
+                </span>
               </div>
               <h3>{item.paper}</h3>
               <p>{item.subjects}</p>
@@ -2085,7 +2241,7 @@ export default function GaokaoPage() {
 
       <section id="subjects" className="gaokao-section">
         <div className="section-heading">
-          <span>Subjects</span>
+          <span>九科总览</span>
           <h2>九科命题趋势</h2>
         </div>
         <div className="subject-grid">
@@ -2122,7 +2278,7 @@ export default function GaokaoPage() {
 
       <section id="gene" className="gaokao-section">
         <div className="section-heading">
-          <span>Question Gene</span>
+          <span>命题基因</span>
           <h2>出题基因与迁移规则</h2>
         </div>
         <div className="prep-grid">
@@ -2141,7 +2297,7 @@ export default function GaokaoPage() {
 
       <section id="knowledge-map" className="gaokao-section">
         <div className="section-heading">
-          <span>Knowledge Graph</span>
+          <span>知识网络</span>
           <h2>九科知识图谱与薄弱点推荐</h2>
         </div>
         <KnowledgeGraph
@@ -2163,30 +2319,33 @@ export default function GaokaoPage() {
 
       <section id="ocr" className="gaokao-section">
         <div className="section-heading">
-          <span>OCR Scan</span>
+          <span>扫描样本</span>
           <h2>2026 江苏数学扫描卷 OCR</h2>
         </div>
         <div className="extract-summary">
           <span>PDF 页 {ocrSummary.pdfPages} 页</span>
           <span>OCR 行 {ocrSummary.ocrLines} 行</span>
           <span>拆分题目 {ocrSummary.questions} 题</span>
-          <span>全部待复核 {ocrSummary.reviewQuestions} 题</span>
+          {isAdmin && <span>全部待复核 {ocrSummary.reviewQuestions} 题</span>}
         </div>
         <p className="extract-intro">
           这部分来自本地 2026 江苏数学扫描 PDF。页面展示的是 OCR
-          题干，用于分析题型分布、情境包装和压轴结构；
-          涉及公式、图形、选项排版的地方先标记为待复核，不混入正式题解练习。
+          题干，用于分析题型分布、情境包装和压轴结构；正式训练仍优先使用后端已清洗题库。
         </p>
         <div className="ocr-grid">
           {ocrSampleQuestions.map((question, index) => (
-            <OcrQuestionCard key={questionRenderKey(question, index, 'ocr')} question={question} />
+            <OcrQuestionCard
+              key={questionRenderKey(question, index, 'ocr')}
+              question={question}
+              isAdmin={isAdmin}
+            />
           ))}
         </div>
       </section>
 
       <section id="extracts" className="gaokao-section">
         <div className="section-heading">
-          <span>Extracted Sources</span>
+          <span>真实来源</span>
           <h2>真实题干结构化题库</h2>
         </div>
         <div className="extract-summary">
@@ -2194,7 +2353,7 @@ export default function GaokaoPage() {
           <span>抽取题干 {combinedExtractSummary.questions} 题</span>
           <span>已匹配解析 {combinedExtractSummary.matchedQuestions ?? 0} 题</span>
           <span>本地补答 {combinedExtractSummary.answerOverrides} 题</span>
-          <span>需核验 {combinedExtractSummary.reviewQuestions} 题</span>
+          {isAdmin && <span>需核验 {combinedExtractSummary.reviewQuestions} 题</span>}
         </div>
         <p className="extract-intro">
           这一栏来自真实 DOCX 与带文本层 PDF 试卷抽取，已合并 2020-2025 江苏/新高考样本、2026
@@ -2208,6 +2367,7 @@ export default function GaokaoPage() {
               key={`${file.year}-${file.subject}-${file.source}-${question.number}-${index}`}
               file={file}
               question={question}
+              isAdmin={isAdmin}
             />
           ))}
         </div>
@@ -2215,7 +2375,7 @@ export default function GaokaoPage() {
 
       <section id="questions" className="gaokao-section">
         <div className="section-heading">
-          <span>Practice</span>
+          <span>专项训练</span>
           <h2>完整题干与详细题解</h2>
         </div>
         <div className="filters">
@@ -2279,6 +2439,7 @@ export default function GaokaoPage() {
               onDone={completeQuestion}
               attempt={attempts[question.id]}
               onAttempt={recordAttempt}
+              isAdmin={isAdmin}
             />
           ))}
         </div>
@@ -2292,7 +2453,7 @@ export default function GaokaoPage() {
 
       <section id="sources" className="gaokao-section sources-section">
         <div className="section-heading">
-          <span>Sources</span>
+          <span>来源说明</span>
           <h2>来源与处理口径</h2>
         </div>
         <p>
