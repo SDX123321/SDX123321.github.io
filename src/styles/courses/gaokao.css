@@ -774,14 +774,18 @@
 
 .extract-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
+  max-width: 1040px;
+  margin-inline: auto;
 }
 
 .ocr-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
+  max-width: 1040px;
+  margin-inline: auto;
 }
 
 .ocr-card {
@@ -1196,8 +1200,10 @@
 
 .taxonomy-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
+  max-width: 1040px;
+  margin-inline: auto;
 }
 
 .taxonomy-card {
@@ -1349,8 +1355,10 @@
 
 .weakness-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
+  max-width: 1040px;
+  margin-inline: auto;
 }
 
 .weakness-panel article {
@@ -1391,9 +1399,42 @@
 
 .practice-route {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
+  max-width: 1040px;
   margin-bottom: 12px;
+  margin-inline: auto;
+}
+
+.question-load-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  max-width: 1040px;
+  margin: 0 auto 14px;
+  color: var(--text2);
+  font-size: .86rem;
+  font-weight: 700;
+}
+
+.question-load-state button {
+  padding: 8px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  cursor: pointer;
+}
+
+.question-load-state button:disabled {
+  cursor: wait;
+  opacity: .62;
+}
+
+.question-load-error {
+  color: var(--danger);
 }
 
 .practice-route button {

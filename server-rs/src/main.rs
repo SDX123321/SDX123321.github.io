@@ -1,0 +1,922 @@
+use axum::{
+    extract::{Query, State},
+    http::{header, HeaderMap, HeaderValue, Method, StatusCode},
+    response::{IntoResponse, Response},
+    routing::{get, post},
+    Json, Router,
+};
+use bcrypt::{hash as bcrypt_hash, verify as bcrypt_verify, DEFAULT_COST};
+use chrono::{DateTime, Utc};
+use deadpool_redis::{redis::AsyncCommands, Config as RedisConfig, Pool as RedisPool, Runtime};
+use rand::{rngs::OsRng, RngCore};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde_json::{json, Value};
+use sha2::{Digest, Sha256};
+use sqlx::{postgres::PgPoolOptions, PgPool, Row};
+use std::{env, net::SocketAddr, sync::Arc};
+use tower_http::cors::{AllowOrigin, CorsLayer};
+use uuid::Uuid;
+
+const SESSION_COOKIE: &str = "exam_review_session";
+const SESSION_DAYS: i64 = 30;
+const CACHE_SECONDS: u64 = 60;
+
+type SharedState = Arc<AppState>;
+
+#[derive(Clone)]
+struct AppState {
+    db: PgPool,
+    redis: Option<RedisPool>,
+}
+
+#[derive(Debug)]
+struct ApiError {
+    status: StatusCode,
+    code: &'static str,
+}
+
+impl ApiError {
+    fn new(status: StatusCode, code: &'static str) -> Self {
+        Self { status, code }
+    }
+    fn bad_request() -> Self {
+        Self::new(StatusCode::BAD_REQUEST, "invalid_input")
+    }
+    fn unauthorized() -> Self {
+        Self::new(StatusCode::UNAUTHORIZED, "not_authenticated")
+    }
+    fn server() -> Self {
+        Self::new(StatusCode::INTERNAL_SERVER_ERROR, "server_error")
+    }
+}
+
+impl IntoResponse for ApiError {
+    fn into_response(self) -> Response {
+        (self.status, Json(json!({ "error": self.code }))).into_response()
+    }
+}
+
+impl From<sqlx::Error> for ApiError {
+    fn from(error: sqlx::Error) -> Self {
+        eprintln!("database error: {error}");
+        ApiError::server()
+    }
+}
+
+#[derive(Serialize)]
+struct UserOut {
+    id: Uuid,
+    username: String,
+    #[serde(rename = "created_at")]
+    created_at: DateTime<Utc>,
+    #[serde(rename = "last_login_at")]
+    last_login_at: Option<DateTime<Utc>>,
+}
+
+#[derive(Clone)]
+struct UserSession {
+    id: Uuid,
+    username: String,
+    created_at: DateTime<Utc>,
+    last_login_at: Option<DateTime<Utc>>,
+}
+
+impl From<UserSession> for UserOut {
+    fn from(user: UserSession) -> Self {
+        Self {
+            id: user.id,
+            username: user.username,
+            created_at: user.created_at,
+            last_login_at: user.last_login_at,
+        }
+    }
+}
+
+#[derive(Deserialize)]
+struct AuthInput {
+    username: String,
+    password: String,
+}
+
+#[derive(Deserialize, Serialize, Default)]
+struct ProgressSnapshot {
+    #[serde(default, rename = "totalStudySeconds")]
+    total_study_seconds: i32,
+    #[serde(default, rename = "chapterDoneCount")]
+    chapter_done_count: i32,
+    #[serde(default, rename = "wrongCount")]
+    wrong_count: i32,
+    #[serde(default, rename = "practiceDoneCount")]
+    practice_done_count: i32,
+    #[serde(default, rename = "masteryItemCount")]
+    mastery_item_count: i32,
+    #[serde(default, rename = "scrollPositionCount")]
+    scroll_position_count: i32,
+    #[serde(default, rename = "recentPaths")]
+    recent_paths: Vec<String>,
+}
+
+#[derive(Deserialize)]
+struct ImportInput {
+    #[serde(rename = "importId")]
+    import_id: String,
+    snapshot: ProgressSnapshot,
+}
+
+#[derive(Deserialize)]
+struct StudyEventInput {
+    #[serde(rename = "eventType")]
+    event_type: String,
+    course: Option<String>,
+    subject: Option<String>,
+    #[serde(rename = "pagePath")]
+    page_path: Option<String>,
+    #[serde(rename = "objectId")]
+    object_id: Option<String>,
+    #[serde(default)]
+    payload: Value,
+}
+
+#[derive(Deserialize)]
+struct GaokaoAttemptInput {
+    #[serde(rename = "questionKey")]
+    question_key: String,
+    #[serde(rename = "subjectKey")]
+    subject_key: Option<String>,
+    result: String,
+    #[serde(default, rename = "knowledgeNodes")]
+    knowledge_nodes: Vec<String>,
+    #[serde(rename = "promptSnapshot")]
+    prompt_snapshot: Option<String>,
+    #[serde(rename = "answerSnapshot")]
+    answer_snapshot: Option<String>,
+    #[serde(rename = "sourceType")]
+    source_type: Option<String>,
+    #[serde(default)]
+    metadata: Value,
+}
+
+#[derive(Deserialize, Serialize)]
+struct QuestionParams {
+    subject: Option<String>,
+    year: Option<i32>,
+    difficulty: Option<String>,
+    quality: Option<String>,
+    #[serde(rename = "sourceType")]
+    source_type: Option<String>,
+    #[serde(rename = "hasSolution")]
+    has_solution: Option<bool>,
+    #[serde(rename = "solutionStatus")]
+    solution_status: Option<String>,
+    cursor: Option<String>,
+    limit: Option<i64>,
+}
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    dotenvy::dotenv().ok();
+    let database_url = env::var("DATABASE_URL")
+        .unwrap_or_else(|_| "postgres://postgres:postgres@127.0.0.1:5432/exam_review".to_string());
+    let db = PgPoolOptions::new()
+        .max_connections(
+            env::var("DATABASE_POOL_SIZE")
+                .ok()
+                .and_then(|v| v.parse().ok())
+                .unwrap_or(10),
+        )
+        .connect(&database_url)
+        .await?;
+    ensure_schema(&db).await?;
+
+    let redis = env::var("REDIS_URL").ok().and_then(|url| {
+        let cfg = RedisConfig {
+            url: Some(url),
+            ..Default::default()
+        };
+        cfg.create_pool(Some(Runtime::Tokio1)).ok()
+    });
+
+    let state = Arc::new(AppState { db, redis });
+    let client_origin =
+        env::var("CLIENT_ORIGIN").unwrap_or_else(|_| "http://127.0.0.1:4173".to_string());
+    let allow_origin = HeaderValue::from_str(&client_origin)
+        .map(AllowOrigin::exact)
+        .unwrap_or_else(|_| AllowOrigin::any());
+    let cors = CorsLayer::new()
+        .allow_origin(allow_origin)
+        .allow_credentials(true)
+        .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
+        .allow_headers([header::CONTENT_TYPE]);
+
+    let app = Router::new()
+        .route("/api/gaokao/summary", get(gaokao_summary))
+        .route("/api/gaokao/subjects", get(gaokao_subjects))
+        .route("/api/gaokao/questions", get(gaokao_questions))
+        .route("/api/gaokao/attempts", post(gaokao_attempts))
+        .route("/api/gaokao/weaknesses", get(gaokao_weaknesses))
+        .route("/api/auth/register", post(register))
+        .route("/api/auth/login", post(login))
+        .route("/api/auth/logout", post(logout))
+        .route("/api/me", get(me))
+        .route("/api/me/stats", get(me_stats))
+        .route("/api/me/import-local", post(import_local))
+        .route("/api/study/event", post(study_event))
+        .layer(cors)
+        .with_state(state);
+
+    let port = env::var("API_PORT")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(8787);
+    let addr = SocketAddr::from(([127, 0, 0, 1], port));
+    println!("Rust API listening on http://{addr}");
+    let listener = tokio::net::TcpListener::bind(addr).await?;
+    axum::serve(listener, app).await?;
+    Ok(())
+}
+
+async fn cache_get<T: DeserializeOwned>(redis: &Option<RedisPool>, key: &str) -> Option<T> {
+    let pool = redis.as_ref()?;
+    let mut conn = pool.get().await.ok()?;
+    let raw: String = conn.get(key).await.ok()?;
+    serde_json::from_str(&raw).ok()
+}
+
+async fn cache_set<T: Serialize>(redis: &Option<RedisPool>, key: &str, value: &T) {
+    let Some(pool) = redis else { return };
+    let Ok(mut conn) = pool.get().await else {
+        return;
+    };
+    let Ok(raw) = serde_json::to_string(value) else {
+        return;
+    };
+    let _: Result<(), _> = conn.set_ex(key, raw, CACHE_SECONDS).await;
+}
+
+fn hash_token(token: &str) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(token.as_bytes());
+    hex::encode(hasher.finalize())
+}
+
+fn new_token() -> String {
+    let mut bytes = [0u8; 32];
+    OsRng.fill_bytes(&mut bytes);
+    hex::encode(bytes)
+}
+
+fn parse_cookie(headers: &HeaderMap, name: &str) -> Option<String> {
+    let raw = headers.get(header::COOKIE)?.to_str().ok()?;
+    raw.split(';').find_map(|part| {
+        let mut pieces = part.trim().splitn(2, '=');
+        let key = pieces.next()?.trim();
+        let value = pieces.next()?.trim();
+        (key == name).then(|| value.to_string())
+    })
+}
+
+fn session_cookie(token: &str) -> String {
+    format!(
+        "{SESSION_COOKIE}={token}; Path=/; Max-Age={}; HttpOnly; SameSite=Lax",
+        SESSION_DAYS * 24 * 60 * 60
+    )
+}
+
+fn clear_session_cookie() -> String {
+    format!("{SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax")
+}
+
+fn validate_auth(input: &AuthInput) -> bool {
+    let username = input.username.trim();
+    let user_ok = (3..=32).contains(&username.chars().count())
+        && username.chars().all(|ch| {
+            ch.is_ascii_alphanumeric()
+                || ch == '_'
+                || ch == '-'
+                || ('\u{4e00}'..='\u{9fa5}').contains(&ch)
+        });
+    let pass_ok = (6..=100).contains(&input.password.chars().count());
+    user_ok && pass_ok
+}
+
+async fn auth_user(state: &SharedState, headers: &HeaderMap) -> Result<UserSession, ApiError> {
+    let token = parse_cookie(headers, SESSION_COOKIE).ok_or_else(ApiError::unauthorized)?;
+    let token_hash = hash_token(&token);
+    let row = sqlx::query(
+        r#"SELECT users.id, users.username, users.created_at, users.last_login_at
+           FROM sessions JOIN users ON users.id = sessions.user_id
+           WHERE sessions.token_hash = $1 AND sessions.expires_at > now()"#,
+    )
+    .bind(token_hash)
+    .fetch_optional(&state.db)
+    .await?;
+    let row = row.ok_or_else(ApiError::unauthorized)?;
+    Ok(UserSession {
+        id: row.try_get("id")?,
+        username: row.try_get("username")?,
+        created_at: row.try_get("created_at")?,
+        last_login_at: row.try_get("last_login_at")?,
+    })
+}
+
+async fn create_session(state: &SharedState, user_id: Uuid) -> Result<String, ApiError> {
+    let token = new_token();
+    sqlx::query("INSERT INTO sessions (user_id, token_hash, expires_at) VALUES ($1, $2, now() + ($3 || ' days')::interval)")
+        .bind(user_id)
+        .bind(hash_token(&token))
+        .bind(SESSION_DAYS)
+        .execute(&state.db)
+        .await?;
+    Ok(token)
+}
+
+async fn get_stats(db: &PgPool, user_id: Uuid) -> Result<Value, ApiError> {
+    let row = sqlx::query(
+        r#"SELECT total_study_seconds, chapter_done_count, wrong_count, practice_done_count,
+                  mastery_item_count, scroll_position_count, recent_paths, current_streak_days,
+                  last_activity_at, updated_at
+           FROM study_snapshots WHERE user_id = $1"#,
+    )
+    .bind(user_id)
+    .fetch_optional(db)
+    .await?;
+    if let Some(row) = row {
+        Ok(json!({
+            "totalStudySeconds": row.try_get::<i32, _>("total_study_seconds")?,
+            "chapterDoneCount": row.try_get::<i32, _>("chapter_done_count")?,
+            "wrongCount": row.try_get::<i32, _>("wrong_count")?,
+            "practiceDoneCount": row.try_get::<i32, _>("practice_done_count")?,
+            "masteryItemCount": row.try_get::<i32, _>("mastery_item_count")?,
+            "scrollPositionCount": row.try_get::<i32, _>("scroll_position_count")?,
+            "recentPaths": row.try_get::<Value, _>("recent_paths")?,
+            "currentStreakDays": row.try_get::<i32, _>("current_streak_days")?,
+            "lastActivityAt": row.try_get::<Option<DateTime<Utc>>, _>("last_activity_at")?,
+            "updatedAt": row.try_get::<DateTime<Utc>, _>("updated_at")?,
+        }))
+    } else {
+        Ok(json!({
+            "totalStudySeconds": 0, "chapterDoneCount": 0, "wrongCount": 0,
+            "practiceDoneCount": 0, "masteryItemCount": 0, "scrollPositionCount": 0,
+            "recentPaths": [], "currentStreakDays": 0, "lastActivityAt": null, "updatedAt": null,
+        }))
+    }
+}
+
+fn recent_paths(existing: &Value, incoming: &[String]) -> Value {
+    let mut paths = Vec::<String>::new();
+    for path in incoming.iter().filter(|item| !item.is_empty()) {
+        if !paths.contains(path) {
+            paths.push(path.clone());
+        }
+    }
+    if let Some(items) = existing.as_array() {
+        for item in items.iter().filter_map(|item| item.as_str()) {
+            let path = item.to_string();
+            if !paths.contains(&path) {
+                paths.push(path);
+            }
+        }
+    }
+    paths.truncate(10);
+    json!(paths)
+}
+
+async fn upsert_snapshot(
+    db: &PgPool,
+    user_id: Uuid,
+    snapshot: &ProgressSnapshot,
+    mode: &str,
+) -> Result<(), ApiError> {
+    let current = get_stats(db, user_id).await?;
+    let current_num = |key: &str| current.get(key).and_then(Value::as_i64).unwrap_or(0) as i32;
+    let next_total = if mode == "add" {
+        current_num("totalStudySeconds") + snapshot.total_study_seconds
+    } else {
+        current_num("totalStudySeconds").max(snapshot.total_study_seconds)
+    };
+    let next_recent = recent_paths(
+        current.get("recentPaths").unwrap_or(&json!([])),
+        &snapshot.recent_paths,
+    );
+    sqlx::query(
+        r#"INSERT INTO study_snapshots (
+             user_id, total_study_seconds, chapter_done_count, wrong_count, practice_done_count,
+             mastery_item_count, scroll_position_count, recent_paths, last_activity_at, updated_at
+           ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,now(),now())
+           ON CONFLICT (user_id) DO UPDATE SET
+             total_study_seconds = EXCLUDED.total_study_seconds,
+             chapter_done_count = EXCLUDED.chapter_done_count,
+             wrong_count = EXCLUDED.wrong_count,
+             practice_done_count = EXCLUDED.practice_done_count,
+             mastery_item_count = EXCLUDED.mastery_item_count,
+             scroll_position_count = EXCLUDED.scroll_position_count,
+             recent_paths = EXCLUDED.recent_paths,
+             last_activity_at = now(), updated_at = now()"#,
+    )
+    .bind(user_id)
+    .bind(next_total)
+    .bind(current_num("chapterDoneCount").max(snapshot.chapter_done_count))
+    .bind(current_num("wrongCount").max(snapshot.wrong_count))
+    .bind(current_num("practiceDoneCount").max(snapshot.practice_done_count))
+    .bind(current_num("masteryItemCount").max(snapshot.mastery_item_count))
+    .bind(current_num("scrollPositionCount").max(snapshot.scroll_position_count))
+    .bind(next_recent)
+    .execute(db)
+    .await?;
+    Ok(())
+}
+
+async fn increment_snapshot(
+    db: &PgPool,
+    user_id: Uuid,
+    field: &str,
+    page_path: Option<String>,
+) -> Result<(), ApiError> {
+    let current = get_stats(db, user_id).await?;
+    let mut snapshot = ProgressSnapshot {
+        total_study_seconds: current
+            .get("totalStudySeconds")
+            .and_then(Value::as_i64)
+            .unwrap_or(0) as i32,
+        chapter_done_count: current
+            .get("chapterDoneCount")
+            .and_then(Value::as_i64)
+            .unwrap_or(0) as i32,
+        wrong_count: current
+            .get("wrongCount")
+            .and_then(Value::as_i64)
+            .unwrap_or(0) as i32,
+        practice_done_count: current
+            .get("practiceDoneCount")
+            .and_then(Value::as_i64)
+            .unwrap_or(0) as i32,
+        mastery_item_count: current
+            .get("masteryItemCount")
+            .and_then(Value::as_i64)
+            .unwrap_or(0) as i32,
+        scroll_position_count: current
+            .get("scrollPositionCount")
+            .and_then(Value::as_i64)
+            .unwrap_or(0) as i32,
+        recent_paths: page_path.into_iter().collect(),
+    };
+    match field {
+        "chapter_done_count" => snapshot.chapter_done_count += 1,
+        "wrong_count" => snapshot.wrong_count += 1,
+        "practice_done_count" => snapshot.practice_done_count += 1,
+        _ => {}
+    }
+    upsert_snapshot(db, user_id, &snapshot, "max").await
+}
+
+async fn gaokao_summary(State(state): State<SharedState>) -> Result<Json<Value>, ApiError> {
+    let cache_key = "gaokao:summary:v1";
+    if let Some(value) = cache_get(&state.redis, cache_key).await {
+        return Ok(Json(value));
+    }
+    let profiles: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM gaokao_subject_profiles")
+        .fetch_one(&state.db)
+        .await?;
+    let papers: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM gaokao_papers")
+        .fetch_one(&state.db)
+        .await?;
+    let questions: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM gaokao_questions")
+        .fetch_one(&state.db)
+        .await?;
+    let by_source = rows_to_values(sqlx::query(r#"SELECT source_type AS "sourceType", COUNT(*)::int AS count FROM gaokao_questions GROUP BY source_type ORDER BY source_type"#).fetch_all(&state.db).await?, &["sourceType", "count"])?;
+    let by_quality = rows_to_values(sqlx::query(r#"SELECT quality, COUNT(*)::int AS count FROM gaokao_questions GROUP BY quality ORDER BY quality"#).fetch_all(&state.db).await?, &["quality", "count"])?;
+    let last_import = sqlx::query(r#"SELECT import_key AS "importKey", summary, created_at AS "createdAt" FROM gaokao_import_runs ORDER BY created_at DESC LIMIT 1"#)
+        .fetch_optional(&state.db).await?.map(|row| json!({
+            "importKey": row.try_get::<String, _>("importKey").ok(),
+            "summary": row.try_get::<Value, _>("summary").ok(),
+            "createdAt": row.try_get::<DateTime<Utc>, _>("createdAt").ok(),
+        }));
+    let value = json!({ "subjects": profiles, "papers": papers, "questions": questions, "bySource": by_source, "byQuality": by_quality, "lastImport": last_import });
+    cache_set(&state.redis, cache_key, &value).await;
+    Ok(Json(value))
+}
+
+async fn gaokao_subjects(State(state): State<SharedState>) -> Result<Json<Value>, ApiError> {
+    let cache_key = "gaokao:subjects:v1";
+    if let Some(value) = cache_get(&state.redis, cache_key).await {
+        return Ok(Json(value));
+    }
+    let rows = sqlx::query(
+        r#"SELECT profile.subject_key AS "subjectKey", profile.subject_name AS "subjectName",
+                  profile.accent, profile.icon, profile.route, profile.trend, profile.advice,
+                  profile.high_frequency AS "highFrequency", profile.easy_mistakes AS "easyMistakes",
+                  COALESCE(paper_counts.count, 0)::int AS "paperCount",
+                  COALESCE(question_counts.count, 0)::int AS "questionCount"
+           FROM gaokao_subject_profiles profile
+           LEFT JOIN (SELECT subject_key, COUNT(*) AS count FROM gaokao_papers GROUP BY subject_key) paper_counts ON paper_counts.subject_key = profile.subject_key
+           LEFT JOIN (SELECT subject_key, COUNT(*) AS count FROM gaokao_questions GROUP BY subject_key) question_counts ON question_counts.subject_key = profile.subject_key
+           ORDER BY profile.subject_key"#,
+    ).fetch_all(&state.db).await?;
+    let subjects: Result<Vec<_>, sqlx::Error> = rows
+        .into_iter()
+        .map(|row| {
+            Ok(json!({
+                "subjectKey": row.try_get::<String, _>("subjectKey")?,
+                "subjectName": row.try_get::<String, _>("subjectName")?,
+                "accent": row.try_get::<Option<String>, _>("accent")?,
+                "icon": row.try_get::<Option<String>, _>("icon")?,
+                "route": row.try_get::<Option<String>, _>("route")?,
+                "trend": row.try_get::<Option<String>, _>("trend")?,
+                "advice": row.try_get::<Option<String>, _>("advice")?,
+                "highFrequency": row.try_get::<Value, _>("highFrequency")?,
+                "easyMistakes": row.try_get::<Value, _>("easyMistakes")?,
+                "paperCount": row.try_get::<i32, _>("paperCount")?,
+                "questionCount": row.try_get::<i32, _>("questionCount")?,
+            }))
+        })
+        .collect();
+    let value = json!({ "subjects": subjects? });
+    cache_set(&state.redis, cache_key, &value).await;
+    Ok(Json(value))
+}
+
+async fn gaokao_questions(
+    State(state): State<SharedState>,
+    Query(params): Query<QuestionParams>,
+) -> Result<Json<Value>, ApiError> {
+    let limit = params.limit.unwrap_or(100).clamp(1, 500);
+    let offset = params
+        .cursor
+        .as_deref()
+        .and_then(|value| value.parse::<i64>().ok())
+        .unwrap_or(0)
+        .max(0);
+    let cache_key = format!(
+        "gaokao:questions:v2:{}:{}",
+        offset,
+        serde_json::to_string(&params).unwrap_or_default()
+    );
+    if let Some(value) = cache_get(&state.redis, &cache_key).await {
+        return Ok(Json(value));
+    }
+    let total_count: i64 = sqlx::query_scalar(
+        r#"SELECT COUNT(*) FROM gaokao_questions
+           WHERE ($1::text IS NULL OR subject_key = $1)
+             AND ($2::int IS NULL OR year = $2)
+             AND ($3::text IS NULL OR difficulty = $3)
+             AND ($4::text IS NULL OR quality = $4)
+             AND ($5::text IS NULL OR source_type = $5)
+             AND ($6::bool IS NULL OR (($6 = true AND jsonb_array_length(solution) > 0) OR ($6 = false AND jsonb_array_length(solution) = 0)))
+             AND ($7::text IS NULL OR metadata #>> '{solutionEnrichment,status}' = $7)"#,
+    )
+    .bind(params.subject.as_deref()).bind(params.year).bind(params.difficulty.as_deref())
+    .bind(params.quality.as_deref()).bind(params.source_type.as_deref()).bind(params.has_solution)
+    .bind(params.solution_status.as_deref())
+    .fetch_one(&state.db).await?;
+    let rows = sqlx::query(
+        r#"SELECT id, question_key AS "questionKey", year, subject_key AS "subjectKey",
+                  subject_name AS "subjectName", question_number AS "questionNumber",
+                  question_type AS "questionType", difficulty, quality, prompt, answer, solution,
+                  flags, source_type AS "sourceType", metadata, updated_at AS "updatedAt"
+           FROM gaokao_questions
+           WHERE ($1::text IS NULL OR subject_key = $1)
+             AND ($2::int IS NULL OR year = $2)
+             AND ($3::text IS NULL OR difficulty = $3)
+             AND ($4::text IS NULL OR quality = $4)
+             AND ($5::text IS NULL OR source_type = $5)
+             AND ($6::bool IS NULL OR (($6 = true AND jsonb_array_length(solution) > 0) OR ($6 = false AND jsonb_array_length(solution) = 0)))
+             AND ($7::text IS NULL OR metadata #>> '{solutionEnrichment,status}' = $7)
+           ORDER BY year NULLS LAST, subject_key, question_number NULLS LAST, updated_at DESC, id
+           LIMIT $8 OFFSET $9"#,
+    )
+    .bind(params.subject.as_deref()).bind(params.year).bind(params.difficulty.as_deref())
+    .bind(params.quality.as_deref()).bind(params.source_type.as_deref()).bind(params.has_solution)
+    .bind(params.solution_status.as_deref())
+    .bind(limit).bind(offset).fetch_all(&state.db).await?;
+    let questions: Result<Vec<_>, sqlx::Error> = rows.into_iter().map(question_row).collect();
+    let questions = questions?;
+    let loaded = offset + questions.len() as i64;
+    let has_more = loaded < total_count;
+    let value = json!({
+        "questions": questions,
+        "pageInfo": { "nextCursor": if has_more { Some(loaded.to_string()) } else { None }, "hasMore": has_more, "totalLoaded": loaded, "totalCount": total_count }
+    });
+    cache_set(&state.redis, &cache_key, &value).await;
+    Ok(Json(value))
+}
+
+fn question_row(row: sqlx::postgres::PgRow) -> Result<Value, sqlx::Error> {
+    let solution: Value = row.try_get("solution")?;
+    let metadata: Value = row.try_get("metadata")?;
+    let solution_status = metadata
+        .pointer("/solutionEnrichment/status")
+        .and_then(Value::as_str)
+        .map(str::to_string);
+    Ok(json!({
+        "id": row.try_get::<Uuid, _>("id")?,
+        "questionKey": row.try_get::<String, _>("questionKey")?,
+        "year": row.try_get::<Option<i32>, _>("year")?,
+        "subjectKey": row.try_get::<String, _>("subjectKey")?,
+        "subjectName": row.try_get::<String, _>("subjectName")?,
+        "questionNumber": row.try_get::<Option<i32>, _>("questionNumber")?,
+        "questionType": row.try_get::<Option<String>, _>("questionType")?,
+        "difficulty": row.try_get::<Option<String>, _>("difficulty")?,
+        "quality": row.try_get::<String, _>("quality")?,
+        "prompt": row.try_get::<String, _>("prompt")?,
+        "answer": row.try_get::<Option<String>, _>("answer")?,
+        "solution": solution,
+        "flags": row.try_get::<Value, _>("flags")?,
+        "sourceType": row.try_get::<String, _>("sourceType")?,
+        "metadata": metadata,
+        "hasSolution": solution.as_array().map(|items| !items.is_empty()).unwrap_or(false),
+        "solutionStatus": solution_status,
+        "updatedAt": row.try_get::<DateTime<Utc>, _>("updatedAt")?,
+    }))
+}
+
+fn rows_to_values(
+    rows: Vec<sqlx::postgres::PgRow>,
+    keys: &[&str],
+) -> Result<Vec<Value>, sqlx::Error> {
+    rows.into_iter()
+        .map(|row| {
+            let mut map = serde_json::Map::new();
+            for key in keys {
+                if let Ok(value) = row.try_get::<String, _>(*key) {
+                    map.insert((*key).to_string(), json!(value));
+                } else if let Ok(value) = row.try_get::<i32, _>(*key) {
+                    map.insert((*key).to_string(), json!(value));
+                } else if let Ok(value) = row.try_get::<i64, _>(*key) {
+                    map.insert((*key).to_string(), json!(value));
+                } else if let Ok(value) = row.try_get::<Value, _>(*key) {
+                    map.insert((*key).to_string(), value);
+                }
+            }
+            Ok(Value::Object(map))
+        })
+        .collect()
+}
+
+async fn gaokao_attempts(
+    State(state): State<SharedState>,
+    headers: HeaderMap,
+    Json(input): Json<GaokaoAttemptInput>,
+) -> Result<Json<Value>, ApiError> {
+    let user = auth_user(&state, &headers).await?;
+    if input.question_key.is_empty() || !matches!(input.result.as_str(), "correct" | "wrong") {
+        return Err(ApiError::bad_request());
+    }
+    sqlx::query(
+        r#"INSERT INTO gaokao_answer_attempts (user_id, question_key, subject_key, result, knowledge_nodes, prompt_snapshot, answer_snapshot, source_type, metadata)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)"#,
+    )
+    .bind(user.id).bind(input.question_key).bind(input.subject_key).bind(input.result).bind(json!(input.knowledge_nodes))
+    .bind(input.prompt_snapshot).bind(input.answer_snapshot).bind(input.source_type).bind(input.metadata)
+    .execute(&state.db).await?;
+    Ok(Json(json!({ "ok": true })))
+}
+
+async fn gaokao_weaknesses(
+    State(state): State<SharedState>,
+    headers: HeaderMap,
+) -> Result<Json<Value>, ApiError> {
+    let user = auth_user(&state, &headers).await?;
+    let rows = sqlx::query(
+        r#"SELECT node.value AS "knowledgeNode", COUNT(*)::int AS total,
+                  COUNT(*) FILTER (WHERE result = 'correct')::int AS correct,
+                  COUNT(*) FILTER (WHERE result = 'wrong')::int AS wrong,
+                  MAX(answered_at) AS "lastAnsweredAt"
+           FROM gaokao_answer_attempts
+           CROSS JOIN LATERAL jsonb_array_elements_text(knowledge_nodes) AS node(value)
+           WHERE user_id = $1
+           GROUP BY node.value
+           ORDER BY wrong DESC, total DESC, "lastAnsweredAt" DESC
+           LIMIT 30"#,
+    )
+    .bind(user.id)
+    .fetch_all(&state.db)
+    .await?;
+    let weaknesses: Result<Vec<_>, sqlx::Error> = rows
+        .into_iter()
+        .map(|row| {
+            Ok(json!({
+                "knowledgeNode": row.try_get::<String, _>("knowledgeNode")?,
+                "total": row.try_get::<i32, _>("total")?,
+                "correct": row.try_get::<i32, _>("correct")?,
+                "wrong": row.try_get::<i32, _>("wrong")?,
+                "lastAnsweredAt": row.try_get::<Option<DateTime<Utc>>, _>("lastAnsweredAt")?,
+            }))
+        })
+        .collect();
+    Ok(Json(json!({ "weaknesses": weaknesses? })))
+}
+
+async fn register(
+    State(state): State<SharedState>,
+    Json(input): Json<AuthInput>,
+) -> Result<Response, ApiError> {
+    if !validate_auth(&input) {
+        return Err(ApiError::bad_request());
+    }
+    let password_hash =
+        bcrypt_hash(input.password, DEFAULT_COST).map_err(|_| ApiError::server())?;
+    let result = sqlx::query("INSERT INTO users (username, password_hash, last_login_at) VALUES ($1, $2, now()) RETURNING id, username, created_at, last_login_at")
+        .bind(input.username.trim()).bind(password_hash).fetch_one(&state.db).await;
+    let row = match result {
+        Ok(row) => row,
+        Err(sqlx::Error::Database(err)) if err.code().as_deref() == Some("23505") => {
+            return Ok((
+                StatusCode::CONFLICT,
+                Json(json!({ "error": "username_exists" })),
+            )
+                .into_response())
+        }
+        Err(err) => return Err(err.into()),
+    };
+    let user = UserSession {
+        id: row.try_get("id")?,
+        username: row.try_get("username")?,
+        created_at: row.try_get("created_at")?,
+        last_login_at: row.try_get("last_login_at")?,
+    };
+    let token = create_session(&state, user.id).await?;
+    let mut response = (
+        StatusCode::CREATED,
+        Json(json!({ "user": UserOut::from(user) })),
+    )
+        .into_response();
+    response.headers_mut().insert(
+        header::SET_COOKIE,
+        HeaderValue::from_str(&session_cookie(&token)).map_err(|_| ApiError::server())?,
+    );
+    Ok(response)
+}
+
+async fn login(
+    State(state): State<SharedState>,
+    Json(input): Json<AuthInput>,
+) -> Result<Response, ApiError> {
+    if !validate_auth(&input) {
+        return Err(ApiError::bad_request());
+    }
+    let row = sqlx::query("SELECT id, username, password_hash, created_at, last_login_at FROM users WHERE username = $1")
+        .bind(input.username.trim()).fetch_optional(&state.db).await?;
+    let Some(row) = row else {
+        return Ok((
+            StatusCode::UNAUTHORIZED,
+            Json(json!({ "error": "invalid_credentials" })),
+        )
+            .into_response());
+    };
+    let password_hash: String = row.try_get("password_hash")?;
+    if !bcrypt_verify(input.password, &password_hash).unwrap_or(false) {
+        return Ok((
+            StatusCode::UNAUTHORIZED,
+            Json(json!({ "error": "invalid_credentials" })),
+        )
+            .into_response());
+    }
+    let user_id: Uuid = row.try_get("id")?;
+    sqlx::query("UPDATE users SET last_login_at = now() WHERE id = $1")
+        .bind(user_id)
+        .execute(&state.db)
+        .await?;
+    let user = UserSession {
+        id: user_id,
+        username: row.try_get("username")?,
+        created_at: row.try_get("created_at")?,
+        last_login_at: Some(Utc::now()),
+    };
+    let token = create_session(&state, user.id).await?;
+    let mut response = Json(json!({ "user": UserOut::from(user) })).into_response();
+    response.headers_mut().insert(
+        header::SET_COOKIE,
+        HeaderValue::from_str(&session_cookie(&token)).map_err(|_| ApiError::server())?,
+    );
+    Ok(response)
+}
+
+async fn logout(
+    State(state): State<SharedState>,
+    headers: HeaderMap,
+) -> Result<Response, ApiError> {
+    if let Some(token) = parse_cookie(&headers, SESSION_COOKIE) {
+        sqlx::query("DELETE FROM sessions WHERE token_hash = $1")
+            .bind(hash_token(&token))
+            .execute(&state.db)
+            .await?;
+    }
+    let mut response = Json(json!({ "ok": true })).into_response();
+    response.headers_mut().insert(
+        header::SET_COOKIE,
+        HeaderValue::from_str(&clear_session_cookie()).map_err(|_| ApiError::server())?,
+    );
+    Ok(response)
+}
+
+async fn me(State(state): State<SharedState>, headers: HeaderMap) -> Result<Json<Value>, ApiError> {
+    let user = auth_user(&state, &headers).await?;
+    Ok(Json(json!({ "user": UserOut::from(user) })))
+}
+
+async fn me_stats(
+    State(state): State<SharedState>,
+    headers: HeaderMap,
+) -> Result<Json<Value>, ApiError> {
+    let user = auth_user(&state, &headers).await?;
+    Ok(Json(
+        json!({ "stats": get_stats(&state.db, user.id).await? }),
+    ))
+}
+
+async fn import_local(
+    State(state): State<SharedState>,
+    headers: HeaderMap,
+    Json(input): Json<ImportInput>,
+) -> Result<Json<Value>, ApiError> {
+    let user = auth_user(&state, &headers).await?;
+    if input.import_id.len() < 8 || input.import_id.len() > 128 {
+        return Err(ApiError::bad_request());
+    }
+    let inserted = sqlx::query("INSERT INTO local_imports (user_id, import_hash, summary) VALUES ($1, $2, $3) ON CONFLICT (user_id, import_hash) DO NOTHING")
+        .bind(user.id).bind(input.import_id).bind(json!(&input.snapshot)).execute(&state.db).await?.rows_affected() > 0;
+    if inserted {
+        sqlx::query("INSERT INTO study_events (user_id, event_type, payload) VALUES ($1, $2, $3)")
+            .bind(user.id)
+            .bind("local_import")
+            .bind(json!(&input.snapshot))
+            .execute(&state.db)
+            .await?;
+        upsert_snapshot(&state.db, user.id, &input.snapshot, "max").await?;
+    }
+    Ok(Json(
+        json!({ "imported": inserted, "stats": get_stats(&state.db, user.id).await? }),
+    ))
+}
+
+async fn study_event(
+    State(state): State<SharedState>,
+    headers: HeaderMap,
+    Json(input): Json<StudyEventInput>,
+) -> Result<Json<Value>, ApiError> {
+    let user = auth_user(&state, &headers).await?;
+    if input.event_type.len() < 2 || input.event_type.len() > 64 {
+        return Err(ApiError::bad_request());
+    }
+    sqlx::query(r#"INSERT INTO study_events (user_id, event_type, course, subject, page_path, object_id, payload) VALUES ($1,$2,$3,$4,$5,$6,$7)"#)
+        .bind(user.id).bind(&input.event_type).bind(&input.course).bind(&input.subject).bind(&input.page_path).bind(&input.object_id).bind(&input.payload).execute(&state.db).await?;
+    if input.event_type == "page_dwell" {
+        let seconds = input
+            .payload
+            .get("seconds")
+            .and_then(Value::as_i64)
+            .unwrap_or(0)
+            .max(0) as i32;
+        upsert_snapshot(
+            &state.db,
+            user.id,
+            &ProgressSnapshot {
+                total_study_seconds: seconds,
+                recent_paths: input.page_path.into_iter().collect(),
+                ..ProgressSnapshot::default()
+            },
+            "add",
+        )
+        .await?;
+    } else if input.event_type == "practice_done" {
+        increment_snapshot(&state.db, user.id, "practice_done_count", input.page_path).await?;
+    } else if input.event_type == "chapter_done" {
+        increment_snapshot(&state.db, user.id, "chapter_done_count", input.page_path).await?;
+    } else if input.event_type == "wrong_added" {
+        increment_snapshot(&state.db, user.id, "wrong_count", input.page_path).await?;
+    }
+    Ok(Json(json!({ "ok": true })))
+}
+
+async fn ensure_schema(db: &PgPool) -> anyhow::Result<()> {
+    let statements = [
+        "CREATE EXTENSION IF NOT EXISTS pgcrypto",
+        "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), username TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), last_login_at TIMESTAMPTZ)",
+        "CREATE TABLE IF NOT EXISTS sessions (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, token_hash TEXT NOT NULL UNIQUE, expires_at TIMESTAMPTZ NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "CREATE TABLE IF NOT EXISTS study_events (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, event_type TEXT NOT NULL, course TEXT, subject TEXT, page_path TEXT, object_id TEXT, payload JSONB NOT NULL DEFAULT '{}'::jsonb, occurred_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "CREATE TABLE IF NOT EXISTS study_snapshots (user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE, total_study_seconds INTEGER NOT NULL DEFAULT 0, chapter_done_count INTEGER NOT NULL DEFAULT 0, wrong_count INTEGER NOT NULL DEFAULT 0, practice_done_count INTEGER NOT NULL DEFAULT 0, mastery_item_count INTEGER NOT NULL DEFAULT 0, scroll_position_count INTEGER NOT NULL DEFAULT 0, recent_paths JSONB NOT NULL DEFAULT '[]'::jsonb, current_streak_days INTEGER NOT NULL DEFAULT 0, last_activity_at TIMESTAMPTZ, updated_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "CREATE TABLE IF NOT EXISTS local_imports (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, import_hash TEXT NOT NULL, imported_at TIMESTAMPTZ NOT NULL DEFAULT now(), summary JSONB NOT NULL DEFAULT '{}'::jsonb, UNIQUE (user_id, import_hash))",
+        "CREATE TABLE IF NOT EXISTS gaokao_sources (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), source_key TEXT NOT NULL UNIQUE, name TEXT NOT NULL, detail TEXT, status TEXT NOT NULL DEFAULT 'active', source_type TEXT NOT NULL DEFAULT 'local', relative_path TEXT, metadata JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "CREATE TABLE IF NOT EXISTS gaokao_papers (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), paper_key TEXT NOT NULL UNIQUE, year INTEGER, subject_key TEXT NOT NULL, subject_name TEXT NOT NULL, paper_name TEXT NOT NULL, paper_kind TEXT NOT NULL DEFAULT 'exam', status TEXT NOT NULL DEFAULT 'indexed', metadata JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "CREATE TABLE IF NOT EXISTS gaokao_questions (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), question_key TEXT NOT NULL UNIQUE, paper_id UUID REFERENCES gaokao_papers(id) ON DELETE SET NULL, year INTEGER, subject_key TEXT NOT NULL, subject_name TEXT NOT NULL, question_number INTEGER, question_type TEXT, difficulty TEXT, quality TEXT NOT NULL DEFAULT 'indexed', prompt TEXT NOT NULL, answer TEXT, solution JSONB NOT NULL DEFAULT '[]'::jsonb, flags JSONB NOT NULL DEFAULT '[]'::jsonb, source_type TEXT NOT NULL DEFAULT 'real', metadata JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "CREATE TABLE IF NOT EXISTS gaokao_question_tags (question_id UUID NOT NULL REFERENCES gaokao_questions(id) ON DELETE CASCADE, tag_type TEXT NOT NULL, tag TEXT NOT NULL, PRIMARY KEY (question_id, tag_type, tag))",
+        "CREATE TABLE IF NOT EXISTS gaokao_subject_profiles (subject_key TEXT PRIMARY KEY, subject_name TEXT NOT NULL, accent TEXT, icon TEXT, route TEXT, trend TEXT, advice TEXT, high_frequency JSONB NOT NULL DEFAULT '[]'::jsonb, easy_mistakes JSONB NOT NULL DEFAULT '[]'::jsonb, metadata JSONB NOT NULL DEFAULT '{}'::jsonb, updated_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "CREATE TABLE IF NOT EXISTS gaokao_trend_notes (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), subject_key TEXT, year INTEGER, title TEXT NOT NULL, body TEXT NOT NULL, source_name TEXT, source_url TEXT, metadata JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "CREATE TABLE IF NOT EXISTS gaokao_import_runs (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), import_key TEXT NOT NULL UNIQUE, summary JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "CREATE TABLE IF NOT EXISTS gaokao_answer_attempts (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, question_key TEXT NOT NULL, subject_key TEXT, result TEXT NOT NULL CHECK (result IN ('correct', 'wrong')), knowledge_nodes JSONB NOT NULL DEFAULT '[]'::jsonb, prompt_snapshot TEXT, answer_snapshot TEXT, source_type TEXT, metadata JSONB NOT NULL DEFAULT '{}'::jsonb, answered_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "CREATE INDEX IF NOT EXISTS idx_study_events_user_time ON study_events(user_id, occurred_at DESC)",
+        "CREATE INDEX IF NOT EXISTS idx_sessions_token_hash ON sessions(token_hash)",
+        "CREATE INDEX IF NOT EXISTS idx_gaokao_papers_subject_year ON gaokao_papers(subject_key, year)",
+        "CREATE INDEX IF NOT EXISTS idx_gaokao_questions_subject_year ON gaokao_questions(subject_key, year)",
+        "CREATE INDEX IF NOT EXISTS idx_gaokao_questions_quality ON gaokao_questions(quality)",
+        "CREATE INDEX IF NOT EXISTS idx_gaokao_questions_source_type ON gaokao_questions(source_type)",
+        "CREATE INDEX IF NOT EXISTS idx_gaokao_questions_solution_status ON gaokao_questions ((metadata #>> '{solutionEnrichment,status}'))",
+        "CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_time ON gaokao_answer_attempts(user_id, answered_at DESC)",
+        "CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_subject ON gaokao_answer_attempts(user_id, subject_key)",
+    ];
+
+    for statement in statements {
+        sqlx::query(statement).execute(db).await?;
+    }
+    Ok(())
+}

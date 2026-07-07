@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
   coverage,
@@ -31,6 +31,8 @@ import { useAuth } from '../../features/account/AuthContext'
 import '../../styles/courses/gaokao.css'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8787'
+const QUESTION_BATCH_SIZE = 120
+const QUESTION_INDEX_CACHE_KEY = 'gaokao_question_index_cache'
 
 const difficultyLabels = {
   all: '全部难度',
@@ -66,26 +68,34 @@ const extractedLibraries = [
   extracted2026Residual,
 ]
 
-const answerOverrideById = new Map((answerOverrides.overrides || []).map(override => [override.questionId, override]))
+const answerOverrideById = new Map(
+  (answerOverrides.overrides || []).map((override) => [override.questionId, override]),
+)
 const answerOverrideBySource = new Map(
   (answerOverrides.overrides || [])
-    .map(override => [answerOverrideLookupKey(override), override])
+    .map((override) => [answerOverrideLookupKey(override), override])
     .filter(([key]) => key),
 )
 
 function answerOverrideLookupKey(value) {
-  if (!value?.dataset || !value?.source || value?.number === undefined || value?.number === null) return null
-  return [value.dataset, value.source, value.relativePath || '', String(value.number)].join('\u241f')
+  if (!value?.dataset || !value?.source || value?.number === undefined || value?.number === null)
+    return null
+  return [value.dataset, value.source, value.relativePath || '', String(value.number)].join(
+    '\u241f',
+  )
 }
 
 function findAnswerOverride(question, context = {}) {
-  if (question?.id && answerOverrideById.has(question.id)) return answerOverrideById.get(question.id)
-  return answerOverrideBySource.get(answerOverrideLookupKey({
-    dataset: context.dataset,
-    source: context.source,
-    relativePath: context.relativePath,
-    number: question?.number,
-  }))
+  if (question?.id && answerOverrideById.has(question.id))
+    return answerOverrideById.get(question.id)
+  return answerOverrideBySource.get(
+    answerOverrideLookupKey({
+      dataset: context.dataset,
+      source: context.source,
+      relativePath: context.relativePath,
+      number: question?.number,
+    }),
+  )
 }
 
 function applyAnswerOverride(question, context = {}) {
@@ -95,7 +105,10 @@ function applyAnswerOverride(question, context = {}) {
   return {
     ...question,
     answer: override.answer,
-    solution: Array.isArray(question.solution) && question.solution.length > 0 ? question.solution : (override.solution || []),
+    solution:
+      Array.isArray(question.solution) && question.solution.length > 0
+        ? question.solution
+        : override.solution || [],
     flags: [...(question.flags || []), 'answer_override', `answer_override_${override.method}`],
   }
 }
@@ -115,13 +128,13 @@ function truncateText(value, maxLength) {
 }
 
 function normalizeList(value) {
-  if (Array.isArray(value)) return value.filter(Boolean).map(item => String(item))
+  if (Array.isArray(value)) return value.filter(Boolean).map((item) => String(item))
   if (!value) return []
   return [String(value)]
 }
 
 function normalizeDbQuestion(row) {
-  const subject = subjects.find(item => item.key === row.subjectKey)
+  const subject = subjects.find((item) => item.key === row.subjectKey)
   const questionNumber = row.questionNumber ? `第 ${row.questionNumber} 题` : '题目'
   const sourceType = row.sourceType || '结构化题库'
   const difficulty = difficultyLabels[row.difficulty] ? row.difficulty : 'medium'
@@ -139,7 +152,27 @@ function normalizeDbQuestion(row) {
     flags: normalizeList(row.flags),
     quality: row.quality,
     questionType: row.questionType,
+    questionKey: row.questionKey,
+    metadata: row.metadata || {},
+    hasSolution: Boolean(row.hasSolution),
+    solutionStatus: row.solutionStatus || row.metadata?.solutionEnrichment?.status || null,
     updatedAt: row.updatedAt,
+  }
+}
+
+function writeQuestionIndexCache(query, questions, pageInfo) {
+  try {
+    localStorage.setItem(
+      QUESTION_INDEX_CACHE_KEY,
+      JSON.stringify({
+        query,
+        ids: questions.map((question) => question.id),
+        pageInfo,
+        updatedAt: new Date().toISOString(),
+      }),
+    )
+  } catch {
+    // 浏览器存储只做轻量索引兜底，失败时不影响题库加载。
   }
 }
 
@@ -156,16 +189,81 @@ function SvgIcon({ name }) {
     'aria-hidden': 'true',
   }
   const paths = {
-    'book-open': <><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5z" /><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5z" /></>,
-    function: <><path d="M5 19c3 0 3-14 6-14" /><path d="M9 9h6" /><path d="M14 5h4" /><path d="M14 19h4" /></>,
-    languages: <><path d="M4 5h9" /><path d="M9 3v2" /><path d="M6 9c1.2 2.8 3.5 4.8 7 6" /><path d="M12 9c-.9 2.3-2.7 4.2-6 6" /><path d="M15 19l3-7 3 7" /><path d="M16 17h4" /></>,
-    atom: <><circle cx="12" cy="12" r="1.4" /><ellipse cx="12" cy="12" rx="8" ry="3.2" /><ellipse cx="12" cy="12" rx="3.2" ry="8" transform="rotate(60 12 12)" /><ellipse cx="12" cy="12" rx="3.2" ry="8" transform="rotate(120 12 12)" /></>,
-    flask: <><path d="M9 3h6" /><path d="M10 3v5l-5 9a3 3 0 0 0 2.6 4.5h8.8A3 3 0 0 0 19 17l-5-9V3" /><path d="M8 15h8" /></>,
-    leaf: <><path d="M5 19c8 0 14-6 14-14-8 0-14 6-14 14z" /><path d="M5 19c3-5 7-8 14-14" /></>,
-    landmark: <><path d="M4 9h16" /><path d="M5 9l7-5 7 5" /><path d="M7 10v7" /><path d="M12 10v7" /><path d="M17 10v7" /><path d="M4 20h16" /></>,
-    scroll: <><path d="M8 4h10a2 2 0 0 1 2 2v12" /><path d="M8 4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10" /><path d="M8 8h8" /><path d="M8 12h7" /></>,
-    map: <><path d="M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2z" /><path d="M9 4v14" /><path d="M15 6v14" /></>,
-    check: <><path d="M20 6L9 17l-5-5" /></>,
+    'book-open': (
+      <>
+        <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5z" />
+        <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5z" />
+      </>
+    ),
+    function: (
+      <>
+        <path d="M5 19c3 0 3-14 6-14" />
+        <path d="M9 9h6" />
+        <path d="M14 5h4" />
+        <path d="M14 19h4" />
+      </>
+    ),
+    languages: (
+      <>
+        <path d="M4 5h9" />
+        <path d="M9 3v2" />
+        <path d="M6 9c1.2 2.8 3.5 4.8 7 6" />
+        <path d="M12 9c-.9 2.3-2.7 4.2-6 6" />
+        <path d="M15 19l3-7 3 7" />
+        <path d="M16 17h4" />
+      </>
+    ),
+    atom: (
+      <>
+        <circle cx="12" cy="12" r="1.4" />
+        <ellipse cx="12" cy="12" rx="8" ry="3.2" />
+        <ellipse cx="12" cy="12" rx="3.2" ry="8" transform="rotate(60 12 12)" />
+        <ellipse cx="12" cy="12" rx="3.2" ry="8" transform="rotate(120 12 12)" />
+      </>
+    ),
+    flask: (
+      <>
+        <path d="M9 3h6" />
+        <path d="M10 3v5l-5 9a3 3 0 0 0 2.6 4.5h8.8A3 3 0 0 0 19 17l-5-9V3" />
+        <path d="M8 15h8" />
+      </>
+    ),
+    leaf: (
+      <>
+        <path d="M5 19c8 0 14-6 14-14-8 0-14 6-14 14z" />
+        <path d="M5 19c3-5 7-8 14-14" />
+      </>
+    ),
+    landmark: (
+      <>
+        <path d="M4 9h16" />
+        <path d="M5 9l7-5 7 5" />
+        <path d="M7 10v7" />
+        <path d="M12 10v7" />
+        <path d="M17 10v7" />
+        <path d="M4 20h16" />
+      </>
+    ),
+    scroll: (
+      <>
+        <path d="M8 4h10a2 2 0 0 1 2 2v12" />
+        <path d="M8 4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10" />
+        <path d="M8 8h8" />
+        <path d="M8 12h7" />
+      </>
+    ),
+    map: (
+      <>
+        <path d="M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2z" />
+        <path d="M9 4v14" />
+        <path d="M15 6v14" />
+      </>
+    ),
+    check: (
+      <>
+        <path d="M20 6L9 17l-5-5" />
+      </>
+    ),
   }
   return <svg {...common}>{paths[name] || paths.check}</svg>
 }
@@ -193,26 +291,27 @@ function formatGeneratedAt(value) {
 
 function mergeAccountWeaknesses(rows = [], knowledgeIds = [], result) {
   const now = new Date().toISOString()
-  const byId = new Map(rows.map(row => [row.knowledgeNode, { ...row }]))
-  knowledgeIds.forEach(id => {
+  const byId = new Map(rows.map((row) => [row.knowledgeNode, { ...row }]))
+  knowledgeIds.forEach((id) => {
     const current = byId.get(id) || { knowledgeNode: id, total: 0, correct: 0, wrong: 0 }
     const total = (Number(current.total) || 0) + 1
     const correct = (Number(current.correct) || 0) + (result === 'correct' ? 1 : 0)
     const wrong = (Number(current.wrong) || 0) + (result === 'wrong' ? 1 : 0)
     byId.set(id, { ...current, total, correct, wrong, lastAnsweredAt: now })
   })
-  return [...byId.values()].sort((left, right) => (
-    (Number(right.wrong) || 0) - (Number(left.wrong) || 0)
-    || (Number(right.total) || 0) - (Number(left.total) || 0)
-    || String(right.lastAnsweredAt || '').localeCompare(String(left.lastAnsweredAt || ''))
-  ))
+  return [...byId.values()].sort(
+    (left, right) =>
+      (Number(right.wrong) || 0) - (Number(left.wrong) || 0) ||
+      (Number(right.total) || 0) - (Number(left.total) || 0) ||
+      String(right.lastAnsweredAt || '').localeCompare(String(left.lastAnsweredAt || '')),
+  )
 }
 
-const knowledgeNodeById = new Map(knowledgeNodes.map(node => [node.id, node]))
+const knowledgeNodeById = new Map(knowledgeNodes.map((node) => [node.id, node]))
 
 function buildKnowledgeQuestionCounts(questions = []) {
   return questions.reduce((counts, question) => {
-    getQuestionKnowledgeIds(question).forEach(id => {
+    getQuestionKnowledgeIds(question).forEach((id) => {
       counts[id] = (counts[id] || 0) + 1
     })
     return counts
@@ -224,7 +323,9 @@ function formatAccuracy(stat) {
 }
 
 function questionRenderKey(question, index, scope) {
-  return [scope, question.id, question.year, question.sourceType, question.number, index].filter(Boolean).join('-')
+  return [scope, question.id, question.year, question.sourceType, question.number, index]
+    .filter(Boolean)
+    .join('-')
 }
 
 function practiceAnchorId(question, index, scope) {
@@ -232,8 +333,9 @@ function practiceAnchorId(question, index, scope) {
 }
 
 function scrollToPracticeQuestion(questionId) {
-  const target = Array.from(document.querySelectorAll('[data-practice-question-id]'))
-    .find(element => element.dataset.practiceQuestionId === String(questionId))
+  const target = Array.from(document.querySelectorAll('[data-practice-question-id]')).find(
+    (element) => element.dataset.practiceQuestionId === String(questionId),
+  )
   target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
 }
 
@@ -259,28 +361,33 @@ function splitAnswerParts(answer) {
   if (!answer || answer === '答案待补全') return []
   return String(answer)
     .split(/(?=（\d+）)|(?=\(\d+\))|；|;/)
-    .map(part => part.trim())
+    .map((part) => part.trim())
     .filter(Boolean)
 }
 
 function buildDetailedSolutionSteps(question, knowledgeLabels) {
   const solution = Array.isArray(question.solution) ? question.solution.filter(Boolean) : []
   const answerParts = splitAnswerParts(question.answer)
-  const subjectName = subjects.find(item => item.key === question.subject)?.name || '本题'
+  const subjectName = subjects.find((item) => item.key === question.subject)?.name || '本题'
   const questionType = getKnowledgeQuestionType(question)
-  const hint = subjectSolutionHints[question.subject] || '先拆条件，再选方法，最后把结论和标准答案逐项核对。'
+  const hint =
+    subjectSolutionHints[question.subject] || '先拆条件，再选方法，最后把结论和标准答案逐项核对。'
   const labels = knowledgeLabels.length > 0 ? knowledgeLabels.join('、') : '题干中的核心概念'
   const sourceSteps = solution.length > 0 ? solution : answerParts
 
-  const steps = [{
-    title: '审题定位',
-    detail: `${subjectName}题先判断题型为「${questionType}」，核心知识点落在「${labels}」。读题时先标出设问对象、限制条件和要求输出的结论，避免直接套用答案。`,
-  }]
+  const steps = [
+    {
+      title: '审题定位',
+      detail: `${subjectName}题先判断题型为「${questionType}」，核心知识点落在「${labels}」。读题时先标出设问对象、限制条件和要求输出的结论，避免直接套用答案。`,
+    },
+  ]
 
   if (sourceSteps.length > 0) {
     sourceSteps.forEach((step, index) => {
       const title = solutionStepTitles[Math.min(index + 1, solutionStepTitles.length - 1)]
-      const answerPart = answerParts[index] ? `本步最后要能对上标准答案中的「${answerParts[index]}」。` : '本步完成后要回到设问，确认没有遗漏小问或条件。'
+      const answerPart = answerParts[index]
+        ? `本步最后要能对上标准答案中的「${answerParts[index]}」。`
+        : '本步完成后要回到设问，确认没有遗漏小问或条件。'
       steps.push({
         title,
         detail: `依据标准题解，第 ${index + 1} 步可以这样展开：${step} ${answerPart}`,
@@ -310,10 +417,10 @@ function buildDetailedSolutionSteps(question, knowledgeLabels) {
 
 function buildQuestionTaxonomy(questions = [], nodeStats = {}, activeSubject = null) {
   const groups = new Map()
-  questions.forEach(question => {
+  questions.forEach((question) => {
     const knowledgeIds = getQuestionKnowledgeIds(question)
     const questionType = getKnowledgeQuestionType(question)
-    knowledgeIds.forEach(nodeId => {
+    knowledgeIds.forEach((nodeId) => {
       const current = groups.get(nodeId) || {
         id: nodeId,
         node: knowledgeNodeById.get(nodeId),
@@ -330,33 +437,48 @@ function buildQuestionTaxonomy(questions = [], nodeStats = {}, activeSubject = n
     })
   })
   const subjectOrder = activeSubject
-    ? knowledgeNodes.filter(node => node.subject === activeSubject.key).map(node => node.id)
-    : knowledgeNodes.map(node => node.id)
+    ? knowledgeNodes.filter((node) => node.subject === activeSubject.key).map((node) => node.id)
+    : knowledgeNodes.map((node) => node.id)
   return [...groups.values()]
-    .map(group => ({
+    .map((group) => ({
       ...group,
       stat: nodeStats[group.id],
-      typeEntries: Object.entries(group.typeCounts).sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], 'zh-CN')),
+      typeEntries: Object.entries(group.typeCounts).sort(
+        (left, right) => right[1] - left[1] || left[0].localeCompare(right[0], 'zh-CN'),
+      ),
     }))
     .sort((left, right) => {
       const leftWeak = left.stat?.wrong || 0
       const rightWeak = right.stat?.wrong || 0
-      return rightWeak - leftWeak
-        || subjectOrder.indexOf(left.id) - subjectOrder.indexOf(right.id)
-        || right.total - left.total
+      return (
+        rightWeak - leftWeak ||
+        subjectOrder.indexOf(left.id) - subjectOrder.indexOf(right.id) ||
+        right.total - left.total
+      )
     })
 }
 
 function QuestionTaxonomyPanel({ questions, activeSubject, attempts, accountWeaknesses }) {
-  const { nodeStats } = useMemo(() => summarizeKnowledgeAttempts(attempts, accountWeaknesses), [attempts, accountWeaknesses])
+  const { nodeStats } = useMemo(
+    () => summarizeKnowledgeAttempts(attempts, accountWeaknesses),
+    [attempts, accountWeaknesses],
+  )
   const layout = activeSubject ? getSubjectKnowledgeLayout(activeSubject.key) : null
-  const taxonomy = useMemo(() => buildQuestionTaxonomy(questions, nodeStats, activeSubject), [questions, nodeStats, activeSubject])
-  const typeCount = useMemo(() => new Set(taxonomy.flatMap(group => group.typeEntries.map(([type]) => type))).size, [taxonomy])
+  const taxonomy = useMemo(
+    () => buildQuestionTaxonomy(questions, nodeStats, activeSubject),
+    [questions, nodeStats, activeSubject],
+  )
+  const typeCount = useMemo(
+    () => new Set(taxonomy.flatMap((group) => group.typeEntries.map(([type]) => type))).size,
+    [taxonomy],
+  )
   const answeredCount = questions.filter(hasCompleteAnswer).length
   const visibleGroups = activeSubject ? taxonomy : taxonomy.slice(0, 12)
 
   return (
-    <div className={`question-taxonomy ${layout ? `question-taxonomy-${layout.pattern}` : 'question-taxonomy-overview'}`}>
+    <div
+      className={`question-taxonomy ${layout ? `question-taxonomy-${layout.pattern}` : 'question-taxonomy-overview'}`}
+    >
       <div className="taxonomy-summary">
         <div>
           <strong>{questions.length}</strong>
@@ -371,22 +493,28 @@ function QuestionTaxonomyPanel({ questions, activeSubject, attempts, accountWeak
           <span>识别题型</span>
         </div>
         <div>
-          <strong>{answeredCount}/{questions.length}</strong>
+          <strong>
+            {answeredCount}/{questions.length}
+          </strong>
           <span>答案完整度</span>
         </div>
       </div>
       {visibleGroups.length > 0 ? (
         <div className="taxonomy-grid">
-          {visibleGroups.map(group => {
+          {visibleGroups.map((group) => {
             const stat = group.stat
             const answerRate = Math.round((group.answered / group.total) * 100)
-            const practiceHint = stat?.wrong > 0
-              ? `先补 ${stat.wrong} 次错题记录`
-              : group.answered < group.total
-                ? '先看有完整答案的题'
-                : '可做同题型迁移'
+            const practiceHint =
+              stat?.wrong > 0
+                ? `先补 ${stat.wrong} 次错题记录`
+                : group.answered < group.total
+                  ? '先看有完整答案的题'
+                  : '可做同题型迁移'
             return (
-              <article key={group.id} className={`taxonomy-card ${stat?.wrong > 0 ? 'has-weakness' : ''}`}>
+              <article
+                key={group.id}
+                className={`taxonomy-card ${stat?.wrong > 0 ? 'has-weakness' : ''}`}
+              >
                 <div className="taxonomy-card-head">
                   <div>
                     <strong>{group.node?.label || group.id}</strong>
@@ -402,8 +530,14 @@ function QuestionTaxonomyPanel({ questions, activeSubject, attempts, accountWeak
                 </div>
                 <div className="taxonomy-types">
                   {group.typeEntries.map(([type, count]) => (
-                    <span key={type} style={{ '--type-share': `${Math.max(14, Math.round((count / group.total) * 100))}%` }}>
-                      <b>{type}</b><i>{count}</i>
+                    <span
+                      key={type}
+                      style={{
+                        '--type-share': `${Math.max(14, Math.round((count / group.total) * 100))}%`,
+                      }}
+                    >
+                      <b>{type}</b>
+                      <i>{count}</i>
                     </span>
                   ))}
                 </div>
@@ -431,11 +565,14 @@ function QuestionTaxonomyPanel({ questions, activeSubject, attempts, accountWeak
 }
 
 function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions = [] }) {
-  const { nodeStats } = useMemo(() => summarizeKnowledgeAttempts(attempts, accountWeaknesses), [attempts, accountWeaknesses])
+  const { nodeStats } = useMemo(
+    () => summarizeKnowledgeAttempts(attempts, accountWeaknesses),
+    [attempts, accountWeaknesses],
+  )
   const questionCounts = useMemo(() => buildKnowledgeQuestionCounts(questions), [questions])
   const layout = activeSubject ? getSubjectKnowledgeLayout(activeSubject.key) : null
 
-  const nodeClass = id => {
+  const nodeClass = (id) => {
     const stat = nodeStats[id]
     if (!stat) return 'is-idle'
     if (stat.wrong > 0 && stat.correct / stat.total < 0.7) return 'is-weak'
@@ -451,18 +588,24 @@ function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions 
             <p>{layout.lead}</p>
           </div>
           <div className="knowledge-stage-rail" aria-label="复习流程">
-            {layout.stages.map(stage => <span key={stage}>{stage}</span>)}
+            {layout.stages.map((stage) => (
+              <span key={stage}>{stage}</span>
+            ))}
           </div>
         </div>
         <div className="knowledge-lanes">
           {layout.lanes.map((lane, laneIndex) => (
-            <article key={lane.label} className="knowledge-lane" style={{ '--lane-index': laneIndex }}>
+            <article
+              key={lane.label}
+              className="knowledge-lane"
+              style={{ '--lane-index': laneIndex }}
+            >
               <div className="knowledge-lane-head">
                 <span>{lane.label}</span>
                 <p>{lane.hint}</p>
               </div>
               <div className="knowledge-node-stack">
-                {lane.nodes.map(nodeId => {
+                {lane.nodes.map((nodeId) => {
                   const node = knowledgeNodeById.get(nodeId)
                   const stat = nodeStats[nodeId]
                   const questionCount = questionCounts[nodeId] || 0
@@ -483,7 +626,9 @@ function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions 
                 })}
               </div>
               <div className="knowledge-type-row">
-                {lane.questionTypes.map(type => <span key={type}>{type}</span>)}
+                {lane.questionTypes.map((type) => (
+                  <span key={type}>{type}</span>
+                ))}
               </div>
             </article>
           ))}
@@ -493,9 +638,9 @@ function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions 
   }
 
   const visibleSubjects = activeSubject ? [activeSubject] : subjects
-  const visibleNodes = visibleSubjects.flatMap(subject => (
-    knowledgeNodes.filter(node => node.subject === subject.key).slice(0, activeSubject ? 8 : 3)
-  ))
+  const visibleNodes = visibleSubjects.flatMap((subject) =>
+    knowledgeNodes.filter((node) => node.subject === subject.key).slice(0, activeSubject ? 8 : 3),
+  )
   const positions = new Map()
   const rowHeight = 92
   const width = 1120
@@ -505,7 +650,7 @@ function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions 
     const y = 46 + rowIndex * rowHeight
     positions.set(`subject:${subject.key}`, { x: 88, y, label: subject.name, subject })
     visibleNodes
-      .filter(node => node.subject === subject.key)
+      .filter((node) => node.subject === subject.key)
       .forEach((node, nodeIndex) => {
         positions.set(node.id, { x: 292 + nodeIndex * 194, y, label: node.label, node })
       })
@@ -513,16 +658,29 @@ function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions 
 
   return (
     <div className="knowledge-graph-wrap">
-      <svg className="knowledge-graph" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="高考知识图谱">
-        {visibleSubjects.flatMap(subject => (
+      <svg
+        className="knowledge-graph"
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label="高考知识图谱"
+      >
+        {visibleSubjects.flatMap((subject) =>
           visibleNodes
-            .filter(node => node.subject === subject.key)
-            .map(node => {
+            .filter((node) => node.subject === subject.key)
+            .map((node) => {
               const from = positions.get(`subject:${subject.key}`)
               const to = positions.get(node.id)
-              return <line key={`${subject.key}-${node.id}`} x1={from.x + 56} y1={from.y} x2={to.x - 58} y2={to.y} />
-            })
-        ))}
+              return (
+                <line
+                  key={`${subject.key}-${node.id}`}
+                  x1={from.x + 56}
+                  y1={from.y}
+                  x2={to.x - 58}
+                  y2={to.y}
+                />
+              )
+            }),
+        )}
         {knowledgeEdges.map(([fromId, toId, label]) => {
           const from = positions.get(fromId)
           const to = positions.get(toId)
@@ -530,7 +688,9 @@ function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions 
           return (
             <g key={`${fromId}-${toId}`} className="graph-cross-edge">
               <line x1={from.x + 58} y1={from.y + 24} x2={to.x - 58} y2={to.y + 24} />
-              <text x={(from.x + to.x) / 2} y={(from.y + to.y) / 2 + 8}>{label}</text>
+              <text x={(from.x + to.x) / 2} y={(from.y + to.y) / 2 + 8}>
+                {label}
+              </text>
             </g>
           )
         })}
@@ -538,9 +698,15 @@ function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions 
           const isSubject = id.startsWith('subject:')
           const stat = nodeStats[id]
           return (
-            <g key={id} className={`graph-node ${isSubject ? 'is-subject' : nodeClass(id)}`} transform={`translate(${point.x} ${point.y})`}>
+            <g
+              key={id}
+              className={`graph-node ${isSubject ? 'is-subject' : nodeClass(id)}`}
+              transform={`translate(${point.x} ${point.y})`}
+            >
               <rect x="-64" y="-24" width="128" height="48" rx="8" />
-              <text className="graph-label" y="-2">{point.label}</text>
+              <text className="graph-label" y="-2">
+                {point.label}
+              </text>
               {!isSubject && (
                 <text className="graph-stat" y="15">
                   {stat ? `${stat.correct}/${stat.total}` : '未作答'}
@@ -557,12 +723,16 @@ function KnowledgeGraph({ activeSubject, attempts, accountWeaknesses, questions 
 function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }) {
   const hasAccountStats = (accountWeaknesses || []).length > 0
   const localAttemptCount = Object.keys(attempts || {}).length
-  const { weakNodes } = useMemo(() => summarizeKnowledgeAttempts(attempts, accountWeaknesses), [attempts, accountWeaknesses])
-  const recommendations = useMemo(() => (
-    recommendPracticeQuestions(questions, attempts, 9, accountWeaknesses)
-  ), [attempts, questions, accountWeaknesses])
+  const { weakNodes } = useMemo(
+    () => summarizeKnowledgeAttempts(attempts, accountWeaknesses),
+    [attempts, accountWeaknesses],
+  )
+  const recommendations = useMemo(
+    () => recommendPracticeQuestions(questions, attempts, 9, accountWeaknesses),
+    [attempts, questions, accountWeaknesses],
+  )
   const visibleWeakNodes = activeSubject
-    ? weakNodes.filter(item => item.node?.subject === activeSubject.key)
+    ? weakNodes.filter((item) => item.node?.subject === activeSubject.key)
     : weakNodes
   const groupedRecommendations = recommendations.reduce((groups, item) => {
     const nodeId = item.targetWeakIds[0] || item.knowledgeIds[0] || 'general'
@@ -576,13 +746,17 @@ function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }
       <article>
         <h3>薄弱环节</h3>
         {hasAccountStats && <p className="weakness-source">已合并账号做题记录。</p>}
-        {!hasAccountStats && localAttemptCount > 0 && <p className="weakness-source">根据本机 {localAttemptCount} 条做题记录生成。</p>}
+        {!hasAccountStats && localAttemptCount > 0 && (
+          <p className="weakness-source">根据本机 {localAttemptCount} 条做题记录生成。</p>
+        )}
         {visibleWeakNodes.length > 0 ? (
           <div className="weakness-list">
-            {visibleWeakNodes.slice(0, 6).map(item => (
+            {visibleWeakNodes.slice(0, 6).map((item) => (
               <div key={item.id}>
                 <strong>{item.node?.label || item.id}</strong>
-                <span>错 {item.wrong} 次 · 正确率 {Math.round(item.accuracy * 100)}%</span>
+                <span>
+                  错 {item.wrong} 次 · 正确率 {Math.round(item.accuracy * 100)}%
+                </span>
               </div>
             ))}
           </div>
@@ -622,7 +796,12 @@ function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }
                         onClick={() => scrollToPracticeQuestion(question.id)}
                       >
                         <strong>{question.title}</strong>
-                        <span>{questionType} · {knowledgeIds.map(id => knowledgeNodeById.get(id)?.label || id).join(' / ')}</span>
+                        <span>
+                          {questionType} ·{' '}
+                          {knowledgeIds
+                            .map((id) => knowledgeNodeById.get(id)?.label || id)
+                            .join(' / ')}
+                        </span>
                         <em>{reasons.join(' · ')}</em>
                       </button>
                     ))}
@@ -642,29 +821,39 @@ function WeaknessPanel({ attempts, questions, activeSubject, accountWeaknesses }
 function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }) {
   const [open, setOpen] = useState(false)
   const knowledgeIds = getQuestionKnowledgeIds(question)
-  const knowledgeLabels = knowledgeIds.map(id => knowledgeNodes.find(node => node.id === id)?.label || id)
+  const knowledgeLabels = knowledgeIds.map(
+    (id) => knowledgeNodes.find((node) => node.id === id)?.label || id,
+  )
   const solution = Array.isArray(question.solution) ? question.solution : []
   const detailedSolution = buildDetailedSolutionSteps(question, knowledgeLabels)
   const difficultyLabel = difficultyLabels[question.difficulty] || question.difficulty || '待标注'
 
   return (
-    <article id={anchorId} data-practice-question-id={question.id} className={`gaokao-question ${isDone ? 'is-complete' : ''} ${attempt ? `attempt-${attempt.result}` : ''}`}>
+    <article
+      id={anchorId}
+      data-practice-question-id={question.id}
+      className={`gaokao-question ${isDone ? 'is-complete' : ''} ${attempt ? `attempt-${attempt.result}` : ''}`}
+    >
       <div className="question-topline">
         <span>{question.year}</span>
-        <span>{subjects.find(item => item.key === question.subject)?.name}</span>
+        <span>{subjects.find((item) => item.key === question.subject)?.name}</span>
         <span>{question.sourceType}</span>
-        <span className={`difficulty difficulty-${question.difficulty || 'unknown'}`}>{difficultyLabel}</span>
+        <span className={`difficulty difficulty-${question.difficulty || 'unknown'}`}>
+          {difficultyLabel}
+        </span>
       </div>
       <h3>{question.title}</h3>
       <div className="knowledge-tags">
-        {knowledgeLabels.map(label => <span key={label}>{label}</span>)}
+        {knowledgeLabels.map((label) => (
+          <span key={label}>{label}</span>
+        ))}
       </div>
       <pre className="question-prompt">{question.prompt}</pre>
       <div className="question-actions">
         <button
           type="button"
           onClick={() => {
-            setOpen(value => {
+            setOpen((value) => {
               const nextOpen = !value
               if (nextOpen) onDone(question.id)
               return nextOpen
@@ -673,16 +862,25 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }
         >
           {open ? '收起题解' : '查看标准答案与分步思路'}
         </button>
-        <button type="button" className={attempt?.result === 'correct' ? 'is-selected' : ''} onClick={() => onAttempt(question, 'correct')}>
+        <button
+          type="button"
+          className={attempt?.result === 'correct' ? 'is-selected' : ''}
+          onClick={() => onAttempt(question, 'correct')}
+        >
           做对了
         </button>
-        <button type="button" className={attempt?.result === 'wrong' ? 'is-selected is-wrong' : ''} onClick={() => onAttempt(question, 'wrong')}>
+        <button
+          type="button"
+          className={attempt?.result === 'wrong' ? 'is-selected is-wrong' : ''}
+          onClick={() => onAttempt(question, 'wrong')}
+        >
           做错了
         </button>
       </div>
       {attempt && (
         <div className="attempt-note">
-          已记录：{attempt.result === 'correct' ? '掌握' : '薄弱'} · {new Date(attempt.updatedAt).toLocaleString('zh-CN', { hour12: false })}
+          已记录：{attempt.result === 'correct' ? '掌握' : '薄弱'} ·{' '}
+          {new Date(attempt.updatedAt).toLocaleString('zh-CN', { hour12: false })}
         </div>
       )}
       {open && (
@@ -709,7 +907,9 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }
             <details className="source-solution">
               <summary>查看原始题解依据</summary>
               <ol>
-                {solution.map((step, index) => <li key={`${question.id}-source-${index}`}>{step}</li>)}
+                {solution.map((step, index) => (
+                  <li key={`${question.id}-source-${index}`}>{step}</li>
+                ))}
               </ol>
             </details>
           ) : (
@@ -734,10 +934,10 @@ function ExtractedQuestionCard({ file, question }) {
         <span>{file.subjectName}</span>
         <span>{extractedQualityLabels[question.quality] || '待整理'}</span>
       </div>
-      <h3>{file.source} · 第 {question.number} 题</h3>
-      {file.analysisSource && (
-        <p className="analysis-source">解析来源：{file.analysisSource}</p>
-      )}
+      <h3>
+        {file.source} · 第 {question.number} 题
+      </h3>
+      {file.analysisSource && <p className="analysis-source">解析来源：{file.analysisSource}</p>}
       <pre className="question-prompt">{displayQuestion.prompt}</pre>
       {hasAnswer && (
         <div className="extract-answer">
@@ -749,13 +949,17 @@ function ExtractedQuestionCard({ file, question }) {
         <div className="extract-solution">
           <strong>解析摘录</strong>
           <ol>
-            {displayQuestion.solution.map((step, index) => <li key={`${question.number}-${index}`}>{step}</li>)}
+            {displayQuestion.solution.map((step, index) => (
+              <li key={`${question.number}-${index}`}>{step}</li>
+            ))}
           </ol>
         </div>
       )}
       {flags.length > 0 && (
         <div className="extract-flags">
-          {flags.map(flag => <span key={flag}>{flag}</span>)}
+          {flags.map((flag) => (
+            <span key={flag}>{flag}</span>
+          ))}
         </div>
       )}
       <p className="extract-note">
@@ -793,10 +997,13 @@ function OcrQuestionCard({ question }) {
         </div>
       )}
       <div className="extract-flags">
-        {(displayQuestion.flags || []).map(flag => <span key={flag}>{flag}</span>)}
+        {(displayQuestion.flags || []).map((flag) => (
+          <span key={flag}>{flag}</span>
+        ))}
       </div>
       <p className="extract-note">
-        该题来自 2026 江苏数学 PDF 扫描识别。题干顺序已按双栏版面整理，公式、根号、上下标和图形信息仍需人工复核。
+        该题来自 2026 江苏数学 PDF
+        扫描识别。题干顺序已按双栏版面整理，公式、根号、上下标和图形信息仍需人工复核。
       </p>
     </article>
   )
@@ -807,44 +1014,148 @@ function SubjectYearCard({ year, cell }) {
     <article className="subject-year-card">
       <strong>{year}</strong>
       <span>资料 {cell?.total || 0} 份</span>
-      <small>可抽取 {cell?.byStatus?.extractable || 0} · 需转换 {cell?.byStatus?.['needs-conversion'] || 0} · OCR {cell?.byStatus?.['needs-ocr-check'] || 0}</small>
+      <small>
+        可抽取 {cell?.byStatus?.extractable || 0} · 需转换{' '}
+        {cell?.byStatus?.['needs-conversion'] || 0} · OCR {cell?.byStatus?.['needs-ocr-check'] || 0}
+      </small>
     </article>
+  )
+}
+
+function QuestionLoadControls({ status, pageInfo, error, onLoadMore }) {
+  const totalCount = pageInfo?.totalCount ?? pageInfo?.totalLoaded ?? 0
+  const loadedCount = pageInfo?.totalLoaded ?? 0
+  return (
+    <div className="question-load-state">
+      <span>
+        {status === 'loading'
+          ? '正在加载当前批次'
+          : `已加载 ${loadedCount}${totalCount ? `/${totalCount}` : ''} 题`}
+      </span>
+      {error && <span className="question-load-error">接口状态：{error}</span>}
+      {pageInfo?.hasMore && (
+        <button type="button" onClick={onLoadMore} disabled={status === 'loadingMore'}>
+          {status === 'loadingMore' ? '加载中…' : '加载更多'}
+        </button>
+      )}
+    </div>
   )
 }
 
 export default function GaokaoPage() {
   const params = useParams()
   const subjectSlug = (params['*'] || '').replace(/^\/+|\/+$/g, '').split('/')[0]
-  const activeSubject = subjects.find(subject => subject.key === subjectSlug)
+  const activeSubject = subjects.find((subject) => subject.key === subjectSlug)
   const isSubjectPage = Boolean(subjectSlug)
   const subjectNotFound = isSubjectPage && !activeSubject
   const pageNavLinks = useMemo(() => {
     if (!activeSubject) return navLinks
     const links = [
-      { id: 'subject-overview', label: `${activeSubject.name}概览`, keywords: `${activeSubject.name} 高考 概览` },
+      {
+        id: 'subject-overview',
+        label: `${activeSubject.name}概览`,
+        keywords: `${activeSubject.name} 高考 概览`,
+      },
       { id: 'subject-trend', label: '命题趋势', keywords: `${activeSubject.name} 趋势 高频考点` },
-      { id: 'subject-knowledge', label: '知识图谱', keywords: `${activeSubject.name} 知识图谱 薄弱点` },
+      {
+        id: 'subject-knowledge',
+        label: '知识图谱',
+        keywords: `${activeSubject.name} 知识图谱 薄弱点`,
+      },
       { id: 'subject-years', label: '年份资料', keywords: `${activeSubject.name} 年份 资料` },
       { id: 'subject-extracts', label: '真实样本', keywords: `${activeSubject.name} 题干 解析` },
       { id: 'subject-practice', label: '扩展训练', keywords: `${activeSubject.name} 练习 题解` },
       { id: 'subject-advice', label: '复习建议', keywords: `${activeSubject.name} 建议 易错` },
     ]
     if (activeSubject.key === 'math') {
-      links.splice(3, 0, { id: 'subject-gene', label: '数学基因', keywords: '数学 出题基因 OCR 迁移' })
+      links.splice(3, 0, {
+        id: 'subject-gene',
+        label: '数学基因',
+        keywords: '数学 出题基因 OCR 迁移',
+      })
     }
     return links
   }, [activeSubject])
 
-  const [filters, setFilters] = useState(() => loadJson('gaokao_jiangsu_filters', {
-    subject: 'all',
-    difficulty: 'all',
-  }))
+  const [filters, setFilters] = useState(() =>
+    loadJson('gaokao_jiangsu_filters', {
+      subject: 'all',
+      difficulty: 'all',
+    }),
+  )
+  const requestedQuestionSubject =
+    activeSubject?.key || (filters.subject !== 'all' ? filters.subject : '')
+  const questionQuery = useMemo(
+    () => ({
+      subject: requestedQuestionSubject,
+      difficulty: filters.difficulty,
+    }),
+    [filters.difficulty, requestedQuestionSubject],
+  )
   const [completed, setCompleted] = useState(() => new Set(loadJson('gaokao_jiangsu_done', [])))
   const [attempts, setAttempts] = useState(() => loadJson('gaokao_knowledge_attempts', {}))
-  const [dbQuestionState, setDbQuestionState] = useState({ status: 'loading', questions: [], error: null })
+  const [dbQuestionState, setDbQuestionState] = useState({
+    status: 'idle',
+    questions: [],
+    error: null,
+    pageInfo: { nextCursor: null, hasMore: false, totalLoaded: 0, totalCount: null },
+  })
   const [accountWeaknessState, setAccountWeaknessState] = useState({ userId: null, rows: [] })
   const { user, syncStudyEvent, syncGaokaoAttempt, fetchGaokaoWeaknesses } = useAuth()
-  const accountWeaknesses = accountWeaknessState.userId === user?.id ? accountWeaknessState.rows : []
+  const accountWeaknesses =
+    accountWeaknessState.userId === user?.id ? accountWeaknessState.rows : []
+
+  const fetchQuestionBatch = useCallback(
+    async ({ cursor, signal } = {}) => {
+      const params = new URLSearchParams({ limit: String(QUESTION_BATCH_SIZE) })
+      if (questionQuery.subject) params.set('subject', questionQuery.subject)
+      if (questionQuery.difficulty !== 'all') params.set('difficulty', questionQuery.difficulty)
+      if (cursor) params.set('cursor', cursor)
+
+      const response = await fetch(`${API_BASE}/api/gaokao/questions?${params.toString()}`, {
+        credentials: 'include',
+        signal,
+      })
+      if (!response.ok) throw new Error(`request_failed_${response.status}`)
+      return response.json()
+    },
+    [questionQuery],
+  )
+
+  const loadMoreQuestions = useCallback(() => {
+    const cursor = dbQuestionState.pageInfo?.nextCursor
+    if (!cursor || dbQuestionState.status === 'loading' || dbQuestionState.status === 'loadingMore')
+      return
+
+    setDbQuestionState((prev) => ({ ...prev, status: 'loadingMore', error: null }))
+    fetchQuestionBatch({ cursor })
+      .then((data) => {
+        const incoming = (data.questions || [])
+          .map(normalizeDbQuestion)
+          .filter((question) => question.id && question.subject && question.prompt)
+        setDbQuestionState((prev) => {
+          const merged = new Map(prev.questions.map((question) => [question.id, question]))
+          incoming.forEach((question) => merged.set(question.id, question))
+          const questions = [...merged.values()]
+          const pageInfo = data.pageInfo || {
+            nextCursor: null,
+            hasMore: false,
+            totalLoaded: questions.length,
+            totalCount: questions.length,
+          }
+          writeQuestionIndexCache(questionQuery, questions, pageInfo)
+          return { status: 'ready', questions, error: null, pageInfo }
+        })
+      })
+      .catch((error) => {
+        setDbQuestionState((prev) => ({ ...prev, status: 'ready', error: error.message }))
+      })
+  }, [
+    dbQuestionState.pageInfo?.nextCursor,
+    dbQuestionState.status,
+    fetchQuestionBatch,
+    questionQuery,
+  ])
 
   useEffect(() => {
     document.title = activeSubject
@@ -866,26 +1177,48 @@ export default function GaokaoPage() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetch(`${API_BASE}/api/gaokao/questions?limit=2000`, {
-      credentials: 'include',
-      signal: controller.signal,
-    })
-      .then(response => {
-        if (!response.ok) throw new Error(`request_failed_${response.status}`)
-        return response.json()
-      })
-      .then(data => {
+    if (subjectNotFound) {
+      return () => controller.abort()
+    }
+
+    const loadingTimer = window.setTimeout(() => {
+      if (!controller.signal.aborted) {
+        setDbQuestionState({
+          status: 'loading',
+          questions: [],
+          error: null,
+          pageInfo: { nextCursor: null, hasMore: false, totalLoaded: 0, totalCount: null },
+        })
+      }
+    }, 0)
+    fetchQuestionBatch({ signal: controller.signal })
+      .then((data) => {
         const questions = (data.questions || [])
           .map(normalizeDbQuestion)
-          .filter(question => question.id && question.subject && question.prompt)
-        setDbQuestionState({ status: 'ready', questions, error: null })
+          .filter((question) => question.id && question.subject && question.prompt)
+        const pageInfo = data.pageInfo || {
+          nextCursor: null,
+          hasMore: false,
+          totalLoaded: questions.length,
+          totalCount: questions.length,
+        }
+        writeQuestionIndexCache(questionQuery, questions, pageInfo)
+        setDbQuestionState({ status: 'ready', questions, error: null, pageInfo })
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.name === 'AbortError') return
-        setDbQuestionState({ status: 'fallback', questions: [], error: error.message })
+        setDbQuestionState({
+          status: 'fallback',
+          questions: [],
+          error: error.message,
+          pageInfo: { nextCursor: null, hasMore: false, totalLoaded: 0, totalCount: null },
+        })
       })
-    return () => controller.abort()
-  }, [])
+    return () => {
+      window.clearTimeout(loadingTimer)
+      controller.abort()
+    }
+  }, [fetchQuestionBatch, questionQuery, subjectNotFound])
 
   useEffect(() => {
     let cancelled = false
@@ -894,7 +1227,7 @@ export default function GaokaoPage() {
         cancelled = true
       }
     }
-    fetchGaokaoWeaknesses().then(rows => {
+    fetchGaokaoWeaknesses().then((rows) => {
       if (!cancelled) setAccountWeaknessState({ userId: user.id, rows })
     })
     return () => {
@@ -905,7 +1238,7 @@ export default function GaokaoPage() {
   useEffect(() => {
     const sidebar = document.querySelector('.sidebar')
     if (!sidebar) return
-    sidebar.querySelectorAll('.nav-group').forEach(group => group.remove())
+    sidebar.querySelectorAll('.nav-group').forEach((group) => group.remove())
 
     const group = document.createElement('div')
     group.className = 'nav-group'
@@ -922,12 +1255,12 @@ export default function GaokaoPage() {
       group.appendChild(overview)
     }
 
-    pageNavLinks.forEach(link => {
+    pageNavLinks.forEach((link) => {
       const item = document.createElement('a')
       item.href = `#${link.id}`
       item.textContent = link.label
       item.dataset.keywords = link.keywords
-      item.onclick = event => {
+      item.onclick = (event) => {
         event.preventDefault()
         document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
         sidebar.classList.remove('open')
@@ -938,14 +1271,17 @@ export default function GaokaoPage() {
     sidebar.appendChild(group)
 
     const navItems = [...group.querySelectorAll('a')]
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return
-        navItems.forEach(item => item.classList.remove('active'))
-        group.querySelector(`a[href="#${entry.target.id}"]`)?.classList.add('active')
-      })
-    }, { rootMargin: '-20% 0px -65% 0px' })
-    pageNavLinks.forEach(link => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          navItems.forEach((item) => item.classList.remove('active'))
+          group.querySelector(`a[href="#${entry.target.id}"]`)?.classList.add('active')
+        })
+      },
+      { rootMargin: '-20% 0px -65% 0px' },
+    )
+    pageNavLinks.forEach((link) => {
       const target = document.getElementById(link.id)
       if (target) observer.observe(target)
     })
@@ -953,12 +1289,22 @@ export default function GaokaoPage() {
   }, [activeSubject, pageNavLinks])
 
   const dbQuestions = dbQuestionState.questions
-  const questionLibrary = dbQuestions.length > 0 ? dbQuestions : practiceQuestions
-  const questionLibraryLabel = dbQuestions.length > 0 ? '数据库题库' : '本地训练题'
-  const answeredQuestionCount = questionLibrary.filter(question => question.answer && question.answer !== '答案待补全').length
+  const usingFallbackQuestions = dbQuestionState.status === 'fallback'
+  const questionLibrary = usingFallbackQuestions ? practiceQuestions : dbQuestions
+  const questionLibraryLabel = usingFallbackQuestions ? '本地兜底题' : '后端题库'
+  const questionPageInfo = dbQuestionState.pageInfo || {
+    nextCursor: null,
+    hasMore: false,
+    totalLoaded: questionLibrary.length,
+    totalCount: null,
+  }
+  const totalQuestionCount = questionPageInfo.totalCount ?? questionLibrary.length
+  const answeredQuestionCount = questionLibrary.filter(
+    (question) => question.answer && question.answer !== '答案待补全',
+  ).length
 
   const filteredQuestions = useMemo(() => {
-    return questionLibrary.filter(question => {
+    return questionLibrary.filter((question) => {
       if (filters.subject !== 'all' && question.subject !== filters.subject) return false
       if (filters.difficulty !== 'all' && question.difficulty !== filters.difficulty) return false
       return true
@@ -967,53 +1313,60 @@ export default function GaokaoPage() {
 
   const extractedSamples = useMemo(() => {
     return extractedLibraries
-      .flatMap(library => library.files || [])
-      .flatMap(file => file.questions.map(question => ({ file, question })))
-      .filter(item => item.question.prompt.length >= 20)
-      .sort((left, right) => (
-        (extractedQualityOrder[left.question.quality] ?? 9) - (extractedQualityOrder[right.question.quality] ?? 9)
-      ))
+      .flatMap((library) => library.files || [])
+      .flatMap((file) => file.questions.map((question) => ({ file, question })))
+      .filter((item) => item.question.prompt.length >= 20)
+      .sort(
+        (left, right) =>
+          (extractedQualityOrder[left.question.quality] ?? 9) -
+          (extractedQualityOrder[right.question.quality] ?? 9),
+      )
   }, [])
 
   const subjectExtractedSamples = useMemo(() => {
     if (!activeSubject) return []
     return extractedLibraries
-      .flatMap(library => library.files || [])
-      .filter(file => file.subject === activeSubject.key)
-      .flatMap(file => file.questions.map(question => ({ file, question })))
-      .filter(item => item.question.prompt.length >= 20)
-      .sort((left, right) => (
-        (extractedQualityOrder[left.question.quality] ?? 9) - (extractedQualityOrder[right.question.quality] ?? 9)
-      ))
+      .flatMap((library) => library.files || [])
+      .filter((file) => file.subject === activeSubject.key)
+      .flatMap((file) => file.questions.map((question) => ({ file, question })))
+      .filter((item) => item.question.prompt.length >= 20)
+      .sort(
+        (left, right) =>
+          (extractedQualityOrder[left.question.quality] ?? 9) -
+          (extractedQualityOrder[right.question.quality] ?? 9),
+      )
   }, [activeSubject])
 
   const subjectPracticeQuestions = useMemo(() => {
     if (!activeSubject) return []
-    return questionLibrary.filter(question => question.subject === activeSubject.key)
+    return questionLibrary.filter((question) => question.subject === activeSubject.key)
   }, [activeSubject, questionLibrary])
 
   const subjectYearRows = useMemo(() => {
     if (!activeSubject) return []
-    return gaokaoIndex.yearSummaries.map(summary => ({
+    return gaokaoIndex.yearSummaries.map((summary) => ({
       year: summary.year,
       cell: gaokaoIndex.matrix[summary.year][activeSubject.key],
     }))
   }, [activeSubject])
 
-  const completeQuestion = id => {
-    setCompleted(prev => {
+  const completeQuestion = (id) => {
+    setCompleted((prev) => {
       const next = new Set(prev)
       next.add(id)
       return next
     })
-    const question = questionLibrary.find(item => item.id === id)
+    const question = questionLibrary.find((item) => item.id === id)
     syncStudyEvent({
       eventType: 'practice_done',
       course: 'gaokao',
       subject: question?.subject || activeSubject?.key || null,
       pagePath: window.location.pathname,
       objectId: id,
-      payload: { sourceType: question?.sourceType || null, difficulty: question?.difficulty || null },
+      payload: {
+        sourceType: question?.sourceType || null,
+        difficulty: question?.difficulty || null,
+      },
     })
   }
 
@@ -1026,16 +1379,20 @@ export default function GaokaoPage() {
       subject: question.subject,
       title: question.title,
     }
-    setAttempts(prev => ({ ...prev, [question.id]: nextAttempt }))
-    setCompleted(prev => {
+    setAttempts((prev) => ({ ...prev, [question.id]: nextAttempt }))
+    setCompleted((prev) => {
       const next = new Set(prev)
       next.add(question.id)
       return next
     })
     if (user) {
-      setAccountWeaknessState(prev => ({
+      setAccountWeaknessState((prev) => ({
         userId: user.id,
-        rows: mergeAccountWeaknesses(prev.userId === user.id ? prev.rows : [], knowledgeIds, result),
+        rows: mergeAccountWeaknesses(
+          prev.userId === user.id ? prev.rows : [],
+          knowledgeIds,
+          result,
+        ),
       }))
     }
     syncGaokaoAttempt({
@@ -1075,9 +1432,18 @@ export default function GaokaoPage() {
   ]
   const combinedExtractSummary = {
     files: extractedLibraries.reduce((total, library) => total + (library.summary?.files || 0), 0),
-    questions: extractedLibraries.reduce((total, library) => total + (library.summary?.questions || 0), 0),
-    matchedQuestions: extractedLibraries.reduce((total, library) => total + (library.summary?.matchedQuestions || 0), 0),
-    reviewQuestions: extractedLibraries.reduce((total, library) => total + (library.summary?.reviewQuestions || 0), 0),
+    questions: extractedLibraries.reduce(
+      (total, library) => total + (library.summary?.questions || 0),
+      0,
+    ),
+    matchedQuestions: extractedLibraries.reduce(
+      (total, library) => total + (library.summary?.matchedQuestions || 0),
+      0,
+    ),
+    reviewQuestions: extractedLibraries.reduce(
+      (total, library) => total + (library.summary?.reviewQuestions || 0),
+      0,
+    ),
     answerOverrides: answerOverrides.summary?.overrides || 0,
   }
 
@@ -1090,7 +1456,9 @@ export default function GaokaoPage() {
             <h2>学科未找到</h2>
           </div>
           <p className="extract-intro">当前路径没有对应的高考学科，请返回九科总览重新选择。</p>
-          <Link className="subject-back-link" to="/courses/gaokao/">返回九科总览</Link>
+          <Link className="subject-back-link" to="/courses/gaokao/">
+            返回九科总览
+          </Link>
         </section>
       </div>
     )
@@ -1098,19 +1466,38 @@ export default function GaokaoPage() {
 
   if (activeSubject) {
     return (
-      <div className="gaokao-page subject-page" style={{ '--subject-accent': activeSubject.accent }}>
+      <div
+        className="gaokao-page subject-page"
+        style={{ '--subject-accent': activeSubject.accent }}
+      >
         <section id="subject-overview" className="gaokao-hero subject-hero">
           <div>
             <span className="eyebrow">高中内容 · 江苏高考 · {activeSubject.name}</span>
             <h1>{activeSubject.name}高考专题</h1>
             <p>{activeSubject.trend}</p>
-            <Link className="subject-back-link" to="/courses/gaokao/">返回九科总览</Link>
+            <Link className="subject-back-link" to="/courses/gaokao/">
+              返回九科总览
+            </Link>
           </div>
           <div className="hero-metrics" aria-label={`${activeSubject.name}专题统计`}>
-            <div><strong>{subjectYearRows.reduce((sum, item) => sum + (item.cell?.total || 0), 0)}</strong><span>资料索引</span></div>
-            <div><strong>{subjectExtractedSamples.length}</strong><span>真实样本</span></div>
-            <div><strong>{subjectPracticeQuestions.length}</strong><span>{questionLibraryLabel}</span></div>
-            <div><strong>{activeSubject.highFrequency.length}</strong><span>高频能力点</span></div>
+            <div>
+              <strong>
+                {subjectYearRows.reduce((sum, item) => sum + (item.cell?.total || 0), 0)}
+              </strong>
+              <span>资料索引</span>
+            </div>
+            <div>
+              <strong>{subjectExtractedSamples.length}</strong>
+              <span>真实样本</span>
+            </div>
+            <div>
+              <strong>{subjectPracticeQuestions.length}</strong>
+              <span>{questionLibraryLabel}</span>
+            </div>
+            <div>
+              <strong>{activeSubject.highFrequency.length}</strong>
+              <span>高频能力点</span>
+            </div>
           </div>
         </section>
 
@@ -1123,13 +1510,17 @@ export default function GaokaoPage() {
             <article>
               <h3>高频能力点</h3>
               <div className="tag-cloud">
-                {activeSubject.highFrequency.map(item => <span key={item}>{item}</span>)}
+                {activeSubject.highFrequency.map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
               </div>
             </article>
             <article>
               <h3>常见失分点</h3>
               <ul className="compact-list">
-                {activeSubject.easyMistakes.map(item => <li key={item}>{item}</li>)}
+                {activeSubject.easyMistakes.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ul>
             </article>
           </div>
@@ -1140,9 +1531,24 @@ export default function GaokaoPage() {
             <span>Knowledge Graph</span>
             <h2>{activeSubject.name}知识图谱与薄弱点</h2>
           </div>
-          <KnowledgeGraph activeSubject={activeSubject} attempts={attempts} accountWeaknesses={accountWeaknesses} questions={subjectPracticeQuestions} />
-          <QuestionTaxonomyPanel questions={subjectPracticeQuestions} activeSubject={activeSubject} attempts={attempts} accountWeaknesses={accountWeaknesses} />
-          <WeaknessPanel attempts={attempts} questions={subjectPracticeQuestions} activeSubject={activeSubject} accountWeaknesses={accountWeaknesses} />
+          <KnowledgeGraph
+            activeSubject={activeSubject}
+            attempts={attempts}
+            accountWeaknesses={accountWeaknesses}
+            questions={subjectPracticeQuestions}
+          />
+          <QuestionTaxonomyPanel
+            questions={subjectPracticeQuestions}
+            activeSubject={activeSubject}
+            attempts={attempts}
+            accountWeaknesses={accountWeaknesses}
+          />
+          <WeaknessPanel
+            attempts={attempts}
+            questions={subjectPracticeQuestions}
+            activeSubject={activeSubject}
+            accountWeaknesses={accountWeaknesses}
+          />
         </section>
 
         <section id="subject-years" className="gaokao-section">
@@ -1151,7 +1557,9 @@ export default function GaokaoPage() {
             <h2>年份资料</h2>
           </div>
           <div className="subject-year-grid">
-            {subjectYearRows.map(item => <SubjectYearCard key={item.year} year={item.year} cell={item.cell} />)}
+            {subjectYearRows.map((item) => (
+              <SubjectYearCard key={item.year} year={item.year} cell={item.cell} />
+            ))}
           </div>
         </section>
 
@@ -1162,16 +1570,25 @@ export default function GaokaoPage() {
               <h2>数学出题基因与 2026 OCR 样本</h2>
             </div>
             <div className="prep-grid">
-              {genePatterns.filter(block => block.title.includes('数学')).map(block => (
-                <article key={block.title}>
-                  <h3>{block.title}</h3>
-                  <ul>{block.points.map(point => <li key={point}>{point}</li>)}</ul>
-                </article>
-              ))}
+              {genePatterns
+                .filter((block) => block.title.includes('数学'))
+                .map((block) => (
+                  <article key={block.title}>
+                    <h3>{block.title}</h3>
+                    <ul>
+                      {block.points.map((point) => (
+                        <li key={point}>{point}</li>
+                      ))}
+                    </ul>
+                  </article>
+                ))}
             </div>
             <div className="ocr-grid subject-ocr-grid">
               {ocrQuestions.questions.slice(0, 6).map((question, index) => (
-                <OcrQuestionCard key={questionRenderKey(question, index, 'subject-ocr')} question={question} />
+                <OcrQuestionCard
+                  key={questionRenderKey(question, index, 'subject-ocr')}
+                  question={question}
+                />
               ))}
             </div>
           </section>
@@ -1193,7 +1610,9 @@ export default function GaokaoPage() {
               ))}
             </div>
           ) : (
-            <p className="extract-intro">该科目的可展示 DOCX 样本仍在清洗中；旧 DOC、扫描件或特殊排版会继续标为待转换/待复核。</p>
+            <p className="extract-intro">
+              该科目的可展示 DOCX 样本仍在清洗中；旧 DOC、扫描件或特殊排版会继续标为待转换/待复核。
+            </p>
           )}
         </section>
 
@@ -1203,21 +1622,45 @@ export default function GaokaoPage() {
             <h2>扩展训练</h2>
           </div>
           {subjectPracticeQuestions.length > 0 ? (
-            <div className="question-grid">
-              {subjectPracticeQuestions.map((question, index) => (
-                <QuestionCard
-                  key={questionRenderKey(question, index, 'subject-practice')}
-                  anchorId={practiceAnchorId(question, index, 'subject-practice')}
-                  question={question}
-                  isDone={completed.has(question.id)}
-                  onDone={completeQuestion}
-                  attempt={attempts[question.id]}
-                  onAttempt={recordAttempt}
-                />
-              ))}
-            </div>
+            <>
+              <QuestionLoadControls
+                status={dbQuestionState.status}
+                pageInfo={questionPageInfo}
+                error={dbQuestionState.error}
+                onLoadMore={loadMoreQuestions}
+              />
+              <div className="question-grid">
+                {subjectPracticeQuestions.map((question, index) => (
+                  <QuestionCard
+                    key={questionRenderKey(question, index, 'subject-practice')}
+                    anchorId={practiceAnchorId(question, index, 'subject-practice')}
+                    question={question}
+                    isDone={completed.has(question.id)}
+                    onDone={completeQuestion}
+                    attempt={attempts[question.id]}
+                    onAttempt={recordAttempt}
+                  />
+                ))}
+              </div>
+              <QuestionLoadControls
+                status={dbQuestionState.status}
+                pageInfo={questionPageInfo}
+                error={null}
+                onLoadMore={loadMoreQuestions}
+              />
+            </>
           ) : (
-            <p className="extract-intro">该科扩展训练题会按真实题型和教材顺序继续补充；当前先展示趋势、资料和真实样本。</p>
+            <>
+              <QuestionLoadControls
+                status={dbQuestionState.status}
+                pageInfo={questionPageInfo}
+                error={dbQuestionState.error}
+                onLoadMore={loadMoreQuestions}
+              />
+              <p className="extract-intro">
+                该科扩展训练题会按真实题型和教材顺序继续补充；当前先展示趋势、资料和真实样本。
+              </p>
+            </>
           )}
         </section>
 
@@ -1228,7 +1671,8 @@ export default function GaokaoPage() {
           </div>
           <div className="subject-advice">{activeSubject.advice}</div>
           <p className="extract-intro">
-            本学科页面只显示与 {activeSubject.name} 相关的资料与题目；总览页仍保留九科矩阵、全局 OCR 和来源说明。
+            本学科页面只显示与 {activeSubject.name} 相关的资料与题目；总览页仍保留九科矩阵、全局 OCR
+            和来源说明。
           </p>
         </section>
       </div>
@@ -1242,16 +1686,28 @@ export default function GaokaoPage() {
           <span className="eyebrow">高中内容 · 江苏近十年 · 全科分析</span>
           <h1>江苏高考真题基因库</h1>
           <p>
-            本页把江苏近十年高考放在同一条时间线上观察：2017-2020 作为江苏自主命题对照，
-            2021 以后按江苏使用的新高考全国Ⅰ卷 / 新课标Ⅰ卷主线分析。页面先呈现严谨可追溯的资料状态、
+            本页把江苏近十年高考放在同一条时间线上观察：2017-2020 作为江苏自主命题对照， 2021
+            以后按江苏使用的新高考全国Ⅰ卷 / 新课标Ⅰ卷主线分析。页面先呈现严谨可追溯的资料状态、
             九科命题趋势和完整训练题解；扫描件和旧 .doc 文件在 OCR 或转换前不会被标成已完整入库。
           </p>
         </div>
         <div className="hero-metrics" aria-label="专题统计">
-          <div><strong>10</strong><span>年份范围</span></div>
-          <div><strong>9</strong><span>覆盖科目</span></div>
-          <div><strong>{questionLibrary.length}</strong><span>题库题目</span></div>
-          <div><strong>{gaokaoIndex.totals.coveredCells}/90</strong><span>资料格覆盖</span></div>
+          <div>
+            <strong>10</strong>
+            <span>年份范围</span>
+          </div>
+          <div>
+            <strong>9</strong>
+            <span>覆盖科目</span>
+          </div>
+          <div>
+            <strong>{totalQuestionCount}</strong>
+            <span>题库题目</span>
+          </div>
+          <div>
+            <strong>{gaokaoIndex.totals.coveredCells}/90</strong>
+            <span>资料格覆盖</span>
+          </div>
         </div>
       </section>
 
@@ -1269,7 +1725,7 @@ export default function GaokaoPage() {
           <h2>十年资料矩阵</h2>
         </div>
         <div className="coverage-strip">
-          {coverage.map(item => (
+          {coverage.map((item) => (
             <article key={item.label}>
               <strong>{item.label}</strong>
               <span>{item.value}</span>
@@ -1277,7 +1733,7 @@ export default function GaokaoPage() {
           ))}
         </div>
         <div className="coverage-strip index-strip">
-          {indexCoverage.map(item => (
+          {indexCoverage.map((item) => (
             <article key={item.label}>
               <strong>{item.label}</strong>
               <span>{item.value}</span>
@@ -1285,24 +1741,29 @@ export default function GaokaoPage() {
           ))}
         </div>
         <div className="index-note">
-          索引生成时间：{formatGeneratedAt(gaokaoIndex.generatedAt)}。脚本只记录文件名和相对路径，不把本地绝对路径写入网页数据。
+          索引生成时间：{formatGeneratedAt(gaokaoIndex.generatedAt)}
+          。脚本只记录文件名和相对路径，不把本地绝对路径写入网页数据。
         </div>
         <div className="index-table-wrap" aria-label="江苏高考资料索引表">
           <table className="index-table">
             <thead>
               <tr>
                 <th>年份</th>
-                {gaokaoIndex.subjects.map(subject => <th key={subject.key}>{subject.name}</th>)}
+                {gaokaoIndex.subjects.map((subject) => (
+                  <th key={subject.key}>{subject.name}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {gaokaoIndex.yearSummaries.map(summary => (
+              {gaokaoIndex.yearSummaries.map((summary) => (
                 <tr key={summary.year}>
                   <th>
                     <strong>{summary.year}</strong>
-                    <span>{summary.coveredSubjects}/{summary.totalSubjects} 科</span>
+                    <span>
+                      {summary.coveredSubjects}/{summary.totalSubjects} 科
+                    </span>
                   </th>
-                  {gaokaoIndex.subjects.map(subject => {
+                  {gaokaoIndex.subjects.map((subject) => {
                     const cell = gaokaoIndex.matrix[summary.year][subject.key]
                     return (
                       <td key={subject.key} className={indexCellClass(cell)}>
@@ -1319,7 +1780,7 @@ export default function GaokaoPage() {
           </table>
         </div>
         <div className="year-grid">
-          {years.map(item => (
+          {years.map((item) => (
             <article key={item.year} className={`year-card year-${item.status}`}>
               <div className="year-card-head">
                 <strong>{item.year}</strong>
@@ -1339,20 +1800,30 @@ export default function GaokaoPage() {
           <h2>九科命题趋势</h2>
         </div>
         <div className="subject-grid">
-          {subjects.map(subject => (
-            <article key={subject.key} className="subject-card" style={{ '--subject-accent': subject.accent }}>
+          {subjects.map((subject) => (
+            <article
+              key={subject.key}
+              className="subject-card"
+              style={{ '--subject-accent': subject.accent }}
+            >
               <div className="subject-title">
-                <div className="subject-icon"><SvgIcon name={subject.icon} /></div>
+                <div className="subject-icon">
+                  <SvgIcon name={subject.icon} />
+                </div>
                 <h3>{subject.name}</h3>
               </div>
               <p>{subject.trend}</p>
               <h4>高频能力点</h4>
               <div className="tag-cloud">
-                {subject.highFrequency.map(item => <span key={item}>{item}</span>)}
+                {subject.highFrequency.map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
               </div>
               <h4>常见失分点</h4>
               <ul className="compact-list">
-                {subject.easyMistakes.map(item => <li key={item}>{item}</li>)}
+                {subject.easyMistakes.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ul>
               <div className="subject-advice">{subject.advice}</div>
             </article>
@@ -1366,11 +1837,13 @@ export default function GaokaoPage() {
           <h2>出题基因与迁移规则</h2>
         </div>
         <div className="prep-grid">
-          {genePatterns.map(block => (
+          {genePatterns.map((block) => (
             <article key={block.title}>
               <h3>{block.title}</h3>
               <ul>
-                {block.points.map(point => <li key={point}>{point}</li>)}
+                {block.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
               </ul>
             </article>
           ))}
@@ -1382,9 +1855,21 @@ export default function GaokaoPage() {
           <span>Knowledge Graph</span>
           <h2>九科知识图谱与薄弱点推荐</h2>
         </div>
-        <KnowledgeGraph attempts={attempts} accountWeaknesses={accountWeaknesses} questions={questionLibrary} />
-        <QuestionTaxonomyPanel questions={questionLibrary} attempts={attempts} accountWeaknesses={accountWeaknesses} />
-        <WeaknessPanel attempts={attempts} questions={questionLibrary} accountWeaknesses={accountWeaknesses} />
+        <KnowledgeGraph
+          attempts={attempts}
+          accountWeaknesses={accountWeaknesses}
+          questions={questionLibrary}
+        />
+        <QuestionTaxonomyPanel
+          questions={questionLibrary}
+          attempts={attempts}
+          accountWeaknesses={accountWeaknesses}
+        />
+        <WeaknessPanel
+          attempts={attempts}
+          questions={questionLibrary}
+          accountWeaknesses={accountWeaknesses}
+        />
       </section>
 
       <section id="ocr" className="gaokao-section">
@@ -1399,7 +1884,8 @@ export default function GaokaoPage() {
           <span>全部待复核 {ocrQuestions.summary.reviewQuestions} 题</span>
         </div>
         <p className="extract-intro">
-          这部分来自本地 2026 江苏数学扫描 PDF。页面展示的是 OCR 题干，用于分析题型分布、情境包装和压轴结构；
+          这部分来自本地 2026 江苏数学扫描 PDF。页面展示的是 OCR
+          题干，用于分析题型分布、情境包装和压轴结构；
           涉及公式、图形、选项排版的地方先标记为待复核，不混入正式题解练习。
         </p>
         <div className="ocr-grid">
@@ -1422,7 +1908,9 @@ export default function GaokaoPage() {
           <span>需核验 {combinedExtractSummary.reviewQuestions} 题</span>
         </div>
         <p className="extract-intro">
-          这一栏来自真实 DOCX 与带文本层 PDF 试卷抽取，已合并 2020-2025 江苏/新高考样本、2026 审计清单中的 DOCX 和可直接读文本的 PDF。含公式、图片、复杂表格的题目可能会丢失部分内容，因此带有质量标记；
+          这一栏来自真实 DOCX 与带文本层 PDF 试卷抽取，已合并 2020-2025 江苏/新高考样本、2026
+          审计清单中的 DOCX 和可直接读文本的
+          PDF。含公式、图片、复杂表格的题目可能会丢失部分内容，因此带有质量标记；
           已匹配解析的样本会展示答案与解析摘录，但在人工复核前仍不替代正式练习区。
         </p>
         <div className="extract-grid">
@@ -1444,25 +1932,54 @@ export default function GaokaoPage() {
         <div className="filters">
           <label>
             科目
-            <select value={filters.subject} onChange={event => setFilters({ ...filters, subject: event.target.value })}>
+            <select
+              value={filters.subject}
+              onChange={(event) => setFilters({ ...filters, subject: event.target.value })}
+            >
               <option value="all">全部科目</option>
-              {subjects.map(subject => <option key={subject.key} value={subject.key}>{subject.name}</option>)}
+              {subjects.map((subject) => (
+                <option key={subject.key} value={subject.key}>
+                  {subject.name}
+                </option>
+              ))}
             </select>
           </label>
           <label>
             难度
-            <select value={filters.difficulty} onChange={event => setFilters({ ...filters, difficulty: event.target.value })}>
-              {Object.entries(difficultyLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            <select
+              value={filters.difficulty}
+              onChange={(event) => setFilters({ ...filters, difficulty: event.target.value })}
+            >
+              {Object.entries(difficultyLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </select>
           </label>
-          <button type="button" onClick={() => setFilters({ subject: 'all', difficulty: 'all' })}>重置</button>
+          <button type="button" onClick={() => setFilters({ subject: 'all', difficulty: 'all' })}>
+            重置
+          </button>
         </div>
         <div className="question-summary">
-          <span>{questionLibraryLabel}{dbQuestionState.status === 'loading' ? '加载中' : ''}</span>
-          <span>已补答案 {answeredQuestionCount}/{questionLibrary.length}</span>
-          <span>已查看 {completed.size}/{questionLibrary.length}</span>
+          <span>
+            {questionLibraryLabel}
+            {dbQuestionState.status === 'loading' ? '加载中' : ''}
+          </span>
+          <span>
+            已补答案 {answeredQuestionCount}/{questionLibrary.length}
+          </span>
+          <span>
+            已查看 {completed.size}/{questionLibrary.length}
+          </span>
           <span>当前筛选 {filteredQuestions.length} 题</span>
         </div>
+        <QuestionLoadControls
+          status={dbQuestionState.status}
+          pageInfo={questionPageInfo}
+          error={dbQuestionState.error}
+          onLoadMore={loadMoreQuestions}
+        />
         <div className="question-grid">
           {filteredQuestions.map((question, index) => (
             <QuestionCard
@@ -1476,6 +1993,12 @@ export default function GaokaoPage() {
             />
           ))}
         </div>
+        <QuestionLoadControls
+          status={dbQuestionState.status}
+          pageInfo={questionPageInfo}
+          error={null}
+          onLoadMore={loadMoreQuestions}
+        />
       </section>
 
       <section id="sources" className="gaokao-section sources-section">
@@ -1484,12 +2007,13 @@ export default function GaokaoPage() {
           <h2>来源与处理口径</h2>
         </div>
         <p>
-          访问与整理日期：{sourceDate}。本页优先使用本地资料目录作为证据来源；
-          数学迁移规则使用个人 Skill gaokao-question-gene。资料索引由 `scripts/build-gaokao-index.mjs`
-          从本地目录生成，DOCX 候选题干由 `scripts/extract-gaokao-docx.py` 抽取；后续逐题入库时，会继续区分“真实原题”“解析摘录”“AI 迁移题”。
+          访问与整理日期：{sourceDate}。本页优先使用本地资料目录作为证据来源； 数学迁移规则使用个人
+          Skill gaokao-question-gene。资料索引由 `scripts/build-gaokao-index.mjs`
+          从本地目录生成，DOCX 候选题干由 `scripts/extract-gaokao-docx.py`
+          抽取；后续逐题入库时，会继续区分“真实原题”“解析摘录”“AI 迁移题”。
         </p>
         <div className="source-list">
-          {sources.map(source => (
+          {sources.map((source) => (
             <article key={source.name}>
               <strong>{source.name}</strong>
               <span>{source.detail}</span>
