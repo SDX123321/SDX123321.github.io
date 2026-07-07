@@ -1,25 +1,35 @@
 {
   "datasetVersion": "gaokao-langsmith-v1",
   "format": "jsonl",
-  "langsmithShape": [
-    "inputs",
-    "outputs",
-    "metadata"
-  ],
-  "generatedAt": "2026-07-07T11:09:27.816Z",
-  "startedAt": "2026-07-07T11:09:27.571Z",
+  "langsmithShape": ["inputs", "outputs", "metadata"],
+  "generatedAt": "2026-07-07T12:45:56.647Z",
+  "startedAt": "2026-07-07T12:45:56.266Z",
+  "runtime": {
+    "orchestrator": "langgraph",
+    "langchain": true,
+    "graph": ["loadRows", "auditRows", "enrichMissingSolutions", "groupBySubject", "writeDatasets"],
+    "threadId": "gaokao-langsmith-2026-07-07T12-45-56-262Z",
+    "enrichmentEnabled": false
+  },
   "options": {
     "outDir": "C:\\Users\\zzz\\Desktop\\site\\datasets\\langsmith\\gaokao",
     "subject": null,
     "includeHidden": false,
     "includeAnswerOnly": false,
     "limit": null,
-    "minSolutionChars": 1
+    "minSolutionChars": 1,
+    "enrichMissingSolutions": false,
+    "enrichLimit": 25,
+    "modelUrl": null,
+    "modelName": null,
+    "threadId": "gaokao-langsmith-2026-07-07T12-45-56-262Z",
+    "printGraphPlan": false
   },
   "totals": {
     "scanned": 1320,
     "exported": 344,
-    "skipped": 976
+    "skipped": 976,
+    "enriched": 0
   },
   "subjects": [
     {

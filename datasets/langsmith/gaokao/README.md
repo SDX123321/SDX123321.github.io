@@ -1,6 +1,6 @@
 # 高考题库 LangSmith JSONL 数据集
 
-本目录由 `npm run gaokao:langsmith` 从 PostgreSQL 表 `gaokao_questions` 导出。
+本目录由 `npm run gaokao:langsmith` 从 PostgreSQL 表 `gaokao_questions` 导出。当前导出流程已经接入 LangGraph，图定义位于 `scripts/langchain/gaokao-dataset-graph.mjs`。
 
 每个学科一个 JSONL 文件，每行是一个 LangSmith example：
 
@@ -34,13 +34,22 @@
 文件说明：
 
 - `gaokao-*.jsonl`：按学科拆分的 LangSmith 数据集文件。
-- `manifest.json`：导出参数、总数与各学科文件清单。
+- `manifest.json`：导出参数、LangGraph runtime、总数与各学科文件清单。
 - `skipped.jsonl`：被跳过题目的审计清单，不是 LangSmith example 文件。
 
 常用命令：
 
 ```bash
 npm run gaokao:langsmith
+npm run gaokao:langgraph -- --print-graph-plan
 node scripts/export-gaokao-langsmith-jsonl.mjs --subject math
 node scripts/export-gaokao-langsmith-jsonl.mjs --include-answer-only --out datasets/langsmith/gaokao-answer-only
+```
+
+如果需要让 LangChain 调用本地 OpenAI-compatible 模型补全缺失题解，可显式启用：
+
+```bash
+$env:LOCAL_MODEL_URL="http://127.0.0.1:11434/v1"
+$env:LOCAL_MODEL_NAME="your-local-chat-model"
+npm run gaokao:langgraph -- --enrich-missing-solutions --enrich-limit 10
 ```
