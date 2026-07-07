@@ -16,6 +16,7 @@ import extracted2026PdfText from '../../data/gaokao-2026-pdf-text-extracted.json
 import extracted2026Ocr from '../../data/gaokao-2026-ocr-extracted.json'
 import extracted2026Residual from '../../data/gaokao-2026-residual-extracted.json'
 import answerOverrides from '../../data/gaokao-2026-answer-overrides.json'
+import questionAssets from '../../data/gaokao-question-assets.json'
 import gaokaoIndex from '../../data/jiangsu-gaokao-index.json'
 import ocrQuestions from '../../data/jiangsu-gaokao-ocr.json'
 import {
@@ -60,13 +61,14 @@ const extractedQualityOrder = {
   review: 2,
 }
 
-const extractedLibraries = [
-  extractedQuestions,
-  extracted2026Docx,
-  extracted2026PdfText,
-  extracted2026Ocr,
-  extracted2026Residual,
+const extractedLibraryEntries = [
+  { dataset: 'jiangsu-gaokao-extracted.json', data: extractedQuestions },
+  { dataset: 'gaokao-2026-docx-extracted.json', data: extracted2026Docx },
+  { dataset: 'gaokao-2026-pdf-text-extracted.json', data: extracted2026PdfText },
+  { dataset: 'gaokao-2026-ocr-extracted.json', data: extracted2026Ocr },
+  { dataset: 'gaokao-2026-residual-extracted.json', data: extracted2026Residual },
 ]
+const extractedLibraries = extractedLibraryEntries.map((entry) => entry.data)
 
 const answerOverrideById = new Map(
   (answerOverrides.overrides || []).map((override) => [override.questionId, override]),
@@ -84,6 +86,23 @@ function answerOverrideLookupKey(value) {
     '\u241f',
   )
 }
+
+function questionAssetLookupKey(value) {
+  if (!value?.dataset || !value?.source || value?.number === undefined || value?.number === null)
+    return null
+  return [value.dataset, value.source, value.relativePath || '', String(value.number)].join(
+    '\u241f',
+  )
+}
+
+const questionImagesByKey = new Map(
+  (questionAssets.questions || []).map((item) => [item.questionKey, item.images || []]),
+)
+const questionImagesBySource = new Map(
+  (questionAssets.questions || [])
+    .map((item) => [questionAssetLookupKey(item), item.images || []])
+    .filter(([key]) => key),
+)
 
 function findAnswerOverride(question, context = {}) {
   if (question?.id && answerOverrideById.has(question.id))
@@ -133,6 +152,37 @@ function normalizeList(value) {
   return [String(value)]
 }
 
+function normalizeQuestionImages(value) {
+  if (!Array.isArray(value)) return []
+  return value
+    .filter((image) => image?.url)
+    .map((image, index) => ({
+      ...image,
+      caption: image.caption || (image.scope === 'source-page' ? 'OCR 页面图' : `题目配图 ${index + 1}`),
+      alt: image.alt || image.caption || `题目配图 ${index + 1}`,
+    }))
+}
+
+function findQuestionImages(questionKey, context = {}) {
+  if (questionKey && questionImagesByKey.has(questionKey)) {
+    return normalizeQuestionImages(questionImagesByKey.get(questionKey))
+  }
+  const sourceKey = questionAssetLookupKey(context)
+  return normalizeQuestionImages(sourceKey ? questionImagesBySource.get(sourceKey) : [])
+}
+
+function attachQuestionImages(file, question, dataset) {
+  const images = normalizeQuestionImages(question.images)
+  const manifestImages = findQuestionImages(question.questionKey || question.id, {
+    dataset,
+    source: file?.source,
+    relativePath: file?.relativePath,
+    number: question?.number,
+  })
+  const nextImages = images.length > 0 ? images : manifestImages
+  return nextImages.length > 0 ? { ...question, images: nextImages } : question
+}
+
 function normalizeDbQuestion(row) {
   const subject = subjects.find((item) => item.key === row.subjectKey)
   const questionNumber = row.questionNumber ? `第 ${row.questionNumber} 题` : '题目'
@@ -154,6 +204,7 @@ function normalizeDbQuestion(row) {
     questionType: row.questionType,
     questionKey: row.questionKey,
     metadata: row.metadata || {},
+    images: normalizeQuestionImages(row.metadata?.assets?.images || row.images),
     hasSolution: Boolean(row.hasSolution),
     solutionStatus: row.solutionStatus || row.metadata?.solutionEnrichment?.status || null,
     updatedAt: row.updatedAt,
@@ -849,6 +900,7 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }
         ))}
       </div>
       <pre className="question-prompt">{question.prompt}</pre>
+      <QuestionImages images={question.images} />
       <div className="question-actions">
         <button
           type="button"
@@ -921,11 +973,31 @@ function QuestionCard({ question, isDone, onDone, attempt, onAttempt, anchorId }
   )
 }
 
+function QuestionImages({ images }) {
+  const normalizedImages = normalizeQuestionImages(images)
+  if (normalizedImages.length === 0) return null
+  return (
+    <div className="question-images" aria-label="题目配图">
+      {normalizedImages.map((image, index) => (
+        <figure key={`${image.url}-${image.mediaPath || image.page || index}`} className="question-image">
+          <img src={image.url} alt={image.alt} loading="lazy" decoding="async" />
+          <figcaption>
+            <span>{image.caption}</span>
+            {image.needsReview && <em>待复核</em>}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  )
+}
+
 function ExtractedQuestionCard({ file, question }) {
   const displayQuestion = applyAnswerOverride(question)
+  const [open, setOpen] = useState(false)
   const flags = displayQuestion.flags || []
   const hasAnswer = Boolean(displayQuestion.answer)
   const hasSolution = Array.isArray(displayQuestion.solution) && displayQuestion.solution.length > 0
+  const hasExplanation = hasAnswer || hasSolution
 
   return (
     <article className={`extract-card extract-${question.quality}`}>
@@ -939,21 +1011,35 @@ function ExtractedQuestionCard({ file, question }) {
       </h3>
       {file.analysisSource && <p className="analysis-source">解析来源：{file.analysisSource}</p>}
       <pre className="question-prompt">{displayQuestion.prompt}</pre>
-      {hasAnswer && (
-        <div className="extract-answer">
-          <strong>参考答案</strong>
-          <span>{displayQuestion.answer}</span>
-        </div>
-      )}
-      {hasSolution && (
-        <div className="extract-solution">
-          <strong>解析摘录</strong>
-          <ol>
-            {displayQuestion.solution.map((step, index) => (
-              <li key={`${question.number}-${index}`}>{step}</li>
-            ))}
-          </ol>
-        </div>
+      <QuestionImages images={displayQuestion.images} />
+      {hasExplanation && (
+        <>
+          <div className="question-actions extract-actions">
+            <button type="button" onClick={() => setOpen((value) => !value)}>
+              {open ? '收起答案与解析' : '查看标准答案与分步思路'}
+            </button>
+          </div>
+          {open && (
+            <div className="extract-explain">
+              {hasAnswer && (
+                <div className="extract-answer">
+                  <strong>参考答案</strong>
+                  <span>{displayQuestion.answer}</span>
+                </div>
+              )}
+              {hasSolution && (
+                <div className="extract-solution">
+                  <strong>解析摘录</strong>
+                  <ol>
+                    {displayQuestion.solution.map((step, index) => (
+                      <li key={`${question.number}-${index}`}>{step}</li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+            </div>
+          )}
+        </>
       )}
       {flags.length > 0 && (
         <div className="extract-flags">
@@ -979,6 +1065,9 @@ function OcrQuestionCard({ question }) {
   })
   const score = Math.round((question.averageScore || 0) * 100)
   const hasAnswer = Boolean(displayQuestion.answer)
+  const hasSolution = Array.isArray(displayQuestion.solution) && displayQuestion.solution.length > 0
+  const hasExplanation = hasAnswer || hasSolution
+  const [open, setOpen] = useState(false)
 
   return (
     <article className="ocr-card">
@@ -990,11 +1079,35 @@ function OcrQuestionCard({ question }) {
       </div>
       <h3>扫描卷 OCR · 第 {question.number} 题</h3>
       <pre className="question-prompt">{displayQuestion.prompt}</pre>
-      {hasAnswer && (
-        <div className="extract-answer">
-          <strong>参考答案</strong>
-          <span>{displayQuestion.answer}</span>
-        </div>
+      <QuestionImages images={displayQuestion.images} />
+      {hasExplanation && (
+        <>
+          <div className="question-actions extract-actions">
+            <button type="button" onClick={() => setOpen((value) => !value)}>
+              {open ? '收起答案与解析' : '查看标准答案与分步思路'}
+            </button>
+          </div>
+          {open && (
+            <div className="extract-explain">
+              {hasAnswer && (
+                <div className="extract-answer">
+                  <strong>参考答案</strong>
+                  <span>{displayQuestion.answer}</span>
+                </div>
+              )}
+              {hasSolution && (
+                <div className="extract-solution">
+                  <strong>解析摘录</strong>
+                  <ol>
+                    {displayQuestion.solution.map((step, index) => (
+                      <li key={`${question.number}-${index}`}>{step}</li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+            </div>
+          )}
+        </>
       )}
       <div className="extract-flags">
         {(displayQuestion.flags || []).map((flag) => (
@@ -1312,9 +1425,16 @@ export default function GaokaoPage() {
   }, [filters, questionLibrary])
 
   const extractedSamples = useMemo(() => {
-    return extractedLibraries
-      .flatMap((library) => library.files || [])
-      .flatMap((file) => file.questions.map((question) => ({ file, question })))
+    return extractedLibraryEntries
+      .flatMap((entry) =>
+        (entry.data.files || []).map((file) => ({ file, dataset: entry.dataset })),
+      )
+      .flatMap(({ file, dataset }) =>
+        file.questions.map((question) => ({
+          file,
+          question: attachQuestionImages(file, question, dataset),
+        })),
+      )
       .filter((item) => item.question.prompt.length >= 20)
       .sort(
         (left, right) =>
@@ -1325,10 +1445,17 @@ export default function GaokaoPage() {
 
   const subjectExtractedSamples = useMemo(() => {
     if (!activeSubject) return []
-    return extractedLibraries
-      .flatMap((library) => library.files || [])
-      .filter((file) => file.subject === activeSubject.key)
-      .flatMap((file) => file.questions.map((question) => ({ file, question })))
+    return extractedLibraryEntries
+      .flatMap((entry) =>
+        (entry.data.files || []).map((file) => ({ file, dataset: entry.dataset })),
+      )
+      .filter(({ file }) => file.subject === activeSubject.key)
+      .flatMap(({ file, dataset }) =>
+        file.questions.map((question) => ({
+          file,
+          question: attachQuestionImages(file, question, dataset),
+        })),
+      )
       .filter((item) => item.question.prompt.length >= 20)
       .sort(
         (left, right) =>

@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename)
 const DATA_DIR = path.resolve(__dirname, '../src/data')
 let answerOverrideMap = new Map()
 let answerOverrideFallbackMap = new Map()
+let questionAssetMap = new Map()
 const PLACEHOLDER_CHINESE_SOURCE = '\u0032\u0030\u0032\u0036\u5e74\u666e\u901a\u9ad8\u7b49\u5b66\u6821\u62db\u751f\u5168\u56fd\u7edf\u4e00\u8003\u8bd5\u8bed\u6587\uff08\u65b0\u0049\uff09\u0020\u002e\u0070\u0064\u0066'
 const PLACEHOLDER_CHINESE_MARKERS = [
   '\u4eba\u5de5\u667a\u80fd\u6280\u672f\u5728\u533b\u7597',
@@ -35,6 +36,15 @@ async function loadJson(filename) {
   return JSON.parse(content)
 }
 
+async function loadOptionalJson(filename, fallback = null) {
+  try {
+    return await loadJson(filename)
+  } catch (error) {
+    if (error?.code === 'ENOENT') return fallback
+    throw error
+  }
+}
+
 function loadAnswerOverrides(data) {
   answerOverrideMap = new Map((data.overrides || []).map(override => [override.questionId, override]))
   answerOverrideFallbackMap = new Map()
@@ -43,6 +53,42 @@ function loadAnswerOverrides(data) {
     if (key && !answerOverrideFallbackMap.has(key)) {
       answerOverrideFallbackMap.set(key, override)
     }
+  }
+}
+
+function imageAssetKey(image) {
+  return [image.hash, image.url, image.mediaPath || '', image.page || ''].join('|')
+}
+
+function loadQuestionAssets(data) {
+  questionAssetMap = new Map()
+  for (const item of data?.questions || []) {
+    if (!item.questionKey || !Array.isArray(item.images) || item.images.length === 0) continue
+    questionAssetMap.set(item.questionKey, item.images)
+  }
+}
+
+function mergeQuestionAssets(questionKey, metadata = {}) {
+  const images = questionAssetMap.get(questionKey)
+  if (!images?.length) return metadata
+  const assets = metadata?.assets && typeof metadata.assets === 'object' && !Array.isArray(metadata.assets)
+    ? metadata.assets
+    : {}
+  const mergedImages = Array.isArray(assets.images) ? [...assets.images] : []
+  const seen = new Set(mergedImages.map(imageAssetKey))
+  for (const image of images) {
+    const key = imageAssetKey(image)
+    if (seen.has(key)) continue
+    mergedImages.push(image)
+    seen.add(key)
+  }
+  return {
+    ...(metadata || {}),
+    assets: {
+      ...assets,
+      images: mergedImages,
+      imageSource: 'src/data/gaokao-question-assets.json',
+    },
   }
 }
 
@@ -277,7 +323,7 @@ async function upsertQuestion(question) {
     asJson(question.solution, []),
     asJson(question.flags, []),
     question.sourceType || 'real',
-    asJson(question.metadata, {}),
+    asJson(mergeQuestionAssets(question.questionKey, question.metadata), {}),
   ])
   return rows[0].id
 }
@@ -768,8 +814,10 @@ async function main() {
   const auditOcr2026 = await loadJson('gaokao-2026-ocr-extracted.json')
   const residual2026 = await loadJson('gaokao-2026-residual-extracted.json')
   const answerOverrides = await loadJson('gaokao-2026-answer-overrides.json')
+  const questionAssets = await loadOptionalJson('gaokao-question-assets.json', { questions: [] })
   const ocr = await loadJson('jiangsu-gaokao-ocr.json')
   loadAnswerOverrides(answerOverrides)
+  loadQuestionAssets(questionAssets)
 
   await ensureSchema()
   await query('BEGIN')
