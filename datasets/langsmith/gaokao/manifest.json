@@ -1,0 +1,81 @@
+{
+  "datasetVersion": "gaokao-langsmith-v1",
+  "format": "jsonl",
+  "langsmithShape": [
+    "inputs",
+    "outputs",
+    "metadata"
+  ],
+  "generatedAt": "2026-07-07T11:09:27.816Z",
+  "startedAt": "2026-07-07T11:09:27.571Z",
+  "options": {
+    "outDir": "C:\\Users\\zzz\\Desktop\\site\\datasets\\langsmith\\gaokao",
+    "subject": null,
+    "includeHidden": false,
+    "includeAnswerOnly": false,
+    "limit": null,
+    "minSolutionChars": 1
+  },
+  "totals": {
+    "scanned": 1320,
+    "exported": 344,
+    "skipped": 976
+  },
+  "subjects": [
+    {
+      "subjectKey": "chinese",
+      "subjectName": "语文",
+      "file": "gaokao-chinese.jsonl",
+      "examples": 3
+    },
+    {
+      "subjectKey": "math",
+      "subjectName": "数学",
+      "file": "gaokao-math.jsonl",
+      "examples": 215
+    },
+    {
+      "subjectKey": "english",
+      "subjectName": "英语",
+      "file": "gaokao-english.jsonl",
+      "examples": 1
+    },
+    {
+      "subjectKey": "physics",
+      "subjectName": "物理",
+      "file": "gaokao-physics.jsonl",
+      "examples": 67
+    },
+    {
+      "subjectKey": "chemistry",
+      "subjectName": "化学",
+      "file": "gaokao-chemistry.jsonl",
+      "examples": 12
+    },
+    {
+      "subjectKey": "biology",
+      "subjectName": "生物",
+      "file": "gaokao-biology.jsonl",
+      "examples": 6
+    },
+    {
+      "subjectKey": "politics",
+      "subjectName": "政治",
+      "file": "gaokao-politics.jsonl",
+      "examples": 3
+    },
+    {
+      "subjectKey": "history",
+      "subjectName": "历史",
+      "file": "gaokao-history.jsonl",
+      "examples": 35
+    },
+    {
+      "subjectKey": "geography",
+      "subjectName": "地理",
+      "file": "gaokao-geography.jsonl",
+      "examples": 2
+    }
+  ],
+  "skippedFile": "skipped.jsonl"
+}

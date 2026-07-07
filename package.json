@@ -9,6 +9,7 @@
     "api:rust": "cargo run --manifest-path server-rs/Cargo.toml --bin exam-review-api",
     "api:js": "node server/index.js",
     "gaokao:enrich": "cargo run --manifest-path server-rs/Cargo.toml --bin gaokao-enrich-solutions --",
+    "gaokao:langsmith": "node scripts/export-gaokao-langsmith-jsonl.mjs",
     "db:setup": "node -e \"import('./server/db.js').then(async m=>{await m.ensureSchema(); await m.pool.end(); console.log('database schema ready')})\"",
     "db:seed:gaokao": "node server/seed-gaokao.js",
     "build": "vite build",
