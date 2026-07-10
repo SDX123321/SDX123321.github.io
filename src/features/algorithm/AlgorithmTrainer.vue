@@ -72,6 +72,10 @@ function moveQuestion(direction: number) {
   questionIndex.value = (questionIndex.value + direction + length) % length
   selected.value = null
 }
+function moveCard(direction: number) {
+  cardIndex.value = (cardIndex.value + direction + flashcards.length) % flashcards.length
+  cardFlipped.value = false
+}
 function selectChapter(key: string) {
   chapter.value = key
   questionIndex.value = 0
@@ -163,24 +167,9 @@ function loadScores() {
           ><span>点击翻面</span>
         </button>
         <div class="trainer-navigation">
-          <button
-            type="button"
-            @click="
-              cardIndex = (cardIndex - 1 + flashcards.length) % flashcards.length
-              cardFlipped = false
-            "
-          >
-            <ArrowLeft :size="17" />上一张</button
+          <button type="button" @click="moveCard(-1)"><ArrowLeft :size="17" />上一张</button
           ><span>{{ cardIndex + 1 }} / {{ flashcards.length }}</span
-          ><button
-            type="button"
-            @click="
-              cardIndex = (cardIndex + 1) % flashcards.length
-              cardFlipped = false
-            "
-          >
-            下一张<ArrowRight :size="17" />
-          </button>
+          ><button type="button" @click="moveCard(1)">下一张<ArrowRight :size="17" /></button>
         </div>
       </div>
     </section>
