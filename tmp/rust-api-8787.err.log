@@ -1,0 +1,3 @@
+   Compiling exam-review-server v0.1.0 (C:\Users\zzz\Desktop\site\server-rs)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.35s
+     Running `server-rs\target\debug\exam-review-api.exe`
