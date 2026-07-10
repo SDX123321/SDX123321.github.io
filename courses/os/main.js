@@ -31,6 +31,7 @@ function getJobs(){
   const jobs=[];
   rows.forEach(r=>{
     const inputs=r.querySelectorAll('input');
+    if(inputs.length<3)return;
     jobs.push({name:inputs[0].value,arrival:+inputs[1].value,burst:+inputs[2].value});
   });
   return jobs.sort((a,b)=>a.arrival-b.arrival);

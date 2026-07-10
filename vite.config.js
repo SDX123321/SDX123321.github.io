@@ -1,10 +1,10 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import vue from '@vitejs/plugin-vue'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 
 export default defineConfig({
   plugins: [
-    react(),
+    vue(),
     // Sentry sourcemap 上传（仅在 SENTRY_AUTH_TOKEN 和 VITE_SENTRY_DSN 均存在时激活）
     process.env.SENTRY_AUTH_TOKEN && process.env.VITE_SENTRY_DSN
       ? sentryVitePlugin({
@@ -23,7 +23,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
+          vendor: ['vue', 'vue-router'],
         },
       },
     },

@@ -16,7 +16,11 @@ interface Window {
     render: (el: HTMLElement, opts: Record<string, unknown>) => string
     remove: (id: string) => void
   }
-  MathJax?: Record<string, unknown>
+  MathJax?: {
+    tex?: { inlineMath: string[][] }
+    typesetPromise?: (elements: HTMLElement[]) => Promise<void>
+  }
+  renderMathInElement?: (element: HTMLElement, options: Record<string, unknown>) => void
   anime?: unknown
   __errorSink__?: (error: unknown, info?: unknown) => void
 }

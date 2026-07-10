@@ -1,47 +1,65 @@
 import js from '@eslint/js'
-import reactHooks from 'eslint-plugin-react-hooks'
+import pluginVue from 'eslint-plugin-vue'
 import tseslint from 'typescript-eslint'
+import vueParser from 'vue-eslint-parser'
 
 export default tseslint.config(
-  { ignores: ['dist/**', 'node_modules/**', 'courses/**', 'files/**'] },
+  {
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      'courses/**',
+      'files/**',
+      'src/**/*.jsx',
+      'src/**/*.tsx',
+      'src/**/*.js',
+      'src/content/**',
+      'src/data/**/*.js',
+    ],
+  },
   js.configs.recommended,
+  ...pluginVue.configs['flat/recommended'],
   ...tseslint.configs.recommended,
   {
-    files: ['src/**/*.{js,jsx,ts,tsx}'],
+    files: ['src/**/*.{ts,vue}'],
     languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+        extraFileExtensions: ['.vue'],
+      },
       globals: {
         window: 'readonly',
         document: 'readonly',
-        navigator: 'readonly',
-        console: 'readonly',
-        setTimeout: 'readonly',
-        clearTimeout: 'readonly',
-        setInterval: 'readonly',
-        clearInterval: 'readonly',
-        fetch: 'readonly',
-        location: 'readonly',
         localStorage: 'readonly',
-        sessionStorage: 'readonly',
-        URL: 'readonly',
-        MutationObserver: 'readonly',
-        IntersectionObserver: 'readonly',
-        requestAnimationFrame: 'readonly',
-        Promise: 'readonly',
-        FormData: 'readonly',
-        MathJax: 'readonly',
-        gsap: 'readonly',
+        navigator: 'readonly',
+        history: 'readonly',
+        getComputedStyle: 'readonly',
+        HTMLScriptElement: 'readonly',
+        HTMLElement: 'readonly',
+        KeyboardEvent: 'readonly',
+        MouseEvent: 'readonly',
       },
     },
-    plugins: {
-      'react-hooks': reactHooks,
-    },
     rules: {
-      ...reactHooks.configs.recommended.rules,
-      // TypeScript 已经做类型检查，关掉 ESLint 的 no-undef 避免误报
-      'no-undef': 'off',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'off',
-      'no-empty': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-useless-assignment': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      'vue/html-self-closing': 'off',
+      'vue/max-attributes-per-line': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
+      'vue/multi-word-component-names': 'off',
+      'vue/no-v-html': 'off',
+    },
+  },
+  {
+    files: ['src/**/*.vue'],
+    languageOptions: {
+      parser: vueParser,
+      parserOptions: {
+        parser: tseslint.parser,
+        extraFileExtensions: ['.vue'],
+      },
     },
   },
 )

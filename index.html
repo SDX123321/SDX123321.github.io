@@ -1,35 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>期末复习笔记 — 概率论、操作系统、算法、DSP 等课程复习平台</title>
-<meta name="description" content="大学期末考试互动复习平台，涵盖概率论与数理统计、操作系统、算法设计与分析、数字信号处理、马克思主义原理、毛概、信号与系统、高等数学等课程。含模拟测验、错题本、公式速查、掌握度追踪。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="期末复习笔记 — 互动式考试复习平台">
-<meta property="og:description" content="大学期末考试互动复习平台，涵盖 8 门课程的知识点总结、例题精讲、互动测验与可视化模拟。">
-<meta property="og:url" content="https://web.zzzzcx.com">
-<meta property="og:locale" content="zh_CN">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="期末复习笔记">
-<meta name="twitter:description" content="大学期末考试互动复习平台">
-<link rel="canonical" href="https://web.zzzzcx.com">
-<link rel="manifest" href="/manifest.json">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
-<script>
-// GitHub Pages SPA: restore URL from 404 redirect
-(function(l) {
-  if (l.search[1] === '/') {
-    var decoded = l.search.slice(1).split('&').map(function(s) {
-      return s.replace(/~and~/g, '&')
-    }).join('?');
-    window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
-  }
-}(window.location));
-</script>
-</head>
-<body>
-<div id="root"></div>
-<script type="module" src="/src/main.jsx"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#070b14" />
+    <title>期末复习笔记｜让每一次复习都有进展</title>
+    <meta
+      name="description"
+      content="大学期末与高考互动复习平台，提供结构化课程笔记、真题练习、错题整理和学习进度追踪。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="期末复习笔记｜互动式考试复习平台" />
+    <meta property="og:description" content="结构化知识点、真题练习、错题整理与学习进度追踪。" />
+    <meta property="og:url" content="https://web.zzzzcx.com" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://web.zzzzcx.com" />
+    <link rel="manifest" href="/manifest.json" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%236366f1'/><path d='M18 17h22a6 6 0 016 6v25H24a6 6 0 01-6-6V17z' fill='white'/><path d='M24 17v31M29 27h11M29 34h9' stroke='%236366f1' stroke-width='3' stroke-linecap='round'/></svg>"
+    />
+    <script>
+      // Restore routes redirected by GitHub Pages' 404 fallback.
+      ;(function (location) {
+        if (location.search[1] !== '/') return
+        const decoded = location.search
+          .slice(1)
+          .split('&')
+          .map((part) => part.replace(/~and~/g, '&'))
+          .join('?')
+        window.history.replaceState(null, '', location.pathname.slice(0, -1) + decoded + location.hash)
+      })(window.location)
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>
