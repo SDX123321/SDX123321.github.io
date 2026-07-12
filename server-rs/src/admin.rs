@@ -279,16 +279,15 @@ async fn persist_ollama_env(
     state: &SharedState,
     input: &OllamaConfigInput,
 ) -> Result<(), ApiError> {
-    let target = state.project_root.join(".env");
+    let target = state.ollama_env_path.clone();
+    let config_dir = target
+        .parent()
+        .ok_or_else(|| ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "env_not_writable"))?;
     let content = fs::read_to_string(&target)
         .await
         .map_err(|_| ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "env_not_writable"))?;
-    let temp = state
-        .project_root
-        .join(format!(".env.{}.tmp", Uuid::new_v4()));
-    let backup = state
-        .project_root
-        .join(format!(".env.{}.bak", Uuid::new_v4()));
+    let temp = config_dir.join(format!(".env.{}.tmp", Uuid::new_v4()));
+    let backup = config_dir.join(format!(".env.{}.bak", Uuid::new_v4()));
     fs::write(&temp, replace_env_values(&content, input))
         .await
         .map_err(|_| ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "env_not_writable"))?;

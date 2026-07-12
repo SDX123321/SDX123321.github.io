@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: exam-review-config
+  namespace: exam-review
+data:
+  API_HOST: "0.0.0.0"
+  API_PORT: "8787"
+  CLIENT_ORIGIN: "https://learn.example.com"
+  REDIS_URL: "redis://redis.example.internal:6379"
+  OLLAMA_URL: "http://ollama.example.internal:11434"
+  EMBEDDING_MODEL: "qwen3-embedding:8b"
+  CHAT_MODEL: "qwen3:8b"
+  MATERIAL_ROOT: "/materials"
+  PROJECT_ROOT: "/app"
+  OLLAMA_ENV_PATH: "/config/.env"

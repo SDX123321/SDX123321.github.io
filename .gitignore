@@ -2,6 +2,13 @@
 _tmp_images/
 node_modules/
 dist/
+coverage/
+target/
+tmp/*.log
+**/__pycache__/
+*.pyc
+.env.production
+.k6-results/
 src_content_home_backup.html
 # Junction targets (don't duplicate files/ and courses/ in git)
 public/files/

@@ -34,6 +34,7 @@ struct AppState {
     http: reqwest::Client,
     material_root: std::path::PathBuf,
     project_root: std::path::PathBuf,
+    ollama_env_path: std::path::PathBuf,
     ollama_config: Arc<tokio::sync::RwLock<OllamaRuntimeConfig>>,
     ollama_config_write: tokio::sync::Mutex<()>,
     vector_enabled: bool,
@@ -312,6 +313,9 @@ async fn audit_question_completeness(
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     dotenvy::dotenv().ok();
+    if let Ok(path) = env::var("OLLAMA_ENV_PATH") {
+        dotenvy::from_path_override(path).ok();
+    }
     let database_url = env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://postgres:postgres@127.0.0.1:5432/exam_review".to_string());
     let db = PgPoolOptions::new()
@@ -328,6 +332,7 @@ async fn main() -> anyhow::Result<()> {
     admin::ensure_schema(&db).await?;
     learning::ensure_schema(&db).await?;
     knowledge::ensure_schema(&db).await?;
+    sqlx::migrate!("./migrations").run(&db).await?;
     learning::bootstrap_admin(&db).await?;
 
     let redis = env::var("REDIS_URL").ok().and_then(|url| {
@@ -338,10 +343,17 @@ async fn main() -> anyhow::Result<()> {
         cfg.create_pool(Some(Runtime::Tokio1)).ok()
     });
 
-    let project_root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .unwrap_or_else(|| std::path::Path::new("."))
-        .to_path_buf();
+    let project_root = env::var("PROJECT_ROOT")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| {
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap_or_else(|| std::path::Path::new("."))
+                .to_path_buf()
+        });
+    let ollama_env_path = env::var("OLLAMA_ENV_PATH")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| project_root.join(".env"));
     let mut api_config_key = [0u8; 32];
     api_config_key.copy_from_slice(&Sha256::digest(
         env::var("AI_CONFIG_SECRET")
@@ -367,6 +379,7 @@ async fn main() -> anyhow::Result<()> {
             .build()?,
         material_root,
         project_root,
+        ollama_env_path,
         ollama_config: Arc::new(tokio::sync::RwLock::new(OllamaRuntimeConfig {
             base_url: env::var("OLLAMA_URL").unwrap_or_else(|_| "http://127.0.0.1:11434".into()),
             embedding_model: env::var("EMBEDDING_MODEL").unwrap_or_else(|_| "bge-m3".into()),
@@ -400,6 +413,11 @@ async fn main() -> anyhow::Result<()> {
 
     let app = Router::new()
         .route("/api/gaokao/summary", get(gaokao_summary))
+        .route("/health/live", get(health_live))
+        .route("/health/ready", get(health_ready))
+        .route("/metrics", get(prometheus_metrics))
+        .route("/api/docs", get(openapi_ui))
+        .route("/api/docs/openapi.yaml", get(openapi_spec))
         .route("/api/gaokao/subjects", get(gaokao_subjects))
         .route("/api/gaokao/questions", get(gaokao_questions))
         .route("/api/gaokao/attempts", post(gaokao_attempts))
@@ -557,11 +575,65 @@ async fn main() -> anyhow::Result<()> {
         .ok()
         .and_then(|v| v.parse().ok())
         .unwrap_or(8787);
-    let addr = SocketAddr::from(([127, 0, 0, 1], port));
+    let host = env::var("API_HOST").unwrap_or_else(|_| "127.0.0.1".into());
+    let addr: SocketAddr = format!("{host}:{port}").parse()?;
     println!("Rust API listening on http://{addr}");
     let listener = tokio::net::TcpListener::bind(addr).await?;
     axum::serve(listener, app).await?;
     Ok(())
+}
+
+async fn health_live() -> Json<Value> {
+    Json(json!({"status":"ok","service":"exam-review-api","version":env!("CARGO_PKG_VERSION")}))
+}
+
+async fn health_ready(State(state): State<SharedState>) -> Result<Json<Value>, ApiError> {
+    sqlx::query_scalar::<_, i32>("SELECT 1")
+        .fetch_one(&state.db)
+        .await?;
+    Ok(Json(
+        json!({"status":"ready","database":"ok","vectorEnabled":state.vector_enabled}),
+    ))
+}
+
+async fn prometheus_metrics(State(state): State<SharedState>) -> Response {
+    let active: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM embedding_generations WHERE is_active")
+            .fetch_one(&state.db)
+            .await
+            .unwrap_or(0);
+    let running: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM material_index_runs WHERE status IN ('queued','running','paused')",
+    )
+    .fetch_one(&state.db)
+    .await
+    .unwrap_or(0);
+    let body=format!("# HELP exam_review_up API process health\n# TYPE exam_review_up gauge\nexam_review_up 1\n# HELP exam_review_db_pool_size PostgreSQL pool connections\n# TYPE exam_review_db_pool_size gauge\nexam_review_db_pool_size {}\n# HELP exam_review_db_pool_idle Idle PostgreSQL pool connections\n# TYPE exam_review_db_pool_idle gauge\nexam_review_db_pool_idle {}\n# HELP exam_review_active_embedding_generations Active embedding generations\n# TYPE exam_review_active_embedding_generations gauge\nexam_review_active_embedding_generations {active}\n# HELP exam_review_running_index_jobs Running or paused index jobs\n# TYPE exam_review_running_index_jobs gauge\nexam_review_running_index_jobs {running}\n",state.db.size(),state.db.num_idle());
+    let mut response = Response::new(axum::body::Body::from(body));
+    response.headers_mut().insert(
+        header::CONTENT_TYPE,
+        HeaderValue::from_static("text/plain; version=0.0.4; charset=utf-8"),
+    );
+    response
+}
+
+async fn openapi_spec() -> Response {
+    let mut response = Response::new(axum::body::Body::from(include_str!("../openapi.yaml")));
+    response.headers_mut().insert(
+        header::CONTENT_TYPE,
+        HeaderValue::from_static("application/yaml; charset=utf-8"),
+    );
+    response
+}
+
+async fn openapi_ui() -> Response {
+    let html = r#"<!doctype html><html><head><meta charset="utf-8"><title>Exam Review API</title><link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"></head><body><div id="swagger-ui"></div><script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script><script>SwaggerUIBundle({url:'/api/docs/openapi.yaml',dom_id:'#swagger-ui',deepLinking:true})</script></body></html>"#;
+    let mut response = Response::new(axum::body::Body::from(html));
+    response.headers_mut().insert(
+        header::CONTENT_TYPE,
+        HeaderValue::from_static("text/html; charset=utf-8"),
+    );
+    response
 }
 
 async fn cache_get<T: DeserializeOwned>(redis: &Option<RedisPool>, key: &str) -> Option<T> {

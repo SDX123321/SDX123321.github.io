@@ -1,0 +1,55 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: exam_review
+      POSTGRES_USER: exam_review
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-exam_review_dev}
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck: { test: [CMD-SHELL, "pg_isready -U exam_review -d exam_review"], interval: 5s, timeout: 3s, retries: 20 }
+  redis:
+    image: redis:7.4-alpine
+    command: redis-server --appendonly yes
+    volumes: [redis-data:/data]
+    healthcheck: { test: [CMD, redis-cli, ping], interval: 5s, timeout: 3s, retries: 20 }
+  api:
+    build: { context: ., dockerfile: Dockerfile.api }
+    env_file: [.env]
+    environment:
+      API_HOST: 0.0.0.0
+      DATABASE_URL: postgres://exam_review:${POSTGRES_PASSWORD:-exam_review_dev}@postgres:5432/exam_review
+      REDIS_URL: redis://redis:6379
+      CLIENT_ORIGIN: http://localhost:8080
+    volumes:
+      - ${MATERIAL_ROOT:-./materials}:/materials:ro
+      - runtime-config:/config
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    ports: ["8787:8787"]
+  web:
+    build: { context: ., dockerfile: Dockerfile.web }
+    depends_on: { api: { condition: service_healthy } }
+    ports: ["8080:80"]
+  prometheus:
+    image: prom/prometheus:v3.2.1
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus"]
+    volumes:
+      - ./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports: ["9090:9090"]
+  grafana:
+    image: grafana/grafana:11.5.2
+    environment: { GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_ADMIN_PASSWORD:-admin}" }
+    volumes:
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports: ["3000:3000"]
+    depends_on: [prometheus]
+volumes:
+  postgres-data:
+  redis-data:
+  prometheus-data:
+  grafana-data:
+  runtime-config:
