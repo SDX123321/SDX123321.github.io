@@ -393,6 +393,7 @@ async fn main() -> anyhow::Result<()> {
         api_config_key,
         question_assets: Arc::new(question_assets),
     });
+    learning::migrate_legacy_math_graphs(state.clone());
     let client_origin =
         env::var("CLIENT_ORIGIN").unwrap_or_else(|_| "http://127.0.0.1:4173".to_string());
     let allow_origin = HeaderValue::from_str(&client_origin)
