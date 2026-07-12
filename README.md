@@ -69,3 +69,18 @@ src/
 - 可点击元素必须具备 hover、键盘焦点和明确的可访问名称。
 - 修改后至少运行 `pnpm typecheck && pnpm lint && pnpm build`。
 - 默认只在本地提交，不主动推送远端。
+
+# Exam Review Knowledge Workspace
+
+The Rust API and Vue application provide shared high-school and university learning spaces, versioned RAG indexing, AI-assisted practice, and subject knowledge graphs.
+
+## Engineering delivery
+
+- Local production stack: `docker compose up --build`
+- API documentation: `/api/docs` (Swagger UI) and `server-rs/openapi.yaml`
+- Health and observability: `/health/live`, `/health/ready`, `/metrics`, Prometheus and Grafana provisioning
+- Database migrations: `npm run db:migrate`
+- Verification: `npm run lint`, `npm run typecheck`, `npm run test:coverage`, and Rust checks in `.github/workflows/ci.yml`
+- Load baseline: `npm run perf:smoke` or `k6 run perf/k6-smoke.js`
+
+See [Production deployment](docs/production-deployment.md), [Performance baseline](docs/performance-report.md), and [Changelog](CHANGELOG.md) for release evidence and operating procedures.
