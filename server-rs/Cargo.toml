@@ -17,18 +17,25 @@ path = "src/bin/gaokao-cleanup-questions.rs"
 
 [dependencies]
 anyhow = "1.0"
-axum = { version = "0.7", features = ["macros"] }
+axum = { version = "0.7", features = ["macros", "multipart"] }
+aes-gcm = "0.10"
+base64 = "0.22"
 bcrypt = "0.15"
 chrono = { version = "0.4", features = ["serde"] }
 deadpool-redis = "0.16"
 dotenvy = "0.15"
 hex = "0.4"
 rand = "0.8"
-reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+reqwest = { version = "0.12", features = ["json", "rustls-tls", "stream"], default-features = false }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 sha2 = "0.10"
 sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "json"] }
 tokio = { version = "1.42", features = ["full"] }
+tokio-util = { version = "0.7", features = ["io"] }
+async-stream = "0.3"
+futures-util = "0.3"
+mime_guess = "2.0"
+urlencoding = "2.1"
 tower-http = { version = "0.6", features = ["cors"] }
 uuid = { version = "1.11", features = ["serde", "v4"] }
