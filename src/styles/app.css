@@ -5,6 +5,8 @@
 @import './courses/marxism.css';
 @import './courses/calculus.css';
 @import './courses/signals.css';
+@import './high-school.css';
+@import './workspace.css';
 
 :root {
   color-scheme: dark;

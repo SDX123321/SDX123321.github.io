@@ -16,6 +16,11 @@ export default defineConfig({
       : null,
   ].filter(Boolean),
   base: '/',
+  server: {
+    proxy: {
+      '/api': 'http://127.0.0.1:8787',
+    },
+  },
   publicDir: 'public',
   build: {
     outDir: 'dist',

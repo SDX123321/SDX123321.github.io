@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: exam-review
+  namespace: exam-review
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [learn.example.com]
+      secretName: exam-review-tls
+  rules:
+    - host: learn.example.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: exam-review-api
+                port:
+                  number: 8787
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: exam-review-api
+                port:
+                  number: 8787
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: exam-review-web
+                port:
+                  number: 80

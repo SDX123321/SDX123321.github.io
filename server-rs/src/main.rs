@@ -1,8 +1,8 @@
 use axum::{
-    extract::{Query, State},
+    extract::{DefaultBodyLimit, Query, State},
     http::{header, HeaderMap, HeaderValue, Method, StatusCode},
     response::{IntoResponse, Response},
-    routing::{get, post},
+    routing::{delete, get, post},
     Json, Router,
 };
 use bcrypt::{hash as bcrypt_hash, verify as bcrypt_verify, DEFAULT_COST};
@@ -17,16 +17,43 @@ use std::{env, net::SocketAddr, sync::Arc};
 use tower_http::cors::{AllowOrigin, CorsLayer};
 use uuid::Uuid;
 
+mod admin;
+mod high_school;
+mod knowledge;
+mod learning;
+
 const SESSION_COOKIE: &str = "exam_review_session";
 const SESSION_DAYS: i64 = 30;
 const CACHE_SECONDS: u64 = 60;
 
 type SharedState = Arc<AppState>;
 
-#[derive(Clone)]
 struct AppState {
     db: PgPool,
     redis: Option<RedisPool>,
+    http: reqwest::Client,
+    material_root: std::path::PathBuf,
+    project_root: std::path::PathBuf,
+    ollama_env_path: std::path::PathBuf,
+    ollama_config: Arc<tokio::sync::RwLock<OllamaRuntimeConfig>>,
+    ollama_config_write: tokio::sync::Mutex<()>,
+    vector_enabled: bool,
+    answer_rate: std::sync::Mutex<high_school::AnswerRateState>,
+    answer_slots: Arc<tokio::sync::Semaphore>,
+    api_config_key: [u8; 32],
+    question_assets: Arc<std::collections::HashMap<String, Value>>,
+}
+
+#[derive(Clone, Serialize)]
+struct OllamaRuntimeConfig {
+    #[serde(rename = "baseUrl")]
+    base_url: String,
+    #[serde(rename = "embeddingModel")]
+    embedding_model: String,
+    #[serde(rename = "chatModel")]
+    chat_model: String,
+    #[serde(rename = "embeddingDimensions")]
+    embedding_dimensions: usize,
 }
 
 #[derive(Debug)]
@@ -200,9 +227,95 @@ struct RagImportInput {
     metadata: Value,
 }
 
+async fn load_question_assets(
+    project_root: &std::path::Path,
+) -> std::collections::HashMap<String, Value> {
+    let path = project_root.join("src/data/gaokao-question-assets.json");
+    let Ok(raw) = tokio::fs::read_to_string(path).await else {
+        return std::collections::HashMap::new();
+    };
+    let Ok(value) = serde_json::from_str::<Value>(&raw) else {
+        return std::collections::HashMap::new();
+    };
+    value
+        .get("questions")
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(|item| {
+            Some((
+                item.get("questionKey")?.as_str()?.to_string(),
+                item.get("images").cloned().unwrap_or_else(|| json!([])),
+            ))
+        })
+        .collect()
+}
+
+async fn audit_question_completeness(
+    db: &PgPool,
+    project_root: &std::path::Path,
+    assets: &std::collections::HashMap<String, Value>,
+) -> anyhow::Result<()> {
+    let rows = sqlx::query("SELECT id,question_key,prompt FROM gaokao_questions")
+        .fetch_all(db)
+        .await?;
+    let asset_root = project_root.join("public/gaokao-assets/images");
+    let mut ids = Vec::with_capacity(rows.len());
+    let mut complete = Vec::with_capacity(rows.len());
+    let mut reason_values = Vec::with_capacity(rows.len());
+    for row in rows {
+        let id: Uuid = row.get("id");
+        let key: String = row.get("question_key");
+        let prompt: String = row.get("prompt");
+        let image_required = ["如图", "图中", "下图", "示意图", "图表", "看图", "据图"]
+            .iter()
+            .any(|marker| prompt.contains(marker));
+        let images = assets
+            .get(&key)
+            .and_then(Value::as_array)
+            .cloned()
+            .unwrap_or_default();
+        let mut reasons = Vec::new();
+        if prompt.trim().chars().count() < 12 {
+            reasons.push("prompt_incomplete");
+        }
+        if image_required && images.is_empty() {
+            reasons.push("required_image_missing");
+        }
+        for image in &images {
+            if image.get("needsReview").and_then(Value::as_bool) == Some(true) {
+                reasons.push("image_needs_review");
+            }
+            let url = image.get("url").and_then(Value::as_str).unwrap_or_default();
+            let name = url.rsplit('/').next().unwrap_or_default();
+            let supported = ["png", "jpg", "jpeg", "webp", "gif"]
+                .iter()
+                .any(|ext| name.to_ascii_lowercase().ends_with(ext));
+            if !supported {
+                reasons.push("unsupported_image");
+            }
+            if name.is_empty() || tokio::fs::metadata(asset_root.join(name)).await.is_err() {
+                reasons.push("image_file_missing");
+            }
+        }
+        reasons.sort();
+        reasons.dedup();
+        ids.push(id);
+        complete.push(reasons.is_empty());
+        reason_values.push(reasons.join(","));
+    }
+    sqlx::query(r#"UPDATE gaokao_questions q SET display_complete=v.complete,incomplete_reason=NULLIF(v.reason,'')
+      FROM (SELECT * FROM unnest($1::uuid[],$2::bool[],$3::text[]) AS t(id,complete,reason)) v WHERE q.id=v.id"#)
+        .bind(ids).bind(complete).bind(reason_values).execute(db).await?;
+    Ok(())
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     dotenvy::dotenv().ok();
+    if let Ok(path) = env::var("OLLAMA_ENV_PATH") {
+        dotenvy::from_path_override(path).ok();
+    }
     let database_url = env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://postgres:postgres@127.0.0.1:5432/exam_review".to_string());
     let db = PgPoolOptions::new()
@@ -215,6 +328,12 @@ async fn main() -> anyhow::Result<()> {
         .connect(&database_url)
         .await?;
     ensure_schema(&db).await?;
+    let vector_enabled = high_school::ensure_schema(&db).await?;
+    admin::ensure_schema(&db).await?;
+    learning::ensure_schema(&db).await?;
+    knowledge::ensure_schema(&db).await?;
+    sqlx::migrate!("./migrations").run(&db).await?;
+    learning::bootstrap_admin(&db).await?;
 
     let redis = env::var("REDIS_URL").ok().and_then(|url| {
         let cfg = RedisConfig {
@@ -224,7 +343,57 @@ async fn main() -> anyhow::Result<()> {
         cfg.create_pool(Some(Runtime::Tokio1)).ok()
     });
 
-    let state = Arc::new(AppState { db, redis });
+    let project_root = env::var("PROJECT_ROOT")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| {
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap_or_else(|| std::path::Path::new("."))
+                .to_path_buf()
+        });
+    let ollama_env_path = env::var("OLLAMA_ENV_PATH")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| project_root.join(".env"));
+    let mut api_config_key = [0u8; 32];
+    api_config_key.copy_from_slice(&Sha256::digest(
+        env::var("AI_CONFIG_SECRET")
+            .unwrap_or_else(|_| format!("{database_url}:exam-review-ai-config"))
+            .as_bytes(),
+    ));
+    let question_assets = load_question_assets(&project_root).await;
+    audit_question_completeness(&db, &project_root, &question_assets).await?;
+    let material_root = env::var("MATERIAL_ROOT")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| std::path::PathBuf::from(r"C:\Users\zzz\Desktop\参考资料"));
+    let embedding_dimensions = sqlx::query_scalar::<_, i32>(
+        "SELECT GREATEST(atttypmod,0) FROM pg_attribute WHERE attrelid='material_chunks'::regclass AND attname='embedding'",
+    )
+    .fetch_optional(&db)
+    .await?
+    .unwrap_or(1024) as usize;
+    let state = Arc::new(AppState {
+        db,
+        redis,
+        http: reqwest::Client::builder()
+            .timeout(std::time::Duration::from_secs(180))
+            .build()?,
+        material_root,
+        project_root,
+        ollama_env_path,
+        ollama_config: Arc::new(tokio::sync::RwLock::new(OllamaRuntimeConfig {
+            base_url: env::var("OLLAMA_URL").unwrap_or_else(|_| "http://127.0.0.1:11434".into()),
+            embedding_model: env::var("EMBEDDING_MODEL").unwrap_or_else(|_| "bge-m3".into()),
+            chat_model: env::var("CHAT_MODEL").unwrap_or_else(|_| "qwen3:4b".into()),
+            embedding_dimensions,
+        })),
+        ollama_config_write: tokio::sync::Mutex::new(()),
+        vector_enabled,
+        answer_rate: std::sync::Mutex::new(high_school::AnswerRateState::default()),
+        answer_slots: Arc::new(tokio::sync::Semaphore::new(2)),
+        api_config_key,
+        question_assets: Arc::new(question_assets),
+    });
+    learning::migrate_legacy_math_graphs(state.clone());
     let client_origin =
         env::var("CLIENT_ORIGIN").unwrap_or_else(|_| "http://127.0.0.1:4173".to_string());
     let allow_origin = HeaderValue::from_str(&client_origin)
@@ -233,11 +402,23 @@ async fn main() -> anyhow::Result<()> {
     let cors = CorsLayer::new()
         .allow_origin(allow_origin)
         .allow_credentials(true)
-        .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
+        .allow_methods([
+            Method::GET,
+            Method::POST,
+            Method::PUT,
+            Method::PATCH,
+            Method::DELETE,
+            Method::OPTIONS,
+        ])
         .allow_headers([header::CONTENT_TYPE]);
 
     let app = Router::new()
         .route("/api/gaokao/summary", get(gaokao_summary))
+        .route("/health/live", get(health_live))
+        .route("/health/ready", get(health_ready))
+        .route("/metrics", get(prometheus_metrics))
+        .route("/api/docs", get(openapi_ui))
+        .route("/api/docs/openapi.yaml", get(openapi_spec))
         .route("/api/gaokao/subjects", get(gaokao_subjects))
         .route("/api/gaokao/questions", get(gaokao_questions))
         .route("/api/gaokao/attempts", post(gaokao_attempts))
@@ -245,6 +426,142 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/gaokao/rag/summary", get(gaokao_rag_summary))
         .route("/api/gaokao/rag/search", get(gaokao_rag_search))
         .route("/api/gaokao/rag/imports", post(gaokao_rag_import))
+        .route("/api/high-school/overview", get(high_school::overview))
+        .route("/api/high-school/materials", get(high_school::materials))
+        .route("/api/high-school/materials/:id", get(high_school::material))
+        .route(
+            "/api/high-school/materials/:id/download",
+            get(high_school::download),
+        )
+        .route("/api/high-school/rag/search", get(high_school::rag_search))
+        .route("/api/high-school/rag/answer", post(high_school::answer))
+        .route("/api/domains", get(knowledge::domains))
+        .route("/api/knowledge/materials", get(knowledge::materials))
+        .route("/api/knowledge/search", post(knowledge::search))
+        .route("/api/knowledge/rag/answer", post(knowledge::answer))
+        .route(
+            "/api/knowledge/suggested-questions",
+            get(knowledge::suggested_questions),
+        )
+        .route(
+            "/api/knowledge/graphs/current",
+            get(knowledge::current_graph),
+        )
+        .route(
+            "/api/admin/knowledge/graph-runs",
+            post(knowledge::start_graph),
+        )
+        .route(
+            "/api/admin/knowledge/suggested-question-runs",
+            post(knowledge::start_suggestion_run),
+        )
+        .route(
+            "/api/admin/knowledge/suggested-question-runs/:id",
+            get(knowledge::suggestion_run),
+        )
+        .route(
+            "/api/admin/knowledge/web-research-runs",
+            post(knowledge::start_web_research),
+        )
+        .route(
+            "/api/admin/knowledge/web-research-runs/:id",
+            get(knowledge::web_research_run),
+        )
+        .route(
+            "/api/admin/knowledge/web-evidence",
+            get(knowledge::web_evidence),
+        )
+        .route(
+            "/api/admin/knowledge/index-runs",
+            post(high_school::start_index),
+        )
+        .route(
+            "/api/admin/knowledge/index-runs/:id",
+            get(high_school::index_run),
+        )
+        .route(
+            "/api/admin/knowledge/index-runs/:id/:action",
+            post(high_school::index_action),
+        )
+        .route(
+            "/api/admin/knowledge/graph-runs/:id",
+            get(knowledge::graph_run),
+        )
+        .route(
+            "/api/admin/knowledge/graphs/:id",
+            axum::routing::patch(knowledge::patch_graph),
+        )
+        .route(
+            "/api/admin/knowledge/graphs/:id/publish",
+            post(knowledge::publish_graph),
+        )
+        .route(
+            "/api/me/knowledge-nodes/:id",
+            axum::routing::put(knowledge::save_node_state),
+        )
+        .route(
+            "/api/high-school/rag/sources/:id",
+            get(high_school::source_preview),
+        )
+        .route(
+            "/api/admin/high-school/index-runs",
+            post(high_school::start_index),
+        )
+        .route(
+            "/api/admin/high-school/index-runs/:id",
+            get(high_school::index_run),
+        )
+        .route("/api/admin/overview", get(admin::overview))
+        .route(
+            "/api/admin/runtime-config/ollama",
+            get(admin::ollama_config).put(admin::save_ollama_config),
+        )
+        .route(
+            "/api/admin/runtime-config/ollama/test",
+            post(admin::test_ollama_config),
+        )
+        .route("/api/admin/accounts", get(admin::accounts))
+        .route("/api/admin/accounts/:id/risk", post(admin::account_risk))
+        .route(
+            "/api/admin/materials/upload",
+            post(admin::upload_material).layer(DefaultBodyLimit::max(64 * 1024 * 1024)),
+        )
+        .route(
+            "/api/me/ai-providers",
+            get(admin::provider_configs).post(admin::save_provider_config),
+        )
+        .route(
+            "/api/me/ai-providers/:id",
+            delete(admin::delete_provider_config),
+        )
+        .route(
+            "/api/me/ai-providers/:id/default",
+            post(admin::default_provider_config),
+        )
+        .route(
+            "/api/me/preferences",
+            get(learning::preferences).put(learning::save_preferences),
+        )
+        .route(
+            "/api/me/conversations",
+            get(learning::conversations).post(learning::create_conversation),
+        )
+        .route(
+            "/api/me/conversations/:id",
+            get(learning::conversation_messages)
+                .patch(learning::patch_conversation)
+                .delete(learning::delete_conversation),
+        )
+        .route(
+            "/api/me/knowledge-graphs",
+            get(learning::graphs).post(learning::start_graph),
+        )
+        .route(
+            "/api/me/knowledge-graphs/:id",
+            get(learning::graph).delete(learning::delete_graph),
+        )
+        .route("/api/me/knowledge-graph-runs/:id", get(learning::graph_run))
+        .route("/api/me/password", post(learning::change_password))
         .route("/api/auth/register", post(register))
         .route("/api/auth/login", post(login))
         .route("/api/auth/logout", post(logout))
@@ -259,11 +576,65 @@ async fn main() -> anyhow::Result<()> {
         .ok()
         .and_then(|v| v.parse().ok())
         .unwrap_or(8787);
-    let addr = SocketAddr::from(([127, 0, 0, 1], port));
+    let host = env::var("API_HOST").unwrap_or_else(|_| "127.0.0.1".into());
+    let addr: SocketAddr = format!("{host}:{port}").parse()?;
     println!("Rust API listening on http://{addr}");
     let listener = tokio::net::TcpListener::bind(addr).await?;
     axum::serve(listener, app).await?;
     Ok(())
+}
+
+async fn health_live() -> Json<Value> {
+    Json(json!({"status":"ok","service":"exam-review-api","version":env!("CARGO_PKG_VERSION")}))
+}
+
+async fn health_ready(State(state): State<SharedState>) -> Result<Json<Value>, ApiError> {
+    sqlx::query_scalar::<_, i32>("SELECT 1")
+        .fetch_one(&state.db)
+        .await?;
+    Ok(Json(
+        json!({"status":"ready","database":"ok","vectorEnabled":state.vector_enabled}),
+    ))
+}
+
+async fn prometheus_metrics(State(state): State<SharedState>) -> Response {
+    let active: i64 =
+        sqlx::query_scalar("SELECT COUNT(*) FROM embedding_generations WHERE is_active")
+            .fetch_one(&state.db)
+            .await
+            .unwrap_or(0);
+    let running: i64 = sqlx::query_scalar(
+        "SELECT COUNT(*) FROM material_index_runs WHERE status IN ('queued','running','paused')",
+    )
+    .fetch_one(&state.db)
+    .await
+    .unwrap_or(0);
+    let body=format!("# HELP exam_review_up API process health\n# TYPE exam_review_up gauge\nexam_review_up 1\n# HELP exam_review_db_pool_size PostgreSQL pool connections\n# TYPE exam_review_db_pool_size gauge\nexam_review_db_pool_size {}\n# HELP exam_review_db_pool_idle Idle PostgreSQL pool connections\n# TYPE exam_review_db_pool_idle gauge\nexam_review_db_pool_idle {}\n# HELP exam_review_active_embedding_generations Active embedding generations\n# TYPE exam_review_active_embedding_generations gauge\nexam_review_active_embedding_generations {active}\n# HELP exam_review_running_index_jobs Running or paused index jobs\n# TYPE exam_review_running_index_jobs gauge\nexam_review_running_index_jobs {running}\n",state.db.size(),state.db.num_idle());
+    let mut response = Response::new(axum::body::Body::from(body));
+    response.headers_mut().insert(
+        header::CONTENT_TYPE,
+        HeaderValue::from_static("text/plain; version=0.0.4; charset=utf-8"),
+    );
+    response
+}
+
+async fn openapi_spec() -> Response {
+    let mut response = Response::new(axum::body::Body::from(include_str!("../openapi.yaml")));
+    response.headers_mut().insert(
+        header::CONTENT_TYPE,
+        HeaderValue::from_static("application/yaml; charset=utf-8"),
+    );
+    response
+}
+
+async fn openapi_ui() -> Response {
+    let html = r#"<!doctype html><html><head><meta charset="utf-8"><title>Exam Review API</title><link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"></head><body><div id="swagger-ui"></div><script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script><script>SwaggerUIBundle({url:'/api/docs/openapi.yaml',dom_id:'#swagger-ui',deepLinking:true})</script></body></html>"#;
+    let mut response = Response::new(axum::body::Body::from(html));
+    response.headers_mut().insert(
+        header::CONTENT_TYPE,
+        HeaderValue::from_static("text/html; charset=utf-8"),
+    );
+    response
 }
 
 async fn cache_get<T: DeserializeOwned>(redis: &Option<RedisPool>, key: &str) -> Option<T> {
@@ -336,7 +707,9 @@ async fn auth_user(state: &SharedState, headers: &HeaderMap) -> Result<UserSessi
     let row = sqlx::query(
         r#"SELECT users.id, users.username, users.role, users.created_at, users.last_login_at
            FROM sessions JOIN users ON users.id = sessions.user_id
-           WHERE sessions.token_hash = $1 AND sessions.expires_at > now()"#,
+           WHERE sessions.token_hash = $1 AND sessions.expires_at > now()
+             AND users.risk_status = 'active'
+             AND (users.locked_until IS NULL OR users.locked_until <= now())"#,
     )
     .bind(token_hash)
     .fetch_optional(&state.db)
@@ -349,6 +722,32 @@ async fn auth_user(state: &SharedState, headers: &HeaderMap) -> Result<UserSessi
         created_at: row.try_get("created_at")?,
         last_login_at: row.try_get("last_login_at")?,
     })
+}
+
+fn auth_request_context(headers: &HeaderMap) -> (Option<String>, Option<String>) {
+    let ip = headers
+        .get("x-forwarded-for")
+        .and_then(|value| value.to_str().ok())
+        .and_then(|value| value.split(',').next())
+        .map(|value| value.trim().chars().take(64).collect());
+    let agent = headers
+        .get(header::USER_AGENT)
+        .and_then(|value| value.to_str().ok())
+        .map(|value| value.chars().take(300).collect());
+    (ip, agent)
+}
+
+async fn record_auth_event(
+    state: &SharedState,
+    headers: &HeaderMap,
+    user_id: Option<Uuid>,
+    username: &str,
+    event_type: &str,
+    risk_level: &str,
+) {
+    let (ip, agent) = auth_request_context(headers);
+    let _ = sqlx::query("INSERT INTO auth_events(user_id,username,event_type,ip_address,user_agent,risk_level) VALUES($1,$2,$3,$4,$5,$6)")
+        .bind(user_id).bind(username).bind(event_type).bind(ip).bind(agent).bind(risk_level).execute(&state.db).await;
 }
 
 async fn create_session(state: &SharedState, user_id: Uuid) -> Result<String, ApiError> {
@@ -588,7 +987,7 @@ async fn gaokao_questions(
         .unwrap_or(0)
         .max(0);
     let cache_key = format!(
-        "gaokao:questions:v3:{}:{}:{}",
+        "gaokao:questions:v4:{}:{}:{}",
         offset,
         include_hidden,
         serde_json::to_string(&params).unwrap_or_default()
@@ -605,7 +1004,7 @@ async fn gaokao_questions(
              AND ($5::text IS NULL OR source_type = $5)
              AND ($6::bool IS NULL OR (($6 = true AND jsonb_array_length(solution) > 0) OR ($6 = false AND jsonb_array_length(solution) = 0)))
              AND ($7::text IS NULL OR metadata #>> '{solutionEnrichment,status}' = $7)
-             AND ($8::bool = true OR COALESCE(metadata #>> '{cleanup,status}', '') <> 'soft_deleted')"#,
+             AND ($8::bool = true OR (COALESCE(metadata #>> '{cleanup,status}', '') <> 'soft_deleted' AND display_complete))"#,
     )
     .bind(params.subject.as_deref()).bind(params.year).bind(params.difficulty.as_deref())
     .bind(params.quality.as_deref()).bind(params.source_type.as_deref()).bind(params.has_solution)
@@ -616,7 +1015,7 @@ async fn gaokao_questions(
         r#"SELECT id, question_key AS "questionKey", year, subject_key AS "subjectKey",
                   subject_name AS "subjectName", question_number AS "questionNumber",
                   question_type AS "questionType", difficulty, quality, prompt, answer, solution,
-                  flags, source_type AS "sourceType", metadata, updated_at AS "updatedAt"
+                  flags, source_type AS "sourceType", metadata, display_complete AS "displayComplete", incomplete_reason AS "incompleteReason", updated_at AS "updatedAt"
            FROM gaokao_questions
            WHERE ($1::text IS NULL OR subject_key = $1)
              AND ($2::int IS NULL OR year = $2)
@@ -625,7 +1024,7 @@ async fn gaokao_questions(
              AND ($5::text IS NULL OR source_type = $5)
              AND ($6::bool IS NULL OR (($6 = true AND jsonb_array_length(solution) > 0) OR ($6 = false AND jsonb_array_length(solution) = 0)))
              AND ($7::text IS NULL OR metadata #>> '{solutionEnrichment,status}' = $7)
-             AND ($8::bool = true OR COALESCE(metadata #>> '{cleanup,status}', '') <> 'soft_deleted')
+             AND ($8::bool = true OR (COALESCE(metadata #>> '{cleanup,status}', '') <> 'soft_deleted' AND display_complete))
            ORDER BY year NULLS LAST, subject_key, question_number NULLS LAST, updated_at DESC, id
            LIMIT $9 OFFSET $10"#,
     )
@@ -634,7 +1033,10 @@ async fn gaokao_questions(
     .bind(params.solution_status.as_deref())
     .bind(include_hidden)
     .bind(limit).bind(offset).fetch_all(&state.db).await?;
-    let questions: Result<Vec<_>, sqlx::Error> = rows.into_iter().map(question_row).collect();
+    let questions: Result<Vec<_>, sqlx::Error> = rows
+        .into_iter()
+        .map(|row| question_row(row, &state.question_assets))
+        .collect();
     let questions = questions?;
     let loaded = offset + questions.len() as i64;
     let has_more = loaded < total_count;
@@ -646,7 +1048,10 @@ async fn gaokao_questions(
     Ok(Json(value))
 }
 
-fn question_row(row: sqlx::postgres::PgRow) -> Result<Value, sqlx::Error> {
+fn question_row(
+    row: sqlx::postgres::PgRow,
+    question_assets: &std::collections::HashMap<String, Value>,
+) -> Result<Value, sqlx::Error> {
     let solution: Value = row.try_get("solution")?;
     let metadata: Value = row.try_get("metadata")?;
     let subject_key: String = row.try_get("subjectKey")?;
@@ -684,9 +1089,14 @@ fn question_row(row: sqlx::postgres::PgRow) -> Result<Value, sqlx::Error> {
     admin_tags.sort();
     admin_tags.dedup();
 
+    let question_key: String = row.try_get("questionKey")?;
+    let images = question_assets
+        .get(&question_key)
+        .cloned()
+        .unwrap_or_else(|| json!([]));
     Ok(json!({
         "id": row.try_get::<Uuid, _>("id")?,
-        "questionKey": row.try_get::<String, _>("questionKey")?,
+        "questionKey": question_key,
         "year": row.try_get::<Option<i32>, _>("year")?,
         "subjectKey": subject_key,
         "subjectName": row.try_get::<String, _>("subjectName")?,
@@ -698,6 +1108,7 @@ fn question_row(row: sqlx::postgres::PgRow) -> Result<Value, sqlx::Error> {
         "prompt": prompt,
         "stem": stem,
         "materials": materials,
+        "images": images,
         "answer": row.try_get::<Option<String>, _>("answer")?,
         "solution": solution,
         "flags": flags,
@@ -706,6 +1117,8 @@ fn question_row(row: sqlx::postgres::PgRow) -> Result<Value, sqlx::Error> {
         "displayTags": display_tags,
         "adminTags": admin_tags,
         "isHidden": metadata.pointer("/cleanup/status").and_then(Value::as_str) == Some("soft_deleted"),
+        "displayComplete": row.try_get::<bool,_>("displayComplete")?,
+        "incompleteReason": row.try_get::<Option<String>,_>("incompleteReason")?,
         "metadata": metadata,
         "hasSolution": solution.as_array().map(|items| !items.is_empty()).unwrap_or(false),
         "solutionStatus": solution_status,
@@ -1129,6 +1542,7 @@ async fn gaokao_rag_import(
 
 async fn register(
     State(state): State<SharedState>,
+    headers: HeaderMap,
     Json(input): Json<AuthInput>,
 ) -> Result<Response, ApiError> {
     if !validate_auth(&input) {
@@ -1137,11 +1551,7 @@ async fn register(
     let password_hash =
         bcrypt_hash(input.password, DEFAULT_COST).map_err(|_| ApiError::server())?;
     let username = input.username.trim();
-    let role = if username == "admin" {
-        "admin"
-    } else {
-        "student"
-    };
+    let role = "student";
     let result = sqlx::query("INSERT INTO users (username, password_hash, role, last_login_at) VALUES ($1, $2, $3, now()) RETURNING id, username, role, created_at, last_login_at")
         .bind(username).bind(password_hash).bind(role).fetch_one(&state.db).await;
     let row = match result {
@@ -1162,7 +1572,20 @@ async fn register(
         created_at: row.try_get("created_at")?,
         last_login_at: row.try_get("last_login_at")?,
     };
+    sqlx::query("INSERT INTO user_preferences(user_id) VALUES($1) ON CONFLICT DO NOTHING")
+        .bind(user.id)
+        .execute(&state.db)
+        .await?;
     let token = create_session(&state, user.id).await?;
+    record_auth_event(
+        &state,
+        &headers,
+        Some(user.id),
+        username,
+        "register_success",
+        "info",
+    )
+    .await;
     let mut response = (
         StatusCode::CREATED,
         Json(json!({ "user": UserOut::from(user) })),
@@ -1177,22 +1600,62 @@ async fn register(
 
 async fn login(
     State(state): State<SharedState>,
+    headers: HeaderMap,
     Json(input): Json<AuthInput>,
 ) -> Result<Response, ApiError> {
     if !validate_auth(&input) {
         return Err(ApiError::bad_request());
     }
-    let row = sqlx::query("SELECT id, username, role, password_hash, created_at, last_login_at FROM users WHERE username = $1")
+    let row = sqlx::query("SELECT id, username, role, password_hash, created_at, last_login_at,risk_status,failed_login_count,locked_until FROM users WHERE username = $1")
         .bind(input.username.trim()).fetch_optional(&state.db).await?;
     let Some(row) = row else {
+        record_auth_event(
+            &state,
+            &headers,
+            None,
+            input.username.trim(),
+            "login_unknown_user",
+            "warning",
+        )
+        .await;
         return Ok((
             StatusCode::UNAUTHORIZED,
             Json(json!({ "error": "invalid_credentials" })),
         )
             .into_response());
     };
+    let risk_status: String = row.try_get("risk_status")?;
+    let locked_until: Option<DateTime<Utc>> = row.try_get("locked_until")?;
+    if risk_status != "active" || locked_until.is_some_and(|until| until > Utc::now()) {
+        record_auth_event(
+            &state,
+            &headers,
+            Some(row.try_get("id")?),
+            input.username.trim(),
+            "login_restricted",
+            "high",
+        )
+        .await;
+        return Ok((
+            StatusCode::FORBIDDEN,
+            Json(json!({"error":"account_restricted"})),
+        )
+            .into_response());
+    }
     let password_hash: String = row.try_get("password_hash")?;
     if !bcrypt_verify(input.password, &password_hash).unwrap_or(false) {
+        let user_id: Uuid = row.try_get("id")?;
+        sqlx::query("UPDATE users SET failed_login_count=failed_login_count+1,locked_until=CASE WHEN failed_login_count+1>=5 THEN now()+interval '15 minutes' ELSE locked_until END WHERE id=$1")
+            .bind(user_id).execute(&state.db).await?;
+        record_auth_event(
+            &state,
+            &headers,
+            Some(user_id),
+            input.username.trim(),
+            "login_failed",
+            "warning",
+        )
+        .await;
         return Ok((
             StatusCode::UNAUTHORIZED,
             Json(json!({ "error": "invalid_credentials" })),
@@ -1200,10 +1663,12 @@ async fn login(
             .into_response());
     }
     let user_id: Uuid = row.try_get("id")?;
-    sqlx::query("UPDATE users SET last_login_at = now() WHERE id = $1")
-        .bind(user_id)
-        .execute(&state.db)
-        .await?;
+    sqlx::query(
+        "UPDATE users SET last_login_at=now(),failed_login_count=0,locked_until=NULL WHERE id=$1",
+    )
+    .bind(user_id)
+    .execute(&state.db)
+    .await?;
     let user = UserSession {
         id: user_id,
         username: row.try_get("username")?,
@@ -1212,6 +1677,15 @@ async fn login(
         last_login_at: Some(Utc::now()),
     };
     let token = create_session(&state, user.id).await?;
+    record_auth_event(
+        &state,
+        &headers,
+        Some(user.id),
+        &user.username,
+        "login_success",
+        "info",
+    )
+    .await;
     let mut response = Json(json!({ "user": UserOut::from(user) })).into_response();
     response.headers_mut().insert(
         header::SET_COOKIE,
@@ -1240,7 +1714,14 @@ async fn logout(
 
 async fn me(State(state): State<SharedState>, headers: HeaderMap) -> Result<Json<Value>, ApiError> {
     let user = auth_user(&state, &headers).await?;
-    Ok(Json(json!({ "user": UserOut::from(user) })))
+    let must_change: bool =
+        sqlx::query_scalar("SELECT must_change_password FROM users WHERE id=$1")
+            .bind(user.id)
+            .fetch_one(&state.db)
+            .await?;
+    Ok(Json(
+        json!({ "user": UserOut::from(user), "mustChangePassword": must_change }),
+    ))
 }
 
 async fn me_stats(
@@ -1331,6 +1812,9 @@ async fn ensure_schema(db: &PgPool) -> anyhow::Result<()> {
         "CREATE TABLE IF NOT EXISTS gaokao_sources (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), source_key TEXT NOT NULL UNIQUE, name TEXT NOT NULL, detail TEXT, status TEXT NOT NULL DEFAULT 'active', source_type TEXT NOT NULL DEFAULT 'local', relative_path TEXT, metadata JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
         "CREATE TABLE IF NOT EXISTS gaokao_papers (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), paper_key TEXT NOT NULL UNIQUE, year INTEGER, subject_key TEXT NOT NULL, subject_name TEXT NOT NULL, paper_name TEXT NOT NULL, paper_kind TEXT NOT NULL DEFAULT 'exam', status TEXT NOT NULL DEFAULT 'indexed', metadata JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now())",
         "CREATE TABLE IF NOT EXISTS gaokao_questions (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), question_key TEXT NOT NULL UNIQUE, paper_id UUID REFERENCES gaokao_papers(id) ON DELETE SET NULL, year INTEGER, subject_key TEXT NOT NULL, subject_name TEXT NOT NULL, question_number INTEGER, question_type TEXT, difficulty TEXT, quality TEXT NOT NULL DEFAULT 'indexed', prompt TEXT NOT NULL, answer TEXT, solution JSONB NOT NULL DEFAULT '[]'::jsonb, flags JSONB NOT NULL DEFAULT '[]'::jsonb, source_type TEXT NOT NULL DEFAULT 'real', metadata JSONB NOT NULL DEFAULT '{}'::jsonb, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now())",
+        "ALTER TABLE gaokao_questions ADD COLUMN IF NOT EXISTS display_complete BOOLEAN NOT NULL DEFAULT true",
+        "ALTER TABLE gaokao_questions ADD COLUMN IF NOT EXISTS incomplete_reason TEXT",
+        "CREATE INDEX IF NOT EXISTS idx_gaokao_questions_complete ON gaokao_questions(display_complete,subject_key,year)",
         "CREATE TABLE IF NOT EXISTS gaokao_question_tags (question_id UUID NOT NULL REFERENCES gaokao_questions(id) ON DELETE CASCADE, tag_type TEXT NOT NULL, tag TEXT NOT NULL, PRIMARY KEY (question_id, tag_type, tag))",
         "CREATE TABLE IF NOT EXISTS gaokao_question_cleanup_audit (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), question_id UUID NOT NULL REFERENCES gaokao_questions(id) ON DELETE CASCADE, question_key TEXT NOT NULL, subject_key TEXT, year INTEGER, reason TEXT NOT NULL, evidence JSONB NOT NULL DEFAULT '{}'::jsonb, action TEXT NOT NULL DEFAULT 'soft_deleted', created_at TIMESTAMPTZ NOT NULL DEFAULT now())",
         "CREATE TABLE IF NOT EXISTS gaokao_subject_profiles (subject_key TEXT PRIMARY KEY, subject_name TEXT NOT NULL, accent TEXT, icon TEXT, route TEXT, trend TEXT, advice TEXT, high_frequency JSONB NOT NULL DEFAULT '[]'::jsonb, easy_mistakes JSONB NOT NULL DEFAULT '[]'::jsonb, metadata JSONB NOT NULL DEFAULT '{}'::jsonb, updated_at TIMESTAMPTZ NOT NULL DEFAULT now())",

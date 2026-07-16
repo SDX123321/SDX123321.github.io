@@ -1,0 +1,11 @@
+.git
+.codex
+.env
+node_modules
+dist
+coverage
+tmp
+server-rs/target
+public/files
+public/courses
+**/__pycache__
