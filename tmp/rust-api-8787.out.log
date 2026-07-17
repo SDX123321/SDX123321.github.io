@@ -1,5 +1,0 @@
-
-> exam-review@2.0.0 api
-> cargo run --manifest-path server-rs/Cargo.toml --bin exam-review-api
-
-Rust API listening on http://127.0.0.1:8787

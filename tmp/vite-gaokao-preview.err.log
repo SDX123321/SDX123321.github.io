@@ -1,5 +1,0 @@
-[31mfailed to load config from C:\Users\zzz\Desktop\site\vite.config.js[39m
-[2m10:21:14 AM[22m [31m[1m[vite][22m[39m Cannot find package '@vitejs/plugin-vue' imported from C:\Users\zzz\Desktop\site\node_modules\.vite-temp\vite.config.js.timestamp-1783650074358-2a20fb80905438.mjs
-[2m10:21:14 AM[22m [31m[1m[vite][22m[39m server restart failed
-[2m10:21:17 AM[22m [31m[1m[vite][22m[39m Pre-transform error: Failed to load url /src/main.ts (resolved id: /src/main.ts). Does the file exist?
-[2m10:21:17 AM[22m [31m[1m[vite][22m[39m Pre-transform error: Failed to load url /src/main.ts (resolved id: /src/main.ts). Does the file exist?
