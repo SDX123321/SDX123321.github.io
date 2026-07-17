@@ -1,8 +1,50 @@
-.env
-_tmp_images/
+# Dependency directories
 node_modules/
+.pnpm-store/
+target/
+
+# Build outputs and caches
 dist/
+coverage/
+.codex/
+.k6-results/
+.eslintcache
+.vite-inspect/
+
+# Temporary and log files
+tmp/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Python cache
+**/__pycache__/
+*.pyc
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project backups
 src_content_home_backup.html
+
+# logs
+logs/
 # Junction targets (don't duplicate files/ and courses/ in git)
 public/files/
 public/courses/
+_tmp_images/
+

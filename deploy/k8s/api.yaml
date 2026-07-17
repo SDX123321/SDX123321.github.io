@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exam-review-api
+  namespace: exam-review
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: exam-review-api
+  template:
+    metadata:
+      labels:
+        app: exam-review-api
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/replace-me/exam-review-api:2.1.0
+          ports:
+            - name: http
+              containerPort: 8787
+          envFrom:
+            - configMapRef:
+                name: exam-review-config
+            - secretRef:
+                name: exam-review-secrets
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          volumeMounts:
+            - name: materials
+              mountPath: /materials
+              readOnly: true
+            - name: runtime-config
+              mountPath: /config
+      volumes:
+        - name: materials
+          persistentVolumeClaim:
+            claimName: exam-review-materials
+        - name: runtime-config
+          persistentVolumeClaim:
+            claimName: exam-review-runtime-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: exam-review-api
+  namespace: exam-review
+  labels:
+    app: exam-review-api
+spec:
+  selector:
+    app: exam-review-api
+  ports:
+    - name: http
+      port: 8787
+      targetPort: http
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: exam-review-materials
+  namespace: exam-review
+spec:
+  accessModes: [ReadOnlyMany]
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: exam-review-runtime-config
+  namespace: exam-review
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 1Gi

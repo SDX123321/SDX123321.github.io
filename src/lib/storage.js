@@ -53,7 +53,7 @@ export function removeLS(key) {
 }
 
 // ── Migration ──
-const MIGRATION_FLAG = 'site_migrated_to_react_v1'
+const MIGRATION_FLAG = 'site_migrated_to_vue_v1'
 
 /**
  * Ensures all existing localStorage data from the old static site

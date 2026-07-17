@@ -1,0 +1,6 @@
+apiVersion: 1
+providers:
+  - name: Exam Review
+    folder: Exam Review
+    type: file
+    options: { path: /var/lib/grafana/dashboards }

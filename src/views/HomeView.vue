@@ -44,6 +44,10 @@ function handleShortcut(event: KeyboardEvent) {
     searchInput.value?.focus()
   }
 }
+
+function selectHighSchool() {
+  localStorage.setItem('review_edition', 'high-school')
+}
 </script>
 
 <template>
@@ -54,6 +58,7 @@ function handleShortcut(event: KeyboardEvent) {
         <span>期末复习笔记</span>
       </RouterLink>
       <nav class="topnav" aria-label="主导航">
+        <RouterLink to="/high-school" @click="selectHighSchool">高中版</RouterLink>
         <a href="#courses">课程</a>
         <a href="#resources">资料</a>
         <a href="#method">复习方法</a>

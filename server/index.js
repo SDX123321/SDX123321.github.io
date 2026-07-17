@@ -16,6 +16,40 @@ app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }))
 app.use(express.json({ limit: '1mb' }))
 app.use(cookieParser())
 
+async function apiKeyAuth(req, res, next) {
+  const path = req.path
+  if (
+    path === '/api/handshake' ||
+    path === '/api/health' ||
+    path === '/health/live' ||
+    path === '/health/ready' ||
+    path === '/metrics'
+  ) {
+    return next()
+  }
+
+  const apiKey = req.headers['x-api-key']
+  if (!apiKey) {
+    return res.status(401).json({ error: 'missing_api_key' })
+  }
+
+  try {
+    const { rows } = await query(
+      'SELECT EXISTS(SELECT 1 FROM visitor_api_keys WHERE api_key = $1 AND expires_at > now()) AS exists',
+      [apiKey]
+    )
+    if (!rows[0] || !rows[0].exists) {
+      return res.status(401).json({ error: 'invalid_api_key' })
+    }
+    next()
+  } catch (error) {
+    console.error('API key auth error:', error)
+    res.status(500).json({ error: 'server_error' })
+  }
+}
+
+app.use(apiKeyAuth)
+
 const authSchema = z.object({
   username: z.string().trim().min(3).max(32).regex(/^[a-zA-Z0-9_\-\u4e00-\u9fa5]+$/),
   password: z.string().min(6).max(100),
@@ -224,6 +258,22 @@ async function incrementSnapshot(userId, field, recentPath) {
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true })
+})
+
+app.post('/api/handshake', async (req, res) => {
+  const apiKey = crypto.randomBytes(32).toString('hex')
+  const expiresAt = new Date()
+  expiresAt.setDate(expiresAt.getDate() + 1) // 24 hours
+  try {
+    await query(
+      'INSERT INTO visitor_api_keys (api_key, expires_at) VALUES ($1, $2)',
+      [apiKey, expiresAt]
+    )
+    res.json({ apiKey })
+  } catch (error) {
+    console.error('Failed to create API key:', error)
+    res.status(500).json({ error: 'server_error' })
+  }
 })
 
 app.get('/api/gaokao/summary', async (req, res) => {

@@ -1,0 +1,31 @@
+FROM rust:1-bookworm AS rust-builder
+WORKDIR /build
+COPY server-rs ./server-rs
+RUN cargo build --release --manifest-path server-rs/Cargo.toml --bin exam-review-api
+
+FROM node:22-bookworm-slim AS runtime
+RUN if [ -f /etc/apt/sources.list.d/debian.sources ]; then \
+      sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources && \
+      sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources; \
+    fi && \
+    if [ -f /etc/apt/sources.list ]; then \
+      sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list && \
+      sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list; \
+    fi && \
+    apt-get update && apt-get install -y --no-install-recommends ca-certificates chromium libreoffice-writer libreoffice-calc && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts
+COPY scripts ./scripts
+COPY src/content ./src/content
+COPY src/data/gaokao-question-assets.json ./src/data/gaokao-question-assets.json
+COPY public/gaokao-assets ./public/gaokao-assets
+COPY server-rs/openapi.yaml ./server-rs/openapi.yaml
+COPY --from=rust-builder /build/server-rs/target/release/exam-review-api /usr/local/bin/exam-review-api
+COPY deploy/api-entrypoint.sh /usr/local/bin/api-entrypoint
+RUN chmod +x /usr/local/bin/api-entrypoint
+ENV API_HOST=0.0.0.0 API_PORT=8787 CHROME_PATH=/usr/bin/chromium MATERIAL_ROOT=/materials PROJECT_ROOT=/app OLLAMA_ENV_PATH=/config/.env
+EXPOSE 8787
+HEALTHCHECK --interval=15s --timeout=5s --retries=5 CMD node -e "fetch('http://127.0.0.1:8787/health/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+ENTRYPOINT ["api-entrypoint"]
+CMD ["exam-review-api"]
