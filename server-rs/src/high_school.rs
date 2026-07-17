@@ -23,26 +23,14 @@ use tokio_util::io::ReaderStream;
 #[derive(Default)]
 pub(crate) struct AnswerRateState {
     recent: HashMap<Uuid, Vec<Instant>>,
-    active: HashMap<Uuid, bool>,
-}
-
-struct ActiveAnswerGuard {
-    state: SharedState,
-    user_id: Uuid,
-}
-
-impl Drop for ActiveAnswerGuard {
-    fn drop(&mut self) {
-        if let Ok(mut rate) = self.state.answer_rate.lock() {
-            rate.active.remove(&self.user_id);
-        }
-    }
 }
 
 #[derive(Debug, Deserialize, Serialize, Default)]
 pub(crate) struct MaterialParams {
     q: Option<String>,
     grade: Option<String>,
+    #[serde(skip)]
+    grades: Option<Vec<String>>,
     subject: Option<String>,
     year: Option<i32>,
     region: Option<String>,
@@ -57,6 +45,7 @@ pub(crate) struct MaterialParams {
 pub(crate) struct AnswerInput {
     question: String,
     grade: Option<String>,
+    grades: Option<Vec<String>>,
     subject: Option<String>,
     year: Option<i32>,
     region: Option<String>,
@@ -318,7 +307,12 @@ async fn embed_query(state: &SharedState, query: &str) -> Option<String> {
             "{}/api/embed",
             config.base_url.trim_end_matches('/')
         ))
-        .json(&json!({"model": config.embedding_model, "input": query}))
+        .json(&json!({
+            "model": config.embedding_model,
+            "input": query,
+            "dimensions": config.embedding_dimensions
+        }))
+        .timeout(Duration::from_secs(12))
         .send()
         .await
         .ok()?;
@@ -338,6 +332,47 @@ async fn embed_query(state: &SharedState, query: &str) -> Option<String> {
     ))
 }
 
+fn keyword_patterns(query: &str) -> Vec<String> {
+    let compact: String = query
+        .chars()
+        .filter(|c| c.is_alphanumeric() || ('\u{4e00}'..='\u{9fff}').contains(c))
+        .collect();
+    let chars: Vec<char> = compact.chars().collect();
+    let mut terms = Vec::new();
+    for width in [4usize, 3, 2] {
+        if chars.len() < width {
+            continue;
+        }
+        for window in chars.windows(width) {
+            let term: String = window.iter().collect();
+            if [
+                "怎么", "如何", "哪些", "什么", "一下", "请问", "判断", "解释",
+            ]
+            .iter()
+            .any(|stop| term == *stop)
+            {
+                continue;
+            }
+            terms.push(format!(
+                "%{}%",
+                term.replace('%', "\\%").replace('_', "\\_")
+            ));
+            if terms.len() >= 24 {
+                break;
+            }
+        }
+        if terms.len() >= 24 {
+            break;
+        }
+    }
+    terms.sort();
+    terms.dedup();
+    if terms.is_empty() && !compact.is_empty() {
+        terms.push(format!("%{compact}%"));
+    }
+    terms
+}
+
 async fn search_matches(
     state: &SharedState,
     params: &MaterialParams,
@@ -348,35 +383,68 @@ async fn search_matches(
         return Ok(Vec::new());
     }
     let pattern = format!("%{}%", q.replace('%', "\\%").replace('_', "\\_"));
-    let keyword_rows = sqlx::query(r#"SELECT c.id,c.material_id,m.file_name,m.subject,m.grade,m.year,m.region,m.kind,c.chunk_index,c.chunk_text,
-        CASE WHEN c.chunk_text ILIKE $1 ESCAPE '\' THEN 1.0 ELSE 0.5 END::float8 AS score
+    let grade_filters = params.grades.clone().or_else(|| {
+        params
+            .grade
+            .as_deref()
+            .filter(|value| *value != "all")
+            .map(|value| vec![value.to_string()])
+    });
+    let patterns = keyword_patterns(q);
+    let fallback_a = patterns.first().unwrap_or(&pattern);
+    let fallback_b = patterns.get(1).unwrap_or(fallback_a);
+    let fallback_c = patterns.get(2).unwrap_or(fallback_b);
+    let keyword_query = sqlx::query(r#"WITH candidates AS MATERIALIZED (
+        SELECT c.id,c.material_id,m.file_name,m.subject,m.grade,m.year,m.region,m.kind,c.chunk_index,c.chunk_text
         FROM material_chunks c JOIN materials m ON m.id=c.material_id
-        WHERE (c.chunk_text ILIKE $1 ESCAPE '\' OR m.file_name ILIKE $1 ESCAPE '\')
+        WHERE (c.chunk_text ILIKE $1 ESCAPE '\' OR m.file_name ILIKE $1 ESCAPE '\'
+               OR c.chunk_text ILIKE $9 ESCAPE '\' OR c.chunk_text ILIKE $10 ESCAPE '\'
+               OR c.chunk_text ILIKE $11 ESCAPE '\')
           AND ($2::uuid IS NULL OR m.domain_id=$2)
-          AND ($3::text IS NULL OR m.grade=$3) AND ($4::text IS NULL OR m.subject=$4)
+          AND ($3::text[] IS NULL OR m.grade=ANY($3)) AND ($4::text IS NULL OR m.subject=$4)
           AND ($5::int IS NULL OR m.year=$5) AND ($6::text IS NULL OR m.region=$6) AND ($7::text IS NULL OR m.kind=$7)
-        ORDER BY score DESC, similarity(c.chunk_text,$8) DESC LIMIT $9"#)
-        .bind(&pattern).bind(params.domain_id).bind(params.grade.as_deref().filter(|v| *v!="all")).bind(params.subject.as_deref().filter(|v| *v!="all"))
+        LIMIT $12)
+        SELECT c.*,
+          CASE WHEN c.chunk_text ILIKE $1 ESCAPE '\' THEN 1.0
+               WHEN c.file_name ILIKE $1 ESCAPE '\' THEN 0.9
+               ELSE GREATEST(similarity(c.chunk_text,$8),0.35) END::float8 AS score
+        FROM candidates c ORDER BY score DESC, similarity(c.chunk_text,$8) DESC LIMIT $13"#)
+        .bind(&pattern).bind(params.domain_id).bind(grade_filters.clone()).bind(params.subject.as_deref().filter(|v| *v!="all"))
         .bind(params.year).bind(params.region.as_deref().filter(|v| *v!="all")).bind(params.kind.as_deref().filter(|v| *v!="all"))
-        .bind(q).bind(limit * 3).fetch_all(&state.db).await?;
+        .bind(q).bind(fallback_a).bind(fallback_b).bind(fallback_c).bind(limit * 40).bind(limit * 4);
+    let keyword_future = async {
+        match tokio::time::timeout(Duration::from_secs(6), keyword_query.fetch_all(&state.db)).await
+        {
+            Ok(rows) => rows.map_err(ApiError::from),
+            Err(_) => Ok(Vec::new()),
+        }
+    };
+    let (keyword_rows, vector) = tokio::join!(keyword_future, embed_query(state, q));
+    let keyword_rows = keyword_rows?;
     let mut ranked: HashMap<Uuid, (SearchMatch, f64)> = HashMap::new();
     for (rank, row) in keyword_rows.into_iter().enumerate() {
         let item = row_to_match(&row, row.try_get("score")?)?;
         ranked.insert(item.id, (item, 1.0 / (60.0 + rank as f64)));
     }
-    if let Some(vector) = embed_query(state, q).await {
-        let dense_rows = sqlx::query(r#"SELECT c.id,c.material_id,m.file_name,m.subject,m.grade,m.year,m.region,m.kind,c.chunk_index,c.chunk_text,
+    if let Some(vector) = vector {
+        let dense_query = sqlx::query(r#"SELECT c.id,c.material_id,m.file_name,m.subject,m.grade,m.year,m.region,m.kind,c.chunk_index,c.chunk_text,
             (1 - (e.embedding <=> $1::vector))::float8 AS score
             FROM material_chunks c JOIN materials m ON m.id=c.material_id
             JOIN embedding_generations g ON g.domain_id=m.domain_id AND g.is_active
             JOIN material_chunk_embeddings e ON e.generation_id=g.id AND e.chunk_id=c.id
             WHERE ($2::uuid IS NULL OR m.domain_id=$2)
-              AND ($3::text IS NULL OR m.grade=$3) AND ($4::text IS NULL OR m.subject=$4)
+              AND ($3::text[] IS NULL OR m.grade=ANY($3)) AND ($4::text IS NULL OR m.subject=$4)
               AND ($5::int IS NULL OR m.year=$5) AND ($6::text IS NULL OR m.region=$6) AND ($7::text IS NULL OR m.kind=$7)
             ORDER BY e.embedding <=> $1::vector LIMIT $8"#)
-            .bind(vector).bind(params.domain_id).bind(params.grade.as_deref().filter(|v| *v!="all")).bind(params.subject.as_deref().filter(|v| *v!="all"))
-            .bind(params.year).bind(params.region.as_deref().filter(|v| *v!="all")).bind(params.kind.as_deref().filter(|v| *v!="all")).bind(limit*3)
-            .fetch_all(&state.db).await?;
+            .bind(vector).bind(params.domain_id).bind(grade_filters).bind(params.subject.as_deref().filter(|v| *v!="all"))
+            .bind(params.year).bind(params.region.as_deref().filter(|v| *v!="all")).bind(params.kind.as_deref().filter(|v| *v!="all")).bind(limit*3);
+        let dense_rows =
+            match tokio::time::timeout(Duration::from_secs(8), dense_query.fetch_all(&state.db))
+                .await
+            {
+                Ok(rows) => rows?,
+                Err(_) => Vec::new(),
+            };
         for (rank, row) in dense_rows.into_iter().enumerate() {
             let item = row_to_match(&row, row.try_get("score")?)?;
             ranked
@@ -393,6 +461,17 @@ async fn search_matches(
         })
         .collect();
     values.sort_by(|a, b| b.score.total_cmp(&a.score));
+    // Prefer evidence diversity: do not let one long document occupy the whole context.
+    let mut per_material = HashMap::<Uuid, usize>::new();
+    values.retain(|item| {
+        let count = per_material.entry(item.material_id).or_default();
+        if *count >= 2 {
+            false
+        } else {
+            *count += 1;
+            true
+        }
+    });
     values.truncate(limit as usize);
     Ok(values)
 }
@@ -455,12 +534,60 @@ pub(crate) async fn source_preview(
     }})))
 }
 
+pub(crate) async fn material_preview(
+    AxumPath(id): AxumPath<Uuid>,
+    State(state): State<SharedState>,
+    headers: HeaderMap,
+) -> Result<Json<Value>, ApiError> {
+    auth_user(&state, &headers).await?;
+    let row = sqlx::query(
+        r#"SELECT c.id,c.chunk_index,c.chunk_text,c.metadata AS chunk_metadata,
+           m.id AS material_id,m.file_name,m.file_ext,m.mime_type,m.subject,m.grade,m.year,m.region,m.kind,m.rag_status
+           FROM materials m LEFT JOIN material_chunks c ON c.material_id=m.id
+           WHERE m.id=$1 ORDER BY c.chunk_index NULLS LAST LIMIT 1"#,
+    )
+    .bind(id)
+    .fetch_optional(&state.db)
+    .await?
+    .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "material_not_found"))?;
+    let chunk_id: Option<Uuid> = row.try_get("id")?;
+    let text: Option<String> = row.try_get("chunk_text")?;
+    Ok(Json(json!({"source":{
+        "id":chunk_id,"chunkIndex":row.try_get::<Option<i32>,_>("chunk_index")?.unwrap_or(0),
+        "text":text.unwrap_or_else(||"该资料尚未生成可预览的文本切片。".to_string()),
+        "metadata":row.try_get::<Option<Value>,_>("chunk_metadata")?.unwrap_or_else(||json!({})),
+        "material":{"id":row.try_get::<Uuid,_>("material_id")?,"fileName":row.try_get::<String,_>("file_name")?,
+            "fileExt":row.try_get::<String,_>("file_ext")?,"mimeType":row.try_get::<String,_>("mime_type")?,
+            "subject":row.try_get::<String,_>("subject")?,"grade":row.try_get::<String,_>("grade")?,
+            "year":row.try_get::<Option<i32>,_>("year")?,"region":row.try_get::<String,_>("region")?,
+            "kind":row.try_get::<String,_>("kind")?,"ragStatus":row.try_get::<String,_>("rag_status")?}
+    }})))
+}
+
 pub(crate) async fn download(
     AxumPath(id): AxumPath<Uuid>,
     State(state): State<SharedState>,
     headers: HeaderMap,
 ) -> Result<Response, ApiError> {
     auth_user(&state, &headers).await?;
+    serve_material_file(&state, id, &headers, false).await
+}
+
+pub(crate) async fn file_preview(
+    AxumPath(id): AxumPath<Uuid>,
+    State(state): State<SharedState>,
+    headers: HeaderMap,
+) -> Result<Response, ApiError> {
+    auth_user(&state, &headers).await?;
+    serve_material_file(&state, id, &headers, true).await
+}
+
+async fn serve_material_file(
+    state: &SharedState,
+    id: Uuid,
+    headers: &HeaderMap,
+    inline: bool,
+) -> Result<Response, ApiError> {
     let row = sqlx::query(r#"SELECT m.file_name,m.mime_type,COALESCE(p.storage_path,p.relative_path) storage_path FROM materials m JOIN material_paths p ON p.material_id=m.id
         WHERE m.id=$1 ORDER BY p.is_canonical DESC,p.relative_path LIMIT 1"#).bind(id).fetch_optional(&state.db).await?
         .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND,"material_not_found"))?;
@@ -512,10 +639,15 @@ pub(crate) async fn download(
     h.insert(
         header::CONTENT_DISPOSITION,
         HeaderValue::from_str(&format!(
-            "attachment; filename*=UTF-8''{}",
+            "{}; filename*=UTF-8''{}",
+            if inline { "inline" } else { "attachment" },
             urlencoding::encode(&file_name)
         ))
         .unwrap(),
+    );
+    h.insert(
+        header::HeaderName::from_static("x-content-type-options"),
+        HeaderValue::from_static("nosniff"),
     );
     if status == StatusCode::PARTIAL_CONTENT {
         h.insert(
@@ -538,9 +670,74 @@ fn parse_range(value: &str, size: u64) -> Option<(u64, u64)> {
     (start <= end && start < size).then_some((start, end))
 }
 
+fn supports_reasoning_effort(model: &str) -> bool {
+    let model = model.to_ascii_lowercase();
+    ["gpt-5", "o1", "o3", "o4", "gpt-oss"]
+        .iter()
+        .any(|prefix| model.starts_with(prefix))
+}
+
+fn is_clearly_off_topic(question: &str) -> bool {
+    let normalized = question.to_lowercase();
+    [
+        "天气",
+        "股票",
+        "基金",
+        "比特币",
+        "彩票",
+        "娱乐新闻",
+        "明星八卦",
+        "订酒店",
+        "订机票",
+        "餐厅推荐",
+        "外卖",
+        "旅游攻略",
+        "写代码",
+        "编程",
+        "javascript",
+        "python",
+        "java ",
+        "游戏攻略",
+    ]
+    .iter()
+    .any(|term| normalized.contains(term))
+}
+
+fn push_utf8_chunk(target: &mut String, pending: &mut Vec<u8>, chunk: &[u8]) {
+    pending.extend_from_slice(chunk);
+    loop {
+        match std::str::from_utf8(pending) {
+            Ok(text) => {
+                target.push_str(text);
+                pending.clear();
+                break;
+            }
+            Err(error) => {
+                let valid = error.valid_up_to();
+                if valid > 0 {
+                    target.push_str(std::str::from_utf8(&pending[..valid]).unwrap_or_default());
+                }
+                match error.error_len() {
+                    Some(invalid) => {
+                        target.push('\u{fffd}');
+                        pending.drain(..valid + invalid);
+                    }
+                    None => {
+                        pending.drain(..valid);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::parse_range;
+    use super::{
+        is_clearly_off_topic, keyword_patterns, parse_range, push_utf8_chunk,
+        supports_reasoning_effort,
+    };
 
     #[test]
     fn parses_bounded_and_open_ranges() {
@@ -555,6 +752,42 @@ mod tests {
         assert_eq!(parse_range("bytes=100-120", 100), None);
         assert_eq!(parse_range("bytes=20-10", 100), None);
     }
+
+    #[test]
+    fn builds_chinese_keyword_fallbacks_for_natural_questions() {
+        let patterns = keyword_patterns("函数的单调性怎么判断");
+        assert!(patterns.iter().any(|term| term.contains("函数")));
+        assert!(patterns.iter().any(|term| term.contains("单调")));
+        assert!(!patterns.is_empty());
+    }
+
+    #[test]
+    fn enables_reasoning_effort_only_for_compatible_models() {
+        assert!(supports_reasoning_effort("gpt-5.2"));
+        assert!(supports_reasoning_effort("o3-mini"));
+        assert!(!supports_reasoning_effort("deepseek-chat"));
+        assert!(!supports_reasoning_effort("qwen-plus"));
+    }
+
+    #[test]
+    fn gates_only_confidently_unrelated_queries() {
+        assert!(is_clearly_off_topic("帮我推荐今天买哪只股票"));
+        assert!(!is_clearly_off_topic("函数的单调性怎么判断"));
+        assert!(!is_clearly_off_topic("牛顿第二定律如何应用"));
+    }
+
+    #[test]
+    fn decodes_utf8_split_across_network_chunks_without_replacement_chars() {
+        let bytes = "数学引用[S1]".as_bytes();
+        let mut output = String::new();
+        let mut pending = Vec::new();
+        for chunk in bytes.chunks(2) {
+            push_utf8_chunk(&mut output, &mut pending, chunk);
+        }
+        assert!(pending.is_empty());
+        assert_eq!(output, "数学引用[S1]");
+        assert!(!output.contains('\u{fffd}'));
+    }
 }
 
 pub(crate) async fn answer(
@@ -563,39 +796,63 @@ pub(crate) async fn answer(
     Json(input): Json<AnswerInput>,
 ) -> Result<Response, ApiError> {
     let user = auth_user(&state, &headers).await?;
-    let ollama = state.ollama_config.read().await.clone();
     let question = input.question.trim().to_string();
-    if !(2..=500).contains(&question.chars().count()) {
+    if question.chars().count() < 2 {
         return Err(ApiError::bad_request());
     }
     let conversation_id = input.conversation_id;
+    let conversation_context = if let Some(id) = conversation_id {
+        super::learning::conversation_reasoning_context(&state, user.id, id).await?
+    } else {
+        String::new()
+    };
     if let Some(id) = conversation_id {
         super::learning::begin_message(&state, user.id, id, &question).await?;
     }
-    let answer_slot = state
-        .answer_slots
-        .clone()
-        .try_acquire_owned()
-        .map_err(|_| ApiError::new(StatusCode::TOO_MANY_REQUESTS, "answer_capacity_reached"))?;
+    if is_clearly_off_topic(&question) {
+        let sources: Vec<SearchMatch> = Vec::new();
+        let answer = "这个问题与高中学科学习及当前资料库无关，已在调用模型前中断。请改为提问高中课程、解题方法、知识点或资料内容。";
+        if let Some(id) = conversation_id {
+            super::learning::save_answer(
+                &state,
+                id,
+                answer,
+                "completed",
+                None,
+                "relevance-gate",
+                "rules-v1",
+                &sources,
+            )
+            .await?;
+        }
+        let mut out = Response::new(Body::from(format!(
+            "{}\n{}\n{}\n{}\n",
+            json!({"type":"sources","sources":sources,"answerMode":"blocked","warning":"问题与高中学科资料无关，未调用模型。","reasoningLevel":"advanced"}),
+            json!({"type":"gate","status":"blocked","reason":"off_topic"}),
+            json!({"type":"delta","text":answer}),
+            json!({"type":"done","answerMode":"blocked","warning":"问题与高中学科资料无关，未调用模型。","reasoningLevel":"advanced"})
+        )));
+        out.headers_mut().insert(
+            header::CONTENT_TYPE,
+            HeaderValue::from_static("application/x-ndjson; charset=utf-8"),
+        );
+        out.headers_mut()
+            .insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
+        return Ok(out);
+    }
     {
         let mut rate = state.answer_rate.lock().map_err(|_| ApiError::server())?;
         let now = Instant::now();
-        let active = rate.active.get(&user.id).copied().unwrap_or(false);
         let recent = rate.recent.entry(user.id).or_default();
         recent.retain(|t| now.duration_since(*t) < Duration::from_secs(60));
-        if recent.len() >= 10 || active {
+        if recent.len() >= 30 {
             return Err(ApiError::new(
                 StatusCode::TOO_MANY_REQUESTS,
                 "answer_rate_limited",
             ));
         }
         recent.push(now);
-        rate.active.insert(user.id, true);
     }
-    let active_guard = ActiveAnswerGuard {
-        state: state.clone(),
-        user_id: user.id,
-    };
     let domain_id = match input.domain_id {
         Some(id) => Some(id),
         None => {
@@ -604,10 +861,22 @@ pub(crate) async fn answer(
                 .await?
         }
     };
+    let mut selected_grades = input.grades.unwrap_or_else(|| {
+        input
+            .grade
+            .filter(|grade| grade != "all")
+            .into_iter()
+            .collect()
+    });
+    selected_grades.retain(|grade| matches!(grade.as_str(), "grade-1" | "grade-2" | "grade-3"));
+    selected_grades.sort();
+    selected_grades.dedup();
+    let selected_subject = input.subject.filter(|subject| subject != "all");
     let params = MaterialParams {
         q: Some(question.clone()),
-        grade: input.grade,
-        subject: input.subject,
+        grade: None,
+        grades: (!selected_grades.is_empty()).then_some(selected_grades.clone()),
+        subject: selected_subject.clone(),
         year: input.year,
         region: input.region,
         kind: input.kind,
@@ -620,123 +889,164 @@ pub(crate) async fn answer(
             return Err(error);
         }
     };
-    if sources.is_empty() {
-        if let Some(id) = conversation_id {
-            super::learning::save_answer(
-                &state,
-                id,
-                "资料库中没有找到足够证据，暂时无法基于资料回答。",
-                "completed",
-                None,
-                "rag",
-                &ollama.chat_model,
-                &[],
-            )
-            .await?;
-        }
-        return Ok(ndjson_once(
-            json!({"type":"done","answer":"资料库中没有找到足够证据，暂时无法基于资料回答。","sources":[]}),
-        ));
-    }
+    let answer_mode = if sources.is_empty() {
+        "general"
+    } else if sources.len() < 4 {
+        "hybrid"
+    } else {
+        "grounded"
+    };
+    let warning = match answer_mode {
+        "general" => Some("未从资料库检索到直接依据，以下为模型通识补充，请核对教材。"),
+        "hybrid" => Some("资料依据有限，回答可能包含明确标记的模型通识补充。"),
+        _ => None,
+    };
     let context = sources
         .iter()
         .enumerate()
         .map(|(i, s)| format!("[S{}] {}\n{}", i + 1, s.file_name, s.text))
         .collect::<Vec<_>>()
         .join("\n\n");
-    if let Some(config_id) = input.provider_config_id {
-        let config = super::admin::provider_runtime(&state, user.id, config_id).await?;
-        let system_prompt = "你是高中学习助教。只能依据给定资料回答；每个结论使用 [S1] 形式标注来源。证据不足就明确说明，不得编造来源。回答使用简洁中文。";
-        let user_prompt = format!("问题：{}\n\n资料：\n{}", question, context);
-        let started = Instant::now();
-        let response = match state
-            .http
-            .post(format!(
-                "{}/chat/completions",
-                config.base_url.trim_end_matches('/')
-            ))
-            .bearer_auth(&config.api_key)
-            .json(&json!({"model":config.model.clone(),"stream":false,"temperature":0.2,"max_tokens":768,
-                "messages":[{"role":"system","content":system_prompt},{"role":"user","content":user_prompt.clone()}]}))
-            .send()
-            .await
-        { Ok(value)=>value, Err(_)=>{ if let Some(id)=conversation_id { let _=super::learning::save_answer(&state,id,"","failed",Some("model_unavailable"),&config.provider,&config.model,&sources).await; } return Err(ApiError::new(StatusCode::SERVICE_UNAVAILABLE,"model_unavailable")); } };
-        if !response.status().is_success() {
-            super::admin::record_ai_usage(
-                &state,
-                user.id,
-                &config.provider,
-                &config.model,
-                user_prompt.chars().count(),
-                0,
-                started.elapsed().as_millis(),
-                "failed",
-            )
-            .await;
-            if let Some(id) = conversation_id {
-                let _ = super::learning::save_answer(
-                    &state,
-                    id,
-                    "",
-                    "failed",
-                    Some("model_unavailable"),
-                    &config.provider,
-                    &config.model,
-                    &sources,
-                )
-                .await;
+    let answer_policy = if sources.is_empty() {
+        "资料为空。请使用可靠的高中通识作答，并以“通识补充（无资料引用）”开头；不得使用 [S1] 等虚假引用。"
+    } else {
+        "优先依据资料回答并使用 [S1] 形式标注来源。资料未覆盖的必要补充必须放在“通识补充”小节，且不得添加虚假引用。"
+    };
+    let advanced_reasoning_policy = format!(
+        "你是高中学习助教，采用进阶思考等级。{answer_policy}\
+         用户在界面选择的年级与学科是强约束：回答深度、术语和例题必须适配该范围，不得擅自切换学科。\
+         回答前应综合当前问题、已有对话结论和全部 RAG 资料，交叉核验不同来源，识别适用条件、隐含假设、矛盾与证据边界。\
+         对数学问题优先给出结论、关键依据、推导摘要、方法迁移与易错边界；不得只复述资料。\
+         内部可以充分推理，但只输出对学习者有用且可核验的推理摘要，不输出隐藏思维链。\
+         不为追求篇幅而截断答案，完成必要推导后再结束。回答使用结构清晰的简体中文。"
+    );
+    let grade_scope = if selected_grades.is_empty() {
+        "全部高中年级".to_string()
+    } else {
+        selected_grades
+            .iter()
+            .map(|grade| match grade.as_str() {
+                "grade-1" => "高一",
+                "grade-2" => "高二",
+                "grade-3" => "高三",
+                _ => grade,
+            })
+            .collect::<Vec<_>>()
+            .join("、")
+    };
+    let subject_scope = match selected_subject.as_deref() {
+        Some("chinese") => "语文",
+        Some("math") => "数学",
+        Some("english") => "英语",
+        Some("physics") => "物理",
+        Some("chemistry") => "化学",
+        Some("biology") => "生物",
+        Some("politics") => "政治",
+        Some("history") => "历史",
+        Some("geography") => "地理",
+        Some(value) => value,
+        None => "全部学科",
+    };
+    let user_prompt = format!(
+        "用户选择范围：年级={grade_scope}；学科={subject_scope}。该范围已用于 RAG 检索，请严格按此范围组织回答。\n\n当前问题：{question}\n\n已有对话结果：\n{}\n\nRAG 资料：\n{}",
+        if conversation_context.is_empty() {
+            "（无）"
+        } else {
+            &conversation_context
+        },
+        if context.is_empty() {
+            "（无）"
+        } else {
+            &context
+        }
+    );
+    let answer_slot = tokio::time::timeout(
+        Duration::from_secs(15),
+        state.answer_slots.clone().acquire_owned(),
+    )
+    .await
+    .map_err(|_| ApiError::new(StatusCode::TOO_MANY_REQUESTS, "answer_capacity_reached"))?
+    .map_err(|_| ApiError::server())?;
+    let source_event = json!({"type":"sources","sources":sources,"answerMode":answer_mode,"warning":warning,"reasoningLevel":"advanced"});
+    let stream_answer_mode = answer_mode.to_string();
+    let stream_warning = warning.map(str::to_string);
+    let remote_provider =
+        super::admin::preferred_provider_runtime(&state, user.id, input.provider_config_id).await?;
+    if let Some(config) = remote_provider {
+        let mut request_payload = json!({"model":config.model.clone(),"stream":true,"stream_options":{"include_usage":true},"temperature":0.15,
+            "messages":[{"role":"system","content":advanced_reasoning_policy},{"role":"user","content":user_prompt.clone()}]});
+        if supports_reasoning_effort(&config.model) {
+            request_payload["reasoning_effort"] = json!("high");
+        }
+        let stream_state = state.clone();
+        let save_sources = sources.clone();
+        let input_chars = user_prompt.chars().count();
+        let user_id = user.id;
+        let body_stream = stream! {
+            let _answer_slot = answer_slot;
+            yield Ok::<Bytes,Infallible>(Bytes::from(format!("{}\n", source_event)));
+            let started = Instant::now();
+            let response = stream_state.http.post(format!("{}/chat/completions", config.base_url.trim_end_matches('/')))
+                .bearer_auth(&config.api_key).json(&request_payload).send().await;
+            let Ok(response) = response else {
+                yield Ok(Bytes::from(format!("{}\n", json!({"type":"error","error":"model_unavailable"}))));
+                if let Some(id)=conversation_id { let _=super::learning::save_answer(&stream_state,id,"","failed",Some("model_unavailable"),&config.provider,&config.model,&save_sources).await; }
+                return;
+            };
+            if !response.status().is_success() {
+                yield Ok(Bytes::from(format!("{}\n", json!({"type":"error","error":"model_unavailable"}))));
+                if let Some(id)=conversation_id { let _=super::learning::save_answer(&stream_state,id,"","failed",Some("model_unavailable"),&config.provider,&config.model,&save_sources).await; }
+                return;
             }
-            return Err(ApiError::new(
-                StatusCode::SERVICE_UNAVAILABLE,
-                "model_unavailable",
-            ));
-        }
-        let value: Value = response
-            .json()
-            .await
-            .map_err(|_| ApiError::new(StatusCode::BAD_GATEWAY, "invalid_model_response"))?;
-        let answer = value
-            .pointer("/choices/0/message/content")
-            .and_then(Value::as_str)
-            .unwrap_or_default()
-            .trim()
-            .to_string();
-        if answer.is_empty() {
-            return Err(ApiError::new(
-                StatusCode::BAD_GATEWAY,
-                "invalid_model_response",
-            ));
-        }
-        super::admin::record_ai_usage(
-            &state,
-            user.id,
-            &config.provider,
-            &config.model,
-            user_prompt.chars().count(),
-            answer.chars().count(),
-            started.elapsed().as_millis(),
-            "completed",
-        )
-        .await;
-        if let Some(id) = conversation_id {
-            super::learning::save_answer(
-                &state,
-                id,
-                &answer,
-                "completed",
-                None,
-                &config.provider,
-                &config.model,
-                &sources,
-            )
-            .await?;
-        }
-        let mut out = Response::new(Body::from(format!(
-            "{}\n{}\n{}\n",
-            json!({"type":"sources","sources":sources}),
-            json!({"type":"delta","text":answer}),
-            json!({"type":"done"})
-        )));
+            let mut bytes=response.bytes_stream();
+            let mut buffer=String::new();
+            let mut utf8_pending=Vec::new();
+            let mut complete_answer=String::new();
+            let mut reasoning_chars=0usize;
+            let mut ttft_ms=None;
+            let mut input_tokens=0usize;
+            let mut output_tokens=0usize;
+            let mut stream_failed=false;
+            while let Some(next)=bytes.next().await {
+                match next {
+                    Ok(chunk) => {
+                        push_utf8_chunk(&mut buffer,&mut utf8_pending,&chunk);
+                        while let Some(pos)=buffer.find('\n') {
+                            let line=buffer[..pos].trim().to_string(); buffer.drain(..=pos);
+                            let Some(data)=line.strip_prefix("data:").map(str::trim) else { continue };
+                            if data.is_empty() || data == "[DONE]" { continue; }
+                            let Ok(value)=serde_json::from_str::<Value>(data) else { continue };
+                            if let Some(usage)=value.get("usage") {
+                                input_tokens=usage.get("prompt_tokens").and_then(Value::as_u64).unwrap_or(input_tokens as u64) as usize;
+                                output_tokens=usage.get("completion_tokens").and_then(Value::as_u64).unwrap_or(output_tokens as u64) as usize;
+                            }
+                            let reasoning=value.pointer("/choices/0/delta/reasoning_content").or_else(||value.pointer("/choices/0/delta/reasoning")).and_then(Value::as_str).unwrap_or_default();
+                            if !reasoning.is_empty() {
+                                ttft_ms.get_or_insert_with(||started.elapsed().as_millis());
+                                reasoning_chars+=reasoning.chars().count();
+                                yield Ok(Bytes::from(format!("{}\n",json!({"type":"reasoning","status":"thinking","text":reasoning,"processedChars":reasoning_chars}))));
+                            }
+                            let content=value.pointer("/choices/0/delta/content").and_then(Value::as_str).unwrap_or_default();
+                            if !content.is_empty() {
+                                ttft_ms.get_or_insert_with(||started.elapsed().as_millis());
+                                complete_answer.push_str(content);
+                                yield Ok(Bytes::from(format!("{}\n",json!({"type":"delta","text":content}))));
+                            }
+                        }
+                    }
+                    Err(_) => { stream_failed=true; yield Ok(Bytes::from(format!("{}\n",json!({"type":"error","error":"model_stream_failed"})))); break; }
+                }
+            }
+            let output_chars=complete_answer.chars().count();
+            if input_tokens==0 { input_tokens=(input_chars+2)/3; }
+            if output_tokens==0 { output_tokens=(output_chars+2)/3; }
+            let duration_ms=started.elapsed().as_millis();
+            yield Ok(Bytes::from(format!("{}\n",json!({"type":"metrics","inputTokens":input_tokens,"outputTokens":output_tokens,"totalTokens":input_tokens+output_tokens,"ttftMs":ttft_ms,"durationMs":duration_ms}))));
+            yield Ok(Bytes::from(format!("{}\n",json!({"type":"done","answerMode":stream_answer_mode,"warning":stream_warning,"reasoningLevel":"advanced"}))));
+            super::admin::record_ai_metrics(&stream_state,user_id,&config.provider,&config.model,input_chars,output_chars,input_tokens,output_tokens,ttft_ms,duration_ms,if stream_failed{"failed"}else{"completed"}).await;
+            if let Some(id)=conversation_id { let _=super::learning::save_answer(&stream_state,id,&complete_answer,if stream_failed{"failed"}else{"completed"},if stream_failed{Some("model_stream_failed")}else{None},&config.provider,&config.model,&save_sources).await; }
+        };
+        let mut out = Response::new(Body::from_stream(body_stream));
         out.headers_mut().insert(
             header::CONTENT_TYPE,
             HeaderValue::from_static("application/x-ndjson; charset=utf-8"),
@@ -745,76 +1055,26 @@ pub(crate) async fn answer(
             .insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
         return Ok(out);
     }
-    let ollama_started = Instant::now();
-    let payload = json!({"model":ollama.chat_model,"stream":true,"think":false,"options":{"temperature":0.2,"num_predict":768},"messages":[{"role":"system","content":"你是高中学习助教。只能依据给定资料回答；每个结论使用 [S1] 形式标注来源。证据不足就明确说明，不得编造来源。回答使用简洁中文。"},{"role":"user","content":format!("问题：{}\n\n资料：\n{}",question,context)}]});
-    let response = match state
-        .http
-        .post(format!(
-            "{}/api/chat",
-            ollama.base_url.trim_end_matches('/')
-        ))
-        .json(&payload)
-        .send()
-        .await
-    {
-        Ok(value) => value,
-        Err(_) => {
-            if let Some(id) = conversation_id {
-                let _ = super::learning::save_answer(
-                    &state,
-                    id,
-                    "",
-                    "failed",
-                    Some("model_unavailable"),
-                    "ollama",
-                    &ollama.chat_model,
-                    &sources,
-                )
-                .await;
-            }
-            return Err(ApiError::new(
-                StatusCode::SERVICE_UNAVAILABLE,
-                "model_unavailable",
-            ));
-        }
-    };
-    if !response.status().is_success() {
-        if let Some(id) = conversation_id {
-            let _ = super::learning::save_answer(
-                &state,
-                id,
-                "",
-                "failed",
-                Some("model_unavailable"),
-                "ollama",
-                &ollama.chat_model,
-                &sources,
-            )
-            .await;
-        }
-        return Err(ApiError::new(
-            StatusCode::SERVICE_UNAVAILABLE,
-            "model_unavailable",
-        ));
-    }
-    super::admin::record_ai_usage(
-        &state,
-        user.id,
-        "ollama",
-        &ollama.chat_model,
-        question.chars().count() + context.chars().count(),
-        0,
-        ollama_started.elapsed().as_millis(),
-        "streaming",
-    )
-    .await;
-    let source_event = json!({"type":"sources","sources":sources});
+    let ollama = state.ollama_config.read().await.clone();
+    let payload = json!({"model":ollama.chat_model,"stream":true,"think":true,"options":{"temperature":0.15},"messages":[{"role":"system","content":advanced_reasoning_policy},{"role":"user","content":user_prompt} ]});
     let save_state = state.clone();
     let save_sources = sources.clone();
     let save_model = ollama.chat_model.clone();
-    let body_stream = stream! {let _answer_slot=answer_slot;let _active_guard=active_guard;yield Ok::<Bytes,Infallible>(Bytes::from(format!("{}\n",source_event))); let mut bytes=response.bytes_stream(); let mut buffer=String::new(); let mut done_sent=false; let mut complete_answer=String::new(); let mut stream_failed=false;
-        while let Some(next)=bytes.next().await{match next{Ok(chunk)=>{buffer.push_str(&String::from_utf8_lossy(&chunk)); while let Some(pos)=buffer.find('\n'){let line=buffer[..pos].trim().to_string();buffer.drain(..=pos);if line.is_empty(){continue} if let Ok(v)=serde_json::from_str::<Value>(&line){if let Some(content)=v.pointer("/message/content").and_then(Value::as_str){if !content.is_empty(){complete_answer.push_str(content);yield Ok(Bytes::from(format!("{}\n",json!({"type":"delta","text":content}))));}} if v.get("done").and_then(Value::as_bool)==Some(true){done_sent=true;yield Ok(Bytes::from(format!("{}\n",json!({"type":"done"}))));}}}},Err(_)=>{stream_failed=true;yield Ok(Bytes::from(format!("{}\n",json!({"type":"error","error":"model_stream_failed"}))));break}}}
-        if !done_sent { yield Ok(Bytes::from(format!("{}\n",json!({"type":"done"})))); }
+    let input_chars = question.chars().count() + context.chars().count();
+    let user_id = user.id;
+    let body_stream = stream! {
+        let _answer_slot=answer_slot;
+        yield Ok::<Bytes,Infallible>(Bytes::from(format!("{}\n",source_event)));
+        let started=Instant::now();
+        let response=save_state.http.post(format!("{}/api/chat",ollama.base_url.trim_end_matches('/'))).json(&payload).send().await;
+        let Ok(response)=response else { yield Ok(Bytes::from(format!("{}\n",json!({"type":"error","error":"model_unavailable"})))); return; };
+        if !response.status().is_success() { yield Ok(Bytes::from(format!("{}\n",json!({"type":"error","error":"model_unavailable"})))); return; }
+        let mut bytes=response.bytes_stream(); let mut buffer=String::new(); let mut utf8_pending=Vec::new(); let mut complete_answer=String::new(); let mut stream_failed=false; let mut reasoning_chars=0usize; let mut ttft_ms=None; let mut input_tokens=0usize; let mut output_tokens=0usize;
+        while let Some(next)=bytes.next().await { match next { Ok(chunk)=>{ push_utf8_chunk(&mut buffer,&mut utf8_pending,&chunk); while let Some(pos)=buffer.find('\n') { let line=buffer[..pos].trim().to_string(); buffer.drain(..=pos); if line.is_empty(){continue} if let Ok(v)=serde_json::from_str::<Value>(&line) { if let Some(thinking)=v.pointer("/message/thinking").and_then(Value::as_str) { if !thinking.is_empty(){ ttft_ms.get_or_insert_with(||started.elapsed().as_millis()); reasoning_chars+=thinking.chars().count(); yield Ok(Bytes::from(format!("{}\n",json!({"type":"reasoning","status":"thinking","text":thinking,"processedChars":reasoning_chars})))); } } if let Some(content)=v.pointer("/message/content").and_then(Value::as_str) { if !content.is_empty(){ ttft_ms.get_or_insert_with(||started.elapsed().as_millis()); complete_answer.push_str(content); yield Ok(Bytes::from(format!("{}\n",json!({"type":"delta","text":content})))); } } if v.get("done").and_then(Value::as_bool)==Some(true) { input_tokens=v.get("prompt_eval_count").and_then(Value::as_u64).unwrap_or(0) as usize; output_tokens=v.get("eval_count").and_then(Value::as_u64).unwrap_or(0) as usize; } } } }, Err(_)=>{stream_failed=true; yield Ok(Bytes::from(format!("{}\n",json!({"type":"error","error":"model_stream_failed"})))); break} } }
+        let output_chars=complete_answer.chars().count(); if input_tokens==0 {input_tokens=(input_chars+2)/3;} if output_tokens==0 {output_tokens=(output_chars+2)/3;} let duration_ms=started.elapsed().as_millis();
+        yield Ok(Bytes::from(format!("{}\n",json!({"type":"metrics","inputTokens":input_tokens,"outputTokens":output_tokens,"totalTokens":input_tokens+output_tokens,"ttftMs":ttft_ms,"durationMs":duration_ms}))));
+        yield Ok(Bytes::from(format!("{}\n",json!({"type":"done","answerMode":stream_answer_mode,"warning":stream_warning,"reasoningLevel":"advanced"}))));
+        super::admin::record_ai_metrics(&save_state,user_id,"ollama",&save_model,input_chars,output_chars,input_tokens,output_tokens,ttft_ms,duration_ms,if stream_failed{"failed"}else{"completed"}).await;
         if let Some(id)=conversation_id { let _=super::learning::save_answer(&save_state,id,&complete_answer,if stream_failed{"failed"}else{"completed"},if stream_failed{Some("model_stream_failed")}else{None},"ollama",&save_model,&save_sources).await; }
     };
     let mut out = Response::new(Body::from_stream(body_stream));
@@ -827,6 +1087,7 @@ pub(crate) async fn answer(
     Ok(out)
 }
 
+#[allow(dead_code)]
 fn ndjson_once(value: Value) -> Response {
     let mut r = Response::new(Body::from(format!("{}\n", value)));
     r.headers_mut().insert(
@@ -880,50 +1141,32 @@ pub(crate) async fn start_index(
     .fetch_one(&state.db)
     .await?;
     let id: Uuid = row.try_get("id")?;
-    let mut command = tokio::process::Command::new(if cfg!(windows) { "npm.cmd" } else { "npm" });
-    command
-        .current_dir(&state.project_root)
-        .arg("run")
-        .arg("materials:index")
-        .arg("--")
-        .arg("--run-id")
-        .arg(id.to_string())
-        .arg("--domain")
-        .arg(domain)
-        .env("MATERIAL_ROOT", &source_root);
-    if rebuild {
-        command.arg("--rebuild");
-    } else if missing_only {
-        command.arg("--missing-only").arg("--retry-failed");
-    }
-    let ollama = state.ollama_config.read().await.clone();
-    command
-        .env("OLLAMA_URL", ollama.base_url)
-        .env("EMBEDDING_MODEL", ollama.embedding_model)
-        .env(
-            "EMBEDDING_DIMENSIONS",
-            ollama.embedding_dimensions.to_string(),
-        )
-        .env("CHAT_MODEL", ollama.chat_model);
-    command
-        .stdout(std::process::Stdio::null())
-        .stderr(std::process::Stdio::piped());
-    let child = command.spawn().map_err(|_| ApiError::server())?;
-    let db = state.db.clone();
+    let state_clone = state.clone();
+    let domain_str = domain.to_string();
+    let source_root_clone = source_root.clone();
     tokio::spawn(async move {
-        match child.wait_with_output().await {
-            Ok(output) if output.status.success() => {}
-            result => {
-                let error = match result {
-                    Ok(output) => String::from_utf8_lossy(&output.stderr)
-                        .chars()
-                        .take(2000)
-                        .collect::<String>(),
-                    Err(error) => error.to_string(),
-                };
-                let _ = sqlx::query("UPDATE material_index_runs SET status='failed',finished_at=now(),updated_at=now(),summary=summary||jsonb_build_object('error',$2) WHERE id=$1 AND status IN ('queued','running')")
-                    .bind(id).bind(error).execute(&db).await;
-            }
+        let options = indexer::IndexOptions {
+            domain: domain_str,
+            root: source_root_clone,
+            rebuild,
+            missing_only,
+            retry_failed: missing_only,
+            catalog_only: false,
+            file: None,
+            course: None,
+            subject: None,
+            limit: None,
+        };
+        if let Err(e) = indexer::run(state_clone.clone(), id, options).await {
+            eprintln!("Indexer error: {:?}", e);
+            let error_str = format!("Indexer error: {:?}", e);
+            let _ = sqlx::query(
+                "UPDATE material_index_runs SET status='failed',finished_at=now(),updated_at=now(),summary=summary||jsonb_build_object('error',$2) WHERE id=$1 AND status IN ('queued','running')"
+            )
+            .bind(id)
+            .bind(error_str)
+            .execute(&state_clone.db)
+            .await;
         }
     });
     Ok((

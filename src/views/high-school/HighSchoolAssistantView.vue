@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import {
   ArrowUp,
@@ -15,16 +15,36 @@ import {
   X,
   MessageSquarePlus,
   PanelLeftClose,
+  BrainCircuit,
+  Square,
+  Gauge,
 } from 'lucide-vue-next'
 import { useAuth } from '../../composables/useAuth'
+import { renderMarkdown } from '../../lib/renderMarkdown'
+import MaterialPreviewDialog from '../../components/high-school/MaterialPreviewDialog.vue'
 
 const emit = defineEmits<{ (event: 'require-auth'): void }>()
 const auth = useAuth()
 const question = ref('')
 const subject = ref('all')
-const grade = ref('all')
+const grades = ref<string[]>([])
+const gradeOptions = [
+  ['grade-1', '高一'],
+  ['grade-2', '高二'],
+  ['grade-3', '高三'],
+]
 const answer = ref('')
 const sources = ref<any[]>([])
+const answerMode = ref<'grounded' | 'hybrid' | 'general' | 'blocked'>('grounded')
+const answerWarning = ref('')
+const reasoningLevel = ref<'standard' | 'advanced'>('advanced')
+const reasoningProcessed = ref(0)
+const reasoningText = ref('')
+const reasoningOpen = ref(false)
+const interrupted = ref(false)
+const requestController = ref<AbortController | null>(null)
+const metrics = ref({ inputTokens: 0, outputTokens: 0, totalTokens: 0, ttftMs: 0, durationMs: 0 })
+const renderedAnswer = computed(() => renderMarkdown(answer.value, sources.value.length))
 const busy = ref(false)
 const error = ref('')
 const providers = ref<any[]>([])
@@ -51,7 +71,7 @@ const examples = ref([
 
 async function loadSuggestions() {
   const params = new URLSearchParams({ subject: subject.value, limit: '3' })
-  if (grade.value !== 'all') params.set('grade', grade.value)
+  if (grades.value.length === 1) params.set('grade', grades.value[0])
   const response = await fetch(`/api/knowledge/suggested-questions?${params}`, {
     credentials: 'include',
   })
@@ -67,7 +87,16 @@ async function ask() {
   busy.value = true
   answer.value = ''
   sources.value = []
+  answerMode.value = 'grounded'
+  answerWarning.value = ''
+  reasoningProcessed.value = 0
+  reasoningText.value = ''
+  reasoningOpen.value = true
+  interrupted.value = false
+  metrics.value = { inputTokens: 0, outputTokens: 0, totalTokens: 0, ttftMs: 0, durationMs: 0 }
   error.value = ''
+  const controller = new AbortController()
+  requestController.value = controller
   try {
     if (!conversationId.value) {
       const created = await fetch('/api/me/conversations', {
@@ -77,7 +106,7 @@ async function ask() {
         body: JSON.stringify({
           title: question.value.trim().slice(0, 60),
           subject: subject.value === 'all' ? null : subject.value,
-          grade: grade.value === 'all' ? null : grade.value,
+          grade: grades.value.length === 1 ? grades.value[0] : null,
           providerConfigId: providerConfigId.value || null,
         }),
       })
@@ -94,10 +123,11 @@ async function ask() {
       method: 'POST',
       credentials: 'include',
       headers: { 'content-type': 'application/json' },
+      signal: controller.signal,
       body: JSON.stringify({
         question: question.value.trim(),
         subject: subject.value === 'all' ? null : subject.value,
-        grade: grade.value === 'all' ? null : grade.value,
+        grades: grades.value,
         providerConfigId: providerConfigId.value || null,
         conversationId: conversationId.value,
       }),
@@ -127,18 +157,62 @@ async function ask() {
       for (const line of lines) {
         if (!line.trim()) continue
         const event = JSON.parse(line)
-        if (event.type === 'sources') sources.value = event.sources || []
+        if (event.type === 'sources') {
+          sources.value = event.sources || []
+          answerMode.value = event.answerMode || 'grounded'
+          answerWarning.value = event.warning || ''
+          reasoningLevel.value = event.reasoningLevel || 'advanced'
+        }
         if (event.type === 'delta') answer.value += event.text || ''
-        if (event.type === 'done' && event.answer) answer.value = event.answer
-        if (event.type === 'error') throw new Error('模型输出中断，请重试')
+        if (event.type === 'reasoning') {
+          reasoningProcessed.value = Number(event.processedChars || 0)
+          reasoningText.value += event.text || ''
+          reasoningOpen.value = true
+        }
+        if (event.type === 'metrics') {
+          metrics.value = {
+            inputTokens: Number(event.inputTokens || 0),
+            outputTokens: Number(event.outputTokens || 0),
+            totalTokens: Number(event.totalTokens || 0),
+            ttftMs: Number(event.ttftMs || 0),
+            durationMs: Number(event.durationMs || 0),
+          }
+        }
+        if (event.type === 'gate') answerMode.value = 'blocked'
+        if (event.type === 'done') {
+          if (event.answer) answer.value = event.answer
+          answerMode.value = event.answerMode || answerMode.value
+          answerWarning.value = event.warning || answerWarning.value
+          reasoningLevel.value = event.reasoningLevel || reasoningLevel.value
+          reasoningOpen.value = false
+        }
+        if (event.type === 'error') {
+          throw new Error(
+            event.error === 'model_unavailable'
+              ? '远程模型暂时不可用，请检查 Provider 配置'
+              : '模型输出中断，请重试',
+          )
+        }
       }
     }
   } catch (reason) {
-    error.value = reason instanceof Error ? reason.message : '回答失败'
+    if (reason instanceof DOMException && reason.name === 'AbortError') {
+      interrupted.value = true
+      reasoningOpen.value = false
+      answerWarning.value = '回答已由你硬中断，以下内容可能不完整。'
+      if (!answer.value) error.value = '回答已中断'
+    } else {
+      error.value = reason instanceof Error ? reason.message : '回答失败'
+    }
   } finally {
     busy.value = false
+    if (requestController.value === controller) requestController.value = null
     void loadConversations()
   }
+}
+
+function stopAnswer() {
+  requestController.value?.abort()
 }
 
 async function loadConversations() {
@@ -154,6 +228,13 @@ function newConversation() {
   question.value = ''
   answer.value = ''
   sources.value = []
+  answerMode.value = 'grounded'
+  answerWarning.value = ''
+  reasoningProcessed.value = 0
+  reasoningText.value = ''
+  reasoningOpen.value = false
+  interrupted.value = false
+  metrics.value = { inputTokens: 0, outputTokens: 0, totalTokens: 0, ttftMs: 0, durationMs: 0 }
   error.value = ''
 }
 async function openConversation(id: string) {
@@ -195,11 +276,14 @@ async function deleteConversation(item: any) {
 
 async function loadProviders() {
   const response = await fetch('/api/me/ai-providers', { credentials: 'include' })
-  if (response.ok) providers.value = (await response.json()).providers || []
-}
-
-function openProviderConfig() {
-  configOpen.value = true
+  if (response.ok) {
+    providers.value = (await response.json()).providers || []
+    if (!providerConfigId.value && providers.value.length) {
+      providerConfigId.value = (
+        providers.value.find((provider) => provider.isDefault) || providers.value[0]
+      ).id
+    }
+  }
 }
 
 async function saveProvider() {
@@ -237,12 +321,20 @@ async function openSource(source: any) {
   previewBusy.value = false
 }
 
+function handleAnswerClick(event: MouseEvent) {
+  if (!(event.target instanceof Element)) return
+  const citation = event.target.closest<HTMLElement>('[data-source-index]')
+  if (!citation) return
+  const source = sources.value[Number(citation.dataset.sourceIndex)]
+  if (source) void openSource(source)
+}
+
 onMounted(() => {
   void loadProviders()
   void loadConversations()
   void loadSuggestions()
 })
-watch([subject, grade], loadSuggestions)
+watch([subject, grades], loadSuggestions, { deep: true })
 </script>
 
 <template>
@@ -251,7 +343,9 @@ watch([subject, grade], loadSuggestions)
       <div>
         <p class="hs-kicker"><Sparkles :size="15" />回答必须有资料依据</p>
         <h1>不是“问 AI”，而是请 AI 帮你读资料。</h1>
-        <p>BGE-M3 从本机资料库召回片段，Qwen 只根据这些片段回答，并保留可核对的出处。</p>
+        <p>
+          4096 维检索先召回本机资料，再由默认远程模型进阶推理，并保留可核对的出处与实时性能指标。
+        </p>
       </div>
     </section>
     <section class="hs-container hs-assistant-layout">
@@ -310,22 +404,79 @@ watch([subject, grade], loadSuggestions)
             <span><Bot :size="20" /></span>
             <div>
               <strong>资料助教</strong>
-              <p v-if="answer">{{ answer }}</p>
-              <p v-else-if="busy" class="hs-thinking">正在阅读相关资料并组织答案…</p>
+              <div v-if="answer || busy" class="hs-answer-evidence-state" :data-mode="answerMode">
+                <span
+                  >{{
+                    answerMode === 'grounded'
+                      ? '资料有据'
+                      : answerMode === 'hybrid'
+                        ? '资料 + 通识'
+                        : answerMode === 'blocked'
+                          ? '已门控中断'
+                          : '通识补充'
+                  }}
+                  · {{ reasoningLevel === 'advanced' ? '进阶思考' : '标准思考' }}</span
+                >
+                <small v-if="answerWarning"><CircleAlert :size="14" />{{ answerWarning }}</small>
+              </div>
+              <details
+                v-if="busy || reasoningText"
+                class="hs-reasoning-progress"
+                :open="reasoningOpen"
+                @toggle="reasoningOpen = ($event.target as HTMLDetailsElement).open"
+              >
+                <summary>
+                  <BrainCircuit :size="16" />
+                  <span>{{ busy ? '正在思考' : '思考过程' }}</span>
+                  <small>{{
+                    reasoningProcessed ? `已接收 ${reasoningProcessed} 字` : '等待模型推理流'
+                  }}</small>
+                </summary>
+                <pre v-if="reasoningText">{{ reasoningText }}</pre>
+                <p v-else>模型正在检索资料并建立回答结构；当前模型供应商尚未返回推理过程文本。</p>
+              </details>
+              <div
+                v-if="answer"
+                class="hs-markdown-answer"
+                @click="handleAnswerClick"
+                v-html="renderedAnswer"
+              ></div>
+              <p v-else-if="busy" class="hs-thinking">
+                正在结合历史结论与 RAG 资料进行进阶思考<span v-if="reasoningProcessed"
+                  >，已分析约 {{ reasoningProcessed }} 字</span
+                >…
+              </p>
               <p v-else class="hs-answer-error"><CircleAlert :size="17" />{{ error }}</p>
+              <div v-if="metrics.totalTokens || interrupted" class="hs-answer-metrics">
+                <span v-if="metrics.totalTokens"
+                  ><Gauge :size="14" />{{ metrics.totalTokens.toLocaleString() }} tokens</span
+                >
+                <span v-if="metrics.inputTokens"
+                  >输入 {{ metrics.inputTokens.toLocaleString() }}</span
+                >
+                <span v-if="metrics.outputTokens"
+                  >输出 {{ metrics.outputTokens.toLocaleString() }}</span
+                >
+                <span v-if="metrics.ttftMs">首字 {{ metrics.ttftMs }} ms</span>
+                <span v-if="metrics.durationMs"
+                  >总耗时 {{ (metrics.durationMs / 1000).toFixed(1) }} s</span
+                >
+                <span v-if="interrupted">用户中断</span>
+              </div>
             </div>
           </div>
         </div>
         <form class="hs-composer" @submit.prevent="ask">
           <div class="hs-scope-selects">
+            <fieldset class="hs-grade-multi">
+              <legend>年级（可多选）</legend>
+              <label v-for="option in gradeOptions" :key="option[0]">
+                <input v-model="grades" type="checkbox" :value="option[0]" />
+                <span>{{ option[1] }}</span>
+              </label>
+              <small v-if="!grades.length">全部</small>
+            </fieldset>
             <label
-              >年级<select v-model="grade">
-                <option value="all">全部</option>
-                <option value="grade-1">高一</option>
-                <option value="grade-2">高二</option>
-                <option value="grade-3">高三</option>
-              </select></label
-            ><label
               >学科<select v-model="subject">
                 <option value="all">全部</option>
                 <option value="chinese">语文</option>
@@ -341,7 +492,7 @@ watch([subject, grade], loadSuggestions)
             >
             <label
               >回答模型<select v-model="providerConfigId">
-                <option value="">本地 Qwen</option>
+                <option value="">本地 Qwen（无远程配置时回退）</option>
                 <option v-for="provider in providers" :key="provider.id" :value="provider.id">
                   {{ provider.name }} · {{ provider.model }}
                 </option>
@@ -353,13 +504,22 @@ watch([subject, grade], loadSuggestions)
             id="assistant-question"
             v-model="question"
             rows="3"
-            maxlength="500"
             placeholder="例如：江苏高考数学导数大题通常怎样分层设问？"
             @keydown.ctrl.enter="ask"
           />
           <div>
-            <span>{{ question.length }}/500 · Ctrl + Enter 发送</span
-            ><button type="submit" :disabled="!question.trim() || busy">
+            <span>已输入 {{ question.length.toLocaleString() }} 字 · Ctrl + Enter 发送</span
+            ><button
+              v-if="busy"
+              type="button"
+              class="hs-stop-answer"
+              aria-label="立即中断回答"
+              title="立即中断回答"
+              @click="stopAnswer"
+            >
+              <Square :size="16" fill="currentColor" /><span class="sr-only">立即中断回答</span>
+            </button>
+            <button v-else type="submit" :disabled="!question.trim()">
               <ArrowUp v-if="auth.user" :size="19" /><LockKeyhole v-else :size="18" /><span
                 class="sr-only"
                 >发送问题</span
@@ -445,31 +605,11 @@ watch([subject, grade], loadSuggestions)
       </section>
     </div>
 
-    <div v-if="preview" class="hs-modal-backdrop" @mousedown.self="preview = null">
-      <section
-        class="hs-source-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="source-preview-title"
-      >
-        <button class="hs-modal-close" type="button" aria-label="关闭" @click="preview = null">
-          <X :size="18" />
-        </button>
-        <p class="hs-kicker"><FileText :size="15" />引用原文</p>
-        <h2 id="source-preview-title">{{ preview.material?.fileName || '正在读取引用' }}</h2>
-        <p v-if="previewBusy">正在加载原文片段…</p>
-        <p v-else-if="preview.error" class="hs-form-error">{{ preview.error }}</p>
-        <blockquote v-else>{{ preview.text }}</blockquote>
-        <div v-if="preview.material" class="hs-source-modal-meta">
-          <span>第 {{ preview.chunkIndex + 1 }} 段</span><span>{{ preview.material.subject }}</span
-          ><span>{{ preview.material.year || '年份未标注' }}</span>
-        </div>
-        <a
-          v-if="preview.material"
-          :href="`/api/high-school/materials/${preview.material.id}/download`"
-          >下载完整资料</a
-        >
-      </section>
-    </div>
+    <MaterialPreviewDialog
+      :open="Boolean(preview)"
+      :source="preview"
+      :loading="previewBusy"
+      @close="preview = null"
+    />
   </main>
 </template>

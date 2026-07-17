@@ -57,6 +57,66 @@ paths:
       responses:
         '200': { description: NDJSON source and answer events }
         '401': { description: Authentication required }
+  /api/high-school/rag/answer:
+    post:
+      tags: [Knowledge]
+      summary: Stream a grounded, hybrid, general or relevance-blocked high-school answer as NDJSON
+      description: Source and done events include answerMode (grounded, hybrid, general or blocked), reasoningLevel=advanced and an optional warning. Reasoning events may include provider-returned thinking text; metrics events include token counts, time to first token and total duration; gate events identify off-topic requests stopped before model invocation. The server imposes neither the former 500-character input limit nor an explicit output-token cap.
+      security: [{ cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question]
+              properties:
+                question: { type: string, minLength: 2 }
+                grades:
+                  type: array
+                  uniqueItems: true
+                  items: { type: string, enum: [grade-1, grade-2, grade-3] }
+                subject: { type: string, nullable: true }
+      responses:
+        '200': { description: NDJSON source, reasoning, delta, metrics, gate and completion events }
+        '401': { description: Authentication required }
+  /api/high-school/rag/search:
+    get:
+      tags: [Knowledge]
+      summary: Hybrid vector and keyword search over high-school material chunks
+      responses:
+        '200': { description: Ranked source chunks with material metadata }
+  /api/high-school/materials/{id}/preview:
+    get:
+      tags: [Knowledge]
+      summary: Preview the first extracted text chunk of a material
+      security: [{ cookieAuth: [] }]
+      responses:
+        '200': { description: Material text preview }
+        '401': { description: Authentication required }
+        '404': { description: Material not found }
+  /api/high-school/materials/{id}/file-preview:
+    get:
+      tags: [Knowledge]
+      summary: Stream a material inline for PDF, DOCX, image or audio preview plugins
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Full inline material stream with range support }
+        '206': { description: Partial material stream }
+        '401': { description: Authentication required }
+        '404': { description: Material file not found }
+  /api/me/knowledge-graphs/{id}:
+    get:
+      tags: [Knowledge Graph]
+      summary: Get a personal graph with detailed node learning metadata
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Graph metadata including sourceRevision and sources; nodes include formulas, sourcePages, sourceLocator, methods, mistakes, questionTypes and nullable material-backed source ids }
+        '404': { description: Graph not found }
   /api/knowledge/graphs/current:
     get:
       tags: [Knowledge Graph]

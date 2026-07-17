@@ -24,7 +24,19 @@ type GraphNode = {
   label: string
   chapter: string
   description: string
-  sources: Array<{ chunkId?: string; fileName: string; excerpt: string }>
+  methods: string[]
+  mistakes: string[]
+  questionTypes: string[]
+  formulas: string[]
+  sourcePages?: string
+  sourceLocator?: string
+  sources: Array<{
+    chunkId?: string
+    fileName: string
+    excerpt: string
+    sourceLocator?: string
+    sourceUrl?: string
+  }>
   difficulty: Difficulty
   importance: number
   mastery: number
@@ -41,16 +53,19 @@ const route = useRoute()
 const router = useRouter()
 const auth = useAuth()
 const stage = ref<HTMLElement | null>(null)
+const canvasShell = ref<HTMLElement | null>(null)
 const graph = ref<any>(null)
 const nodes = ref<GraphNode[]>([])
 const edges = ref<any[]>([])
 const selected = ref<GraphNode | null>(null)
 const query = ref('')
 const difficulty = ref<'all' | Difficulty>('all')
+const moduleFilter = ref('all')
 const relation = ref('all')
 const run = ref<any>(null)
 const error = ref('')
-const rotating = ref(true)
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+const rotating = ref(!prefersReducedMotion)
 const loading = ref(false)
 const renderFailure = ref('')
 const subject = computed(() => String(route.params.subject || 'math'))
@@ -91,10 +106,12 @@ const visibleNodes = computed(() => {
   return nodes.value.filter(
     (node) =>
       (difficulty.value === 'all' || node.difficulty === difficulty.value) &&
+      (moduleFilter.value === 'all' || node.chapter === moduleFilter.value) &&
       (!needle ||
         `${node.label} ${node.chapter} ${node.description}`.toLowerCase().includes(needle)),
   )
 })
+const modules = computed(() => [...new Set(nodes.value.map((node) => node.chapter))])
 const visibleKeys = computed(() => new Set(visibleNodes.value.map((node) => node.key)))
 const visibleEdges = computed(() =>
   edges.value.filter((edge) => {
@@ -123,6 +140,16 @@ const neighbors = computed(() => {
     })
     .filter((item) => item.node)
 })
+const neighborKeys = computed(() => new Set(neighbors.value.map((item) => item.node!.key)))
+
+const modulePalette = [
+  0x38bdf8, 0x818cf8, 0xc084fc, 0xf472b6, 0xfb7185, 0xf59e0b, 0x84cc16, 0x22c55e, 0x14b8a6,
+  0x06b6d4, 0x60a5fa, 0xa78bfa, 0xe879f9,
+]
+function moduleColor(chapter: string) {
+  const index = Math.abs([...chapter].reduce((sum, char) => sum + char.charCodeAt(0), 0))
+  return modulePalette[index % modulePalette.length]
+}
 
 function classifyDifficulty(
   index: number,
@@ -151,22 +178,23 @@ function enrichNodes(rawNodes: any[], rawEdges: any[]): GraphNode[] {
   const maxDegree = Math.max(1, ...degrees.values())
   return rawNodes.map((node, index) => {
     const degree = degrees.get(node.key) || 0
-    const difficulty = classifyDifficulty(
-      index,
-      rawNodes.length,
-      node.label || '',
-      node.description || '',
-    )
-    const angle = index * 2.399963
-    const radius = 55 + Math.sqrt(index + 1) * 24
+    const difficulty: Difficulty =
+      node.difficulty ||
+      classifyDifficulty(index, rawNodes.length, node.label || '', node.description || '')
+    const chapters = [...new Set(rawNodes.map((item) => item.chapter))]
+    const chapterIndex = chapters.indexOf(node.chapter)
+    const clusterAngle = (chapterIndex / Math.max(chapters.length, 1)) * Math.PI * 2
+    const localAngle = index * 2.399963
+    const clusterRadius = node.key?.startsWith('math-module-') ? 150 : 185
+    const localRadius = node.key?.startsWith('math-module-') ? 0 : 28 + (index % 5) * 8
     return {
       ...node,
       difficulty,
       degree,
-      importance: 0.28 + (degree / maxDegree) * 0.72,
+      importance: Number(node.importance || 0.28 + (degree / maxDegree) * 0.72),
       mastery: Number(node.mastery || 0),
-      x: Math.cos(angle) * radius,
-      y: Math.sin(angle) * radius * 0.72,
+      x: Math.cos(clusterAngle) * clusterRadius + Math.cos(localAngle) * localRadius,
+      y: Math.sin(clusterAngle) * clusterRadius * 0.72 + Math.sin(localAngle) * localRadius,
       z: difficultyMeta[difficulty].z + ((index % 5) - 2) * 8,
     }
   })
@@ -204,7 +232,10 @@ function makeLabel(node: GraphNode, size: number) {
 
 function nodeObject(node: GraphNode) {
   const group = new THREE.Group()
-  const meta = difficultyMeta[node.difficulty]
+  const color = moduleColor(node.chapter)
+  const dimmed = Boolean(
+    selected.value && selected.value.key !== node.key && !neighborKeys.value.has(node.key),
+  )
   const size = 4.8 + node.importance * 6.5
   const geometry =
     node.difficulty === 'basic'
@@ -215,9 +246,11 @@ function nodeObject(node: GraphNode) {
   const mesh = new THREE.Mesh(
     geometry,
     new THREE.MeshStandardMaterial({
-      color: meta.color,
-      emissive: meta.color,
+      color,
+      emissive: color,
       emissiveIntensity: selected.value?.key === node.key ? 0.4 : 0.12,
+      transparent: dimmed,
+      opacity: dimmed ? 0.24 : 1,
       roughness: 0.28,
       metalness: 0.22,
     }),
@@ -233,7 +266,9 @@ function nodeObject(node: GraphNode) {
   )
   ring.rotation.x = Math.PI / 2
   group.add(ring)
-  group.add(makeLabel(node, size))
+  if (node.key.startsWith('math-module-') || selected.value?.key === node.key || node.degree >= 4) {
+    group.add(makeLabel(node, size))
+  }
   return group
 }
 
@@ -267,11 +302,14 @@ function renderGraph() {
               ? '#f06f68'
               : '#6f8daa',
         )
+        .linkLabel((edge: any) => relationNames[edge.relation] || edge.relation || '相关')
         .linkWidth((edge: any) => (edge.source?.key === selected.value?.key ? 1.8 : 0.8))
         .linkOpacity(0.48)
         .linkDirectionalArrowLength(4.5)
         .linkDirectionalArrowRelPos(0.92)
-        .linkDirectionalParticles((edge: any) => (edge.relation === 'prerequisite' ? 2 : 0))
+        .linkDirectionalParticles((edge: any) =>
+          !prefersReducedMotion && edge.relation === 'prerequisite' ? 2 : 0,
+        )
         .linkDirectionalParticleWidth(1.5)
         .linkDirectionalParticleSpeed(0.003)
         .onNodeClick((node: any) => focusNode(node as GraphNode))
@@ -282,7 +320,7 @@ function renderGraph() {
       forceGraph.d3Force('charge')?.strength(-230).distanceMax(420)
       forceGraph.d3Force('link')?.distance(75)
       forceGraph.d3Force('layer', layerForce)
-      forceGraph.controls().autoRotate = true
+      forceGraph.controls().autoRotate = rotating.value
       forceGraph.controls().autoRotateSpeed = 0.42
       forceGraph.controls().enableDamping = true
       forceGraph.controls().dampingFactor = 0.08
@@ -313,6 +351,8 @@ function resize() {
 
 function focusNode(node: GraphNode) {
   selected.value = nodes.value.find((item) => item.key === node.key) || node
+  rotating.value = false
+  if (forceGraph) forceGraph.controls().autoRotate = false
   const distance = 115
   const length = Math.hypot(node.x || 1, node.y || 1, node.z || 1)
   const ratio = 1 + distance / Math.max(length, 1)
@@ -333,7 +373,7 @@ function toggleRotation() {
 }
 
 async function fullscreen() {
-  await stage.value?.requestFullscreen()
+  await canvasShell.value?.requestFullscreen()
 }
 
 async function api(path: string, init: Parameters<typeof fetch>[1] = {}) {
@@ -418,7 +458,7 @@ watch(
     if (user && !previous) void load()
   },
 )
-watch([visibleNodes, visibleEdges], () => nextTick(renderGraph))
+watch([visibleNodes, visibleEdges, moduleFilter], () => nextTick(renderGraph))
 watch(selected, () => {
   if (forceGraph)
     forceGraph
@@ -473,6 +513,10 @@ onBeforeUnmount(() => {
         <option value="intermediate">中等</option>
         <option value="advanced">提高</option>
       </select>
+      <select v-model="moduleFilter" :aria-label="`筛选${subjectName}模块`">
+        <option value="all">全部模块</option>
+        <option v-for="name in modules" :key="name" :value="name">{{ name }}</option>
+      </select>
       <select v-model="relation" aria-label="筛选关系">
         <option value="all">全部关系</option>
         <option v-for="(name, key) in relationNames" :key="key" :value="key">{{ name }}</option>
@@ -520,7 +564,14 @@ onBeforeUnmount(() => {
     </div>
 
     <section v-else class="hs-kg-stage">
-      <div ref="stage" class="hs-kg-canvas" aria-label="可旋转、缩放和拖动的三维知识图谱">
+      <div
+        ref="canvasShell"
+        class="hs-kg-canvas"
+        role="application"
+        tabindex="0"
+        aria-label="可旋转、缩放和拖动的三维知识图谱"
+      >
+        <div ref="stage" class="hs-kg-render-surface" aria-hidden="true"></div>
         <div v-if="renderFailure" class="hs-kg-render-error">{{ renderFailure }}</div>
         <div class="hs-kg-depth" aria-hidden="true">
           <span><i data-level="basic"></i>基础层</span>
@@ -528,6 +579,18 @@ onBeforeUnmount(() => {
           <span><i data-level="advanced"></i>提高层</span>
         </div>
         <div class="hs-kg-hint" aria-hidden="true">拖动旋转 · 滚轮缩放 · 拖拽节点</div>
+        <details class="hs-kg-accessible-list">
+          <summary>知识点列表（键盘入口）</summary>
+          <button
+            v-for="node in visibleNodes"
+            :key="node.key"
+            type="button"
+            @click="focusNode(node)"
+          >
+            <span>{{ node.chapter }}</span
+            >{{ node.label }}
+          </button>
+        </details>
       </div>
 
       <aside v-if="selected" class="hs-kg-inspector">
@@ -540,6 +603,30 @@ onBeforeUnmount(() => {
         <h2>{{ selected.label }}</h2>
         <p class="hs-kg-chapter">{{ selected.chapter }}</p>
         <p class="hs-kg-summary">{{ selected.description }}</p>
+
+        <section v-if="selected.formulas?.length" class="hs-kg-detail-block">
+          <h3>核心规则与表达范式</h3>
+          <code v-for="formula in selected.formulas" :key="formula">{{ formula }}</code>
+        </section>
+        <section v-if="selected.methods?.length" class="hs-kg-detail-block">
+          <h3>常用方法</h3>
+          <p v-for="method in selected.methods" :key="method">{{ method }}</p>
+        </section>
+        <section v-if="selected.mistakes?.length" class="hs-kg-detail-block hs-kg-mistakes">
+          <h3>易错提醒</h3>
+          <p v-for="mistake in selected.mistakes" :key="mistake">{{ mistake }}</p>
+        </section>
+        <section v-if="selected.questionTypes?.length" class="hs-kg-detail-block">
+          <h3>典型题型</h3>
+          <span v-for="item in selected.questionTypes" :key="item">{{ item }}</span>
+        </section>
+        <p v-if="selected.sourceLocator || selected.sourcePages" class="hs-kg-source-pages">
+          依据：{{
+            selected.sources?.[0]?.fileName || graph?.sources?.[0]?.title || '结构化资料'
+          }}
+          ·
+          {{ selected.sourceLocator || `第 ${selected.sourcePages} 页` }}
+        </p>
 
         <div class="hs-kg-metrics">
           <div>
@@ -572,9 +659,15 @@ onBeforeUnmount(() => {
           <h3><BookOpen :size="15" />资料证据</h3>
           <article
             v-for="source in selected.sources.slice(0, 4)"
-            :key="source.chunkId || source.fileName"
+            :key="source.chunkId || `${source.fileName}-${source.sourceLocator || ''}`"
           >
-            <strong>{{ source.fileName }}</strong>
+            <strong>
+              <a v-if="source.sourceUrl" :href="source.sourceUrl" target="_blank" rel="noopener">{{
+                source.fileName
+              }}</a>
+              <template v-else>{{ source.fileName }}</template>
+            </strong>
+            <small v-if="source.sourceLocator">{{ source.sourceLocator }}</small>
             <p>{{ source.excerpt }}</p>
           </article>
         </section>

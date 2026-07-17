@@ -1,6 +1,7 @@
 use axum::{
     extract::{DefaultBodyLimit, Query, State},
     http::{header, HeaderMap, HeaderValue, Method, StatusCode},
+    middleware::{self, Next},
     response::{IntoResponse, Response},
     routing::{delete, get, post},
     Json, Router,
@@ -19,6 +20,7 @@ use uuid::Uuid;
 
 mod admin;
 mod high_school;
+mod indexer;
 mod knowledge;
 mod learning;
 
@@ -365,12 +367,17 @@ async fn main() -> anyhow::Result<()> {
     let material_root = env::var("MATERIAL_ROOT")
         .map(std::path::PathBuf::from)
         .unwrap_or_else(|_| std::path::PathBuf::from(r"C:\Users\zzz\Desktop\参考资料"));
+    // Query vectors must match the active generation. The legacy material_chunks
+    // column can have a different typmod (1024 in older installations), while
+    // generation-scoped vectors are allowed to use the model's native size.
     let embedding_dimensions = sqlx::query_scalar::<_, i32>(
-        "SELECT GREATEST(atttypmod,0) FROM pg_attribute WHERE attrelid='material_chunks'::regclass AND attname='embedding'",
+        r#"SELECT COALESCE(
+          (SELECT dimensions FROM embedding_generations WHERE is_active ORDER BY activated_at DESC NULLS LAST LIMIT 1),
+          (SELECT GREATEST(atttypmod,0) FROM pg_attribute WHERE attrelid='material_chunks'::regclass AND attname='embedding'),
+          1024)"#,
     )
-    .fetch_optional(&db)
-    .await?
-    .unwrap_or(1024) as usize;
+    .fetch_one(&db)
+    .await? as usize;
     let state = Arc::new(AppState {
         db,
         redis,
@@ -389,11 +396,17 @@ async fn main() -> anyhow::Result<()> {
         ollama_config_write: tokio::sync::Mutex::new(()),
         vector_enabled,
         answer_rate: std::sync::Mutex::new(high_school::AnswerRateState::default()),
-        answer_slots: Arc::new(tokio::sync::Semaphore::new(2)),
+        answer_slots: Arc::new(tokio::sync::Semaphore::new(
+            env::var("ANSWER_CONCURRENCY")
+                .ok()
+                .and_then(|value| value.parse::<usize>().ok())
+                .filter(|value| *value > 0)
+                .unwrap_or(16),
+        )),
         api_config_key,
         question_assets: Arc::new(question_assets),
     });
-    learning::migrate_legacy_math_graphs(state.clone());
+    learning::migrate_seeded_graphs(state.clone());
     let client_origin =
         env::var("CLIENT_ORIGIN").unwrap_or_else(|_| "http://127.0.0.1:4173".to_string());
     let allow_origin = HeaderValue::from_str(&client_origin)
@@ -430,8 +443,16 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/high-school/materials", get(high_school::materials))
         .route("/api/high-school/materials/:id", get(high_school::material))
         .route(
+            "/api/high-school/materials/:id/preview",
+            get(high_school::material_preview),
+        )
+        .route(
             "/api/high-school/materials/:id/download",
             get(high_school::download),
+        )
+        .route(
+            "/api/high-school/materials/:id/file-preview",
+            get(high_school::file_preview),
         )
         .route("/api/high-school/rag/search", get(high_school::rag_search))
         .route("/api/high-school/rag/answer", post(high_school::answer))
@@ -569,6 +590,8 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/me/stats", get(me_stats))
         .route("/api/me/import-local", post(import_local))
         .route("/api/study/event", post(study_event))
+        .route("/api/handshake", post(api_handshake))
+        .layer(middleware::from_fn_with_state(state.clone(), api_key_auth))
         .layer(cors)
         .with_state(state);
 
@@ -1798,10 +1821,68 @@ async fn study_event(
     Ok(Json(json!({ "ok": true })))
 }
 
+async fn api_handshake(State(state): State<SharedState>) -> Result<Json<Value>, ApiError> {
+    let mut key_bytes = [0u8; 32];
+    OsRng.fill_bytes(&mut key_bytes);
+    let api_key = hex::encode(key_bytes);
+
+    sqlx::query("INSERT INTO visitor_api_keys (api_key, expires_at) VALUES ($1, now() + interval '1 day')")
+        .bind(&api_key)
+        .execute(&state.db)
+        .await
+        .map_err(|e| {
+            eprintln!("Failed to generate API key: {e}");
+            ApiError::server()
+        })?;
+
+    Ok(Json(json!({ "apiKey": api_key })))
+}
+
+async fn api_key_auth(
+    State(state): State<SharedState>,
+    req: axum::extract::Request,
+    next: Next,
+) -> Result<Response, ApiError> {
+    let path = req.uri().path();
+    if path == "/api/handshake"
+        || path == "/health/live"
+        || path == "/health/ready"
+        || path == "/metrics"
+        || path == "/api/docs"
+        || path.starts_with("/api/docs/")
+    {
+        return Ok(next.run(req).await);
+    }
+
+    let api_key = req
+        .headers()
+        .get("x-api-key")
+        .and_then(|value| value.to_str().ok())
+        .ok_or_else(|| ApiError::new(StatusCode::UNAUTHORIZED, "missing_api_key"))?;
+
+    let exists = sqlx::query_scalar::<_, bool>(
+        "SELECT EXISTS(SELECT 1 FROM visitor_api_keys WHERE api_key = $1 AND expires_at > now())",
+    )
+    .bind(api_key)
+    .fetch_one(&state.db)
+    .await
+    .map_err(|e| {
+        eprintln!("API key validation error: {e}");
+        ApiError::server()
+    })?;
+
+    if !exists {
+        return Err(ApiError::new(StatusCode::UNAUTHORIZED, "invalid_api_key"));
+    }
+
+    Ok(next.run(req).await)
+}
+
 async fn ensure_schema(db: &PgPool) -> anyhow::Result<()> {
     let statements = [
         "CREATE EXTENSION IF NOT EXISTS pgcrypto",
         "CREATE EXTENSION IF NOT EXISTS pg_trgm",
+        "CREATE TABLE IF NOT EXISTS visitor_api_keys (api_key TEXT PRIMARY KEY, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), expires_at TIMESTAMPTZ NOT NULL)",
         "CREATE TABLE IF NOT EXISTS users (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), username TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'student', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), last_login_at TIMESTAMPTZ)",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'student'",
         "UPDATE users SET role = 'admin' WHERE username = 'admin' AND role <> 'admin'",

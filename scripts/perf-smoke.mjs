@@ -14,12 +14,30 @@ const errors = []
 let requests = 0
 const deadline = Date.now() + durationSeconds * 1000
 
+let apiKey = null
+try {
+  const hsRes = await fetch(`${baseUrl}/api/handshake`, { method: 'POST' })
+  if (hsRes.ok) {
+    const data = await hsRes.json()
+    apiKey = data.apiKey
+  }
+} catch (error) {
+  console.warn('Unable to get API key for smoke test, proceeding anyway:', error.message)
+}
+
 async function worker(workerId) {
   while (Date.now() < deadline) {
     const path = endpoints[(requests + workerId) % endpoints.length]
     const started = performance.now()
     try {
-      const response = await fetch(`${baseUrl}${path}`, { signal: AbortSignal.timeout(5000) })
+      const headers = {}
+      if (apiKey && path.includes('/api/')) {
+        headers['X-API-Key'] = apiKey
+      }
+      const response = await fetch(`${baseUrl}${path}`, {
+        signal: AbortSignal.timeout(5000),
+        headers,
+      })
       await response.arrayBuffer()
       if (!response.ok) errors.push(`${path}: HTTP ${response.status}`)
     } catch (error) {

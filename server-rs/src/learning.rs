@@ -83,6 +83,27 @@ pub(crate) async fn ensure_schema(db: &PgPool) -> anyhow::Result<()> {
           subject TEXT NOT NULL, provider_config_id UUID REFERENCES ai_provider_configs(id) ON DELETE SET NULL,
           status TEXT NOT NULL DEFAULT 'queued', progress INTEGER NOT NULL DEFAULT 0, graph_id UUID REFERENCES knowledge_graphs(id) ON DELETE SET NULL,
           error TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now())"#,
+        "ALTER TABLE knowledge_graphs ADD COLUMN IF NOT EXISTS source_revision TEXT",
+        "ALTER TABLE knowledge_graphs ADD COLUMN IF NOT EXISTS source_metadata JSONB NOT NULL DEFAULT '[]'::jsonb",
+        "ALTER TABLE knowledge_graph_nodes ADD COLUMN IF NOT EXISTS formulas JSONB NOT NULL DEFAULT '[]'::jsonb",
+        "ALTER TABLE knowledge_graph_nodes ADD COLUMN IF NOT EXISTS source_pages TEXT",
+        "ALTER TABLE knowledge_graph_nodes ADD COLUMN IF NOT EXISTS source_locator TEXT",
+        "ALTER TABLE knowledge_graph_nodes ADD COLUMN IF NOT EXISTS difficulty TEXT NOT NULL DEFAULT 'intermediate'",
+        "ALTER TABLE knowledge_graph_nodes ADD COLUMN IF NOT EXISTS importance DOUBLE PRECISION NOT NULL DEFAULT 0.5",
+        "ALTER TABLE knowledge_graph_node_sources ADD COLUMN IF NOT EXISTS id UUID DEFAULT gen_random_uuid()",
+        "UPDATE knowledge_graph_node_sources SET id=gen_random_uuid() WHERE id IS NULL",
+        "ALTER TABLE knowledge_graph_node_sources ALTER COLUMN id SET NOT NULL",
+        "ALTER TABLE knowledge_graph_node_sources ADD COLUMN IF NOT EXISTS source_locator TEXT",
+        "ALTER TABLE knowledge_graph_node_sources ADD COLUMN IF NOT EXISTS source_url TEXT",
+        r#"DO $$ BEGIN
+          IF EXISTS (SELECT 1 FROM pg_constraint WHERE conrelid='knowledge_graph_node_sources'::regclass AND contype='p' AND conname<>'knowledge_graph_node_sources_id_pkey') THEN
+            EXECUTE (SELECT format('ALTER TABLE knowledge_graph_node_sources DROP CONSTRAINT %I', conname) FROM pg_constraint WHERE conrelid='knowledge_graph_node_sources'::regclass AND contype='p' LIMIT 1);
+          END IF;
+          IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conrelid='knowledge_graph_node_sources'::regclass AND contype='p') THEN
+            ALTER TABLE knowledge_graph_node_sources ADD CONSTRAINT knowledge_graph_node_sources_id_pkey PRIMARY KEY(id);
+          END IF;
+        END $$"#,
+        "ALTER TABLE knowledge_graph_node_sources ALTER COLUMN chunk_id DROP NOT NULL",
         "CREATE INDEX IF NOT EXISTS idx_conversations_user_time ON chat_conversations(user_id,updated_at DESC)",
         "CREATE INDEX IF NOT EXISTS idx_graphs_user_subject ON knowledge_graphs(user_id,subject,version DESC)",
         "INSERT INTO user_preferences(user_id,onboarding_completed_at) SELECT id,now() FROM users WHERE role<>'admin' ON CONFLICT(user_id) DO NOTHING",
@@ -279,6 +300,38 @@ async fn own_conversation(state: &SharedState, id: Uuid, user_id: Uuid) -> Resul
     }
 }
 
+pub(crate) async fn conversation_reasoning_context(
+    state: &SharedState,
+    user_id: Uuid,
+    conversation_id: Uuid,
+) -> Result<String, ApiError> {
+    own_conversation(state, conversation_id, user_id).await?;
+    let rows = sqlx::query(
+        "SELECT role,content FROM chat_messages WHERE conversation_id=$1 AND status='completed' ORDER BY created_at DESC,id DESC LIMIT 8",
+    )
+    .bind(conversation_id)
+    .fetch_all(&state.db)
+    .await?;
+    let mut messages = rows
+        .into_iter()
+        .map(|row| {
+            let role = row.get::<String, _>("role");
+            let content = row
+                .get::<String, _>("content")
+                .chars()
+                .take(3000)
+                .collect::<String>();
+            format!(
+                "{}：{}",
+                if role == "user" { "用户" } else { "助教" },
+                content
+            )
+        })
+        .collect::<Vec<_>>();
+    messages.reverse();
+    Ok(messages.join("\n\n"))
+}
+
 pub(crate) async fn begin_message(
     state: &SharedState,
     user_id: Uuid,
@@ -353,6 +406,7 @@ pub(crate) async fn start_graph(
     ))
 }
 
+#[allow(dead_code)]
 struct ConceptSeed {
     label: &'static str,
     chapter: &'static str,
@@ -360,6 +414,94 @@ struct ConceptSeed {
     summary: &'static str,
 }
 
+#[derive(Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct GraphSourceSeed {
+    key: String,
+    title: String,
+    kind: String,
+    revision: String,
+    #[serde(default)]
+    url: Option<String>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct SubjectGraphSeed {
+    revision: String,
+    #[serde(default)]
+    subject: String,
+    #[serde(default)]
+    source: String,
+    #[serde(default)]
+    sources: Vec<GraphSourceSeed>,
+    modules: Vec<SubjectModuleSeed>,
+    cross_links: Vec<(String, String, String)>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct SubjectModuleSeed {
+    key: String,
+    name: String,
+    #[serde(default)]
+    pages: String,
+    #[serde(default)]
+    source_key: String,
+    #[serde(default)]
+    locator: String,
+    method: String,
+    mistake: String,
+    question_type: String,
+    formula: String,
+    concepts: Vec<String>,
+}
+
+impl SubjectGraphSeed {
+    fn normalized(mut self, fallback_subject: &str) -> Self {
+        if self.subject.is_empty() {
+            self.subject = fallback_subject.to_string();
+        }
+        if self.sources.is_empty() && !self.source.is_empty() {
+            self.sources.push(GraphSourceSeed {
+                key: "primary".into(),
+                title: self.source.clone(),
+                kind: "pdf".into(),
+                revision: self.revision.clone(),
+                url: None,
+            });
+        }
+        for module in &mut self.modules {
+            if module.source_key.is_empty() {
+                module.source_key = self
+                    .sources
+                    .first()
+                    .map(|s| s.key.clone())
+                    .unwrap_or_default();
+            }
+            if module.locator.is_empty() && !module.pages.is_empty() {
+                module.locator = format!("第 {} 页", module.pages);
+            }
+        }
+        self
+    }
+}
+
+fn seeded_graph(subject: &str) -> Option<anyhow::Result<SubjectGraphSeed>> {
+    let raw = match subject {
+        "math" => include_str!("../data/math-knowledge-graph-v1.json"),
+        "chinese" => include_str!("../data/chinese-knowledge-graph-v1.json"),
+        "english" => include_str!("../data/english-knowledge-graph-v1.json"),
+        _ => return None,
+    };
+    Some(
+        serde_json::from_str(raw)
+            .map(|seed: SubjectGraphSeed| seed.normalized(subject))
+            .map_err(Into::into),
+    )
+}
+
+#[allow(dead_code)]
 fn math_concept_catalog() -> &'static [ConceptSeed] {
     &[
         ConceptSeed {
@@ -533,6 +675,7 @@ fn math_concept_catalog() -> &'static [ConceptSeed] {
     ]
 }
 
+#[allow(dead_code)]
 fn math_prerequisites() -> &'static [(&'static str, &'static str)] {
     &[
         ("集合与元素", "命题与量词"),
@@ -568,7 +711,8 @@ async fn generate_graph(
 ) -> anyhow::Result<()> {
     sqlx::query("UPDATE knowledge_graph_generation_runs SET status='running',progress=10,updated_at=now() WHERE id=$1").bind(run_id).execute(&state.db).await?;
     let rows=sqlx::query("SELECT c.id chunk_id,c.material_id,c.chunk_text,m.file_name,c.chunk_index FROM material_chunks c JOIN materials m ON m.id=c.material_id WHERE m.subject=$1 AND length(trim(c.chunk_text))>=20 ORDER BY m.file_name,c.chunk_index LIMIT 240").bind(subject).fetch_all(&state.db).await?;
-    if rows.len() < 3 {
+    let seed = seeded_graph(subject).transpose()?;
+    if rows.len() < 3 && seed.is_none() {
         sqlx::query("UPDATE knowledge_graph_generation_runs SET status='failed',error='insufficient_sources',updated_at=now() WHERE id=$1").bind(run_id).execute(&state.db).await?;
         return Ok(());
     }
@@ -580,48 +724,92 @@ async fn generate_graph(
     .fetch_one(&state.db)
     .await?;
     let mut tx = state.db.begin().await?;
-    let graph_id:Uuid=sqlx::query_scalar("INSERT INTO knowledge_graphs(user_id,subject,version,status) VALUES($1,$2,$3,'building') RETURNING id").bind(user_id).bind(subject).bind(version).fetch_one(&mut*tx).await?;
+    let source_revision = seed.as_ref().map(|value| value.revision.as_str());
+    let source_metadata = seed
+        .as_ref()
+        .map(|value| json!(value.sources))
+        .unwrap_or_else(|| json!([]));
+    let graph_id:Uuid=sqlx::query_scalar("INSERT INTO knowledge_graphs(user_id,subject,version,status,source_revision,source_metadata) VALUES($1,$2,$3,'building',$4,$5) RETURNING id").bind(user_id).bind(subject).bind(version).bind(source_revision).bind(source_metadata).fetch_one(&mut*tx).await?;
     let mut node_count = 0;
     let mut edge_count = 0;
     let mut concept_keys = std::collections::HashMap::<String, String>::new();
-    if subject == "math" {
-        for (idx, concept) in math_concept_catalog().iter().enumerate() {
-            let source = rows.iter().find(|row| {
-                let text = row.get::<String, _>("chunk_text");
-                concept
-                    .keywords
-                    .iter()
-                    .any(|keyword| text.contains(keyword))
-            });
-            let Some(r) = source else { continue };
-            let text = r.get::<String, _>("chunk_text");
-            let file = r.get::<String, _>("file_name");
-            let key = format!("math-concept-{}", idx + 1);
-            let node_id:Uuid=sqlx::query_scalar("INSERT INTO knowledge_graph_nodes(graph_id,node_key,label,chapter,description) VALUES($1,$2,$3,$4,$5) RETURNING id").bind(graph_id).bind(&key).bind(concept.label).bind(concept.chapter).bind(concept.summary).fetch_one(&mut*tx).await?;
-            let excerpt = text.chars().take(320).collect::<String>();
-            sqlx::query("INSERT INTO knowledge_graph_node_sources(node_id,material_id,chunk_id,file_name,excerpt) VALUES($1,$2,$3,$4,$5)").bind(node_id).bind(r.get::<Uuid,_>("material_id")).bind(r.get::<Uuid,_>("chunk_id")).bind(&file).bind(excerpt).execute(&mut*tx).await?;
-            concept_keys.insert(concept.label.to_string(), key);
+    if let Some(seed) = seed.as_ref() {
+        for module in &seed.modules {
+            let module_key = format!("{}-module-{}", subject, module.key);
+            let source = seed
+                .sources
+                .iter()
+                .find(|source| source.key == module.source_key)
+                .or_else(|| seed.sources.first());
+            let source_title = source
+                .map(|value| value.title.as_str())
+                .unwrap_or("学科结构化资料");
+            let module_description = format!(
+                "{}模块总览，依据《{}》{}整理。",
+                module.name,
+                source_title,
+                if module.locator.is_empty() {
+                    ""
+                } else {
+                    module.locator.as_str()
+                }
+            );
+            let module_node_id:Uuid=sqlx::query_scalar("INSERT INTO knowledge_graph_nodes(graph_id,node_key,label,chapter,description,methods,mistakes,question_types,formulas,source_pages,source_locator,difficulty,importance) VALUES($1,$2,$3,$3,$4,$5,$6,$7,$8,$9,$10,'basic',1.0) RETURNING id")
+                .bind(graph_id).bind(&module_key).bind(&module.name).bind(&module_description)
+                .bind(json!([module.method])).bind(json!([module.mistake])).bind(json!([module.question_type]))
+                .bind(json!([module.formula])).bind((!module.pages.is_empty()).then_some(&module.pages)).bind(&module.locator).fetch_one(&mut *tx).await?;
+            sqlx::query("INSERT INTO knowledge_graph_node_sources(node_id,material_id,chunk_id,file_name,excerpt,source_locator,source_url) VALUES($1,NULL,NULL,$2,$3,$4,$5)")
+                .bind(module_node_id).bind(source_title).bind(&module_description).bind(&module.locator)
+                .bind(source.and_then(|value| value.url.as_deref())).execute(&mut *tx).await?;
+            concept_keys.insert(module.name.clone(), module_key.clone());
             node_count += 1;
+            let mut previous_math_key: Option<String> = None;
+            for (idx, label) in module.concepts.iter().enumerate() {
+                let key = format!("{}-{}-{}", subject, module.key, idx + 1);
+                let description = format!(
+                    "{}是{}模块的核心知识点。需要掌握其概念、适用条件、典型方法与常见误区。",
+                    label, module.name,
+                );
+                let ratio = idx as f64 / module.concepts.len().max(1) as f64;
+                let difficulty = if ratio < 0.34 {
+                    "basic"
+                } else if ratio > 0.76 {
+                    "advanced"
+                } else {
+                    "intermediate"
+                };
+                let importance = 0.62 + (1.0 - (ratio - 0.5).abs()) * 0.28;
+                let node_id:Uuid=sqlx::query_scalar("INSERT INTO knowledge_graph_nodes(graph_id,node_key,label,chapter,description,methods,mistakes,question_types,formulas,source_pages,source_locator,difficulty,importance) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id")
+                    .bind(graph_id).bind(&key).bind(label).bind(&module.name).bind(description)
+                    .bind(json!([module.method])).bind(json!([module.mistake])).bind(json!([module.question_type]))
+                    .bind(json!([module.formula])).bind((!module.pages.is_empty()).then_some(&module.pages)).bind(&module.locator).bind(difficulty).bind(importance).fetch_one(&mut *tx).await?;
+                sqlx::query("INSERT INTO knowledge_graph_node_sources(node_id,material_id,chunk_id,file_name,excerpt,source_locator,source_url) VALUES($1,NULL,NULL,$2,$3,$4,$5)")
+                    .bind(node_id).bind(source_title).bind(format!("{}：{}", label, module.method)).bind(&module.locator)
+                    .bind(source.and_then(|value| value.url.as_deref())).execute(&mut *tx).await?;
+                sqlx::query("INSERT INTO knowledge_graph_edges(graph_id,source_key,target_key,relation) VALUES($1,$2,$3,'part_of')")
+                    .bind(graph_id).bind(&key).bind(&module_key).execute(&mut *tx).await?;
+                edge_count += 1;
+                if subject == "math" {
+                    if let Some(previous) = previous_math_key.replace(key.clone()) {
+                        sqlx::query("INSERT INTO knowledge_graph_edges(graph_id,source_key,target_key,relation) VALUES($1,$2,$3,'prerequisite')")
+                            .bind(graph_id).bind(previous).bind(&key).execute(&mut *tx).await?;
+                        edge_count += 1;
+                    }
+                }
+                concept_keys.insert(label.clone(), key);
+                node_count += 1;
+            }
         }
-        for &(source_label, target_label) in math_prerequisites() {
+        for (source_label, target_label, relation) in &seed.cross_links {
             let (Some(source), Some(target)) = (
                 concept_keys.get(source_label),
                 concept_keys.get(target_label),
             ) else {
                 continue;
             };
-            sqlx::query("INSERT INTO knowledge_graph_edges(graph_id,source_key,target_key,relation) VALUES($1,$2,$3,'prerequisite')").bind(graph_id).bind(source).bind(target).execute(&mut*tx).await?;
+            sqlx::query("INSERT INTO knowledge_graph_edges(graph_id,source_key,target_key,relation) VALUES($1,$2,$3,$4)")
+                .bind(graph_id).bind(source).bind(target).bind(relation).execute(&mut *tx).await?;
             edge_count += 1;
-        }
-        let mut chapter_tail = std::collections::HashMap::<&str, String>::new();
-        for concept in math_concept_catalog() {
-            let Some(key) = concept_keys.get(concept.label) else {
-                continue;
-            };
-            if let Some(previous) = chapter_tail.insert(concept.chapter, key.clone()) {
-                sqlx::query("INSERT INTO knowledge_graph_edges(graph_id,source_key,target_key,relation) VALUES($1,$2,$3,'related')").bind(graph_id).bind(previous).bind(key).execute(&mut*tx).await?;
-                edge_count += 1;
-            }
         }
     } else {
         let mut previous: Option<String> = None;
@@ -659,8 +847,35 @@ async fn generate_graph(
     Ok(())
 }
 
-pub(crate) fn migrate_legacy_math_graphs(state: SharedState) {
+pub(crate) fn migrate_seeded_graphs(state: SharedState) {
     tokio::spawn(async move {
+        for subject in ["math", "chinese", "english"] {
+            let Some(Ok(seed)) = seeded_graph(subject) else {
+                continue;
+            };
+            let stale_users = sqlx::query_scalar::<_, Uuid>(
+                "SELECT DISTINCT user_id FROM knowledge_graphs WHERE subject=$1 AND is_current AND source_revision IS DISTINCT FROM $2",
+            )
+            .bind(subject)
+            .bind(&seed.revision)
+            .fetch_all(&state.db)
+            .await
+            .unwrap_or_default();
+            for user_id in stale_users {
+                let running: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM knowledge_graph_generation_runs WHERE user_id=$1 AND subject=$2 AND status IN ('queued','running')")
+                    .bind(user_id).bind(subject).fetch_one(&state.db).await.unwrap_or(0);
+                if running == 0 {
+                    if let Ok(run_id) = sqlx::query_scalar::<_, Uuid>("INSERT INTO knowledge_graph_generation_runs(user_id,subject) VALUES($1,$2) RETURNING id")
+                        .bind(user_id).bind(subject).fetch_one(&state.db).await {
+                        if let Err(error) = generate_graph(&state, run_id, user_id, subject).await {
+                            eprintln!("{subject} graph revision migration failed: {error:?}");
+                            let _ = sqlx::query("UPDATE knowledge_graph_generation_runs SET status='failed',error='migration_failed',updated_at=now() WHERE id=$1")
+                                .bind(run_id).execute(&state.db).await;
+                        }
+                    }
+                }
+            }
+        }
         let users = sqlx::query_scalar::<_, Uuid>(
             r#"SELECT DISTINCT g.user_id
                FROM knowledge_graphs g
@@ -724,9 +939,9 @@ pub(crate) async fn graphs(
     Query(params): Query<GraphParams>,
 ) -> Result<Json<Value>, ApiError> {
     let u = auth_user(&state, &headers).await?;
-    let rows=sqlx::query("SELECT id,subject,version,status,is_current,node_count,edge_count,created_at FROM knowledge_graphs WHERE user_id=$1 AND ($2::text IS NULL OR subject=$2) ORDER BY created_at DESC").bind(u.id).bind(params.subject).fetch_all(&state.db).await?;
+    let rows=sqlx::query("SELECT id,subject,version,status,is_current,node_count,edge_count,source_revision,created_at FROM knowledge_graphs WHERE user_id=$1 AND ($2::text IS NULL OR subject=$2) ORDER BY created_at DESC").bind(u.id).bind(params.subject).fetch_all(&state.db).await?;
     Ok(Json(
-        json!({"graphs":rows.into_iter().map(|r|json!({"id":r.get::<Uuid,_>("id"),"subject":r.get::<String,_>("subject"),"version":r.get::<i32,_>("version"),"status":r.get::<String,_>("status"),"isCurrent":r.get::<bool,_>("is_current"),"nodeCount":r.get::<i32,_>("node_count"),"edgeCount":r.get::<i32,_>("edge_count"),"createdAt":r.get::<DateTime<Utc>,_>("created_at")})).collect::<Vec<_>>()}),
+        json!({"graphs":rows.into_iter().map(|r|json!({"id":r.get::<Uuid,_>("id"),"subject":r.get::<String,_>("subject"),"version":r.get::<i32,_>("version"),"status":r.get::<String,_>("status"),"isCurrent":r.get::<bool,_>("is_current"),"nodeCount":r.get::<i32,_>("node_count"),"edgeCount":r.get::<i32,_>("edge_count"),"sourceRevision":r.get::<Option<String>,_>("source_revision"),"createdAt":r.get::<DateTime<Utc>,_>("created_at")})).collect::<Vec<_>>()}),
     ))
 }
 
@@ -736,8 +951,8 @@ pub(crate) async fn graph(
     headers: HeaderMap,
 ) -> Result<Json<Value>, ApiError> {
     let u = auth_user(&state, &headers).await?;
-    let g=sqlx::query("SELECT id,subject,version,is_current FROM knowledge_graphs WHERE id=$1 AND user_id=$2 AND status='ready'").bind(id).bind(u.id).fetch_optional(&state.db).await?.ok_or_else(||ApiError::new(StatusCode::NOT_FOUND,"graph_not_found"))?;
-    let nodes=sqlx::query("SELECT id,node_key,label,chapter,description,methods,mistakes,question_types FROM knowledge_graph_nodes WHERE graph_id=$1 ORDER BY chapter,label").bind(id).fetch_all(&state.db).await?;
+    let g=sqlx::query("SELECT id,subject,version,is_current,source_revision,source_metadata FROM knowledge_graphs WHERE id=$1 AND user_id=$2 AND status='ready'").bind(id).bind(u.id).fetch_optional(&state.db).await?.ok_or_else(||ApiError::new(StatusCode::NOT_FOUND,"graph_not_found"))?;
+    let nodes=sqlx::query("SELECT id,node_key,label,chapter,description,methods,mistakes,question_types,formulas,source_pages,source_locator,difficulty,importance FROM knowledge_graph_nodes WHERE graph_id=$1 ORDER BY chapter,label").bind(id).fetch_all(&state.db).await?;
     let edges = sqlx::query(
         "SELECT source_key,target_key,relation FROM knowledge_graph_edges WHERE graph_id=$1",
     )
@@ -747,11 +962,11 @@ pub(crate) async fn graph(
     let mut out = Vec::new();
     for n in nodes {
         let nid = n.get::<Uuid, _>("id");
-        let sources=sqlx::query("SELECT material_id,chunk_id,file_name,excerpt FROM knowledge_graph_node_sources WHERE node_id=$1").bind(nid).fetch_all(&state.db).await?;
-        out.push(json!({"id":nid,"key":n.get::<String,_>("node_key"),"label":n.get::<String,_>("label"),"chapter":n.get::<String,_>("chapter"),"description":n.get::<String,_>("description"),"methods":n.get::<Value,_>("methods"),"mistakes":n.get::<Value,_>("mistakes"),"questionTypes":n.get::<Value,_>("question_types"),"sources":sources.into_iter().map(|s|json!({"materialId":s.get::<Option<Uuid>,_>("material_id"),"chunkId":s.get::<Option<Uuid>,_>("chunk_id"),"fileName":s.get::<String,_>("file_name"),"excerpt":s.get::<String,_>("excerpt")})).collect::<Vec<_>>() }));
+        let sources=sqlx::query("SELECT material_id,chunk_id,file_name,excerpt,source_locator,source_url FROM knowledge_graph_node_sources WHERE node_id=$1").bind(nid).fetch_all(&state.db).await?;
+        out.push(json!({"id":nid,"key":n.get::<String,_>("node_key"),"label":n.get::<String,_>("label"),"chapter":n.get::<String,_>("chapter"),"description":n.get::<String,_>("description"),"methods":n.get::<Value,_>("methods"),"mistakes":n.get::<Value,_>("mistakes"),"questionTypes":n.get::<Value,_>("question_types"),"formulas":n.get::<Value,_>("formulas"),"sourcePages":n.get::<Option<String>,_>("source_pages"),"sourceLocator":n.get::<Option<String>,_>("source_locator"),"difficulty":n.get::<String,_>("difficulty"),"importance":n.get::<f64,_>("importance"),"sources":sources.into_iter().map(|s|json!({"materialId":s.get::<Option<Uuid>,_>("material_id"),"chunkId":s.get::<Option<Uuid>,_>("chunk_id"),"fileName":s.get::<String,_>("file_name"),"excerpt":s.get::<String,_>("excerpt"),"sourceLocator":s.get::<Option<String>,_>("source_locator"),"sourceUrl":s.get::<Option<String>,_>("source_url")})).collect::<Vec<_>>() }));
     }
     Ok(Json(
-        json!({"graph":{"id":g.get::<Uuid,_>("id"),"subject":g.get::<String,_>("subject"),"version":g.get::<i32,_>("version"),"isCurrent":g.get::<bool,_>("is_current")},"nodes":out,"edges":edges.into_iter().map(|e|json!({"source":e.get::<String,_>("source_key"),"target":e.get::<String,_>("target_key"),"relation":e.get::<String,_>("relation")})).collect::<Vec<_>>() }),
+        json!({"graph":{"id":g.get::<Uuid,_>("id"),"subject":g.get::<String,_>("subject"),"version":g.get::<i32,_>("version"),"isCurrent":g.get::<bool,_>("is_current"),"sourceRevision":g.get::<Option<String>,_>("source_revision"),"sources":g.get::<Value,_>("source_metadata")},"nodes":out,"edges":edges.into_iter().map(|e|json!({"source":e.get::<String,_>("source_key"),"target":e.get::<String,_>("target_key"),"relation":e.get::<String,_>("relation")})).collect::<Vec<_>>() }),
     ))
 }
 
@@ -817,4 +1032,140 @@ pub(crate) async fn change_password(
             .await?;
     }
     Ok(Json(json!({"ok":true})))
+}
+
+#[cfg(test)]
+mod subject_graph_tests {
+    use super::{seeded_graph, SubjectGraphSeed};
+    use std::collections::{HashMap, HashSet, VecDeque};
+
+    fn assert_valid_seed(seed: &SubjectGraphSeed, expected_subject: &str) {
+        let valid_relations = HashSet::from([
+            "prerequisite",
+            "part_of",
+            "related",
+            "derived_from",
+            "applies_to",
+            "contrasts_with",
+        ]);
+        assert_eq!(seed.subject, expected_subject);
+        assert!(!seed.revision.is_empty());
+        assert!(!seed.sources.is_empty());
+        assert!(seed.modules.iter().all(|module| {
+            !module.key.is_empty()
+                && !module.name.is_empty()
+                && !module.locator.is_empty()
+                && !module.method.is_empty()
+                && !module.mistake.is_empty()
+                && !module.question_type.is_empty()
+                && !module.formula.is_empty()
+                && !module.concepts.is_empty()
+        }));
+
+        let mut labels = HashSet::<String>::new();
+        for module in &seed.modules {
+            assert!(labels.insert(module.name.clone()), "duplicate module label");
+            for concept in &module.concepts {
+                assert!(
+                    labels.insert(concept.clone()),
+                    "duplicate concept label: {concept}"
+                );
+            }
+        }
+        assert!(seed.cross_links.iter().all(|(source, target, relation)| {
+            source != target
+                && labels.contains(source)
+                && labels.contains(target)
+                && valid_relations.contains(relation.as_str())
+        }));
+
+        let mut adjacency: HashMap<String, Vec<String>> = labels
+            .iter()
+            .map(|label| (label.clone(), Vec::new()))
+            .collect();
+        for module in &seed.modules {
+            for concept in &module.concepts {
+                adjacency
+                    .get_mut(&module.name)
+                    .unwrap()
+                    .push(concept.clone());
+                adjacency
+                    .get_mut(concept)
+                    .unwrap()
+                    .push(module.name.clone());
+            }
+            if expected_subject == "math" {
+                for pair in module.concepts.windows(2) {
+                    adjacency.get_mut(&pair[0]).unwrap().push(pair[1].clone());
+                    adjacency.get_mut(&pair[1]).unwrap().push(pair[0].clone());
+                }
+            }
+        }
+        for (source, target, _) in &seed.cross_links {
+            adjacency.get_mut(source).unwrap().push(target.clone());
+            adjacency.get_mut(target).unwrap().push(source.clone());
+        }
+        let start = labels.iter().next().unwrap().clone();
+        let mut visited = HashSet::from([start.clone()]);
+        let mut queue = VecDeque::from([start]);
+        while let Some(label) = queue.pop_front() {
+            for neighbor in &adjacency[&label] {
+                if visited.insert(neighbor.clone()) {
+                    queue.push_back(neighbor.clone());
+                }
+            }
+        }
+        assert_eq!(visited.len(), labels.len(), "seed graph must be connected");
+
+        let mut indegree: HashMap<String, usize> =
+            labels.iter().map(|label| (label.clone(), 0)).collect();
+        let mut directed: HashMap<String, Vec<String>> = HashMap::new();
+        for (source, target, relation) in &seed.cross_links {
+            if relation == "prerequisite" {
+                directed
+                    .entry(source.clone())
+                    .or_default()
+                    .push(target.clone());
+                *indegree.get_mut(target).unwrap() += 1;
+            }
+        }
+        let mut ready: VecDeque<String> = indegree
+            .iter()
+            .filter(|(_, degree)| **degree == 0)
+            .map(|(label, _)| label.clone())
+            .collect();
+        let mut processed = 0;
+        while let Some(label) = ready.pop_front() {
+            processed += 1;
+            for target in directed.get(&label).into_iter().flatten() {
+                let degree = indegree.get_mut(target).unwrap();
+                *degree -= 1;
+                if *degree == 0 {
+                    ready.push_back(target.clone());
+                }
+            }
+        }
+        assert_eq!(
+            processed,
+            labels.len(),
+            "prerequisite relations must be acyclic"
+        );
+    }
+
+    #[test]
+    fn all_seeded_subject_graphs_are_complete_and_valid() {
+        for subject in ["math", "chinese", "english"] {
+            let seed = seeded_graph(subject).unwrap().expect("valid subject seed");
+            assert_valid_seed(&seed, subject);
+            let node_count = seed.modules.len()
+                + seed
+                    .modules
+                    .iter()
+                    .map(|module| module.concepts.len())
+                    .sum::<usize>();
+            if subject != "math" {
+                assert!((110..=130).contains(&node_count));
+            }
+        }
+    }
 }

@@ -13,7 +13,7 @@ use std::{
     net::IpAddr,
     path::{Component, Path},
 };
-use tokio::{fs, process::Command};
+use tokio::fs;
 
 #[derive(Deserialize)]
 pub(crate) struct AccountParams {
@@ -89,6 +89,9 @@ pub(crate) async fn ensure_schema(db: &PgPool) -> anyhow::Result<()> {
             output_chars INTEGER NOT NULL DEFAULT 0, latency_ms INTEGER NOT NULL DEFAULT 0,
             status TEXT NOT NULL, metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
             created_at TIMESTAMPTZ NOT NULL DEFAULT now())"#,
+        "ALTER TABLE ai_usage_events ADD COLUMN IF NOT EXISTS input_tokens INTEGER NOT NULL DEFAULT 0",
+        "ALTER TABLE ai_usage_events ADD COLUMN IF NOT EXISTS output_tokens INTEGER NOT NULL DEFAULT 0",
+        "ALTER TABLE ai_usage_events ADD COLUMN IF NOT EXISTS ttft_ms INTEGER",
         r#"CREATE TABLE IF NOT EXISTS material_uploads (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(), requested_by UUID REFERENCES users(id) ON DELETE SET NULL,
             file_name TEXT NOT NULL, relative_path TEXT NOT NULL UNIQUE, size_bytes BIGINT NOT NULL,
@@ -635,8 +638,8 @@ pub(crate) async fn save_provider_config(
             "provider_limit_reached",
         ));
     }
-    let row=sqlx::query("INSERT INTO ai_provider_configs(user_id,name,provider,base_url,model,api_key_ciphertext) VALUES($1,$2,$3,$4,$5,$6) RETURNING id")
-        .bind(user.id).bind(input.name.trim()).bind(&input.provider).bind(input.base_url.trim_end_matches('/')).bind(input.model.trim()).bind(encrypt_key(&state,&input.api_key)?).fetch_one(&state.db).await?;
+    let row=sqlx::query("INSERT INTO ai_provider_configs(user_id,name,provider,base_url,model,api_key_ciphertext,is_default) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING id")
+        .bind(user.id).bind(input.name.trim()).bind(&input.provider).bind(input.base_url.trim_end_matches('/')).bind(input.model.trim()).bind(encrypt_key(&state,&input.api_key)?).bind(count == 0).fetch_one(&state.db).await?;
     Ok((
         StatusCode::CREATED,
         Json(json!({"id":row.get::<Uuid,_>("id"),"ok":true})),
@@ -708,18 +711,52 @@ pub(crate) async fn provider_runtime(
     })
 }
 
-pub(crate) async fn record_ai_usage(
+pub(crate) async fn preferred_provider_runtime(
+    state: &SharedState,
+    user_id: Uuid,
+    requested_id: Option<Uuid>,
+) -> Result<Option<ProviderRuntime>, ApiError> {
+    let id = match requested_id {
+        Some(id) => Some(id),
+        None => sqlx::query_scalar(
+            "SELECT id FROM ai_provider_configs WHERE user_id=$1 ORDER BY is_default DESC,created_at LIMIT 1",
+        )
+        .bind(user_id)
+        .fetch_optional(&state.db)
+        .await?,
+    };
+    match id {
+        Some(id) => provider_runtime(state, user_id, id).await.map(Some),
+        None => Ok(None),
+    }
+}
+
+pub(crate) async fn record_ai_metrics(
     state: &SharedState,
     user_id: Uuid,
     provider: &str,
     model: &str,
     input_chars: usize,
     output_chars: usize,
-    latency_ms: u128,
+    input_tokens: usize,
+    output_tokens: usize,
+    ttft_ms: Option<u128>,
+    duration_ms: u128,
     status: &str,
 ) {
-    let _=sqlx::query("INSERT INTO ai_usage_events(user_id,provider,model,input_chars,output_chars,latency_ms,status) VALUES($1,$2,$3,$4,$5,$6,$7)")
-        .bind(user_id).bind(provider).bind(model).bind(input_chars as i32).bind(output_chars as i32).bind(latency_ms.min(i32::MAX as u128) as i32).bind(status).execute(&state.db).await;
+    let _ = sqlx::query("INSERT INTO ai_usage_events(user_id,provider,model,input_chars,output_chars,input_tokens,output_tokens,ttft_ms,latency_ms,status) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)")
+        .bind(user_id)
+        .bind(provider)
+        .bind(model)
+        .bind(input_chars.min(i32::MAX as usize) as i32)
+        .bind(output_chars.min(i32::MAX as usize) as i32)
+        .bind(input_tokens.min(i32::MAX as usize) as i32)
+        .bind(output_tokens.min(i32::MAX as usize) as i32)
+        .bind(ttft_ms.map(|value| value.min(i32::MAX as u128) as i32))
+        .bind(duration_ms.min(i32::MAX as u128) as i32)
+        .bind(status)
+        .execute(&state.db)
+        .await;
 }
 
 fn safe_file_name(value: &str) -> Option<String> {
@@ -863,37 +900,61 @@ pub(crate) async fn upload_material(
     let relative_text = relative.to_string_lossy().replace('\\', "/");
     sqlx::query("INSERT INTO material_uploads(id,requested_by,file_name,relative_path,size_bytes,status,metadata) VALUES($1,$2,$3,$4,$5,'indexing',$6)")
         .bind(upload_id).bind(admin.id).bind(&filename).bind(&relative_text).bind(bytes.len() as i64).bind(Value::Object(metadata.clone())).execute(&state.db).await?;
-    let db = state.db.clone();
-    let project = state.project_root.clone();
     let target_clone = target.clone();
+    let state_clone = state.clone();
+    let domain_str = metadata
+        .get("domain")
+        .and_then(Value::as_str)
+        .unwrap_or("high-school")
+        .to_string();
     tokio::spawn(async move {
-        let result = Command::new("node")
-            .arg("scripts/index-materials.mjs")
-            .arg("--domain")
-            .arg(
-                metadata
-                    .get("domain")
-                    .and_then(Value::as_str)
-                    .unwrap_or("high-school"),
-            )
-            .arg("--file")
-            .arg(&target_clone)
-            .current_dir(project)
-            .status()
-            .await;
-        let (status, error) = match result {
-            Ok(value) if value.success() => ("indexed", None),
-            Ok(value) => ("failed", Some(format!("indexer exited {value}"))),
-            Err(error) => ("failed", Some(error.to_string())),
+        let run_id = Uuid::new_v4();
+        let source_root = if domain_str == "university" {
+            state_clone.project_root.join("src/content")
+        } else {
+            state_clone.material_root.clone()
         };
-        let _ = sqlx::query(
-            "UPDATE material_uploads SET status=$2,error=$3,updated_at=now() WHERE id=$1",
+        let run_setup = sqlx::query(
+            "INSERT INTO material_index_runs(id,source_root,status) VALUES($1,$2,'running')"
         )
-        .bind(upload_id)
-        .bind(status)
-        .bind(error)
-        .execute(&db)
+        .bind(run_id)
+        .bind(source_root.to_string_lossy().to_string())
+        .execute(&state_clone.db)
         .await;
+
+        if run_setup.is_ok() {
+            let options = crate::indexer::IndexOptions {
+                domain: domain_str,
+                root: source_root,
+                rebuild: false,
+                missing_only: false,
+                retry_failed: false,
+                catalog_only: false,
+                file: Some(target_clone),
+                course: None,
+                subject: None,
+                limit: None,
+            };
+            let (status, error) = match crate::indexer::run(state_clone.clone(), run_id, options).await {
+                Ok(_) => ("indexed", None),
+                Err(e) => ("failed", Some(format!("indexer error: {:?}", e))),
+            };
+            let _ = sqlx::query(
+                "UPDATE material_uploads SET status=$2,error=$3,updated_at=now() WHERE id=$1",
+            )
+            .bind(upload_id)
+            .bind(status)
+            .bind(error)
+            .execute(&state_clone.db)
+            .await;
+        } else {
+            let _ = sqlx::query(
+                "UPDATE material_uploads SET status='failed',error='Failed to initialize index run',updated_at=now() WHERE id=$1",
+            )
+            .bind(upload_id)
+            .execute(&state_clone.db)
+            .await;
+        }
     });
     Ok((
         StatusCode::ACCEPTED,
