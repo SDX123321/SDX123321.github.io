@@ -159,7 +159,7 @@ function onBlur() {
 .gs-input {
   width: 100%;
   padding: 12px 16px 12px 40px;
-  border-radius: 12px;
+  border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--card);
   color: var(--text);
@@ -175,11 +175,11 @@ function onBlur() {
   margin-top: 6px;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 8px;
   max-height: 420px;
   overflow-y: auto;
   z-index: 200;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
 }
 .gs-item {
   padding: 10px 16px;

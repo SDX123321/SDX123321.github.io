@@ -99,10 +99,10 @@ defineExpose({
 }
 .sm-qr {
   width: 280px;
-  border-radius: 14px;
+  border-radius: 10px;
   display: block;
   margin: 0 auto;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
 }
 .sm-hint {
   color: var(--text);
@@ -141,12 +141,12 @@ defineExpose({
 .sm-reward-panel {
   position: relative;
   background: var(--card);
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 28px 28px 20px;
   text-align: center;
   border: 1px solid var(--border);
   max-width: 90vw;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
 }
 .sm-reward-close {
   position: absolute;

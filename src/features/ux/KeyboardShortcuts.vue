@@ -71,12 +71,12 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 }
 .ks-panel {
   background: var(--card, #1a1d27);
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 28px;
   max-width: 400px;
   width: 92vw;
   border: 1px solid var(--border, #2d3436);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
 }
 .ks-title {
   margin: 0 0 16px;

@@ -171,7 +171,7 @@ async function submit(event: Event) {
 .account-panel {
   background: var(--card, #1a1d27);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 28px;
   max-width: 480px;
   width: 92vw;

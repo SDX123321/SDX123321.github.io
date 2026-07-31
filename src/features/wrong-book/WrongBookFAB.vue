@@ -91,7 +91,7 @@ function confirmClearAll() {
   border: none;
   cursor: pointer;
   font-size: 1.2em;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
   transition: transform 0.2s;
 }
 .wb-fab:hover {
@@ -124,7 +124,7 @@ function confirmClearAll() {
 }
 .wb-panel {
   background: var(--card, #1a1d27);
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 28px;
   max-width: 720px;
   width: 92vw;

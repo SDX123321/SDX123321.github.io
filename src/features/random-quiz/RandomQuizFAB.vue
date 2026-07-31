@@ -300,7 +300,7 @@ onUnmounted(clearTimer)
   border: none;
   cursor: pointer;
   font-size: 1.2em;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
   transition: transform 0.2s;
 }
 .rq-fab:hover {
@@ -317,7 +317,7 @@ onUnmounted(clearTimer)
 }
 .rq-panel {
   background: var(--card, #1a1d27);
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 28px;
   max-width: 700px;
   width: 92vw;
@@ -325,7 +325,7 @@ onUnmounted(clearTimer)
   overflow-y: auto;
   border: 1px solid var(--border);
   position: relative;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
 }
 .rq-close {
   position: absolute;
@@ -432,7 +432,7 @@ onUnmounted(clearTimer)
 }
 .rq-card {
   background: var(--card2, #22263a);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 20px;
   margin: 12px 0;
 }

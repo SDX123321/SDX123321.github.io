@@ -175,7 +175,7 @@ function collapseAll() {
   border: 1px solid var(--border);
   cursor: pointer;
   font-size: 1.2em;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
   transition: transform 0.2s;
 }
 .fr-fab:hover {
@@ -192,7 +192,7 @@ function collapseAll() {
 }
 .fr-panel {
   background: var(--card, #1a1d27);
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 20px 24px;
   max-width: 640px;
   width: 94vw;

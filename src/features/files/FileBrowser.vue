@@ -305,7 +305,7 @@ function showTip(f: FileEntry, e: MouseEvent) {
 }
 .fb-modal {
   background: var(--card, #1e293b);
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 20px;
   max-width: 90vw;
   width: 900px;
@@ -313,7 +313,7 @@ function showTip(f: FileEntry, e: MouseEvent) {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
 }
 .fb-modal-header {
   display: flex;
