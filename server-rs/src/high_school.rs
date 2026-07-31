@@ -461,7 +461,6 @@ async fn search_matches(
         })
         .collect();
     values.sort_by(|a, b| b.score.total_cmp(&a.score));
-    // Prefer evidence diversity: do not let one long document occupy the whole context.
     let mut per_material = HashMap::<Uuid, usize>::new();
     values.retain(|item| {
         let count = per_material.entry(item.material_id).or_default();
@@ -472,8 +471,67 @@ async fn search_matches(
             true
         }
     });
+    values.truncate((limit * 3) as usize);
+
+    // Apply reranking if configured
+    if !values.is_empty() {
+        let config = state.ollama_config.read().await.clone();
+        if !config.rerank_url.is_empty() {
+            if let Ok(reranked) = rerank_candidates(&config.rerank_url, &config.rerank_model, q, &values).await {
+                values = reranked;
+            }
+        }
+    }
+
     values.truncate(limit as usize);
     Ok(values)
+}
+
+#[derive(Serialize)]
+struct RerankRequest<'a> {
+    model: &'a str,
+    query: &'a str,
+    texts: Vec<&'a str>,
+}
+
+#[derive(Deserialize)]
+struct RerankResult {
+    index: usize,
+    relevance_score: f64,
+}
+
+#[derive(Deserialize)]
+struct RerankResponse {
+    results: Option<Vec<RerankResult>>,
+}
+
+async fn rerank_candidates(
+    url: &str,
+    model: &str,
+    query: &str,
+    candidates: &[SearchMatch],
+) -> Result<Vec<SearchMatch>, anyhow::Error> {
+    let texts: Vec<&str> = candidates.iter().map(|c| c.text.as_str()).collect();
+    let req = RerankRequest {
+        model,
+        query,
+        texts,
+    };
+    let client = reqwest::Client::new();
+    let res = client.post(url).json(&req).send().await?.error_for_status()?;
+    let data: RerankResponse = res.json().await?;
+    let mut results = data.results.unwrap_or_default();
+    results.sort_by(|a, b| b.relevance_score.total_cmp(&a.relevance_score));
+
+    let mut ranked = Vec::new();
+    for r in results {
+        if let Some(c) = candidates.get(r.index) {
+            let mut clone = c.clone();
+            clone.score = r.relevance_score;
+            ranked.push(clone);
+        }
+    }
+    Ok(ranked)
 }
 
 fn row_to_match(row: &sqlx::postgres::PgRow, score: f64) -> Result<SearchMatch, sqlx::Error> {
@@ -840,7 +898,20 @@ pub(crate) async fn answer(
             .insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
         return Ok(out);
     }
-    {
+    if let Some(redis_pool) = &state.redis {
+        let mut conn = redis_pool.get().await.map_err(|_| ApiError::server())?;
+        let key = format!("rate_limit:answer:{}", user.id);
+        let count: i32 = deadpool_redis::redis::cmd("INCR").arg(&key).query_async(&mut conn).await.unwrap_or(0);
+        if count == 1 {
+            let _ = deadpool_redis::redis::cmd("EXPIRE").arg(&key).arg(60).query_async::<()>(&mut conn).await;
+        }
+        if count > 30 {
+            return Err(ApiError::new(
+                StatusCode::TOO_MANY_REQUESTS,
+                "answer_rate_limited",
+            ));
+        }
+    } else {
         let mut rate = state.answer_rate.lock().map_err(|_| ApiError::server())?;
         let now = Instant::now();
         let recent = rate.recent.entry(user.id).or_default();

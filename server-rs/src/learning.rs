@@ -1,5 +1,7 @@
 use super::*;
 use axum::extract::Path as AxumPath;
+use bcrypt::{hash as bcrypt_hash, verify as bcrypt_verify, DEFAULT_COST};
+use rand::{rngs::OsRng, RngCore};
 use serde::Deserialize;
 
 #[derive(Deserialize)]

@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import './styles/app.css'
@@ -62,6 +63,7 @@ window.fetch = async function (input: RequestInfo | URL, init?: RequestInit) {
 
 async function bootstrap() {
   const app = createApp(App)
+  app.use(createPinia())
   app.use(router)
 
   if (import.meta.env.VITE_SENTRY_DSN) {

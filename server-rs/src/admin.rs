@@ -8,6 +8,7 @@ use axum::{
     http::HeaderMap,
 };
 use base64::{engine::general_purpose::STANDARD, Engine};
+use rand::{rngs::OsRng, RngCore};
 use serde::{Deserialize, Serialize};
 use std::{
     net::IpAddr,
@@ -47,6 +48,10 @@ pub(crate) struct OllamaConfigInput {
     embedding_model: String,
     #[serde(rename = "chatModel")]
     chat_model: String,
+    #[serde(rename = "rerankUrl")]
+    rerank_url: String,
+    #[serde(rename = "rerankModel")]
+    rerank_model: String,
 }
 
 #[derive(Serialize)]
@@ -247,6 +252,8 @@ fn replace_env_values(content: &str, input: &OllamaConfigInput) -> String {
         ("OLLAMA_URL", input.base_url.as_str()),
         ("EMBEDDING_MODEL", input.embedding_model.as_str()),
         ("CHAT_MODEL", input.chat_model.as_str()),
+        ("RERANK_URL", input.rerank_url.as_str()),
+        ("RERANK_MODEL", input.rerank_model.as_str()),
     ];
     let newline = if content.contains("\r\n") {
         "\r\n"
@@ -374,6 +381,8 @@ pub(crate) async fn save_ollama_config(
                 base_url: previous.base_url.clone(),
                 embedding_model: previous.embedding_model.clone(),
                 chat_model: previous.chat_model.clone(),
+                rerank_url: previous.rerank_url.clone(),
+                rerank_model: previous.rerank_model.clone(),
             };
             let _ = persist_ollama_env(&state, &rollback_input).await;
             return Err(error.into());
@@ -384,6 +393,8 @@ pub(crate) async fn save_ollama_config(
         embedding_model: input.embedding_model,
         chat_model: input.chat_model,
         embedding_dimensions: check.embedding_dimensions,
+        rerank_url: input.rerank_url,
+        rerank_model: input.rerank_model,
     };
     *state.ollama_config.write().await = next.clone();
     if let Err(error) = sqlx::query("INSERT INTO auth_events(user_id,username,event_type,risk_level,metadata) VALUES($1,$2,'admin_ollama_config_changed','warning',$3)")
@@ -820,6 +831,8 @@ mod tests {
                 base_url: "http://127.0.0.1:11434".into(),
                 embedding_model: "bge-m3".into(),
                 chat_model: "qwen3:4b".into(),
+                rerank_url: "http://127.0.0.1:8080/v1/rerank".into(),
+                rerank_model: "Qwen3-Reranker-0.6B".into(),
             },
         );
         assert!(updated.contains("R2_TOKEN=secret"));
@@ -835,6 +848,8 @@ mod tests {
             base_url: base_url.into(),
             embedding_model: "bge-m3".into(),
             chat_model: "qwen3:4b".into(),
+            rerank_url: "http://127.0.0.1:8080/v1/rerank".into(),
+            rerank_model: "Qwen3-Reranker-0.6B".into(),
         };
         assert!(normalize_ollama_input(input("http://127.0.0.1:11434")).is_ok());
         assert!(normalize_ollama_input(input("http://user:pass@localhost:11434")).is_err());

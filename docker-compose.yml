@@ -30,7 +30,7 @@ services:
   web:
     build: { context: ., dockerfile: Dockerfile.web }
     depends_on: { api: { condition: service_healthy } }
-    ports: ["8080:80"]
+    ports: ["38080:80"]
   prometheus:
     image: prom/prometheus:v3.2.1
     command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus"]
@@ -45,7 +45,7 @@ services:
       - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
       - grafana-data:/var/lib/grafana
-    ports: ["3000:3000"]
+    ports: ["33000:3000"]
     depends_on: [prometheus]
 volumes:
   postgres-data:

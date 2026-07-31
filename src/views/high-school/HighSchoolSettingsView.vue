@@ -37,7 +37,13 @@ const subjects = ref<string[]>([])
 const providers = ref<any[]>([])
 const notice = ref('')
 const error = ref('')
-const ollama = ref({ baseUrl: '', embeddingModel: '', chatModel: '' })
+const ollama = ref({
+  baseUrl: '',
+  embeddingModel: '',
+  chatModel: '',
+  rerankUrl: '',
+  rerankModel: '',
+})
 const ollamaStatus = ref<any>(null)
 const ollamaBusy = ref<'test' | 'save' | ''>('')
 const ollamaMessage = ref('')
@@ -321,6 +327,18 @@ onBeforeUnmount(() => {
             /></label>
             <label
               >聊天模型<input v-model.trim="ollama.chatModel" required placeholder="qwen3:4b"
+            /></label>
+          </div>
+          <div class="hs-ollama-models">
+            <label
+              >Rerank 接口地址<input
+                v-model.trim="ollama.rerankUrl"
+                placeholder="http://127.0.0.1:8080/v1/rerank"
+            /></label>
+            <label
+              >Rerank 模型名称<input
+                v-model.trim="ollama.rerankModel"
+                placeholder="Qwen3-Reranker-0.6B"
             /></label>
           </div>
           <p class="hs-settings-help">

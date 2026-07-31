@@ -13,6 +13,8 @@ import {
   WandSparkles,
 } from 'lucide-vue-next'
 import { useAuth } from '../../composables/useAuth'
+import AdminFeishuCard from '../../features/high-school/admin/AdminFeishuCard.vue'
+import AdminAccountsSection from '../../features/high-school/admin/AdminAccountsSection.vue'
 
 const auth = useAuth()
 const overview = ref<any>(null)
@@ -217,16 +219,6 @@ async function controlIndex(action: 'pause' | 'resume' | 'cancel' | 'rollback') 
   if (!indexRun.value?.id) return
   await api(`/api/admin/knowledge/index-runs/${indexRun.value.id}/${action}`, { method: 'POST' })
   await pollIndexRun(indexRun.value.id)
-}
-
-async function risk(account: any, action: string) {
-  if (!window.confirm(`确认对账号“${account.username}”执行此操作？`)) return
-  await api(`/api/admin/accounts/${account.id}/risk`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ action, reason: '管理员面板操作' }),
-  })
-  await load()
 }
 
 onMounted(load)
@@ -448,6 +440,8 @@ watch(
           </form>
         </article>
 
+        <AdminFeishuCard />
+
         <article class="hs-admin-card">
           <header>
             <Activity :size="20" />
@@ -469,75 +463,7 @@ watch(
         </article>
       </section>
 
-      <section class="hs-container hs-admin-card hs-account-card">
-        <header>
-          <Users :size="20" />
-          <div>
-            <h2>账户用量与风控</h2>
-            <p>暂停账号会立即撤销其全部登录会话。</p>
-          </div>
-          <form class="hs-admin-search" @submit.prevent="load">
-            <label class="sr-only" for="admin-account-search">搜索账号</label
-            ><input
-              id="admin-account-search"
-              v-model.trim="search"
-              placeholder="搜索用户名"
-            /><button type="submit">查询</button>
-          </form>
-        </header>
-        <div class="hs-admin-table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>账号</th>
-                <th>状态</th>
-                <th>学习时长</th>
-                <th>练习</th>
-                <th>AI 调用</th>
-                <th>会话</th>
-                <th>最近登录</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="account in accounts" :key="account.id">
-                <td>
-                  <strong>{{ account.username }}</strong
-                  ><small>{{ account.role }}</small>
-                </td>
-                <td>
-                  <span class="hs-risk-badge" :data-risk="account.riskStatus">{{
-                    account.riskStatus
-                  }}</span>
-                </td>
-                <td>{{ Math.round(account.studySeconds / 60) }} 分钟</td>
-                <td>{{ account.practiceCount }}</td>
-                <td>{{ account.aiCalls }}</td>
-                <td>{{ account.activeSessions }}</td>
-                <td>
-                  {{
-                    account.lastLoginAt
-                      ? new Date(account.lastLoginAt).toLocaleString()
-                      : '从未登录'
-                  }}
-                </td>
-                <td>
-                  <div class="hs-admin-actions">
-                    <button
-                      v-if="account.riskStatus === 'active'"
-                      type="button"
-                      @click="risk(account, 'suspend')"
-                    >
-                      暂停</button
-                    ><button v-else type="button" @click="risk(account, 'activate')">恢复</button
-                    ><button type="button" @click="risk(account, 'revoke_sessions')">下线</button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <AdminAccountsSection />
     </template>
   </main>
 </template>

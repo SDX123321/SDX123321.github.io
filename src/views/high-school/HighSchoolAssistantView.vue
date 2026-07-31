@@ -138,6 +138,9 @@ async function ask() {
         emit('require-auth')
         throw new Error('请先登录后使用 AI 助学')
       }
+      if (response.status === 429) {
+        throw new Error('提问过于频繁，请稍等一分钟后再试')
+      }
       throw new Error(
         body.error === 'model_unavailable'
           ? '本地模型尚未启动，请确认 Ollama 正在运行'
