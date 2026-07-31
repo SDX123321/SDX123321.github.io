@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import {
   ArrowUp,
@@ -44,7 +44,14 @@ const reasoningOpen = ref(false)
 const interrupted = ref(false)
 const requestController = ref<AbortController | null>(null)
 const metrics = ref({ inputTokens: 0, outputTokens: 0, totalTokens: 0, ttftMs: 0, durationMs: 0 })
-const renderedAnswer = computed(() => renderMarkdown(answer.value, sources.value.length))
+const renderedAnswer = ref('')
+watch(
+  [answer, () => sources.value.length],
+  async () => {
+    renderedAnswer.value = await renderMarkdown(answer.value, sources.value.length)
+  },
+  { immediate: true },
+)
 const busy = ref(false)
 const error = ref('')
 const providers = ref<any[]>([])

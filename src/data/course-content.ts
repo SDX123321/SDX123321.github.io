@@ -1,39 +1,59 @@
 import type { Course, NavLink } from '../types/course'
 import { courseMap } from './courses'
-import probabilityHtml from '../content/probability.html?raw'
-import osHtml from '../content/os.html?raw'
-import algorithmHtml from '../content/algorithm.html?raw'
-import dspHtml from '../content/dsp.html?raw'
-import marxismHtml from '../content/marxism.html?raw'
-import maogaiHtml from '../content/maogai.html?raw'
-import calculusHtml from '../content/calculus.html?raw'
-import signalsHtml from '../content/signals.html?raw'
-import osInteractions from '../../courses/os/main.js?raw'
-import dspInteractions from '../../courses/dsp/main.js?raw'
-import { navLinks as probabilityNav } from './probability-nav.js'
-import { navLinks as osNav } from './os-nav.js'
-import { navLinks as algorithmNav } from './algorithm-nav.js'
-import { navLinks as dspNav } from './dsp-nav.js'
-import { navLinks as marxismNav } from './marxism-nav.js'
-import { navLinks as maogaiNav } from './maogai-nav.js'
-import { navLinks as calculusNav } from './calculus-nav.js'
-import { navLinks as signalsNav } from './signals-nav.js'
 
-const nav = (links: unknown) => links as NavLink[]
 const attach = (id: string, html: string, links: unknown, interactionScript?: string): Course => ({
   ...(courseMap.get(id) as Course),
   html,
-  nav: nav(links),
+  nav: links as NavLink[],
   interactionScript,
 })
 
-export const courseContentMap = new Map<string, Course>([
-  ['probability', attach('probability', probabilityHtml, probabilityNav)],
-  ['os', attach('os', osHtml, osNav, osInteractions)],
-  ['algorithm', attach('algorithm', algorithmHtml, algorithmNav)],
-  ['dsp', attach('dsp', dspHtml, dspNav, dspInteractions)],
-  ['marxism', attach('marxism', marxismHtml, marxismNav)],
-  ['maogai', attach('maogai', maogaiHtml, maogaiNav)],
-  ['calculus', attach('calculus', calculusHtml, calculusNav)],
-  ['signals', attach('signals', signalsHtml, signalsNav)],
-])
+interface CourseAssets {
+  html: string
+  links: NavLink[]
+  interactionScript?: string
+}
+
+const courseLoaders: Record<string, () => Promise<CourseAssets>> = {
+  probability: async () => ({
+    html: (await import('../content/probability.html?raw')).default,
+    links: (await import('./probability-nav.js')).navLinks,
+  }),
+  os: async () => ({
+    html: (await import('../content/os.html?raw')).default,
+    links: (await import('./os-nav.js')).navLinks,
+    interactionScript: (await import('../../courses/os/main.js?raw')).default,
+  }),
+  algorithm: async () => ({
+    html: (await import('../content/algorithm.html?raw')).default,
+    links: (await import('./algorithm-nav.js')).navLinks,
+  }),
+  dsp: async () => ({
+    html: (await import('../content/dsp.html?raw')).default,
+    links: (await import('./dsp-nav.js')).navLinks,
+    interactionScript: (await import('../../courses/dsp/main.js?raw')).default,
+  }),
+  marxism: async () => ({
+    html: (await import('../content/marxism.html?raw')).default,
+    links: (await import('./marxism-nav.js')).navLinks,
+  }),
+  maogai: async () => ({
+    html: (await import('../content/maogai.html?raw')).default,
+    links: (await import('./maogai-nav.js')).navLinks,
+  }),
+  calculus: async () => ({
+    html: (await import('../content/calculus.html?raw')).default,
+    links: (await import('./calculus-nav.js')).navLinks,
+  }),
+  signals: async () => ({
+    html: (await import('../content/signals.html?raw')).default,
+    links: (await import('./signals-nav.js')).navLinks,
+  }),
+}
+
+export async function loadCourseContent(courseId: string): Promise<Course | undefined> {
+  const loader = courseLoaders[courseId]
+  if (!loader) return undefined
+  const assets = await loader()
+  return attach(courseId, assets.html, assets.links, assets.interactionScript)
+}

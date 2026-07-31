@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   ArrowLeft,
@@ -8,6 +8,7 @@ import {
   BookX,
   Check,
   ChevronRight,
+  CircleAlert,
   Menu,
   Search,
   Trash2,
@@ -15,8 +16,9 @@ import {
 } from 'lucide-vue-next'
 import CourseIcon from '../components/CourseIcon.vue'
 import AlgorithmTrainer from '../features/algorithm/AlgorithmTrainer.vue'
-import { courseContentMap } from '../data/course-content'
+import { loadCourseContent } from '../data/course-content'
 import type { NavLink } from '../types/course'
+import type { Course } from '../types/course'
 
 const route = useRoute()
 const router = useRouter()
@@ -35,8 +37,32 @@ interface WrongAnswer {
 }
 const wrongAnswers = ref<WrongAnswer[]>(loadWrongAnswers())
 const wrongBookOpen = ref(false)
-const course = computed(() => courseContentMap.get(String(route.params.courseId)))
+const course = ref<Course | null>(null)
+const courseLoading = ref(false)
+const courseError = ref(false)
+let loadSequence = 0
 const cleanLabel = (label: string) => label.replace(/<[^>]+>/g, '').trim()
+
+async function loadCourse() {
+  const id = String(route.params.courseId)
+  const sequence = ++loadSequence
+  course.value = null
+  courseError.value = false
+  courseLoading.value = true
+  try {
+    const loaded = await loadCourseContent(id)
+    if (sequence !== loadSequence) return
+    course.value = loaded ?? null
+    if (!loaded) courseError.value = true
+  } catch {
+    if (sequence !== loadSequence) return
+    courseError.value = true
+  } finally {
+    if (sequence === loadSequence) courseLoading.value = false
+  }
+}
+
+watch(() => route.params.courseId, loadCourse, { immediate: true })
 
 watch(
   course,
@@ -440,6 +466,17 @@ function handleKeydown(event: KeyboardEvent) {
       </form>
     </div>
   </div>
+  <main v-else-if="courseLoading" id="main-content" class="empty-state">
+    <BookOpen :size="34" />
+    <p class="eyebrow">课程加载中</p>
+    <h1>正在准备学习资料…</h1>
+  </main>
+  <main v-else-if="courseError" id="main-content" class="empty-state">
+    <CircleAlert :size="34" />
+    <p class="eyebrow">课程加载失败</p>
+    <h1>请稍后重试</h1>
+    <button class="primary-button" type="button" @click="loadCourse">重新加载</button>
+  </main>
   <main v-else id="main-content" class="empty-state">
     <BookOpen :size="34" />
     <p class="eyebrow">课程未找到</p>

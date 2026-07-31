@@ -28,7 +28,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['vue', 'vue-router'],
+          vendor: ['vue', 'vue-router', 'pinia'],
+          'graph-vendor': ['three', '3d-force-graph'],
+          'markdown-vendor': ['marked', 'dompurify', 'katex'],
+          'docs-vendor': ['mammoth'],
         },
       },
     },

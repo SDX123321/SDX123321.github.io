@@ -1,25 +1,36 @@
 import DOMPurify from 'dompurify'
-import katex from 'katex'
 import { marked } from 'marked'
-import 'katex/dist/katex.min.css'
 
 marked.setOptions({
   breaks: true,
   gfm: true,
 })
 
-export function renderMarkdown(source: string, citationCount = 0): string {
+let katexPromise: Promise<typeof import('katex')> | null = null
+
+async function loadKatex() {
+  katexPromise ??= import('katex')
+  await import('katex/dist/katex.min.css')
+  return (await katexPromise).default
+}
+
+const MATH_PATTERN = /\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|\\\(.+?\\\)|(^|[^\\$])\$[^\n$]+?\$/
+
+export async function renderMarkdown(source: string, citationCount = 0): Promise<string> {
   if (!source) return ''
+  const katex = MATH_PATTERN.test(source) ? await loadKatex() : null
   const formulas: string[] = []
   const citations: string[] = []
   const stash = (formula: string, displayMode: boolean) => {
     const index = formulas.push(
-      katex.renderToString(formula.trim(), {
-        displayMode,
-        throwOnError: false,
-        strict: false,
-        trust: false,
-      }),
+      katex
+        ? katex.renderToString(formula.trim(), {
+            displayMode,
+            throwOnError: false,
+            strict: false,
+            trust: false,
+          })
+        : formula.trim(),
     )
     return `MATHPLACEHOLDER${index - 1}END`
   }
