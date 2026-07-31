@@ -102,23 +102,25 @@ function selectHighSchool() {
           </div>
         </div>
 
-        <div class="focus-panel" aria-label="学习概览">
-          <div class="focus-orbit orbit-one" />
-          <div class="focus-orbit orbit-two" />
-          <div class="focus-card focus-card-main">
-            <span class="focus-icon"><Target :size="22" /></span>
-            <p>今日建议</p>
-            <strong>25 分钟专注复习</strong>
-            <div class="focus-progress"><span /></div>
-            <small>从最近一次停下的位置继续</small>
+        <aside class="home-panel" aria-label="学习概览">
+          <div class="home-panel-head">
+            <span><Target :size="18" /></span>
+            <div>
+              <small>复习概览</small
+              ><strong>{{ recentCourse ? recentCourse.shortName : '准备开始' }}</strong>
+            </div>
           </div>
-          <div class="focus-card focus-card-float">
-            <TrendingUp :size="18" />
-            <span
-              ><strong>{{ courses.length }}</strong> 门课程</span
-            >
+          <div class="home-panel-metric">
+            <strong>{{ courses.length }}</strong
+            ><span>门课程</span>
           </div>
-        </div>
+          <div class="home-progress"><span /></div>
+          <div class="home-panel-foot">
+            <Clock3 v-if="recentCourse" :size="14" />
+            <span v-if="recentCourse">最近复习：{{ recentCourse.shortName }}</span>
+            <span v-else>从课程库选择第一门课</span>
+          </div>
+        </aside>
       </section>
 
       <section id="courses" class="course-section page-container" aria-labelledby="courses-title">
@@ -130,31 +132,26 @@ function selectHighSchool() {
           <p>{{ filteredCourses.length }} 门课程</p>
         </div>
 
-        <div v-if="filteredCourses.length" class="course-grid">
+        <div v-if="filteredCourses.length" class="course-list">
           <RouterLink
-            v-for="(course, index) in filteredCourses"
+            v-for="course in filteredCourses"
             :key="course.id"
-            class="course-card"
-            :class="{ 'course-card-featured': course.featured }"
+            class="course-row"
             :style="{
               '--course-accent': course.accent,
               '--course-soft': course.softAccent,
-              '--delay': `${index * 35}ms`,
             }"
             :to="`/courses/${course.id}`"
           >
-            <div class="course-card-top">
-              <span class="course-icon"><CourseIcon :name="course.icon" :size="23" /></span>
-              <ArrowRight class="course-arrow" :size="19" />
-            </div>
-            <div>
-              <p class="course-kicker">{{ course.shortName }}</p>
-              <h3>{{ course.name }}</h3>
-            </div>
-            <p>{{ course.description }}</p>
-            <ul class="tag-list" aria-label="课程特点">
-              <li v-for="tag in course.tags" :key="tag">{{ tag }}</li>
-            </ul>
+            <span class="course-row-icon"><CourseIcon :name="course.icon" :size="22" /></span>
+            <span class="course-row-main">
+              <strong>{{ course.name }}</strong>
+              <small>{{ course.description }}</small>
+            </span>
+            <span class="course-row-tags" aria-label="课程特点">
+              <i v-for="tag in course.tags" :key="tag">{{ tag }}</i>
+            </span>
+            <ArrowRight class="course-row-arrow" :size="17" />
           </RouterLink>
         </div>
         <div v-else class="no-results">

@@ -20,6 +20,9 @@ export default defineConfig({
     proxy: {
       '/api': 'http://127.0.0.1:8787',
     },
+    watch: {
+      ignored: ['**/target/**', '**/server-rs/target/**'],
+    },
   },
   publicDir: 'public',
   build: {
