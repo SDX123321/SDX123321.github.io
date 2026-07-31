@@ -8,12 +8,16 @@ use deadpool_redis::Pool as RedisPool;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sqlx::PgPool;
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc, time::Instant};
 use uuid::Uuid;
 
-use crate::high_school;
-
 pub(crate) const CACHE_SECONDS: u64 = 60;
+
+/// Sliding-window answer rate limiter state (per user recent timestamps).
+#[derive(Default)]
+pub(crate) struct AnswerRateState {
+    pub(crate) recent: HashMap<Uuid, Vec<Instant>>,
+}
 
 pub(crate) type SharedState = Arc<AppState>;
 
@@ -27,7 +31,7 @@ pub(crate) struct AppState {
     pub(crate) ollama_config: Arc<tokio::sync::RwLock<OllamaRuntimeConfig>>,
     pub(crate) ollama_config_write: tokio::sync::Mutex<()>,
     pub(crate) vector_enabled: bool,
-    pub(crate) answer_rate: std::sync::Mutex<high_school::AnswerRateState>,
+    pub(crate) answer_rate: std::sync::Mutex<AnswerRateState>,
     pub(crate) answer_slots: Arc<tokio::sync::Semaphore>,
     pub(crate) api_config_key: [u8; 32],
     pub(crate) question_assets: Arc<std::collections::HashMap<String, Value>>,

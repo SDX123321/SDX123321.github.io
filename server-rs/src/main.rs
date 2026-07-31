@@ -6,8 +6,8 @@ use axum::{
     routing::{delete, get, post},
     Json, Router,
 };
-use deadpool_redis::{Config as RedisConfig, Pool as RedisPool, Runtime};
-use serde::{de::DeserializeOwned, Serialize};
+use deadpool_redis::{Config as RedisConfig, Runtime};
+use serde::Serialize;
 use sha2::{Digest, Sha256};
 use sqlx::postgres::PgPoolOptions;
 use std::{env, net::SocketAddr, sync::Arc};
@@ -15,6 +15,7 @@ use tower_http::cors::{AllowOrigin, CorsLayer};
 
 mod admin;
 mod auth;
+mod cache;
 mod feishu;
 mod gaokao;
 mod high_school;
@@ -23,8 +24,9 @@ mod knowledge;
 mod learning;
 mod types;
 
-pub(crate) use types::*;
 pub(crate) use auth::*;
+pub(crate) use cache::*;
+pub(crate) use types::*;
 // Crate-wide re-exports so child modules (which use `use super::*`) can resolve
 // common external types without repeating imports in every file.
 pub(crate) use axum::extract::Query;
@@ -33,24 +35,6 @@ pub(crate) use chrono::{DateTime, Utc};
 pub(crate) use serde_json::{json, Value};
 pub(crate) use sqlx::{PgPool, Row};
 pub(crate) use uuid::Uuid;
-
-pub(crate) async fn cache_get<T: DeserializeOwned>(redis: &Option<RedisPool>, key: &str) -> Option<T> {
-    let pool = redis.as_ref()?;
-    let mut conn = pool.get().await.ok()?;
-    let raw: String = deadpool_redis::redis::AsyncCommands::get(&mut conn, key).await.ok()?;
-    serde_json::from_str(&raw).ok()
-}
-
-pub(crate) async fn cache_set<T: Serialize>(redis: &Option<RedisPool>, key: &str, value: &T) {
-    let Some(pool) = redis else { return };
-    let Ok(mut conn) = pool.get().await else {
-        return;
-    };
-    let Ok(raw) = serde_json::to_string(value) else {
-        return;
-    };
-    let _: Result<(), _> = deadpool_redis::redis::AsyncCommands::set_ex(&mut conn, key, raw, types::CACHE_SECONDS).await;
-}
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -131,12 +115,13 @@ async fn main() -> anyhow::Result<()> {
             embedding_model: env::var("EMBEDDING_MODEL").unwrap_or_else(|_| "bge-m3".into()),
             chat_model: env::var("CHAT_MODEL").unwrap_or_else(|_| "qwen3:4b".into()),
             embedding_dimensions,
-            rerank_url: env::var("RERANK_URL").unwrap_or_else(|_| "http://127.0.0.1:8080/v1/rerank".into()),
+            rerank_url: env::var("RERANK_URL")
+                .unwrap_or_else(|_| "http://127.0.0.1:8080/v1/rerank".into()),
             rerank_model: env::var("RERANK_MODEL").unwrap_or_else(|_| "Qwen3-Reranker-0.6B".into()),
         })),
         ollama_config_write: tokio::sync::Mutex::new(()),
         vector_enabled,
-        answer_rate: std::sync::Mutex::new(high_school::AnswerRateState::default()),
+        answer_rate: std::sync::Mutex::new(AnswerRateState::default()),
         answer_slots: Arc::new(tokio::sync::Semaphore::new(
             env::var("ANSWER_CONCURRENCY")
                 .ok()
@@ -333,7 +318,10 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/me/import-local", post(auth::import_local))
         .route("/api/study/event", post(auth::study_event))
         .route("/api/handshake", post(auth::api_handshake))
-        .layer(middleware::from_fn_with_state(state.clone(), auth::api_key_auth))
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
+            auth::api_key_auth,
+        ))
         .layer(cors)
         .with_state(state);
 

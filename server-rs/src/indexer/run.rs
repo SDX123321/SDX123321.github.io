@@ -1,427 +1,7 @@
-use std::path::{Path, PathBuf};
-use std::fs::File as StdFile;
-use std::io::{self, Read};
-use std::sync::OnceLock;
-use tokio::fs::{self, File};
-use tokio::io::AsyncReadExt;
-use sqlx::{PgPool, Row};
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
-use uuid::Uuid;
-use chrono::{DateTime, Utc};
-use regex::Regex;
+use super::*;
+use std::path::PathBuf;
+use tokio::fs;
 use walkdir::WalkDir;
-use zip::ZipArchive;
-use quick_xml::events::Event;
-use quick_xml::Reader as XmlReader;
-use lopdf::Document as PdfDocument;
-use sha2::{Digest, Sha256};
-use crate::SharedState;
-
-static REGEX_SUBJECTS: OnceLock<Vec<(&'static str, Regex)>> = OnceLock::new();
-static REGEX_YEAR: OnceLock<Regex> = OnceLock::new();
-static HTML_CLEANERS: OnceLock<(Regex, Regex, Regex)> = OnceLock::new();
-static RE_LINE_SPACES: OnceLock<Regex> = OnceLock::new();
-static RE_MULTIPLE_NEWLINES: OnceLock<Regex> = OnceLock::new();
-
-fn get_subjects_regex() -> &'static [(&'static str, Regex)] {
-    REGEX_SUBJECTS.get_or_init(|| {
-        let subjects = [
-            ("chinese", "语文"),
-            ("math", "数学"),
-            ("english", "英语|听力"),
-            ("physics", "物理"),
-            ("chemistry", "化学"),
-            ("biology", "生物"),
-            ("politics", "政治|思想政治"),
-            ("history", "历史"),
-            ("geography", "地理"),
-        ];
-        subjects.iter().map(|(k, p)| (*k, Regex::new(p).unwrap())).collect()
-    })
-}
-
-fn get_year_regex() -> &'static Regex {
-    REGEX_YEAR.get_or_init(|| Regex::new(r"20(1[7-9]|2[0-6])").unwrap())
-}
-
-#[derive(Clone)]
-pub(crate) struct IndexOptions {
-    pub(crate) domain: String,
-    pub(crate) root: PathBuf,
-    pub(crate) rebuild: bool,
-    pub(crate) missing_only: bool,
-    pub(crate) retry_failed: bool,
-    pub(crate) catalog_only: bool,
-    pub(crate) file: Option<PathBuf>,
-    pub(crate) course: Option<String>,
-    pub(crate) subject: Option<String>,
-    pub(crate) limit: Option<usize>,
-}
-
-struct IndexStats {
-    discovered: i32,
-    processed: i32,
-    deduplicated: i32,
-    extracted: i32,
-    embedded: i32,
-    failed: i32,
-}
-
-fn classify(relative_path: &str, ext: &str) -> (String, String, Option<i32>, String, String) {
-    let text = relative_path.replace('\\', "/");
-    
-    // Grade matching
-    let grade = if text.contains("高一") {
-        "grade-1"
-    } else if text.contains("高二") {
-        "grade-2"
-    } else if text.contains("高三") || text.contains("高考") {
-        "grade-3"
-    } else {
-        "other"
-    };
-
-    // Subject matching
-    let mut subject = "other";
-    for &(key, ref re) in get_subjects_regex() {
-        if re.is_match(&text) {
-            subject = key;
-            break;
-        }
-    }
-
-    // Year detection
-    let year_re = get_year_regex();
-    let base_name = Path::new(&text).file_name().and_then(|n| n.to_str()).unwrap_or("");
-    let mut year = None;
-    if let Some(m) = year_re.find_iter(base_name).map(|m| m.as_str().parse::<i32>().unwrap_or(0)).max() {
-        if m > 0 {
-            year = Some(m);
-        }
-    }
-    if year.is_none() {
-        let segments: Vec<&str> = text.split('/').collect();
-        if segments.len() > 1 {
-            for segment in segments.iter().rev().skip(1) {
-                if let Some(m) = year_re.find_iter(segment).map(|m| m.as_str().parse::<i32>().unwrap_or(0)).max() {
-                    if m > 0 {
-                        year = Some(m);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    // Region matching
-    let regions = [
-        "南京", "苏州", "无锡", "常州", "南通", "扬州", "镇江", "泰州", "盐城", "淮安",
-        "宿迁", "徐州", "连云港", "江苏", "北京", "上海", "天津", "重庆", "浙江", "山东",
-        "广东", "福建", "安徽", "湖北", "湖南", "河北", "河南", "四川", "陕西", "山西",
-        "江西", "辽宁", "吉林", "黑龙江", "广西", "贵州", "云南", "甘肃", "青海", "宁夏",
-        "新疆", "西藏", "海南", "内蒙古",
-    ];
-    let mut region = "other";
-    for r in regions {
-        if text.contains(r) {
-            region = r;
-            break;
-        }
-    }
-    if region == "other" && text.contains("全国") {
-        region = "全国";
-    }
-
-    // Kind matching
-    let mut kind = "other";
-    if text.contains("答案") || text.contains("解析") || text.contains("详解") {
-        kind = "answer";
-    } else if text.contains("答题卡") || text.contains("答卷纸") {
-        kind = "answer-sheet";
-    } else if text.contains("听力") || ext == ".mp3" || ext == ".wav" {
-        kind = "audio";
-    } else if text.contains("试卷") || text.contains("试题") || text.contains("真题") ||
-              text.contains("模拟") || text.contains("联考") || text.contains("月考") ||
-              text.contains("期中") || text.contains("期末") || text.contains("高考") {
-        kind = "paper";
-    } else if ext == ".jpg" || ext == ".jpeg" || ext == ".png" {
-        kind = "image";
-    } else if ext == ".zip" {
-        kind = "archive";
-    }
-
-    (grade.to_string(), subject.to_string(), year, region.to_string(), kind.to_string())
-}
-
-fn mime_for(ext: &str) -> &'static str {
-    match ext {
-        ".doc" => "application/msword",
-        ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        ".pdf" => "application/pdf",
-        ".mp3" => "audio/mpeg",
-        ".wav" => "audio/wav",
-        ".jpg" | ".jpeg" => "image/jpeg",
-        ".png" => "image/png",
-        ".zip" => "application/zip",
-        ".html" => "text/html",
-        _ => "application/octet-stream",
-    }
-}
-
-async fn compute_sha256(path: &Path) -> io::Result<String> {
-    let mut file = File::open(path).await?;
-    let mut hasher = Sha256::new();
-    let mut buffer = [0; 8192];
-    loop {
-        let n = file.read(&mut buffer).await?;
-        if n == 0 {
-            break;
-        }
-        hasher.update(&buffer[..n]);
-    }
-    Ok(hex::encode(hasher.finalize()))
-}
-
-fn compact(text: &str) -> String {
-    let mut result = text.replace('\0', "");
-    result = result.replace("\r\n", "\n");
-    
-    let re_line_spaces = RE_LINE_SPACES.get_or_init(|| Regex::new(r"[ \t]+\n").unwrap());
-    let result = re_line_spaces.replace_all(&result, "\n").into_owned();
-
-    let re_multiple_newlines = RE_MULTIPLE_NEWLINES.get_or_init(|| Regex::new(r"\n{3,}").unwrap());
-    let result = re_multiple_newlines.replace_all(&result, "\n\n").into_owned();
-
-    result.trim().to_string()
-}
-
-pub(crate) fn chunks(text: &str, size: usize, overlap: usize) -> Vec<String> {
-    let chars: Vec<char> = text.chars().collect();
-    let mut out = Vec::new();
-    let mut start = 0;
-    while start < chars.len() {
-        let end = (start + size).min(chars.len());
-        let slice: String = chars[start..end].iter().collect();
-        let value = compact(&slice);
-        if !value.is_empty() {
-            out.push(value);
-        }
-        if start + size >= chars.len() {
-            break;
-        }
-        start += size - overlap;
-    }
-    out
-}
-
-fn clean_html(html: &str) -> String {
-    let (re_script, re_style, re_tags) = HTML_CLEANERS.get_or_init(|| {
-        (
-            Regex::new(r"(?i)<script[\s\S]*?</script>").unwrap(),
-            Regex::new(r"(?i)<style[\s\S]*?</style>").unwrap(),
-            Regex::new(r"<[^>]+>").unwrap(),
-        )
-    });
-
-    let s1 = re_script.replace_all(html, " ");
-    let s2 = re_style.replace_all(&s1, " ");
-    let s3 = re_tags.replace_all(&s2, " ");
-    s3.replace("&nbsp;", " ").replace("&amp;", "&")
-}
-
-fn extract_docx(file_path: &Path) -> anyhow::Result<String> {
-    let file = StdFile::open(file_path)?;
-    let mut archive = ZipArchive::new(file)?;
-    let mut doc_file = archive.by_name("word/document.xml")?;
-    let mut xml_data = String::new();
-    doc_file.read_to_string(&mut xml_data)?;
-
-    let mut reader = XmlReader::from_str(&xml_data);
-    reader.config_mut().trim_text(true);
-    let mut txt = String::new();
-    let mut buf = Vec::new();
-    let mut inside_t = false;
-    let mut math_depth: i32 = 0;
-    let mut last_was_math = false;
-
-    loop {
-        match reader.read_event_into(&mut buf) {
-            Ok(Event::Start(ref e)) => {
-                let name = e.local_name();
-                if name.as_ref() == b"t" {
-                    inside_t = true;
-                } else if name.as_ref() == b"oMath" || name.as_ref() == b"oMathPara" {
-                    math_depth += 1;
-                    if !last_was_math {
-                        txt.push_str("[公式]");
-                        last_was_math = true;
-                    }
-                }
-            }
-            Ok(Event::End(ref e)) => {
-                let name = e.local_name();
-                if name.as_ref() == b"t" {
-                    inside_t = false;
-                } else if name.as_ref() == b"oMath" || name.as_ref() == b"oMathPara" {
-                    math_depth = math_depth.saturating_sub(1);
-                } else if name.as_ref() == b"p" {
-                    txt.push('\n');
-                    last_was_math = false;
-                }
-            }
-            Ok(Event::Empty(ref e)) => {
-                let name = e.local_name();
-                if name.as_ref() == b"tab" {
-                    txt.push('\t');
-                    last_was_math = false;
-                } else if name.as_ref() == b"br" {
-                    txt.push('\n');
-                    last_was_math = false;
-                } else if name.as_ref() == b"p" {
-                    txt.push('\n');
-                    last_was_math = false;
-                }
-            }
-            Ok(Event::Text(ref e)) => {
-                if inside_t {
-                    if let Ok(val) = e.unescape() {
-                        txt.push_str(&val);
-                        last_was_math = false;
-                    }
-                }
-            }
-            Ok(Event::Eof) => break,
-            Err(_) => break,
-            _ => {}
-        }
-        buf.clear();
-    }
-    
-    Ok(txt)
-}
-
-async fn extract_doc(file_path: &Path, cache_root: &Path) -> anyhow::Result<String> {
-    let upload_id = Uuid::new_v4();
-    let temp_dir = cache_root.join(format!("doc-{}", upload_id));
-    let profile_dir = cache_root.join(format!("lo-profile-{}", upload_id));
-    fs::create_dir_all(&temp_dir).await?;
-    fs::create_dir_all(&profile_dir).await?;
-
-    let soffice_path = std::env::var("LIBREOFFICE_PATH").unwrap_or_else(|_| "soffice".to_string());
-    let timeout_ms = std::env::var("LIBREOFFICE_TIMEOUT_MS")
-        .ok()
-        .and_then(|v| v.parse::<u64>().ok())
-        .unwrap_or(30_000);
-
-    let profile_url = format!("file:///{}", profile_dir.to_string_lossy().replace('\\', "/"));
-
-    let mut cmd = tokio::process::Command::new(&soffice_path);
-    cmd.arg(format!("-env:UserInstallation={}", profile_url))
-        .arg("--headless")
-        .arg("--convert-to")
-        .arg("docx")
-        .arg("--outdir")
-        .arg(&temp_dir)
-        .arg(file_path);
-
-    let child = cmd.spawn()?;
-    
-    let result = tokio::time::timeout(
-        std::time::Duration::from_millis(timeout_ms),
-        child.wait_with_output(),
-    )
-    .await;
-
-    let output_docx = match result {
-        Ok(Ok(out)) if out.status.success() => {
-            let stem = file_path.file_stem().and_then(|s| s.to_str()).unwrap_or("document");
-            Some(temp_dir.join(format!("{}.docx", stem)))
-        }
-        _ => None,
-    };
-
-    let text = if let Some(path) = output_docx {
-        if path.exists() {
-            extract_docx(&path).unwrap_or_default()
-        } else {
-            String::new()
-        }
-    } else {
-        String::new()
-    };
-
-    let _ = fs::remove_dir_all(&temp_dir).await;
-    let _ = fs::remove_dir_all(&profile_dir).await;
-
-    Ok(text)
-}
-
-fn extract_pdf(file_path: &Path) -> anyhow::Result<String> {
-    let doc = PdfDocument::load(file_path)?;
-    let mut text = String::new();
-    let pages = doc.get_pages();
-    for page_num in pages.keys() {
-        if let Ok(page_text) = doc.extract_text(&[*page_num]) {
-            text.push_str(&page_text);
-            text.push('\n');
-        }
-    }
-    Ok(text)
-}
-
-async fn extract_text(file_path: &Path, ext: &str, cache_root: &Path) -> anyhow::Result<String> {
-    if ext == ".html" {
-        let html = fs::read_to_string(file_path).await?;
-        return Ok(compact(&clean_html(&html)));
-    }
-    if ext == ".docx" {
-        return Ok(compact(&extract_docx(file_path)?));
-    }
-    if ext == ".doc" {
-        return extract_doc(file_path, cache_root).await;
-    }
-    if ext == ".pdf" {
-        return Ok(compact(&extract_pdf(file_path)?));
-    }
-    Ok(String::new())
-}
-
-pub(crate) async fn get_ollama_embeddings(
-    http: &reqwest::Client,
-    base_url: &str,
-    model: &str,
-    inputs: Vec<String>,
-) -> anyhow::Result<Vec<Vec<f32>>> {
-    if inputs.is_empty() {
-        return Ok(Vec::new());
-    }
-    let url = format!("{}/api/embed", base_url.trim_end_matches('/'));
-    
-    #[derive(Serialize)]
-    struct EmbedRequest<'a> {
-        model: &'a str,
-        input: Vec<String>,
-    }
-    #[derive(Deserialize)]
-    struct EmbedResponse {
-        embeddings: Vec<Vec<f32>>,
-    }
-    
-    let response = http
-        .post(&url)
-        .json(&EmbedRequest { model, input: inputs })
-        .send()
-        .await?;
-    let status = response.status();
-    if !status.is_success() {
-        let err_text = response.text().await.unwrap_or_default();
-        return Err(anyhow::anyhow!("Ollama embedding failed with status {}: {}", status, err_text));
-    }
-    
-    let data = response.json::<EmbedResponse>().await?;
-    Ok(data.embeddings)
-}
 
 async fn update_run_stats(
     pool: &PgPool,
@@ -458,104 +38,6 @@ async fn check_run_status(pool: &PgPool, run_id: Uuid) -> anyhow::Result<String>
 
 // WIP: wired up by the Feishu sync flow (see feishu.rs run_sync TODO); not yet called.
 #[allow(dead_code)]
-pub(crate) async fn chunk_and_embed_text(
-    pool: &PgPool,
-    http: &reqwest::Client,
-    ollama: &crate::OllamaRuntimeConfig,
-    material_id: Uuid,
-    relative_path: &str,
-    text: &str,
-    target_generation: Option<Uuid>,
-) -> anyhow::Result<()> {
-    if text.len() < 20 {
-        sqlx::query(
-            "UPDATE materials SET rag_status='no_text',text_length=$2,metadata=metadata-'extractionError'-'embeddingError',updated_at=now() WHERE id=$1"
-        )
-        .bind(material_id)
-        .bind(text.len() as i32)
-        .execute(pool)
-        .await?;
-        return Ok(());
-    }
-
-    let parts = chunks(text, 1000, 150);
-    sqlx::query("DELETE FROM material_chunks WHERE material_id=$1")
-        .bind(material_id)
-        .execute(pool)
-        .await?;
-
-    for (index, chunk) in parts.iter().enumerate() {
-        let mut chunk_hasher = Sha256::new();
-        chunk_hasher.update(chunk.as_bytes());
-        let chunk_hash = hex::encode(chunk_hasher.finalize());
-
-        sqlx::query(
-            r#"INSERT INTO material_chunks(material_id,chunk_index,chunk_text,content_hash,token_estimate,metadata)
-            VALUES($1,$2,$3,$4,$5,$6)"#
-        )
-        .bind(material_id)
-        .bind(index as i32)
-        .bind(chunk)
-        .bind(&chunk_hash)
-        .bind((chunk.len() as f64 / 1.7).ceil() as i32)
-        .bind(json!({ "relativePath": relative_path }))
-        .execute(pool)
-        .await?;
-    }
-
-    let pending_rows = sqlx::query(
-        "SELECT id,chunk_text FROM material_chunks WHERE material_id=$1 AND embedding IS NULL ORDER BY chunk_index"
-    )
-    .bind(material_id)
-    .fetch_all(pool)
-    .await?;
-
-    if !pending_rows.is_empty() {
-        for chunk_batch in pending_rows.chunks(16) {
-            let batch_texts: Vec<String> = chunk_batch.iter().map(|r| r.get::<String, _>("chunk_text")).collect();
-            let vectors = get_ollama_embeddings(http, &ollama.base_url, &ollama.embedding_model, batch_texts).await?;
-            let chunk_ids: Vec<Uuid> = chunk_batch.iter().map(|row| row.get("id")).collect();
-            let vec_strs: Vec<String> = vectors
-                .iter()
-                .map(|v| format!("[{}]", v.iter().map(|n| n.to_string()).collect::<Vec<String>>().join(",")))
-                .collect();
-
-            sqlx::query(
-                r#"UPDATE material_chunks c SET embedding = v.vec
-                   FROM (SELECT UNNEST($1::uuid[]) AS id, UNNEST($2::text[])::vector AS vec) v
-                   WHERE c.id = v.id"#,
-            )
-            .bind(&chunk_ids)
-            .bind(&vec_strs)
-            .execute(pool)
-            .await?;
-
-            if let Some(gen_id) = target_generation {
-                sqlx::query(
-                    r#"INSERT INTO material_chunk_embeddings(generation_id,chunk_id,embedding)
-                       SELECT $1, UNNEST($2::uuid[]), UNNEST($3::text[])::vector
-                       ON CONFLICT(generation_id,chunk_id) DO UPDATE SET embedding=EXCLUDED.embedding"#,
-                )
-                .bind(gen_id)
-                .bind(&chunk_ids)
-                .bind(&vec_strs)
-                .execute(pool)
-                .await?;
-            }
-        }
-    }
-
-    sqlx::query(
-        "UPDATE materials SET rag_status='indexed',text_length=$2,metadata=metadata-'embeddingError'-'extractionError',updated_at=now() WHERE id=$1"
-    )
-    .bind(material_id)
-    .bind(text.len() as i32)
-    .execute(pool)
-    .await?;
-
-    Ok(())
-}
-
 async fn handle_pause_cancel(pool: &PgPool, run_id: Uuid) -> anyhow::Result<bool> {
     loop {
         let status = check_run_status(pool, run_id).await?;
@@ -597,7 +79,7 @@ async fn rebuild_generation(
     .bind(total as i32)
     .fetch_one(pool)
     .await?;
-    
+
     let generation_id: Uuid = row.try_get("id")?;
 
     sqlx::query(
@@ -635,8 +117,14 @@ async fn rebuild_generation(
             break;
         }
 
-        let chunk_texts: Vec<String> = rows.iter().map(|r| r.get::<String, _>("chunk_text")).collect();
-        let file_name = rows.last().map(|r| r.get::<String, _>("file_name")).unwrap_or_default();
+        let chunk_texts: Vec<String> = rows
+            .iter()
+            .map(|r| r.get::<String, _>("chunk_text"))
+            .collect();
+        let file_name = rows
+            .last()
+            .map(|r| r.get::<String, _>("file_name"))
+            .unwrap_or_default();
 
         match get_ollama_embeddings(http_client, ollama_base, ollama_model, chunk_texts).await {
             Ok(vectors) => {
@@ -644,7 +132,15 @@ async fn rebuild_generation(
                 let chunk_ids: Vec<Uuid> = rows.iter().map(|row| row.get("id")).collect();
                 let vec_strs: Vec<String> = vectors
                     .iter()
-                    .map(|v| format!("[{}]", v.iter().map(|n| n.to_string()).collect::<Vec<String>>().join(",")))
+                    .map(|v| {
+                        format!(
+                            "[{}]",
+                            v.iter()
+                                .map(|n| n.to_string())
+                                .collect::<Vec<String>>()
+                                .join(",")
+                        )
+                    })
                     .collect();
                 sqlx::query(
                     r#"INSERT INTO material_chunk_embeddings(generation_id,chunk_id,embedding)
@@ -673,11 +169,17 @@ async fn rebuild_generation(
                     .execute(pool)
                     .await?;
                 }
-                sqlx::query("UPDATE embedding_generations SET error=$2,updated_at=now() WHERE id=$1")
-                    .bind(generation_id)
-                    .bind(format!("Error: {}", e).get(0..1000).unwrap_or(&format!("Error: {}", e)))
-                    .execute(pool)
-                    .await?;
+                sqlx::query(
+                    "UPDATE embedding_generations SET error=$2,updated_at=now() WHERE id=$1",
+                )
+                .bind(generation_id)
+                .bind(
+                    format!("Error: {}", e)
+                        .get(0..1000)
+                        .unwrap_or(&format!("Error: {}", e)),
+                )
+                .execute(pool)
+                .await?;
 
                 if total > 0 && (failed as f64 / total as f64) > 0.005 {
                     return Err(e);
@@ -688,7 +190,11 @@ async fn rebuild_generation(
         let processed = embedded + failed;
         let elapsed_secs = started.elapsed().as_secs().max(1);
         let rate = embedded as f64 / elapsed_secs as f64;
-        let eta_secs = if rate > 0.0 { Some(((total as i32 - processed) as f64 / rate).ceil() as i32) } else { None };
+        let eta_secs = if rate > 0.0 {
+            Some(((total as i32 - processed) as f64 / rate).ceil() as i32)
+        } else {
+            None
+        };
 
         sqlx::query("UPDATE embedding_generations SET embedded_chunks=$2,failed_chunks=$3,updated_at=now() WHERE id=$1")
             .bind(generation_id)
@@ -717,9 +223,16 @@ async fn rebuild_generation(
         .await?;
     }
 
-    let coverage = if total > 0 { embedded as f64 / total as f64 } else { 1.0 };
+    let coverage = if total > 0 {
+        embedded as f64 / total as f64
+    } else {
+        1.0
+    };
     if coverage < 0.995 {
-        return Err(anyhow::anyhow!("Embedding coverage {}% is below 99.5%", coverage * 100.0));
+        return Err(anyhow::anyhow!(
+            "Embedding coverage {}% is below 99.5%",
+            coverage * 100.0
+        ));
     }
 
     let mut tx = pool.begin().await?;
@@ -747,12 +260,18 @@ async fn rebuild_generation(
     .bind(json!({ "phase": "completed", "model": ollama_model, "dimensions": ollama_dimensions, "domain": options.domain, "coverage": coverage }))
     .execute(&mut *tx)
     .await?;
-    
+
     tx.commit().await?;
     Ok(())
 }
 
-fn needs_text_extraction(ext: &str, catalog_only: bool, unchanged: bool, retry_failed: bool, status: &str) -> bool {
+fn needs_text_extraction(
+    ext: &str,
+    catalog_only: bool,
+    unchanged: bool,
+    retry_failed: bool,
+    status: &str,
+) -> bool {
     let text_extensions = [".doc", ".docx", ".pdf", ".html"];
     let is_text = text_extensions.contains(&ext);
     let settled = ["indexed", "text_ready", "no_text"].contains(&status);
@@ -774,7 +293,9 @@ pub(crate) async fn run(
     } else if let Some(ref req_file) = requested_file {
         files.push(req_file.clone());
     } else {
-        let supported_exts = [".doc", ".docx", ".pdf", ".mp3", ".wav", ".jpg", ".jpeg", ".png", ".zip", ".html"];
+        let supported_exts = [
+            ".doc", ".docx", ".pdf", ".mp3", ".wav", ".jpg", ".jpeg", ".png", ".zip", ".html",
+        ];
         for entry in WalkDir::new(root).into_iter().filter_map(|e| e.ok()) {
             if entry.file_type().is_file() {
                 let path = entry.path();
@@ -804,10 +325,14 @@ pub(crate) async fn run(
         }
     }
 
-    let domain_name = if options.domain == "university" { "大学" } else { "高中" };
+    let domain_name = if options.domain == "university" {
+        "大学"
+    } else {
+        "高中"
+    };
     let domain_row = sqlx::query(
         r#"INSERT INTO content_domains(domain_key,name,description) VALUES($1,$2,$3)
-        ON CONFLICT(domain_key) DO UPDATE SET name=EXCLUDED.name RETURNING id"#
+        ON CONFLICT(domain_key) DO UPDATE SET name=EXCLUDED.name RETURNING id"#,
     )
     .bind(&options.domain)
     .bind(domain_name)
@@ -820,7 +345,7 @@ pub(crate) async fn run(
     let subject_id: Option<Uuid> = if let Some(ref subject_key) = options.subject {
         let row = sqlx::query(
             r#"INSERT INTO knowledge_subjects(domain_id,subject_key,name) VALUES($1,$2,$2)
-            ON CONFLICT(domain_id,subject_key) DO UPDATE SET name=EXCLUDED.name RETURNING id"#
+            ON CONFLICT(domain_id,subject_key) DO UPDATE SET name=EXCLUDED.name RETURNING id"#,
         )
         .bind(domain_id)
         .bind(subject_key)
@@ -862,7 +387,7 @@ pub(crate) async fn run(
         SET status='interrupted',finished_at=now(),updated_at=now(),
             summary=summary||jsonb_build_object('reason','stale heartbeat recovered')
         WHERE status IN ('queued','running')
-          AND updated_at < now() - ($1::int * interval '1 minute')"#
+          AND updated_at < now() - ($1::int * interval '1 minute')"#,
     )
     .bind(stale_minutes)
     .execute(pool)
@@ -906,10 +431,14 @@ pub(crate) async fn run(
             ollama.embedding_dimensions,
             &state.http,
         )
-        .await {
+        .await
+        {
             Ok(_) => return Ok(()),
             Err(e) => {
-                let err_str = format!("Error: {}", e).get(0..1000).unwrap_or(&format!("Error: {}", e)).to_string();
+                let err_str = format!("Error: {}", e)
+                    .get(0..1000)
+                    .unwrap_or(&format!("Error: {}", e))
+                    .to_string();
                 sqlx::query("UPDATE embedding_generations SET status='failed',error=$2,updated_at=now() WHERE id=(SELECT generation_id FROM material_index_runs WHERE id=$1)")
                     .bind(run_id)
                     .bind(&err_str)
@@ -941,7 +470,14 @@ pub(crate) async fn run(
         }
 
         if handle_pause_cancel(pool, run_id).await? {
-            update_run_stats(pool, run_id, &stats, "cancelled", json!({ "reason": "cancelled by user" })).await?;
+            update_run_stats(
+                pool,
+                run_id,
+                &stats,
+                "cancelled",
+                json!({ "reason": "cancelled by user" }),
+            )
+            .await?;
             return Ok(());
         }
 
@@ -949,14 +485,19 @@ pub(crate) async fn run(
         let size_bytes = metadata.len() as i64;
         let modified_at: DateTime<Utc> = DateTime::from(metadata.modified()?);
 
-        let source_relative_path = file_path.strip_prefix(root)?
+        let source_relative_path = file_path
+            .strip_prefix(root)?
             .to_string_lossy()
             .replace('\\', "/");
 
         let relative_path = format!("{}/{}", options.domain, source_relative_path);
         let storage_path = source_relative_path.clone();
 
-        let ext = file_path.extension().and_then(|s| s.to_str()).unwrap_or("").to_ascii_lowercase();
+        let ext = file_path
+            .extension()
+            .and_then(|s| s.to_str())
+            .unwrap_or("")
+            .to_ascii_lowercase();
         let ext_dot = format!(".{}", ext);
 
         let row_opt = sqlx::query(
@@ -986,10 +527,17 @@ pub(crate) async fn run(
         if options.missing_only && row_opt.is_some() && previous_has_chunks {
             stats.processed += 1;
             if stats.processed % 100 == 0 {
-                update_run_stats(pool, run_id, &stats, "running", json!({
-                    "phase": "discovering-missing",
-                    "currentFile": file_path.file_name().and_then(|s| s.to_str()).unwrap_or("")
-                })).await?;
+                update_run_stats(
+                    pool,
+                    run_id,
+                    &stats,
+                    "running",
+                    json!({
+                        "phase": "discovering-missing",
+                        "currentFile": file_path.file_name().and_then(|s| s.to_str()).unwrap_or("")
+                    }),
+                )
+                .await?;
             }
             continue;
         }
@@ -1015,7 +563,7 @@ pub(crate) async fn run(
             .bind(&hash)
             .fetch_optional(pool)
             .await?;
-        
+
         if has_hash_row.is_some() {
             stats.deduplicated += 1;
         }
@@ -1162,13 +710,32 @@ pub(crate) async fn run(
             if !pending_rows.is_empty() {
                 let mut embedding_error = None;
                 for chunk_batch in pending_rows.chunks(16) {
-                    let batch_texts: Vec<String> = chunk_batch.iter().map(|r| r.get::<String, _>("chunk_text")).collect();
-                    match get_ollama_embeddings(&state.http, &ollama.base_url, &ollama.embedding_model, batch_texts).await {
+                    let batch_texts: Vec<String> = chunk_batch
+                        .iter()
+                        .map(|r| r.get::<String, _>("chunk_text"))
+                        .collect();
+                    match get_ollama_embeddings(
+                        &state.http,
+                        &ollama.base_url,
+                        &ollama.embedding_model,
+                        batch_texts,
+                    )
+                    .await
+                    {
                         Ok(vectors) => {
-                            let chunk_ids: Vec<Uuid> = chunk_batch.iter().map(|row| row.get("id")).collect();
+                            let chunk_ids: Vec<Uuid> =
+                                chunk_batch.iter().map(|row| row.get("id")).collect();
                             let vec_strs: Vec<String> = vectors
                                 .iter()
-                                .map(|v| format!("[{}]", v.iter().map(|n| n.to_string()).collect::<Vec<String>>().join(",")))
+                                .map(|v| {
+                                    format!(
+                                        "[{}]",
+                                        v.iter()
+                                            .map(|n| n.to_string())
+                                            .collect::<Vec<String>>()
+                                            .join(",")
+                                    )
+                                })
                                 .collect();
 
                             sqlx::query(
@@ -1234,12 +801,19 @@ pub(crate) async fn run(
         }
 
         stats.processed += 1;
-        update_run_stats(pool, run_id, &stats, "running", json!({
-            "phase": "embedding",
-            "rebuild": options.rebuild,
-            "currentFile": file_path.file_name().and_then(|s| s.to_str()).unwrap_or("")
-        })).await?;
-        
+        update_run_stats(
+            pool,
+            run_id,
+            &stats,
+            "running",
+            json!({
+                "phase": "embedding",
+                "rebuild": options.rebuild,
+                "currentFile": file_path.file_name().and_then(|s| s.to_str()).unwrap_or("")
+            }),
+        )
+        .await?;
+
         heartbeat_at = std::time::Instant::now();
     }
 
@@ -1259,50 +833,19 @@ pub(crate) async fn run(
         .await?;
     }
 
-    update_run_stats(pool, run_id, &stats, "completed", json!({
-        "extensions": ext_counts,
-        "vectorEnabled": vector_enabled,
-        "rebuild": options.rebuild,
-        "phase": "completed"
-    })).await?;
+    update_run_stats(
+        pool,
+        run_id,
+        &stats,
+        "completed",
+        json!({
+            "extensions": ext_counts,
+            "vectorEnabled": vector_enabled,
+            "rebuild": options.rebuild,
+            "phase": "completed"
+        }),
+    )
+    .await?;
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_classify() {
-        let (grade, subject, year, region, kind) = classify("高一数学试卷.docx", ".docx");
-        assert_eq!(grade, "grade-1");
-        assert_eq!(subject, "math");
-        assert_eq!(year, None);
-        assert_eq!(region, "other");
-        assert_eq!(kind, "paper");
-
-        let (grade, subject, year, region, kind) = classify("高三物理/2025南京一模物理试卷解析.pdf", ".pdf");
-        assert_eq!(grade, "grade-3");
-        assert_eq!(subject, "physics");
-        assert_eq!(year, Some(2025));
-        assert_eq!(region, "南京");
-        assert_eq!(kind, "answer");
-    }
-
-    #[test]
-    fn test_compact() {
-        let text = " Hello  \t\n\n\nWorld! \n\n  ";
-        assert_eq!(compact(text), "Hello\n\nWorld!");
-    }
-
-    #[test]
-    fn test_chunks() {
-        let text = "abcdefghij";
-        let c = chunks(text, 5, 2);
-        assert_eq!(c.len(), 3);
-        assert_eq!(c[0], "abcde");
-        assert_eq!(c[1], "defgh");
-        assert_eq!(c[2], "ghij");
-    }
 }
