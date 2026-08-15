@@ -31,6 +31,9 @@ jobs:
 
       - run: npm run build
 
+      # sourcemap 已由 Sentry 插件在构建期上传，Pages 产物不再保留 .map（省约 11MB）
+      - run: find dist -name '*.map' -delete
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

@@ -33,7 +33,7 @@ pnpm-debug.log*
 .vscode/
 .idea/
 *.code-workspace
-
+*.agent/
 # OS files
 .DS_Store
 Thumbs.db

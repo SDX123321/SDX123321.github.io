@@ -17,6 +17,8 @@ import {
 } from 'lucide-vue-next'
 import { useAuth } from '../composables/useAuth'
 import HighSchoolOnboarding from './HighSchoolOnboarding.vue'
+// 高中版样式只在进入 /high-school 路由时加载，不再随首页首屏打包
+import '../styles/high-school.css'
 
 const auth = useAuth()
 const menuOpen = ref(false)

@@ -35,6 +35,10 @@ jobs:
       - name: Build
         run: npm run build
 
+      # sourcemap 已由 Sentry 插件在构建期上传，部署产物不再保留 .map（省约 11MB）
+      - name: Strip source maps from deploy payload
+        run: find dist -name '*.map' -delete
+
       # SSH 密钥设置 — 写入前先确保换行符正确
       - name: Setup SSH key
         env:

@@ -27,7 +27,9 @@ export default defineConfig({
   publicDir: 'public',
   build: {
     outDir: 'dist',
-    sourcemap: true, // 启用 Sourcemap 以便 Sentry 解析错误堆栈
+    // 'hidden'：仍然生成并上传 sourcemap 给 Sentry 解析错误堆栈，
+    // 但 JS 里不带 sourceMappingURL 注释，浏览器不会去下载（部署产物省约 11MB）。
+    sourcemap: 'hidden',
     rollupOptions: {
       output: {
         manualChunks: {

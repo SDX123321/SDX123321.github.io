@@ -46,24 +46,44 @@ onMounted(() => {
   const canvas = canvasRef.value!
   const ctx = canvas.getContext('2d')!
 
+  // 尊重系统减少动效偏好：直接不启动
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  const DPR = Math.min(window.devicePixelRatio || 1, 2)
+
   function resize() {
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+    canvas.width = Math.round(window.innerWidth * DPR)
+    canvas.height = Math.round(window.innerHeight * DPR)
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0)
   }
   resize()
   window.addEventListener('resize', resize)
 
+  let hidden = false
+  function onVisibility() {
+    hidden = document.hidden
+    if (hidden) {
+      cancelAnimationFrame(raf)
+      raf = 0
+    } else if (particles.length) {
+      // 切回前台时若还有粒子，恢复绘制
+      raf = requestAnimationFrame(draw)
+    }
+  }
+  document.addEventListener('visibilitychange', onVisibility)
+
   function onClick(e: MouseEvent) {
-    if (!(e.target as HTMLElement).closest('.card')) return
+    if (hidden || !(e.target as HTMLElement).closest('.card')) return
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       particles.push(createParticle(e.clientX, e.clientY))
     }
+    if (!raf) raf = requestAnimationFrame(draw)
   }
   document.addEventListener('click', onClick)
 
   function draw() {
     raf = requestAnimationFrame(draw)
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
     for (let i = particles.length - 1; i >= 0; i--) {
       const p = particles[i]
       p.life++
@@ -91,12 +111,19 @@ onMounted(() => {
       ctx.fill()
       ctx.globalAlpha = 1
     }
+    // 粒子全部消失后停掉 rAF，避免后台空转耗电
+    if (!particles.length) {
+      cancelAnimationFrame(raf)
+      raf = 0
+    }
   }
   raf = requestAnimationFrame(draw)
 
   onUnmounted(() => {
     cancelAnimationFrame(raf)
+    raf = 0
     document.removeEventListener('click', onClick)
+    document.removeEventListener('visibilitychange', onVisibility)
     window.removeEventListener('resize', resize)
   })
 })

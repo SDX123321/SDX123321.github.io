@@ -19,6 +19,14 @@ import AlgorithmTrainer from '../features/algorithm/AlgorithmTrainer.vue'
 import { loadCourseContent } from '../data/course-content'
 import type { NavLink } from '../types/course'
 import type { Course } from '../types/course'
+// 课程内容样式：只在课程路由加载，不再随全站首屏打包
+import '../styles/courses/probability.css'
+import '../styles/courses/os.css'
+import '../styles/courses/algorithm.css'
+import '../styles/courses/dsp.css'
+import '../styles/courses/marxism.css'
+import '../styles/courses/calculus.css'
+import '../styles/courses/signals.css'
 
 const route = useRoute()
 const router = useRouter()
@@ -26,8 +34,12 @@ const contentElement = ref<HTMLElement | null>(null)
 const sidebarOpen = ref(false)
 const searchOpen = ref(false)
 const searchQuery = ref('')
-const progress = ref(0)
+const showBackTop = ref(false)
 const activeSection = ref('')
+const progressBarRef = ref<HTMLElement | null>(null)
+const progressTextRef = ref<HTMLElement | null>(null)
+let progressRAF = 0
+let scrollSpy: IntersectionObserver | null = null
 interface WrongAnswer {
   page: string
   question: string
@@ -72,6 +84,8 @@ watch(
     localStorage.setItem('review_recent_course', next.id)
     await nextTick()
     enhanceContent()
+    setupScrollSpy()
+    updateProgress()
   },
   { immediate: true },
 )
@@ -85,14 +99,43 @@ function scrollToSection(link: NavLink) {
 }
 
 function updateProgress() {
-  const max = document.documentElement.scrollHeight - window.innerHeight
-  progress.value = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0
-  const headings = contentElement.value?.querySelectorAll<HTMLElement>('[id]') ?? []
-  let current = ''
-  headings.forEach((heading) => {
-    if (heading.getBoundingClientRect().top <= 130) current = heading.id
+  if (progressRAF) return
+  progressRAF = requestAnimationFrame(() => {
+    progressRAF = 0
+    const max = document.documentElement.scrollHeight - window.innerHeight
+    const pct = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0
+    // 直接写 DOM，避免每次滚动触发整页模板重渲染
+    if (progressBarRef.value) {
+      progressBarRef.value.style.transform = `scaleX(${pct / 100})`
+    }
+    if (progressTextRef.value) {
+      progressTextRef.value.textContent = `${Math.round(pct)}%`
+    }
+    const crossing = pct > 12
+    if (crossing !== showBackTop.value) showBackTop.value = crossing
   })
-  activeSection.value = current
+}
+
+// 滚动高亮：用 IntersectionObserver 代替每帧 getBoundingClientRect，
+// 由浏览器批量回调，滚动时零强制布局。
+function setupScrollSpy() {
+  scrollSpy?.disconnect()
+  scrollSpy = null
+  const el = contentElement.value
+  if (!el) return
+  const hasIo = typeof IntersectionObserver !== 'undefined'
+  if (!hasIo) return
+  scrollSpy = new IntersectionObserver(
+    (entries) => {
+      let current = activeSection.value
+      for (const entry of entries) {
+        if (entry.isIntersecting) current = entry.target.id
+      }
+      if (current !== activeSection.value) activeSection.value = current
+    },
+    { rootMargin: '0px 0px -75% 0px', threshold: 0 },
+  )
+  el.querySelectorAll<HTMLElement>('[id]').forEach((node) => scrollSpy?.observe(node))
 }
 
 function handleContentClick(event: MouseEvent) {
@@ -303,6 +346,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', updateProgress)
   window.removeEventListener('keydown', handleKeydown)
+  if (progressRAF) cancelAnimationFrame(progressRAF)
+  scrollSpy?.disconnect()
   contentElement.value?.removeEventListener('click', handleContentClick)
   document.getElementById('course-interactions')?.remove()
   for (const id of ['subGuide', 'progressFill', 'sidebarOverlay'])
@@ -327,7 +372,7 @@ function handleKeydown(event: KeyboardEvent) {
     class="course-shell"
     :style="{ '--course-accent': course.accent, '--course-soft': course.softAccent }"
   >
-    <div class="reading-progress" :style="{ transform: `scaleX(${progress / 100})` }" />
+    <div ref="progressBarRef" class="reading-progress" />
     <button
       class="mobile-menu"
       type="button"
@@ -366,7 +411,7 @@ function handleKeydown(event: KeyboardEvent) {
         </button>
       </nav>
       <div class="sidebar-foot">
-        <BookOpen :size="16" /><span>阅读进度</span><strong>{{ Math.round(progress) }}%</strong>
+        <BookOpen :size="16" /><span>阅读进度</span><strong ref="progressTextRef">0%</strong>
       </div>
     </aside>
     <button
@@ -397,7 +442,7 @@ function handleKeydown(event: KeyboardEvent) {
     </main>
 
     <button
-      v-show="progress > 12"
+      v-show="showBackTop"
       id="backTop"
       class="back-to-top"
       type="button"

@@ -46,20 +46,31 @@ let isIdle = false
 onMounted(() => {
   const canvas = canvasRef.value!
   const ctx = canvas.getContext('2d')!
+
+  // 尊重系统减少动效偏好：直接不启动
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  const DPR = Math.min(window.devicePixelRatio || 1, 2)
   let meteors: Meteor[] = []
 
   function resize() {
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+    canvas.width = Math.round(window.innerWidth * DPR)
+    canvas.height = Math.round(window.innerHeight * DPR)
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0)
   }
   resize()
   window.addEventListener('resize', resize)
+
+  function start() {
+    if (!raf) raf = requestAnimationFrame(draw)
+  }
 
   function resetIdle() {
     isIdle = false
     if (idleTimer) clearTimeout(idleTimer)
     idleTimer = setTimeout(() => {
       isIdle = true
+      start()
     }, 3000)
   }
   window.addEventListener('mousemove', resetIdle)
@@ -67,11 +78,29 @@ onMounted(() => {
   window.addEventListener('keydown', resetIdle)
   resetIdle()
 
+  function onVisibility() {
+    if (document.hidden) {
+      cancelAnimationFrame(raf)
+      raf = 0
+    } else if (isIdle && meteors.length) {
+      start()
+    }
+  }
+  document.addEventListener('visibilitychange', onVisibility)
+
   function draw() {
     raf = requestAnimationFrame(draw)
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    const w = window.innerWidth
+    const h = window.innerHeight
+    // 无流星且用户活跃时停掉循环，避免后台空转
+    if (!isIdle && meteors.length === 0) {
+      cancelAnimationFrame(raf)
+      raf = 0
+      return
+    }
+    ctx.clearRect(0, 0, w, h)
     if (isIdle && meteors.length < METEOR_COUNT && Math.random() < 0.012) {
-      meteors.push(spawnMeteor(canvas.width, canvas.height))
+      meteors.push(spawnMeteor(w, h))
     }
     for (let i = meteors.length - 1; i >= 0; i--) {
       const m = meteors[i]
@@ -81,7 +110,7 @@ onMounted(() => {
       if (m.life < 20) m.alpha = m.life / 20
       else if (m.life > m.maxLife - 20) m.alpha = (m.maxLife - m.life) / 20
       else m.alpha = 1
-      if (m.life > m.maxLife || m.x > canvas.width + 100 || m.y > canvas.height + 100) {
+      if (m.life > m.maxLife || m.x > w + 100 || m.y > h + 100) {
         meteors.splice(i, 1)
         continue
       }
@@ -110,11 +139,13 @@ onMounted(() => {
 
   onUnmounted(() => {
     cancelAnimationFrame(raf)
+    raf = 0
     if (idleTimer) clearTimeout(idleTimer)
     window.removeEventListener('resize', resize)
     window.removeEventListener('mousemove', resetIdle)
     window.removeEventListener('scroll', resetIdle)
     window.removeEventListener('keydown', resetIdle)
+    document.removeEventListener('visibilitychange', onVisibility)
   })
 })
 </script>

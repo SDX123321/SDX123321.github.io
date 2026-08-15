@@ -1,12 +1,9 @@
-@import './courses/probability.css';
-@import './courses/os.css';
-@import './courses/algorithm.css';
-@import './courses/dsp.css';
-@import './courses/marxism.css';
-@import './courses/calculus.css';
-@import './courses/signals.css';
-@import './high-school.css';
-@import './workspace.css';
+/*
+ * 路由级样式已拆分到各自路由的懒加载 chunk，不再进入全站首屏 CSS：
+ *   - 课程样式（courses/*.css）→ src/views/CourseView.vue
+ *   - 高中版（high-school.css）→ src/components/HighSchoolShell.vue
+ *   - 工作台（workspace.css）→ src/components/WorkspaceShell.vue
+ */
 
 :root {
   color-scheme: dark;
@@ -149,7 +146,7 @@ kbd { display: inline-flex; align-items: center; gap: 3px; padding: 4px 7px; bor
 /* Course reading shell */
 .reading-progress { position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 3px; transform-origin: left; background: var(--course-accent); }
 .course-shell { min-height: 100vh; background: var(--bg); }
-.course-sidebar { position: fixed; z-index: 200; inset: 0 auto 0 0; width: 292px; padding: 24px 16px 18px; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(18px); overflow-y: auto; }
+.course-sidebar { position: fixed; z-index: 200; inset: 0 auto 0 0; width: 292px; padding: 24px 16px 18px; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(12px); overflow-y: auto; }
 .course-back { min-height: 38px; padding: 0 10px; display: inline-flex; align-items: center; gap: 8px; width: max-content; border-radius: 9px; color: var(--text-faint); font-size: .78rem; font-weight: 680; text-decoration: none; }.course-back:hover { background: var(--surface-strong); color: var(--text); }
 .course-identity { margin: 22px 6px 24px; display: flex; align-items: center; gap: 13px; }.course-identity > span { width: 46px; height: 46px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 9px; color: var(--course-accent); background: var(--course-soft); }.course-identity small, .course-identity strong { display: block; }.course-identity small { margin-bottom: 3px; color: var(--course-accent); font-size: .66rem; font-weight: 800; letter-spacing: .1em; }.course-identity strong { max-width: 190px; font-size: .88rem; line-height: 1.4; }
 .sidebar-tools button { width: 100%; height: 42px; padding: 0 10px; display: flex; align-items: center; gap: 9px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-strong); color: var(--text-soft); font-size: .78rem; }.sidebar-tools button:hover { border-color: var(--border-strong); color: var(--text); }.sidebar-tools kbd { margin-left: auto; }
@@ -230,6 +227,11 @@ kbd { display: inline-flex; align-items: center; gap: 3px; padding: 4px 7px; bor
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* 系统提示减少透明效果时，关闭固定侧栏的实时 backdrop 模糊（滚动时每帧重采样，低端设备卡顿源） */
+@media (prefers-reduced-transparency: reduce) {
+  .course-sidebar { backdrop-filter: none; background: var(--surface); }
 }
 
 @media print {

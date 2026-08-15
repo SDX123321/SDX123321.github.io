@@ -116,27 +116,42 @@ function setupCollapsibles() {
 }
 
 // ── 侧边栏滚动监听 ──
-let scrollRAF = 0
-function updateNavHighlight() {
-  cancelAnimationFrame(scrollRAF)
-  scrollRAF = requestAnimationFrame(() => {
-    const el = containerRef.value
-    if (!el) return
-    const ids = el.querySelectorAll('[id]')
-    let currentId = ''
-    ids.forEach((node) => {
-      if (node.getBoundingClientRect().top <= 110) currentId = node.id
-    })
-    document.querySelectorAll('.sidebar a').forEach((a) => {
-      a.classList.toggle('active', a.getAttribute('href') === '#' + currentId)
-    })
-  })
+// 缓存 DOM 查询结果，滚动帧内只做类名切换，避免每帧 querySelectorAll + getBoundingClientRect
+let navRAF = 0
+let idNodes: HTMLElement[] = []
+let sidebarLinks: HTMLElement[] = []
+let backTopShown = false
+
+function refreshNavCache() {
+  const el = containerRef.value
+  idNodes = el ? [...el.querySelectorAll<HTMLElement>('[id]')] : []
+  sidebarLinks = [...document.querySelectorAll<HTMLElement>('.sidebar a')]
 }
 
-// ── 返回顶部按钮 ──
-function handleBackTopScroll() {
-  const btn = document.getElementById('backTop') as HTMLElement | null
-  if (btn) btn.style.display = window.scrollY > 300 ? 'flex' : 'none'
+function handleScroll() {
+  if (navRAF) return
+  navRAF = requestAnimationFrame(() => {
+    navRAF = 0
+    const el = containerRef.value
+    if (!el) return
+    let currentId = ''
+    for (const node of idNodes) {
+      if (node.getBoundingClientRect().top <= 110) currentId = node.id
+    }
+    for (const link of sidebarLinks) {
+      const active = link.getAttribute('href') === '#' + currentId
+      if (link.classList.contains('active') !== active) link.classList.toggle('active', active)
+    }
+    // 返回顶部按钮：只在阈值跨越时写样式
+    const btn = document.getElementById('backTop') as HTMLElement | null
+    if (btn) {
+      const shouldShow = window.scrollY > 300
+      if (shouldShow !== backTopShown) {
+        backTopShown = shouldShow
+        btn.style.display = shouldShow ? 'flex' : 'none'
+      }
+    }
+  })
 }
 
 let cleanupQuiz: (() => void) | undefined
@@ -152,6 +167,7 @@ watch(
     // 等 DOM 更新后再绑定折叠
     setTimeout(() => {
       cleanupCollapsibles = setupCollapsibles()
+      refreshNavCache()
     }, 0)
   },
 )
@@ -160,17 +176,16 @@ onMounted(() => {
   renderMath()
   cleanupQuiz = setupQuiz()
   cleanupCollapsibles = setupCollapsibles()
-  window.addEventListener('scroll', updateNavHighlight, { passive: true })
-  window.addEventListener('scroll', handleBackTopScroll, { passive: true })
-  updateNavHighlight()
-  handleBackTopScroll()
+  refreshNavCache()
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  handleScroll()
 })
 
 onUnmounted(() => {
+  if (navRAF) cancelAnimationFrame(navRAF)
   cleanupQuiz?.()
   cleanupCollapsibles?.()
-  window.removeEventListener('scroll', updateNavHighlight)
-  window.removeEventListener('scroll', handleBackTopScroll)
+  window.removeEventListener('scroll', handleScroll)
 })
 </script>
 

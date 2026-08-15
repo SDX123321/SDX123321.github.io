@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import HighSchoolShell from '../components/HighSchoolShell.vue'
-import WorkspaceShell from '../components/WorkspaceShell.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,7 +12,7 @@ const router = createRouter({
     { path: '/', name: 'home', component: HomeView },
     {
       path: '/workspace/:domain(high-school|university)',
-      component: WorkspaceShell,
+      component: () => import('../components/WorkspaceShell.vue'),
       children: [
         {
           path: '',
@@ -30,7 +28,7 @@ const router = createRouter({
     },
     {
       path: '/high-school',
-      component: HighSchoolShell,
+      component: () => import('../components/HighSchoolShell.vue'),
       children: [
         {
           path: '',

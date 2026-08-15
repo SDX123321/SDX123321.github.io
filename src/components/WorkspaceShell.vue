@@ -12,6 +12,8 @@ import {
 } from 'lucide-vue-next'
 import { useRoute } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
+// 工作台样式只在进入 /workspace 路由时加载，不再随首页首屏打包
+import '../styles/workspace.css'
 
 const route = useRoute()
 const auth = useAuth()
