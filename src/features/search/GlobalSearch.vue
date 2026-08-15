@@ -4,6 +4,7 @@
  * 全局文件搜索框，使用 Fuse.js 模糊匹配。
  */
 import { ref, onMounted, onUnmounted } from 'vue'
+import { Search } from 'lucide-vue-next'
 import { FILES } from '../../data/files'
 
 interface FileEntry {
@@ -105,7 +106,7 @@ function onBlur() {
 <template>
   <div class="search-section gs-wrap">
     <div class="gs-input-wrap">
-      <span class="gs-icon">🔍</span>
+      <span class="gs-icon"><Search :size="17" aria-hidden="true" /></span>
       <input
         ref="inputRef"
         :value="query"

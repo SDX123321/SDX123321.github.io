@@ -4,6 +4,7 @@
  * 首次访问及每 3 次访问弹出赞赏码弹窗。
  */
 import { ref, onMounted } from 'vue'
+import { Coffee, Heart, Sparkles, X } from 'lucide-vue-next'
 
 const LS_COUNT = 'visit_count'
 const LS_DISMISSED = 'reward_dismissed'
@@ -49,31 +50,35 @@ defineExpose({
     <!-- 欢迎弹窗 -->
     <div v-if="show" class="sm-overlay" @click.self="show = false">
       <div class="splash-box">
-        <p class="sm-head">✨ 欢迎来到期末复习笔记</p>
-        <p class="sm-sub">如果这份笔记对你有帮助，可以请作者喝杯咖啡 ☕</p>
+        <p class="sm-head"><Sparkles :size="18" /> 欢迎来到期末复习笔记</p>
+        <p class="sm-sub"><Coffee :size="16" /> 如果这份笔记对你有帮助，可以请作者喝杯咖啡</p>
         <img :src="QR_URL" alt="赞赏码" class="sm-qr" />
         <p class="sm-hint">微信扫码赞赏</p>
         <div class="sm-btns">
           <button class="sm-btn sm-btn-close" @click="show = false">关闭</button>
-          <button class="sm-btn sm-btn-dismiss" @click="dismissPermanently">残忍拒绝</button>
+          <button class="sm-btn sm-btn-dismiss" @click="dismissPermanently">不再提示</button>
         </div>
-        <p class="sm-footnote">「残忍拒绝」后不再显示</p>
+        <p class="sm-footnote">选择「不再提示」后不再自动弹出</p>
       </div>
     </div>
 
     <!-- 赞赏弹窗（页脚链接触发） -->
     <div v-if="showReward" class="sm-overlay" @click.self="showReward = false">
       <div class="sm-reward-panel">
-        <span class="sm-reward-close" @click="showReward = false">&times;</span>
+        <span class="sm-reward-close" aria-label="关闭" @click="showReward = false"
+          ><X :size="18"
+        /></span>
         <img :src="QR_URL" alt="赞赏码" class="sm-qr" />
         <p class="sm-hint">微信扫码赞赏</p>
-        <p class="sm-footnote">感谢支持 ❤</p>
+        <p class="sm-footnote"><Heart :size="14" /> 感谢支持</p>
       </div>
     </div>
   </Teleport>
 
   <!-- 页脚链接 -->
-  <span class="sm-footer-link" @click="showReward = true"> 通过赞赏码请作者喝杯咖啡 ☕ </span>
+  <span class="sm-footer-link" @click="showReward = true">
+    <Coffee :size="14" /> 通过赞赏码请作者喝杯咖啡
+  </span>
 </template>
 
 <style scoped>

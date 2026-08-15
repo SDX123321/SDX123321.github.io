@@ -4,6 +4,7 @@
  * 文件列表浏览器，支持学科/类型筛选和预览弹窗。
  */
 import { ref, computed } from 'vue'
+import { FileText, X } from 'lucide-vue-next'
 import { FILES } from '../../data/files'
 
 interface FileEntry {
@@ -161,7 +162,7 @@ function showTip(f: FileEntry, e: MouseEvent) {
     <div v-if="previewFile" class="fb-modal-overlay" @click.self="previewFile = null">
       <div class="fb-modal">
         <div class="fb-modal-header">
-          <span class="fb-modal-title">📄 {{ previewFile.n }}</span>
+          <span class="fb-modal-title"><FileText :size="16" /> {{ previewFile.n }}</span>
           <div class="fb-modal-actions">
             <a
               :href="getPreviewUrl(previewFile)"
@@ -170,7 +171,9 @@ function showTip(f: FileEntry, e: MouseEvent) {
               class="fb-modal-open"
               >↗ 新窗口打开</a
             >
-            <button class="fb-modal-close" @click="previewFile = null">×</button>
+            <button class="fb-modal-close" aria-label="关闭" @click="previewFile = null">
+              <X :size="18" />
+            </button>
           </div>
         </div>
         <div class="fb-modal-body">

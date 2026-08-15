@@ -223,21 +223,21 @@ mark { background: var(--warn-bg); color: var(--warn); padding: 0 2px; border-ra
 
   <div class="main" id="main">
     <div class="topbar">
-      <button class="menu-btn" id="menuBtn">☰</button>
+      <button class="menu-btn" id="menuBtn"></button>
       <div class="search-box">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"></span>
         <input type="text" id="searchInput" placeholder="搜索知识点...">
       </div>
       <div class="topbar-actions">
-        <button class="icon-btn" id="darkBtn" title="深色模式">🌙</button>
+        <button class="icon-btn" id="darkBtn" title="深色模式"></button>
       </div>
     </div>
 
     <div class="mode-tabs" id="modeTabs">
-      <button class="mode-tab active" data-mode="browse">📖 浏览</button>
+      <button class="mode-tab active" data-mode="browse">浏览</button>
       <button class="mode-tab" data-mode="flashcard">🃏 闪卡</button>
-      <button class="mode-tab" data-mode="quiz">📝 测验</button>
-      <button class="mode-tab" data-mode="stats">📊 统计</button>
+      <button class="mode-tab" data-mode="quiz">测验</button>
+      <button class="mode-tab" data-mode="stats">统计</button>
     </div>
 
     <div class="content" id="content"></div>
@@ -247,7 +247,7 @@ mark { background: var(--warn-bg); color: var(--warn); padding: 0 2px; border-ra
 <script>
 // ==================== DATA ====================
 const DATA = [
-{id:"intro",title:"导论",icon:"📌",sections:[
+{id:"intro",title:"导论",icon:"",sections:[
 {title:"什么是马克思主义？",qa:[
 {q:"马克思主义的科学内涵是什么？",a:"马克思主义是由马克思、恩格斯创立并为后继者所不断发展的科学理论体系，是关于自然、社会和人类思维发展一般规律的学说，是关于社会主义必然代替资本主义、最终实现共产主义的学说，是关于无产阶级解放、全人类解放和每个人自由而全面发展的学说，是无产阶级政党和社会主义国家的指导思想，是指引人民创造美好生活的行动指南。"},
 {q:"马克思主义的三个基本组成部分？",a:"马克思主义哲学（基础）、马克思主义政治经济学（论证）和科学社会主义（归宿）是其三个基本组成部分，它们有机统一并共同构成了马克思主义理论体系的主体内容。"},
@@ -268,7 +268,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch1",title:"Ⅰ 世界的物质性及发展规律",icon:"🌍",sections:[
+{id:"ch1",title:"Ⅰ 世界的物质性及发展规律",icon:"",sections:[
 {title:"物质及其存在方式",qa:[
 {q:"什么是哲学？哲学的基本问题包含哪些内容？",a:"哲学是系统化、理论化的世界观，是对自然知识、社会知识和思维知识的概括和总结。<br>基本问题包括两方面：①存在和思维、物质和意识谁为本原的问题（<strong>唯物主义VS唯心主义</strong>）；②存在和思维是否具有同一性的问题（<strong>可知论VS不可知论</strong>）。"},
 {q:"什么是物质？马克思主义的物质范畴具有怎样的理论意义？",a:"物质是标志客观实在的哲学范畴，这种客观实在是人通过感觉感知的，它不依赖于我们的感觉而存在，为我们的感觉所复写、摄影、反映。<br><strong>理论意义：</strong>①坚持了唯物主义一元论；②坚持了能动的反映论和可知论；③体现了唯物论和辩证法的统一；④体现了唯物主义自然观与历史观的统一。"},
@@ -317,7 +317,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch2",title:"Ⅱ 实践与认识及其发展规律",icon:"🔬",sections:[
+{id:"ch2",title:"Ⅱ 实践与认识及其发展规律",icon:"",sections:[
 {title:"科学的实践观及其意义",qa:[
 {q:"什么是马克思主义理论区别于其他理论的根本特征？",a:"<strong>实践性</strong>。<strong>实践的观点</strong>是马克思主义的基本观点。"},
 {q:"科学实践观的意义是什么？",a:"①克服了旧唯物主义的根本缺陷，为辩证唯物主义的创立奠定基础；<br>②揭示了实践对认识的决定作用，为能动的反映论奠定基础；<br>③第一次揭示了社会生活的实践本质，为唯物史观奠定基础；<br>④为能动地认识世界和改造世界提供基本思想方法和工作方法。"}
@@ -355,7 +355,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch3",title:"Ⅲ 人类社会及其发展规律",icon:"🏛️",sections:[
+{id:"ch3",title:"Ⅲ 人类社会及其发展规律",icon:"",sections:[
 {title:"社会存在与社会意识",qa:[
 {q:"唯心史观的主要缺陷是什么？",a:"至多考察了人的活动的思想动机，而没有进一步考究背后的物质动因和经济根源，把社会历史看成精神发展史，根本不懂得社会历史的客观规律和人民群众的决定作用。"},
 {q:"什么是社会存在？",a:"社会存在是指社会物质生活条件，包括<strong>自然地理环境、人口因素和物质生产方式</strong>。<br>物质生产方式是生产力和生产关系的统一体，是社会历史发展的决定力量。"},
@@ -382,7 +382,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch4",title:"Ⅳ 资本主义的本质及规律",icon:"⚙️",sections:[
+{id:"ch4",title:"Ⅳ 资本主义的本质及规律",icon:"",sections:[
 {title:"商品经济和价值规律",qa:[
 {q:"什么是商品经济？其产生条件是什么？",a:"商品经济是以交换为目的而进行生产的经济形式。<br>产生条件：①存在<strong>社会分工</strong>；②生产资料和劳动产品属于<strong>不同的所有者</strong>。"},
 {q:"什么是商品的二因素和劳动的二重性？",a:"<strong>二因素：</strong>使用价值（自然属性）和价值（社会属性）。<br><strong>劳动二重性：</strong>具体劳动创造使用价值，抽象劳动形成价值。这是理解政治经济学的枢纽。"},
@@ -402,7 +402,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch5",title:"Ⅴ 资本主义的发展及其趋势",icon:"📈",sections:[
+{id:"ch5",title:"Ⅴ 资本主义的发展及其趋势",icon:"",sections:[
 {title:"资本主义从自由竞争到垄断",qa:[
 {q:"什么是垄断？为什么会产生垄断？",a:"垄断是少数资本主义大企业为获得高额利润，对一个或几个部门商品的生产、销售和价格进行操纵和控制。<br>原因：①生产集中发展到很高程度时少数企业联合；②企业规模巨大形成竞争限制；③激烈竞争使企业达成妥协、避免两败俱伤。"},
 {q:"垄断为什么会使竞争更复杂和激烈？",a:"①垄断没有消除产生竞争的经济条件（私有制）；②垄断必须通过竞争来维持；③任何垄断组织不可能包揽全部社会生产，中小企业之间也存在竞争。"}
@@ -425,7 +425,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch6",title:"Ⅵ 社会主义的发展及其规律",icon:"🔨",sections:[
+{id:"ch6",title:"Ⅵ 社会主义的发展及其规律",icon:"",sections:[
 {title:"社会主义五百年的历史进程",qa:[
 {q:"世界社会主义五百年历史的启示是什么？",a:"①社会主义建设过程具有<strong>长期性</strong>；②社会主义发展道路具有<strong>多样性</strong>；③要探索<strong>适合本国国情</strong>的发展道路——坚持科学态度对待马克思主义，从历史条件出发\"走自己的路\"，充分吸收人类一切优秀文明成果。"}
 ]},
@@ -440,7 +440,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch7",title:"Ⅶ 共产主义崇高理想及其最终实现",icon:"⭐",sections:[
+{id:"ch7",title:"Ⅶ 共产主义崇高理想及其最终实现",icon:"",sections:[
 {title:"预见未来社会的方法论原则",qa:[
 {q:"马克思主义经典作家与空想社会主义者的本质区别是什么？",a:"是否坚持科学的立场、观点和方法来预见未来。<br>方法论原则：①在揭示社会发展一般规律基础上指明方向；②在剖析旧世界过程中阐发新世界特点；③在社会主义发展中深化对共产主义的认识；④立足于揭示一般特征，不作详尽细节描绘。"}
 ]},
@@ -479,7 +479,7 @@ function init() {
 function buildNav() {
   const nav = document.getElementById('nav');
   let html = '<div class="nav-group"><div class="nav-group-title">目录</div>';
-  html += `<div class="nav-item" data-chapter="welcome"><span>🏠</span><span>首页</span></div>`;
+  html += `<div class="nav-item" data-chapter="welcome"><span></span><span>首页</span></div>`;
   DATA.forEach(ch => {
     const total = ch.sections.reduce((s, sec) => s + sec.qa.length, 0);
     const known = ch.sections.reduce((s, sec) => s + sec.qa.filter(qa => state.knownCards[qa.q]).length, 0);
@@ -523,9 +523,9 @@ function bindEvents() {
     state.dark = !state.dark;
     document.body.classList.toggle('dark', state.dark);
     localStorage.setItem('m_dark', state.dark);
-    document.getElementById('darkBtn').textContent = state.dark ? '☀️' : '🌙';
+    document.getElementById('darkBtn').textContent = state.dark ? '' : '';
   });
-  document.getElementById('darkBtn').textContent = state.dark ? '☀️' : '🌙';
+  document.getElementById('darkBtn').textContent = state.dark ? '' : '';
 
   // Mode tabs
   document.getElementById('modeTabs').addEventListener('click', e => {
@@ -595,7 +595,7 @@ function showWelcome() {
       <p>期末复习互动指南 — 共 ${totalQA} 个知识点，已掌握 ${knownCount} 个</p>
       <div class="welcome-cards">
         <div class="welcome-card" onclick="startBrowse()">
-          <div class="wc-icon">📖</div>
+          <div class="wc-icon"></div>
           <h3>浏览模式</h3>
           <p>按章节浏览所有知识点</p>
         </div>
@@ -605,12 +605,12 @@ function showWelcome() {
           <p>翻转卡片测试记忆</p>
         </div>
         <div class="welcome-card" onclick="startQuiz()">
-          <div class="wc-icon">📝</div>
+          <div class="wc-icon"></div>
           <h3>测验模式</h3>
           <p>选择题自测</p>
         </div>
         <div class="welcome-card" onclick="startStats()">
-          <div class="wc-icon">📊</div>
+          <div class="wc-icon"></div>
           <h3>学习统计</h3>
           <p>查看复习进度</p>
         </div>
@@ -682,8 +682,8 @@ function renderBrowse() {
                 <div class="qa-answer">
                   <div class="qa-answer-inner">${qa.a}</div>
                   <div class="qa-actions">
-                    <button class="known-btn ${status==='known'?'active':''}" data-action="known" data-key="${key}">✓ 已掌握</button>
-                    <button class="unknown-btn ${status==='unknown'?'active':''}" data-action="unknown" data-key="${key}">✗ 待复习</button>
+                    <button class="known-btn ${status==='known'?'active':''}" data-action="known" data-key="${key}">已掌握</button>
+                    <button class="unknown-btn ${status==='unknown'?'active':''}" data-action="unknown" data-key="${key}">待复习</button>
                   </div>
                 </div>
               </div>`;
@@ -779,12 +779,12 @@ function renderFlashcard() {
       </div>
       <div class="flashcard-nav">
         <button onclick="prevFlashcard()">◀ 上一个</button>
-        <button class="success-btn" onclick="markFlashcard('known')">✓ 已掌握 <span class="kbd">1</span></button>
-        <button class="warn-btn" onclick="markFlashcard('unknown')">✗ 待复习 <span class="kbd">2</span></button>
+        <button class="success-btn" onclick="markFlashcard('known')">已掌握 <span class="kbd">1</span></button>
+        <button class="warn-btn" onclick="markFlashcard('unknown')">待复习 <span class="kbd">2</span></button>
         <button class="primary" onclick="nextFlashcard()">下一个 ▶</button>
       </div>
       <div style="text-align:center;margin-top:12px;">
-        <button class="btn btn-secondary" onclick="shuffleFlashcards()" style="font-size:13px;">🔀 随机打乱</button>
+        <button class="btn btn-secondary" onclick="shuffleFlashcards()" style="font-size:13px;"> 随机打乱</button>
       </div>
     </div>`;
 
@@ -845,7 +845,7 @@ function renderQuiz() {
     content.innerHTML = `
       <div class="quiz-container fade-in">
         <div class="quiz-setup">
-          <h3>📝 测验设置</h3>
+          <h3>测验设置</h3>
           <p style="color:var(--text2);margin-bottom:16px;">章节：${ch.title}</p>
           <div class="quiz-option"><input type="radio" name="qnum" id="q5" value="5" checked><label for="q5">5 题</label></div>
           <div class="quiz-option"><input type="radio" name="qnum" id="q10" value="10"><label for="q10">10 题</label></div>
@@ -958,7 +958,7 @@ function renderStats() {
 
   content.innerHTML = `
     <div class="fade-in">
-      <h2 class="chapter-title">📊 学习统计</h2>
+      <h2 class="chapter-title"> 学习统计</h2>
       <p class="chapter-subtitle">复习进度总览</p>
       <div class="stats-bar">
         <div class="stat-card"><div class="stat-num">${totalQA}</div><div class="stat-label">总知识点</div></div>

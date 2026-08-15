@@ -39,7 +39,7 @@ onMounted(() => {
   const el = document.getElementById('f-heatmap')
   if (!el) return
 
-  let h = '<h4 style="margin-bottom:12px;color:var(--text)">📊 学习进度</h4>'
+  let h = '<h4 style="margin-bottom:12px;color:var(--text)">学习进度</h4>'
   Object.keys(CHAPTERS).forEach((sub) => {
     const chapters = CHAPTERS[sub]
     h += `<div style="display:flex;align-items:center;gap:8px;margin:6px 0">

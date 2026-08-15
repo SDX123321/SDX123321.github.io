@@ -4,6 +4,7 @@
  * 扫描正文关键词并注入跨学科知识点链接气泡。
  */
 import { onMounted, onUnmounted } from 'vue'
+import DOMPurify from 'dompurify'
 
 interface KnowledgeLink {
   keyword: string
@@ -14,18 +15,30 @@ interface KnowledgeLink {
 
 const KNOWLEDGE_MAP: KnowledgeLink[] = [
   { keyword: '大数定律', subject: '概率论', url: '/courses/probability/', chapter: 'Ch5' },
-  { keyword: '贝叶斯', subject: '概率论', url: '/courses/probability/', chapter: 'Ch1' },
-  { keyword: '离散型随机变量', subject: '概率论', url: '/courses/probability/', chapter: 'Ch2' },
-  { keyword: '连续型随机变量', subject: '概率论', url: '/courses/probability/', chapter: 'Ch3' },
-  { keyword: '生产者问题', subject: '操作系统', url: '/courses/os/', chapter: 'Ch2' },
-  { keyword: '死锁', subject: '操作系统', url: '/courses/os/', chapter: 'Ch2' },
-  { keyword: '页面置换', subject: '操作系统', url: '/courses/os/', chapter: 'Ch3' },
-  { keyword: '动态规划', subject: '算法', url: '/courses/algorithm/', chapter: 'Ch3' },
-  { keyword: '贪心算法', subject: '算法', url: '/courses/algorithm/', chapter: 'Ch4' },
-  { keyword: '分治法', subject: '算法', url: '/courses/algorithm/', chapter: 'Ch2' },
-  { keyword: 'DFT', subject: 'DSP', url: '/courses/dsp/', chapter: 'Ch3' },
-  { keyword: 'FFT', subject: 'DSP', url: '/courses/dsp/', chapter: 'Ch3' },
-  { keyword: '傅里叶变换', subject: 'DSP', url: '/courses/dsp/', chapter: 'Ch2' },
+  {
+    keyword: '傅里叶变换',
+    subject: '信号与系统',
+    url: '../../courses/dsp/index.html#ch3',
+    chapter: '第3章 频域分析',
+  },
+  {
+    keyword: '概率密度',
+    subject: '概率论',
+    url: '../../courses/probability/index.html#ch2',
+    chapter: '第2章 随机变量',
+  },
+  {
+    keyword: '死锁',
+    subject: '操作系统',
+    url: '../../courses/os/index.html#ch3',
+    chapter: '第3章 死锁处理',
+  },
+  {
+    keyword: '泰勒公式',
+    subject: '高等数学',
+    url: '../../courses/calculus/index.html#ch4',
+    chapter: '第4章 导数应用',
+  },
 ]
 
 let tooltip: HTMLElement | null = null
@@ -43,9 +56,12 @@ function showTip(link: HTMLElement, item: KnowledgeLink) {
     box-shadow:0 6px 24px rgba(0,0,0,.3);min-width:180px;pointer-events:none;
     animation:fadeInUp .2s ease;
   `
+  const safeSubject = DOMPurify.sanitize(item.subject)
+  const safeChapter = DOMPurify.sanitize(item.chapter)
+  const safeKeyword = DOMPurify.sanitize(item.keyword)
   tooltip.innerHTML = `
-    <div style="font-weight:700;color:var(--accent,#6c8aff);margin-bottom:4px">${item.subject} → ${item.chapter}</div>
-    <div style="color:var(--text)">知识点「${item.keyword}」</div>
+    <div style="font-weight:700;color:var(--accent,#6c8aff);margin-bottom:4px">${safeSubject} → ${safeChapter}</div>
+    <div style="color:var(--text)">知识点「${safeKeyword}」</div>
     <div style="font-size:.72rem;color:var(--text3);margin-top:4px">点击跳转学习 →</div>
   `
   document.body.appendChild(tooltip)

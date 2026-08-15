@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { Moon, Sun } from 'lucide-vue-next'
+import InteractiveCanvas from './components/InteractiveCanvas.vue'
 import { useTheme } from './composables/useTheme'
 
 const { isDark, toggleTheme } = useTheme()
 </script>
 
 <template>
+  <InteractiveCanvas />
   <a class="skip-link" href="#main-content">跳到主要内容</a>
   <RouterView />
   <button

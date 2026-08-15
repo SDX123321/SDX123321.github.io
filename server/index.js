@@ -16,6 +16,36 @@ app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }))
 app.use(express.json({ limit: '1mb' }))
 app.use(cookieParser())
 
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('X-Frame-Options', 'DENY')
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+  next()
+})
+
+const rateLimitStore = new Map()
+
+function rateLimit(limit, windowMs) {
+  return (req, res, next) => {
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown'
+    const key = `${req.path}:${ip}`
+    const now = Date.now()
+    const record = rateLimitStore.get(key)
+    if (!record || now - record.start > windowMs) {
+      rateLimitStore.set(key, { start: now, count: 1 })
+      return next()
+    }
+    if (record.count >= limit) {
+      return res.status(429).json({ error: 'too_many_requests' })
+    }
+    record.count += 1
+    next()
+  }
+}
+
+const apiKeyCache = new Map()
+const API_KEY_TTL_MS = 5 * 60 * 1000
+
 async function apiKeyAuth(req, res, next) {
   const path = req.path
   if (
@@ -33,6 +63,12 @@ async function apiKeyAuth(req, res, next) {
     return res.status(401).json({ error: 'missing_api_key' })
   }
 
+  const now = Date.now()
+  const cachedExp = apiKeyCache.get(apiKey)
+  if (cachedExp && cachedExp > now) {
+    return next()
+  }
+
   try {
     const { rows } = await query(
       'SELECT EXISTS(SELECT 1 FROM visitor_api_keys WHERE api_key = $1 AND expires_at > now()) AS exists',
@@ -40,6 +76,12 @@ async function apiKeyAuth(req, res, next) {
     )
     if (!rows[0] || !rows[0].exists) {
       return res.status(401).json({ error: 'invalid_api_key' })
+    }
+    apiKeyCache.set(apiKey, now + API_KEY_TTL_MS)
+    if (apiKeyCache.size > 2000) {
+      for (const [k, exp] of apiKeyCache.entries()) {
+        if (exp <= now) apiKeyCache.delete(k)
+      }
     }
     next()
   } catch (error) {
@@ -260,7 +302,7 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true })
 })
 
-app.post('/api/handshake', async (req, res) => {
+app.post('/api/handshake', rateLimit(30, 60000), async (req, res) => {
   const apiKey = crypto.randomBytes(32).toString('hex')
   const expiresAt = new Date()
   expiresAt.setDate(expiresAt.getDate() + 1) // 24 hours
@@ -432,7 +474,7 @@ app.get('/api/gaokao/weaknesses', authUser, async (req, res) => {
   res.json({ weaknesses: rows })
 })
 
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', rateLimit(10, 60000), async (req, res) => {
   const parsed = authSchema.safeParse(req.body)
   if (!parsed.success) return res.status(400).json({ error: 'invalid_input' })
   const { username, password } = parsed.data
@@ -451,7 +493,7 @@ app.post('/api/auth/register', async (req, res) => {
   }
 })
 
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', rateLimit(10, 60000), async (req, res) => {
   const parsed = authSchema.safeParse(req.body)
   if (!parsed.success) return res.status(400).json({ error: 'invalid_input' })
   const { username, password } = parsed.data

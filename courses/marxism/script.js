@@ -1,6 +1,6 @@
 // ==================== DATA ====================
 const DATA = [
-{id:"intro",title:"导论",icon:"📌",sections:[
+{id:"intro",title:"导论",icon:"book",sections:[
 {title:"马克思主义的基本概念",kp:[
 {q:"马克思的两个伟大发现是什么？",a:"<strong>唯物史观</strong>和<strong>剩余价值学说</strong>是马克思一生的两个伟大发现。",t:["选择"]},
 {q:"马克思主义的本质属性和政治立场是什么？",a:"<strong>人民性</strong>是马克思主义的本质属性；<strong>人民至上</strong>是马克思主义的政治立场。",t:["选择","简答"]},
@@ -9,7 +9,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch1",title:"第一章 世界的物质性及发展规律",icon:"🌍",sections:[
+{id:"ch1",title:"第一章 世界的物质性及发展规律",icon:"globe",sections:[
 {title:"世界的物质统一性",kp:[
 {q:"哲学的物质范畴——三种唯物主义对物质的理解？",a:"<strong>物质范畴</strong>是一切唯物主义哲学的理论基石。<br>古代朴素唯物主义＝具体物质形态；近代形而上学＝<strong>原子</strong>；马克思主义＝客观实在。<br>马克思主义的物质概念与自然科学的物质概念之间是<strong>共性与个性</strong>的关系。",t:["选择","辨析"]},
 {q:"物质与意识的辩证关系？",a:"物质决定意识；意识对物质具有能动反作用；意识从其本质来看是客观世界的主观映像。",t:["选择","简答"]},
@@ -37,7 +37,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch2",title:"第二章 实践与认识及其发展规律",icon:"🔬",sections:[
+{id:"ch2",title:"第二章 实践与认识及其发展规律",icon:"microscope",sections:[
 {title:"科学实践观",kp:[
 {q:"实践的本质和\"改变世界\"的名言？",a:"马克思揭示了科学实践观的基本内容。\"<strong>哲学家们只是用不同的方式解释世界，而问题在于改变世界。</strong>\"<br><strong>物质资料的生产</strong>是人类历史中首要的社会实践活动。",t:["选择","简答"]},
 {q:"实践对认识的决定作用（四点）？",a:"①实践是认识的<strong>来源</strong>；②实践是认识发展的<strong>动力</strong>；③实践是认识的<strong>目的</strong>；④实践是检验认识真理性的<strong>唯一标准</strong>。",t:["简答","论述","重点"]}
@@ -52,7 +52,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch3",title:"第三章 人类社会及其发展规律",icon:"🏛️",sections:[
+{id:"ch3",title:"第三章 人类社会及其发展规律",icon:"landmark",sections:[
 {title:"社会存在与社会意识",kp:[
 {q:"社会存在和社会意识的关系？唯物史观与唯心史观的根本分野？",a:"<strong>社会存在决定社会意识</strong>，社会意识能动地反作用于社会存在。<br>主张社会存在决定社会意识，还是社会意识决定社会存在，是唯物史观与唯心史观的<strong>根本分野</strong>。",t:["选择","简答"]},
 {q:"人民群众在历史发展中的作用？",a:"①人民群众是社会<strong>物质财富</strong>的创造者；②人民群众是社会<strong>精神财富</strong>的创造者；③人民群众是社会<strong>变革的决定力量</strong>。",t:["简答","论述","重点"]},
@@ -61,7 +61,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch4",title:"第四章 资本主义的本质及规律",icon:"⚙️",sections:[
+{id:"ch4",title:"第四章 资本主义的本质及规律",icon:"cog",sections:[
 {title:"商品与劳动",kp:[
 {q:"商品的二因素及其对立统一关系？",a:"<strong>使用价值</strong>：自然属性，满足需要。<strong>价值</strong>：社会属性，凝结的无差别人类劳动。<br>对立性：二者不可兼得。统一性：使用价值是价值的物质承担者。",t:["选择","辨析","重点"]},
 {q:"劳动的二重性是什么？\"枢纽\"指什么？",a:"<strong>具体劳动</strong>创造使用价值；<strong>抽象劳动</strong>创造价值。劳动二重性理论是\"<strong>理解政治经济学的枢纽</strong>\"。",t:["选择","简答"]},
@@ -80,7 +80,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch5",title:"第五章 资本主义的发展及其趋势",icon:"📈",sections:[
+{id:"ch5",title:"第五章 资本主义的发展及其趋势",icon:"trending-up",sections:[
 {title:"垄断资本主义",kp:[
 {q:"金融寡头的统治方式？",a:"经济领域：通过\"<strong>参与制</strong>\"实现。国家机器：通过与政府的\"<strong>个人联合</strong>\"实现。",t:["选择"]},
 {q:"国家垄断资本主义的实质？",a:"私人垄断资本利用国家机器来为其发展服务的手段，是私人垄断资本与国家政权相结合的一种垄断资本主义形式。",t:["选择","辨析"]},
@@ -95,7 +95,7 @@ const DATA = [
 ]}
 ]},
 
-{id:"ch6",title:"第六章 社会主义的发展及其规律",icon:"✦",sections:[
+{id:"ch6",title:"第六章 社会主义的发展及其规律",icon:"sparkles",sections:[
 {title:"科学社会主义",kp:[
 {q:"科学社会主义基本原则的主要内容？",a:"约10条：资本主义必然灭亡、社会主义必然胜利；无产阶级是最先进最革命的阶级；建立无产阶级专政；生产资料公有制；按劳分配；合乎自然规律改造和利用自然；坚持科学理论指导；坚持无产阶级政党领导；解放和发展生产力、实现共同富裕；实现共产主义是最高理想。",t:["简答","论述"]},
 {q:"社会主义实践的基本认识？",a:"社会主义是亿万人民群众的伟大实践；实践探索中出现某种曲折并不改变社会主义的前进趋势；推进社会主义实践发展必须有开拓奋进的精神状态。",t:["简答"]}
@@ -172,7 +172,7 @@ function init(){
 function buildNav(){
   const nav=document.getElementById('nav');
   let h='<div class="nav-group"><div class="nav-title">目录</div>';
-  h+=`<div class="nav-item" data-ch="welcome" onclick="goChapter(null)"><span class="icon">🏠</span><span>首页</span></div>`;
+  h+=`<div class="nav-item" data-ch="welcome" onclick="goChapter(null)"><span>首页</span></div>`;
   DATA.forEach(ch=>{
     const cnt=ch.sections.reduce((s,sec)=>s+sec.kp.length,0);
     h+=`<div class="nav-item" data-ch="${ch.id}" onclick="goChapter('${ch.id}')"><span class="icon">${ch.icon}</span><span>${ch.title}</span><span class="count">${cnt}</span></div>`;
@@ -240,10 +240,10 @@ function showWelcome(){
       <h2>马克思主义基本原理</h2>
       <p>期末知识点 · 互动复习 · 共 ${total} 个知识点 · 已掌握 ${known} 个</p>
       <div class="wcards">
-        <div class="wcard" onclick="goChapter('intro')"><div class="wi">📖</div><h3>浏览模式</h3><p>按章节浏览知识点</p></div>
+        <div class="wcard" onclick="goChapter('intro')"><h3>浏览模式</h3><p>按章节浏览知识点</p></div>
         <div class="wcard" onclick="goChapter('intro');setTimeout(()=>setMode('flashcard'),100)"><div class="wi">🃏</div><h3>闪卡模式</h3><p>翻转卡片测试记忆</p></div>
-        <div class="wcard" onclick="setMode('quiz')"><div class="wi">📝</div><h3>测验模式</h3><p>选择题自测</p></div>
-        <div class="wcard" onclick="setMode('stats')"><div class="wi">📊</div><h3>统计面板</h3><p>查看复习进度</p></div>
+        <div class="wcard" onclick="setMode('quiz')"><h3>测验模式</h3><p>选择题自测</p></div>
+        <div class="wcard" onclick="setMode('stats')"><h3>统计面板</h3><p>查看复习进度</p></div>
       </div>
     </div>`;
 }
@@ -278,8 +278,8 @@ function renderBrowse(){
           <div class="qi">Q</div><div class="qt">${kp.q}</div><div class="ti">▼</div>
         </div><div class="qa-a"><div class="qa-a-inner">${kp.a}</div>
           <div class="qa-acts">${tHtml}<span style="flex:1"></span>
-            <button class="kb ${S.known[kp.q]===true?'active':''}" onclick="event.stopPropagation();markKnown('${esc(kp.q)}',true)">✓ 已掌握</button>
-            <button class="ub ${S.known[kp.q]===false?'active':''}" onclick="event.stopPropagation();markKnown('${esc(kp.q)}',false)">✗ 待复习</button>
+            <button class="kb ${S.known[kp.q]===true?'active':''}" onclick="event.stopPropagation();markKnown('${esc(kp.q)}',true)">已掌握</button>
+            <button class="ub ${S.known[kp.q]===false?'active':''}" onclick="event.stopPropagation();markKnown('${esc(kp.q)}',false)">待复习</button>
           </div></div></div>`;
     });
     h+='</div></div>';
@@ -345,8 +345,8 @@ function renderFC(){
       </div>
       <div class="fc-nav">
         <button onclick="event.stopPropagation();prevFC()">← 上一张</button>
-        <button class="ng" onclick="event.stopPropagation();markFC(false)">✗ 待复习</button>
-        <button class="ok" onclick="event.stopPropagation();markFC(true)">✓ 已掌握</button>
+        <button class="ng" onclick="event.stopPropagation();markFC(false)">待复习</button>
+        <button class="ok" onclick="event.stopPropagation();markFC(true)">已掌握</button>
         <button class="pri" onclick="event.stopPropagation();nextFC()">下一张 →</button>
       </div>
     </div>`;
@@ -366,7 +366,7 @@ function renderQuiz(){
   const q=S.qzQs[S.qzIdx];
   const pct=Math.round((S.qzIdx)/S.qzQs.length*100);
   let h=`<div class="quiz-wrap fade-in">
-    <div class="page-title">📝 自测练习</div>
+    <div class="page-title">自测练习</div>
     <div class="fc-bar"><div class="prog"><div class="prog-fill" style="width:${pct}%"></div></div><div class="cnt">${S.qzIdx+1} / ${S.qzQs.length} · 得分 ${S.qzScore}</div></div>
     <div class="quiz-card"><div class="qq">${S.qzIdx+1}. ${q.q}</div><div class="quiz-opts">`;
   q.opts.forEach((o,i)=>{h+=`<label><input type="radio" name="qz" value="${i}">${o}</label>`;});
@@ -379,8 +379,8 @@ function checkQuiz(){
   if(!sel) return;
   S.qzAnswered=true;
   const q=S.qzQs[S.qzIdx]; const v=parseInt(sel.value); const r=document.getElementById('qr');
-  if(v===q.ans){S.qzScore++;r.className='quiz-result ok';r.textContent='✓ 回答正确！';}
-  else{r.className='quiz-result ng';r.textContent=`✗ 回答错误。正确答案：${q.opts[q.ans]}`;}
+  if(v===q.ans){S.qzScore++;r.className='quiz-result ok';r.textContent='回答正确！';}
+  else{r.className='quiz-result ng';r.textContent=`回答错误。正确答案：${q.opts[q.ans]}`;}
   r.style.display='block';
   setTimeout(()=>{if(S.qzIdx<S.qzQs.length-1){S.qzIdx++;renderQuiz();}else renderQuizResult();},1500);
 }
@@ -388,7 +388,7 @@ function renderQuizResult(){
   const pct=Math.round(S.qzScore/S.qzQs.length*100);
   document.getElementById('content').innerHTML=`
     <div class="quiz-wrap fade-in" style="text-align:center;padding:60px 20px">
-      <div style="font-size:64px;margin-bottom:16px">${pct>=80?'🎉':pct>=60?'👍':'💪'}</div>
+      <div style="font-size:64px;margin-bottom:16px">${pct>=80?'':pct>=60?'':''}</div>
       <div class="page-title">测验完成！</div>
       <p style="color:var(--text2);margin:12px 0 24px;font-size:18px">得分：${S.qzScore} / ${S.qzQs.length}（${pct}%）</p>
       <div class="stats" style="max-width:400px;margin:0 auto 24px">
@@ -409,7 +409,7 @@ function renderStats(){
     cs.push({ch,ct,ck});
   });
   const pct=total?Math.round(known/total*100):0;
-  let h=`<div class="fade-in"><div class="page-title">📊 复习统计</div><div class="page-sub">总进度 ${pct}%</div>
+  let h=`<div class="fade-in"><div class="page-title">复习统计</div><div class="page-sub">总进度 ${pct}%</div>
     <div class="stats">
       <div class="stat"><div class="num">${total}</div><div class="lbl">总知识点</div></div>
       <div class="stat ok"><div class="num">${known}</div><div class="lbl">已掌握</div></div>

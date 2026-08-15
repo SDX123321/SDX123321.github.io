@@ -14,7 +14,7 @@ const DATA = [
   {
     id: 'preface',
     title: '前言',
-    icon: '📌',
+    icon: 'book',
     items: [
       {
         type: 'note',
@@ -27,7 +27,7 @@ const DATA = [
   {
     id: 'intro',
     title: '导论',
-    icon: '📖',
+    icon: 'book-open',
     items: [
       {
         type: 'overview',
@@ -56,7 +56,7 @@ const DATA = [
   {
     id: 'ch1',
     title: 'Ⅰ 世界的物质性及发展规律',
-    icon: '🌍',
+    icon: 'globe',
     items: [
       {
         type: 'overview',
@@ -132,7 +132,7 @@ const DATA = [
   {
     id: 'ch2',
     title: 'Ⅱ 实践与认识及其发展规律',
-    icon: '🧠',
+    icon: 'brain',
     items: [
       {
         type: 'overview',
@@ -146,8 +146,8 @@ const DATA = [
           '',
           '┌─ 认识过程 ───────────────────┐',
           '│  感性认识 → 理性认识          │',
-          '│  ✗ 唯理论（教条主义）         │',
-          '│  ✗ 经验论（经验主义）         │',
+          '│  [待复习] 唯理论（教条主义）         │',
+          '│  [待复习] 经验论（经验主义）         │',
           '└──────────────────────────────┘',
           '',
           '┌─ 真理检验标准 ─────────────────┐',
@@ -203,14 +203,14 @@ const DATA = [
   {
     id: 'ch3',
     title: 'Ⅲ 人类社会及其发展规律',
-    icon: '👥',
+    icon: 'users',
     items: [
       {
         type: 'overview',
         lines: [
           '┌─ 唯物史观 vs 唯心史观 ────────────┐',
-          '│  唯物史观：社会存在决定社会意识 ✓   │',
-          '│  唯心史观：社会意识决定社会存在 ✗   │',
+          '│  唯物史观：社会存在决定社会意识 [正确]   │',
+          '│  唯心史观：社会意识决定社会存在 [待复习]   │',
           '└───────────────────────────────────┘',
           '',
           '┌─ 历史人物评价方法 ────────────────┐',
@@ -279,7 +279,7 @@ const DATA = [
   {
     id: 'ch4',
     title: 'Ⅳ 资本主义的本质及规律',
-    icon: '💰',
+    icon: 'coins',
     subtitle: '本章小题居多',
     items: [
       {
@@ -461,7 +461,7 @@ const DATA = [
   {
     id: 'ch5',
     title: 'Ⅴ 资本主义的发展及其趋势',
-    icon: '📈',
+    icon: 'trending-up',
     items: [
       {
         type: 'overview',
@@ -565,7 +565,7 @@ const DATA = [
   {
     id: 'ch6',
     title: 'Ⅵ 社会主义的发展及其规律',
-    icon: '🚩',
+    icon: 'flag',
     items: [
       {
         type: 'overview',
@@ -626,7 +626,7 @@ const DATA = [
   {
     id: 'ch7',
     title: 'Ⅶ 共产主义崇高理想及其最终实现',
-    icon: '⭐',
+    icon: 'star',
     items: [
       {
         type: 'overview',
@@ -661,8 +661,8 @@ const DATA = [
   // ── 附加 · 材料题素材 ──
   {
     id: 'bonus',
-    title: '🎯 附加 · 材料题素材',
-    icon: '🔥',
+    title: '附加 · 材料题素材',
+    icon: 'zap',
     subtitle: '有余力想拿高分的同学可以背，针对材料题写套话',
     items: [
       {

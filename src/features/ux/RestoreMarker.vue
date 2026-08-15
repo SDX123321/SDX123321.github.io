@@ -63,7 +63,7 @@ onMounted(() => {
     back.style.cssText =
       'position:fixed;bottom:250px;right:30px;z-index:99;display:none;pointer-events:auto'
     back.innerHTML =
-      '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px 8px 12px;background:var(--card,#1e2235);border:1px solid var(--border,#2d3436);border-left:3px solid var(--accent,#6c63ff);border-radius:20px;box-shadow:0 4px 16px rgba(0,0,0,.25);cursor:pointer;font-size:.8rem;color:var(--accent,#6c63ff);font-weight:600;white-space:nowrap"><span>📍</span><span>上次学到这里</span></div>'
+      '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px 8px 12px;background:var(--card,#1e2235);border:1px solid var(--border,#2d3436);border-left:3px solid var(--accent,#6c63ff);border-radius:20px;box-shadow:0 4px 16px rgba(0,0,0,.25);cursor:pointer;font-size:.8rem;color:var(--accent,#6c63ff);font-weight:600;white-space:nowrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg><span>上次学到这里</span></div>'
     document.body.appendChild(back)
     back.addEventListener('click', () => window.scrollTo({ top: saved - 80, behavior: 'smooth' }))
     backFab = back

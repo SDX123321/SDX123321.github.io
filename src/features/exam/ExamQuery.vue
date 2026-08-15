@@ -4,6 +4,7 @@
  * 根据班级 ID 查询考试安排，带实时倒计时。
  */
 import { ref, onMounted, onUnmounted } from 'vue'
+import { Calendar } from 'lucide-vue-next'
 
 const LS_KEY = 'exam_class_id'
 const LS_DELETED = 'exam_deleted'
@@ -229,7 +230,7 @@ onUnmounted(() => {
   <div class="exam-section">
     <!-- 查询框 -->
     <div v-show="!showResult" id="examInput" class="exam-input-wrap">
-      <div class="exam-input-title">📅 查询考试安排</div>
+      <div class="exam-input-title"><Calendar :size="18" /> 查询考试安排</div>
       <div class="exam-input-row">
         <input
           id="examClassInput"

@@ -4,6 +4,8 @@
  * 从当前课程页面收集题目，随机组卷并计时测验。
  */
 import { ref, computed, onUnmounted } from 'vue'
+import { Dices, X } from 'lucide-vue-next'
+import DOMPurify from 'dompurify'
 
 interface Question {
   text: string
@@ -35,7 +37,8 @@ function collectPageQuizzes(): Question[] {
       }
       prev = prev.previousElementSibling
     }
-    questions.push({ text: qEl.innerHTML.trim(), options: opts, correct, chapter })
+    const safeText = DOMPurify.sanitize(qEl.innerHTML.trim())
+    questions.push({ text: safeText, options: opts, correct, chapter })
   })
   return questions
 }
@@ -142,18 +145,18 @@ onUnmounted(clearTimer)
       phase = 'config'
     "
   >
-    🎲
+    <Dices :size="20" aria-hidden="true" />
   </button>
 
   <!-- 弹窗 -->
   <Teleport to="body">
     <div v-if="open" class="rq-overlay" @click.self="close">
       <div class="rq-panel">
-        <button class="rq-close" @click="close">&times;</button>
+        <button class="rq-close" aria-label="关闭" @click="close"><X :size="18" /></button>
 
         <!-- 配置页 -->
         <template v-if="phase === 'config'">
-          <h3 class="rq-subtitle">🎲 随机组卷</h3>
+          <h3 class="rq-subtitle"><Dices :size="18" /> 随机组卷</h3>
           <p class="rq-desc">
             从当前页面 <strong>{{ allQ.length }}</strong> 道题中随机抽取
           </p>

@@ -68,7 +68,7 @@ function toggleSidebar(){
 }
 if(!localStorage.getItem('sg_done_prob'))document.getElementById('subGuide').style.display='flex';
 // Quiz
-function checkQuiz(btn){var c=btn.closest('.quiz-container');var correct=parseInt(c.dataset.correct);var sel=c.querySelector('input:checked');var res=c.querySelector('.quiz-result');if(!sel){res.textContent='请先选择答案';res.className='quiz-result quiz-wrong';return}if(parseInt(sel.value)===correct){res.textContent='✓ 正确！';res.className='quiz-result quiz-correct'}else{res.textContent='✗ 错误，正确答案是 '+c.querySelectorAll('.quiz-options label')[correct].textContent;res.className='quiz-result quiz-wrong'}}
+function checkQuiz(btn){var c=btn.closest('.quiz-container');var correct=parseInt(c.dataset.correct);var sel=c.querySelector('input:checked');var res=c.querySelector('.quiz-result');if(!sel){res.textContent='请先选择答案';res.className='quiz-result quiz-wrong';return}if(parseInt(sel.value)===correct){res.textContent='正确！';res.className='quiz-result quiz-correct'}else{res.textContent='错误，正确答案是 '+c.querySelectorAll('.quiz-options label')[correct].textContent;res.className='quiz-result quiz-wrong'}}
 
 // Fill-in-the-blank check
 function checkFill(btn) {

@@ -44,6 +44,8 @@ struct AppState {
     answer_slots: Arc<tokio::sync::Semaphore>,
     api_config_key: [u8; 32],
     question_assets: Arc<std::collections::HashMap<String, Value>>,
+    rate_limiter: std::sync::Mutex<std::collections::HashMap<String, (std::time::Instant, usize)>>,
+    api_key_cache: std::sync::Mutex<std::collections::HashMap<String, std::time::Instant>>,
 }
 
 #[derive(Clone, Serialize)]
@@ -362,8 +364,26 @@ async fn main() -> anyhow::Result<()> {
             .unwrap_or_else(|_| format!("{database_url}:exam-review-ai-config"))
             .as_bytes(),
     ));
-    let question_assets = load_question_assets(&project_root).await;
-    audit_question_completeness(&db, &project_root, &question_assets).await?;
+    let question_assets = Arc::new(load_question_assets(&project_root).await);
+    let db_audit = db.clone();
+    let project_root_audit = project_root.clone();
+    let question_assets_audit = question_assets.clone();
+    tokio::spawn(async move {
+        if let Err(e) = audit_question_completeness(&db_audit, &project_root_audit, &question_assets_audit).await {
+            eprintln!("Background question audit error: {e}");
+        }
+    });
+
+    let db_purge = db.clone();
+    tokio::spawn(async move {
+        let mut interval = tokio::time::interval(std::time::Duration::from_secs(3600));
+        loop {
+            interval.tick().await;
+            let _ = sqlx::query("DELETE FROM visitor_api_keys WHERE expires_at < now()").execute(&db_purge).await;
+            let _ = sqlx::query("DELETE FROM sessions WHERE expires_at < now()").execute(&db_purge).await;
+        }
+    });
+
     let material_root = env::var("MATERIAL_ROOT")
         .map(std::path::PathBuf::from)
         .unwrap_or_else(|_| std::path::PathBuf::from(r"C:\Users\zzz\Desktop\参考资料"));
@@ -404,7 +424,9 @@ async fn main() -> anyhow::Result<()> {
                 .unwrap_or(16),
         )),
         api_config_key,
-        question_assets: Arc::new(question_assets),
+        question_assets,
+        rate_limiter: std::sync::Mutex::new(std::collections::HashMap::new()),
+        api_key_cache: std::sync::Mutex::new(std::collections::HashMap::new()),
     });
     learning::migrate_seeded_graphs(state.clone());
     let client_origin =
@@ -591,6 +613,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/me/import-local", post(import_local))
         .route("/api/study/event", post(study_event))
         .route("/api/handshake", post(api_handshake))
+        .layer(middleware::from_fn(security_headers))
         .layer(middleware::from_fn_with_state(state.clone(), api_key_auth))
         .layer(cors)
         .with_state(state);
@@ -700,15 +723,54 @@ fn parse_cookie(headers: &HeaderMap, name: &str) -> Option<String> {
     })
 }
 
+fn is_secure_context() -> bool {
+    env::var("NODE_ENV").map(|v| v == "production").unwrap_or(false)
+        || env::var("CLIENT_ORIGIN").map(|v| v.starts_with("https://")).unwrap_or(false)
+}
+
 fn session_cookie(token: &str) -> String {
+    let secure = if is_secure_context() { "; Secure" } else { "" };
     format!(
-        "{SESSION_COOKIE}={token}; Path=/; Max-Age={}; HttpOnly; SameSite=Lax",
+        "{SESSION_COOKIE}={token}; Path=/; Max-Age={}; HttpOnly; SameSite=Lax{secure}",
         SESSION_DAYS * 24 * 60 * 60
     )
 }
 
 fn clear_session_cookie() -> String {
-    format!("{SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax")
+    let secure = if is_secure_context() { "; Secure" } else { "" };
+    format!("{SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax{secure}")
+}
+
+fn check_rate_limit(state: &AppState, key: &str, limit: usize, window: std::time::Duration) -> bool {
+    let Ok(mut map) = state.rate_limiter.lock() else { return true };
+    let now = std::time::Instant::now();
+    if map.len() > 2000 {
+        map.retain(|_, (start, _)| now.duration_since(*start) <= window);
+    }
+    if let Some((start, count)) = map.get_mut(key) {
+        if now.duration_since(*start) > window {
+            *start = now;
+            *count = 1;
+            true
+        } else if *count < limit {
+            *count += 1;
+            true
+        } else {
+            false
+        }
+    } else {
+        map.insert(key.to_string(), (now, 1));
+        true
+    }
+}
+
+async fn security_headers(req: axum::extract::Request, next: Next) -> Response {
+    let mut response = next.run(req).await;
+    let headers = response.headers_mut();
+    headers.insert(header::X_CONTENT_TYPE_OPTIONS, HeaderValue::from_static("nosniff"));
+    headers.insert(axum::http::HeaderName::from_static("x-frame-options"), HeaderValue::from_static("DENY"));
+    headers.insert(axum::http::HeaderName::from_static("referrer-policy"), HeaderValue::from_static("strict-origin-when-cross-origin"));
+    response
 }
 
 fn validate_auth(input: &AuthInput) -> bool {
@@ -1568,6 +1630,11 @@ async fn register(
     headers: HeaderMap,
     Json(input): Json<AuthInput>,
 ) -> Result<Response, ApiError> {
+    let (ip, _) = auth_request_context(&headers);
+    let rate_key = format!("register:{}", ip.as_deref().unwrap_or("unknown"));
+    if !check_rate_limit(&state, &rate_key, 10, std::time::Duration::from_secs(60)) {
+        return Err(ApiError::new(StatusCode::TOO_MANY_REQUESTS, "too_many_requests"));
+    }
     if !validate_auth(&input) {
         return Err(ApiError::bad_request());
     }
@@ -1626,6 +1693,11 @@ async fn login(
     headers: HeaderMap,
     Json(input): Json<AuthInput>,
 ) -> Result<Response, ApiError> {
+    let (ip, _) = auth_request_context(&headers);
+    let rate_key = format!("login:{}", ip.as_deref().unwrap_or("unknown"));
+    if !check_rate_limit(&state, &rate_key, 10, std::time::Duration::from_secs(60)) {
+        return Err(ApiError::new(StatusCode::TOO_MANY_REQUESTS, "too_many_requests"));
+    }
     if !validate_auth(&input) {
         return Err(ApiError::bad_request());
     }
@@ -1821,7 +1893,15 @@ async fn study_event(
     Ok(Json(json!({ "ok": true })))
 }
 
-async fn api_handshake(State(state): State<SharedState>) -> Result<Json<Value>, ApiError> {
+async fn api_handshake(
+    State(state): State<SharedState>,
+    headers: HeaderMap,
+) -> Result<Json<Value>, ApiError> {
+    let (ip, _) = auth_request_context(&headers);
+    let rate_key = format!("handshake:{}", ip.as_deref().unwrap_or("unknown"));
+    if !check_rate_limit(&state, &rate_key, 30, std::time::Duration::from_secs(60)) {
+        return Err(ApiError::new(StatusCode::TOO_MANY_REQUESTS, "too_many_requests"));
+    }
     let mut key_bytes = [0u8; 32];
     OsRng.fill_bytes(&mut key_bytes);
     let api_key = hex::encode(key_bytes);
@@ -1860,6 +1940,21 @@ async fn api_key_auth(
         .and_then(|value| value.to_str().ok())
         .ok_or_else(|| ApiError::new(StatusCode::UNAUTHORIZED, "missing_api_key"))?;
 
+    let now_inst = std::time::Instant::now();
+    let cache_hit = if let Ok(cache) = state.api_key_cache.lock() {
+        if let Some(created) = cache.get(api_key) {
+            now_inst.duration_since(*created) < std::time::Duration::from_secs(300)
+        } else {
+            false
+        }
+    } else {
+        false
+    };
+
+    if cache_hit {
+        return Ok(next.run(req).await);
+    }
+
     let exists = sqlx::query_scalar::<_, bool>(
         "SELECT EXISTS(SELECT 1 FROM visitor_api_keys WHERE api_key = $1 AND expires_at > now())",
     )
@@ -1873,6 +1968,13 @@ async fn api_key_auth(
 
     if !exists {
         return Err(ApiError::new(StatusCode::UNAUTHORIZED, "invalid_api_key"));
+    }
+
+    if let Ok(mut cache) = state.api_key_cache.lock() {
+        if cache.len() > 2000 {
+            cache.retain(|_, created| now_inst.duration_since(*created) < std::time::Duration::from_secs(300));
+        }
+        cache.insert(api_key.to_string(), now_inst);
     }
 
     Ok(next.run(req).await)
@@ -1919,6 +2021,8 @@ async fn ensure_schema(db: &PgPool) -> anyhow::Result<()> {
         "CREATE INDEX IF NOT EXISTS idx_gaokao_rag_chunks_text_trgm ON gaokao_rag_chunks USING gin (chunk_text gin_trgm_ops)",
         "CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_time ON gaokao_answer_attempts(user_id, answered_at DESC)",
         "CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_subject ON gaokao_answer_attempts(user_id, subject_key)",
+        "CREATE INDEX IF NOT EXISTS idx_gaokao_questions_sorting ON gaokao_questions(subject_key, year DESC NULLS LAST, question_number ASC NULLS LAST, updated_at DESC)",
+        "CREATE INDEX IF NOT EXISTS idx_visitor_api_keys_expires ON visitor_api_keys(expires_at)",
     ];
 
     for statement in statements {

@@ -198,5 +198,7 @@ export async function ensureSchema() {
     CREATE INDEX IF NOT EXISTS idx_gaokao_questions_cleanup_status ON gaokao_questions ((metadata #>> '{cleanup,status}'));
     CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_time ON gaokao_answer_attempts(user_id, answered_at DESC);
     CREATE INDEX IF NOT EXISTS idx_gaokao_attempts_user_subject ON gaokao_answer_attempts(user_id, subject_key);
+    CREATE INDEX IF NOT EXISTS idx_gaokao_questions_sorting ON gaokao_questions(subject_key, year DESC NULLS LAST, question_number ASC NULLS LAST, updated_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_visitor_api_keys_expires ON visitor_api_keys(expires_at);
   `)
 }
