@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import {
+  computed,
+  defineAsyncComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   ArrowLeft,
@@ -14,10 +22,13 @@ import {
   X,
 } from 'lucide-vue-next'
 import CourseIcon from '../components/CourseIcon.vue'
-import AlgorithmTrainer from '../features/algorithm/AlgorithmTrainer.vue'
-import { courseContentMap } from '../data/course-content'
+import type { CourseContent } from '../data/course-content'
 import type { NavLink } from '../types/course'
 
+const AlgorithmTrainer = defineAsyncComponent(
+  () => import('../features/algorithm/AlgorithmTrainer.vue'),
+)
+const props = defineProps<{ course?: CourseContent }>()
 const route = useRoute()
 const router = useRouter()
 const contentElement = ref<HTMLElement | null>(null)
@@ -35,17 +46,30 @@ interface WrongAnswer {
 }
 const wrongAnswers = ref<WrongAnswer[]>(loadWrongAnswers())
 const wrongBookOpen = ref(false)
-const course = computed(() => courseContentMap.get(String(route.params.courseId)))
+const course = computed(() => props.course)
 const cleanLabel = (label: string) => label.replace(/<[^>]+>/g, '').trim()
+let chapterHeadings: HTMLElement[] = []
 
 watch(
   course,
-  async (next) => {
+  async (next, _, onCleanup) => {
     if (!next) return
+    let current = true
+    const style = document.createElement('style')
+    if (next.stylesheet) {
+      style.textContent = next.stylesheet
+      document.head.prepend(style)
+    }
+    onCleanup(() => {
+      current = false
+      style.remove()
+      chapterHeadings = []
+      document.getElementById('course-interactions')?.remove()
+    })
     document.title = `${next.name}｜期末复习笔记`
     localStorage.setItem('review_recent_course', next.id)
     await nextTick()
-    enhanceContent()
+    if (current) enhanceContent()
   },
   { immediate: true },
 )
@@ -61,11 +85,12 @@ function scrollToSection(link: NavLink) {
 function updateProgress() {
   const max = document.documentElement.scrollHeight - window.innerHeight
   progress.value = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0
-  const headings = contentElement.value?.querySelectorAll<HTMLElement>('[id]') ?? []
   let current = ''
-  headings.forEach((heading) => {
-    if (heading.getBoundingClientRect().top <= 130) current = heading.id
-  })
+  for (const heading of chapterHeadings) {
+    if (heading.getClientRects().length && heading.getBoundingClientRect().top <= 130) {
+      current = heading.id
+    }
+  }
   activeSection.value = current
 }
 
@@ -176,11 +201,15 @@ function clearWrongAnswers() {
 
 function enhanceContent() {
   if (!contentElement.value) return
-  contentElement.value.removeEventListener('click', handleContentClick)
   contentElement.value.addEventListener('click', handleContentClick)
+  const sectionIds = new Set(course.value?.nav.map((link) => link.id))
+  chapterHeadings = Array.from(contentElement.value.querySelectorAll<HTMLElement>('[id]')).filter(
+    (element) => sectionIds.has(element.id),
+  )
   loadCourseInteractions()
-  renderMath()
-  if (route.hash) document.querySelector(route.hash)?.scrollIntoView({ block: 'start' })
+  void renderMath().catch(() => undefined)
+  if (route.hash) document.getElementById(route.hash.slice(1))?.scrollIntoView({ block: 'start' })
+  updateProgress()
 }
 
 function loadCourseInteractions() {
@@ -201,12 +230,19 @@ function loadCourseInteractions() {
 }
 
 async function renderMath() {
-  if (!course.value?.renderer || !contentElement.value) return
-  if (course.value.renderer === 'katex') {
-    await loadStylesheet('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css')
-    await loadScript('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js')
-    await loadScript('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js')
-    window.renderMathInElement?.(contentElement.value, {
+  const renderer = course.value?.renderer
+  const content = contentElement.value
+  if (!renderer || !content) return
+  if (renderer === 'katex') {
+    const core = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist'
+    await Promise.all([
+      loadMathAsset(`${core}/katex.min.css`, 'style'),
+      loadMathAsset(`${core}/katex.min.js`, 'script').then(() =>
+        loadMathAsset(`${core}/contrib/auto-render.min.js`, 'script'),
+      ),
+    ])
+    if (content !== contentElement.value || course.value?.renderer !== renderer) return
+    window.renderMathInElement?.(content, {
       delimiters: [
         { left: '$$', right: '$$', display: true },
         { left: '\\[', right: '\\]', display: true },
@@ -224,31 +260,39 @@ async function renderMath() {
         ],
       },
     }
-    await loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js')
-    await window.MathJax?.typesetPromise?.([contentElement.value])
+    await loadMathAsset('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js', 'script')
+    if (content !== contentElement.value || course.value?.renderer !== renderer) return
+    await window.MathJax?.typesetPromise?.([content])
   }
 }
 
-function loadScript(src: string) {
-  const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`)
-  if (existing) return Promise.resolve()
+function loadMathAsset(url: string, kind: 'style' | 'script') {
+  const existing = document.querySelector<HTMLElement>(`[data-course-math="${url}"]`)
+  if (existing?.dataset.ready) return Promise.resolve()
+  const asset =
+    existing ??
+    (kind === 'style'
+      ? Object.assign(document.createElement('link'), { rel: 'stylesheet', href: url })
+      : Object.assign(document.createElement('script'), { src: url }))
+  asset.dataset.courseMath = url
   return new Promise<void>((resolve, reject) => {
-    const script = document.createElement('script')
-    script.src = src
-    script.onload = () => resolve()
-    script.onerror = () => reject(new Error(`无法加载 ${src}`))
-    document.head.appendChild(script)
-  })
-}
-
-function loadStylesheet(href: string) {
-  if (document.querySelector(`link[href="${href}"]`)) return Promise.resolve()
-  return new Promise<void>((resolve) => {
-    const link = document.createElement('link')
-    link.rel = 'stylesheet'
-    link.href = href
-    link.onload = () => resolve()
-    document.head.appendChild(link)
+    asset.addEventListener(
+      'load',
+      () => {
+        asset.dataset.ready = 'true'
+        resolve()
+      },
+      { once: true },
+    )
+    asset.addEventListener(
+      'error',
+      () => {
+        asset.remove()
+        reject(new Error(`无法加载 ${url}`))
+      },
+      { once: true },
+    )
+    if (!existing) document.head.appendChild(asset)
   })
 }
 
@@ -351,9 +395,9 @@ function handleKeydown(event: KeyboardEvent) {
       @click="sidebarOpen = false"
     />
 
-    <main id="main-content" class="course-main">
+    <main id="main-content" class="course-main" :class="course.id">
       <template v-if="course.html">
-        <div ref="contentElement" class="course-content" v-html="course.html" />
+        <div :key="course.id" ref="contentElement" class="course-content" v-html="course.html" />
         <AlgorithmTrainer v-if="course.id === 'algorithm'" />
       </template>
       <section v-else class="special-course">

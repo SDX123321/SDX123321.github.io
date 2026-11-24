@@ -2,7 +2,7 @@
 function scrollToSection(id){
   document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
 }
-window.addEventListener('scroll',()=>{
+if (document.currentScript?.id !== 'course-interactions') window.addEventListener('scroll',()=>{
   const btn=document.getElementById('backTop');
   btn.classList.toggle('show',window.scrollY>300);
   // Active nav

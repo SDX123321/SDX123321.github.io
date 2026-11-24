@@ -11,12 +11,11 @@ async function getApiKey(): Promise<string> {
 
   if (handshakePromise) return handshakePromise
 
-  const API_BASE = (import.meta.env.VITE_API_BASE_URL as string) || 'http://127.0.0.1:8787'
+  const apiBase = import.meta.env.VITE_API_BASE_URL || ''
   handshakePromise = (async () => {
     try {
-      const response = await originalFetch(`${API_BASE}/api/handshake`, {
+      const response = await originalFetch(`${apiBase}/api/handshake`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
       })
       if (!response.ok) throw new Error('Handshake failed')
       const data = (await response.json()) as { apiKey: string }

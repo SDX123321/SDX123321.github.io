@@ -17,6 +17,7 @@ import {
 } from 'lucide-vue-next'
 import { useAuth } from '../composables/useAuth'
 import HighSchoolOnboarding from './HighSchoolOnboarding.vue'
+import '../styles/high-school.css'
 
 const auth = useAuth()
 const menuOpen = ref(false)

@@ -5,7 +5,7 @@
 import { ref, readonly } from 'vue'
 import { collectLocalProgressSnapshot } from '../features/account/progressSnapshot'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8787'
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 export interface SessionUser {
   id: string
@@ -33,6 +33,7 @@ const busy = ref(false)
 const apiAvailable = ref(true)
 const mustChangePassword = ref(false)
 const lastImport = ref<{ imported: number; snapshot: unknown } | null>(null)
+let pendingRefresh: Promise<SessionUser | null> | undefined
 
 // ── 内部 API 工具函数 ──
 
@@ -71,7 +72,14 @@ async function refreshStats(): Promise<AuthStats | null> {
   }
 }
 
-async function refresh(): Promise<SessionUser | null> {
+function refresh(): Promise<SessionUser | null> {
+  pendingRefresh ??= refreshSession().finally(() => {
+    pendingRefresh = undefined
+  })
+  return pendingRefresh
+}
+
+async function refreshSession(): Promise<SessionUser | null> {
   try {
     const data = await api('/api/me')
     user.value = (data['user'] ?? data) as SessionUser

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { ExternalLink, FileArchive, FileText, Search, SlidersHorizontal } from 'lucide-vue-next'
+import { ExternalLink, FileArchive, FileText, Search } from 'lucide-vue-next'
 import { FILES as filesRaw } from '../../data/files.js'
 
 interface ResourceFile {
@@ -45,14 +45,7 @@ function resetVisible() {
 </script>
 
 <template>
-  <section id="resources" class="resource-section page-container" aria-labelledby="resources-title">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">复习资料库</p>
-        <h2 id="resources-title">课件、试卷与参考资料</h2>
-      </div>
-      <p>{{ filtered.length }} 份文件</p>
-    </div>
+  <div>
     <div class="resource-toolbar">
       <div class="resource-search">
         <Search :size="18" /><label class="sr-only" for="resource-search">搜索复习资料</label
@@ -80,8 +73,8 @@ function resetVisible() {
           <option v-for="item in types" :key="item.key" :value="item.key">{{ item.name }}</option>
         </select></label
       >
-      <SlidersHorizontal :size="18" aria-hidden="true" />
     </div>
+    <p class="resource-count" role="status">{{ filtered.length }} 份文件</p>
     <div v-if="filtered.length" class="resource-grid">
       <a
         v-for="file in filtered.slice(0, visible)"
@@ -111,5 +104,5 @@ function resetVisible() {
     <button v-if="visible < filtered.length" class="load-more" type="button" @click="visible += 12">
       继续加载（还剩 {{ filtered.length - visible }} 份）
     </button>
-  </section>
+  </div>
 </template>

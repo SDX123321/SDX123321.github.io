@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   Download,
@@ -38,7 +38,8 @@ const year = ref('')
 const region = ref('all')
 const kind = ref('all')
 let timer: number | undefined
-let loadVersion = 0
+let catalogRequest: AbortController | undefined
+let ragRequest: AbortController | undefined
 const subjectOptions = [
   ['all', '全部学科'],
   ['chinese', '语文'],
@@ -81,10 +82,21 @@ const hasFilters = computed(
 )
 
 async function load(reset = true) {
-  const requestVersion = ++loadVersion
+  if (!reset && (loading.value || cursor.value === null)) return
+  window.clearTimeout(timer)
+  catalogRequest?.abort()
+  const request = new AbortController()
+  catalogRequest = request
   loading.value = true
   error.value = ''
-  if (reset) ragError.value = ''
+  if (reset) {
+    ragRequest?.abort()
+    ragRequest = undefined
+    ragError.value = ''
+    ragMatches.value = []
+    ragLoading.value = false
+    cursor.value = null
+  }
   const params = new URLSearchParams({ limit: '24' })
   if (!reset && cursor.value !== null) params.set('cursor', String(cursor.value))
   if (query.value.trim()) params.set('q', query.value.trim())
@@ -94,48 +106,46 @@ async function load(reset = true) {
   if (region.value !== 'all') params.set('region', region.value)
   if (kind.value !== 'all') params.set('kind', kind.value)
   try {
-    const ragParams = new URLSearchParams(params)
-    ragParams.delete('cursor')
-    ragParams.set('limit', '10')
-    const shouldSearchRag = reset && Boolean(query.value.trim())
-    ragLoading.value = shouldSearchRag
-    const response = await fetch(`/api/high-school/materials?${params}`)
-    if (requestVersion !== loadVersion) return
+    const response = await fetch(`/api/high-school/materials?${params}`, { signal: request.signal })
     if (!response.ok) throw new Error('资料目录加载失败')
     const body = await response.json()
+    if (request.signal.aborted) return
     items.value = reset ? body.items : [...items.value, ...body.items]
     total.value = body.pageInfo.total
     cursor.value = body.pageInfo.nextCursor
-    if (shouldSearchRag) {
-      void loadRag(ragParams, requestVersion)
-    } else if (reset) {
-      ragMatches.value = []
+    if (reset && params.has('q')) {
+      params.set('limit', '10')
+      void loadRag(params)
     }
   } catch (reason) {
-    if (requestVersion !== loadVersion) return
+    if (request.signal.aborted) return
     error.value = reason instanceof Error ? reason.message : '加载失败'
   } finally {
-    if (requestVersion === loadVersion) {
-      loading.value = false
-    }
+    if (catalogRequest === request) loading.value = false
   }
 }
-async function loadRag(params: URLSearchParams, requestVersion: number) {
+
+async function loadRag(params: URLSearchParams) {
+  const request = new AbortController()
+  ragRequest = request
+  ragLoading.value = true
+  const timeout = window.setTimeout(() => request.abort(), 22_000)
   try {
     const response = await fetch(`/api/high-school/rag/search?${params}`, {
-      signal: AbortSignal.timeout(22_000),
+      signal: request.signal,
     })
-    if (requestVersion !== loadVersion) return
     if (!response.ok) throw new Error('rag_unavailable')
     const body = await response.json()
+    if (ragRequest !== request) return
     ragMatches.value = body.matches || []
     vectorEnabled.value = Boolean(body.vectorEnabled)
   } catch {
-    if (requestVersion !== loadVersion) return
+    if (ragRequest !== request) return
     ragMatches.value = []
     ragError.value = '语义召回暂时不可用，已保留目录搜索结果。'
   } finally {
-    if (requestVersion === loadVersion) ragLoading.value = false
+    window.clearTimeout(timeout)
+    if (ragRequest === request) ragLoading.value = false
   }
 }
 function schedule() {
@@ -149,7 +159,6 @@ function clearFilters() {
   year.value = ''
   region.value = 'all'
   kind.value = 'all'
-  void load(true)
 }
 function download(item: any) {
   if (!auth.user) {
@@ -178,8 +187,15 @@ async function openPreview(item: any, match = false) {
 function iconFor(item: any) {
   return item.kind === 'audio' ? FileAudio : item.kind === 'archive' ? FileArchive : FileText
 }
+watch(query, schedule)
 watch([grade, subject, year, region, kind], () => load(true))
 onMounted(() => load(true))
+onBeforeUnmount(() => {
+  window.clearTimeout(timer)
+  catalogRequest?.abort()
+  ragRequest?.abort()
+  ragRequest = undefined
+})
 </script>
 
 <template>
@@ -248,7 +264,6 @@ onMounted(() => load(true))
             v-model="query"
             type="search"
             placeholder="搜索试卷、学校、地区或年份"
-            @input="schedule"
           /><span>{{ total.toLocaleString('zh-CN') }} 项</span>
         </div>
         <div v-if="error" class="hs-empty">

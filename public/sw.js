@@ -1,14 +1,6 @@
-/* sw.js — Service Worker for 期末复习 PWA (v3)
- *
- * v3 改动：
- *   - 删除坏掉的 PRECACHE_URLS（那些是 React 化前的旧文件名，install 阶段 addAll 失败）
- *   - 改为纯运行时缓存：HTML Network-First，静态资源 Stale-While-Revalidate
- *   - 站点本身已是 Vite hash 文件名，天然支持永久缓存
- *   - 跨域请求（KaTeX/MathJax/Giscus/busuanzi/Turnstile CDN）一律不拦截
- */
 'use strict';
 
-var VERSION = 'v3';
+var VERSION = 'v4';
 var HTML_CACHE = 'exam-review-html-' + VERSION;
 var ASSET_CACHE = 'exam-review-asset-' + VERSION;
 
@@ -18,12 +10,13 @@ self.addEventListener('install', function (event) {
 });
 
 self.addEventListener('activate', function (event) {
-  // 清掉所有非当前版本的缓存（包括 v2、v1）
   var keep = [HTML_CACHE, ASSET_CACHE];
   event.waitUntil(
     caches.keys().then(function (names) {
       return Promise.all(
-        names.filter(function (n) { return keep.indexOf(n) === -1; })
+        names.filter(function (n) {
+          return n.indexOf('exam-review-') === 0 && keep.indexOf(n) === -1;
+        })
              .map(function (n) { return caches.delete(n); })
       );
     }).then(function () { return self.clients.claim(); })
@@ -35,24 +28,27 @@ self.addEventListener('fetch', function (event) {
   if (req.method !== 'GET') return;
 
   var url = new URL(req.url);
-  // 跨域资源交给浏览器默认处理（CDN 自己有缓存）
-  if (url.origin !== location.origin) return;
+  if (url.origin !== location.origin || req.headers.has('range')) return;
+  if (/^\/(?:api|health|metrics)(?:\/|$)/.test(url.pathname)) return;
 
-  // HTML：Network-First，离线时回退到缓存
   var isHTML = req.headers.get('accept') || '';
-  if (isHTML.indexOf('text/html') !== -1) {
-    event.respondWith(networkFirst(req));
+  if (req.mode === 'navigate' || isHTML.indexOf('text/html') !== -1) {
+    event.respondWith(networkFirst(event));
     return;
   }
 
-  // 同源静态资源：Stale-While-Revalidate
+  if (/^\/assets\/[^/]+-[\w-]{8}\.[^/]+$/.test(url.pathname)) {
+    event.respondWith(cacheFirst(event));
+    return;
+  }
+
   if (isStaticAsset(url.pathname)) {
-    event.respondWith(staleWhileRevalidate(req));
+    event.respondWith(staleWhileRevalidate(event));
     return;
   }
 
   // 其余同源 GET（如 search_index.json）：Network-First 落缓存
-  event.respondWith(networkFirst(req));
+  event.respondWith(networkFirst(event));
 });
 
 function isStaticAsset(pathname) {
@@ -61,38 +57,46 @@ function isStaticAsset(pathname) {
           'woff', 'woff2', 'ttf', 'eot', 'webp', 'avif'].indexOf(ext) !== -1;
 }
 
-function staleWhileRevalidate(request) {
-  return caches.open(ASSET_CACHE).then(function (cache) {
-    return cache.match(request).then(function (cached) {
-      var network = fetch(request).then(function (res) {
-        if (res && res.status === 200 && res.type === 'basic') {
-          cache.put(request, res.clone());
-        }
-        return res;
-      }).catch(function () { return cached; });
-      return cached || network;
-    });
-  });
+async function fetchAndCache(event, cacheName) {
+  var response = await fetch(event.request);
+  var policy = response.headers.get('cache-control') || '';
+  if (response.status === 200 && response.type === 'basic' && !/\b(no-store|private)\b/i.test(policy)) {
+    var copy = response.clone();
+    event.waitUntil(caches.open(cacheName).then(function (cache) {
+      return cache.put(event.request, copy);
+    }).catch(function () {}));
+  }
+  return response;
 }
 
-function networkFirst(request) {
-  return fetch(request).then(function (res) {
-    if (res && res.status === 200 && res.type === 'basic') {
-      var clone = res.clone();
-      caches.open(HTML_CACHE).then(function (cache) { cache.put(request, clone); });
-    }
-    return res;
-  }).catch(function () {
-    return caches.match(request).then(function (cached) {
-      if (cached) return cached;
-      // 对导航请求返回离线兜底页
-      if (request.mode === 'navigate') return generateOfflinePage();
-      return new Response('离线状态，该内容暂不可用', {
-        status: 503,
-        headers: new Headers({ 'Content-Type': 'text/plain; charset=utf-8' }),
-      });
+function matchCache(cacheName, request) {
+  return caches.match(request, { cacheName: cacheName }).catch(function () {});
+}
+
+async function cacheFirst(event) {
+  return (await matchCache(ASSET_CACHE, event.request)) || fetchAndCache(event, ASSET_CACHE);
+}
+
+async function staleWhileRevalidate(event) {
+  var cached = await matchCache(ASSET_CACHE, event.request);
+  var update = fetchAndCache(event, ASSET_CACHE);
+  if (!cached) return update;
+  event.waitUntil(update.catch(function () {}));
+  return cached;
+}
+
+async function networkFirst(event) {
+  try {
+    return await fetchAndCache(event, HTML_CACHE);
+  } catch (_) {
+    var cached = await matchCache(HTML_CACHE, event.request);
+    if (cached) return cached;
+    if (event.request.mode === 'navigate') return generateOfflinePage();
+    return new Response('离线状态，该内容暂不可用', {
+      status: 503,
+      headers: new Headers({ 'Content-Type': 'text/plain; charset=utf-8' }),
     });
-  });
+  }
 }
 
 function generateOfflinePage() {

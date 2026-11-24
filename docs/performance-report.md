@@ -34,3 +34,18 @@ Run at 2026-07-12 22:17 CST against the optimized Rust 2.1.0 binary on Windows, 
 | Maximum | 445.31 ms |
 
 The tested routes were `/health/live`, `/health/ready`, and `/api/domains`. RAG generation and Ollama inference are intentionally excluded because their capacity depends on the selected model and accelerator; production acceptance must run a separate model-specific scenario.
+
+## Route loading and high-school overview
+
+The November 23, 2026 local comparison used production builds, baseline commit `60849b3`, and Chromium at 1440 × 900. Each route started in a fresh browser context with the service worker disabled. The table counts same-origin JavaScript and CSS fetched by the initial route, compressed by the same local server with gzip.
+
+| Route | Baseline | Updated | Reduction | JS/CSS requests |
+| --- | ---: | ---: | ---: | ---: |
+| Home `/` | 87,485 B | 56,005 B | 36.0% | 3 → 3 |
+| Probability `/courses/probability` | 206,420 B | 88,347 B | 57.2% | 6 → 14 |
+
+The home page loads its resource catalog when readers approach it or choose the resource link. The high-school and knowledge-workspace styles load with their shells. Course pages download the selected course's content and navigation, with the view and content loader starting in parallel. The probability route trades more requests for less transferred code. Real-user page-load timing requires a separate measurement that includes third-party assets and network conditions.
+
+The browser checks covered the eight course URLs, home search, resuming the most recent course, the resource catalog, theme switching, mobile layout, stale search responses, and an offline home reload. The service worker served a repeated hashed asset without reaching the server and left API responses outside its cache. Browser API checks used mocked responses.
+
+`GET /api/high-school/overview` combines six SQL statements into one. The material totals and subject counts share a single scan, and the aggregate and latest index run use the same database snapshot. The old and new queries matched on an empty database and a fixture of 30,000 materials, 60,000 chunks, 23 subjects and two index runs. `EXPLAIN ANALYZE` on the fixture showed one `materials` scan. This check used an embedded PostgreSQL instance. A load test of the deployed API is still pending.

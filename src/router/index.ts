@@ -1,7 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import HighSchoolShell from '../components/HighSchoolShell.vue'
-import WorkspaceShell from '../components/WorkspaceShell.vue'
+import type { CourseContent } from '../data/course-content'
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    course?: CourseContent
+  }
+}
+
+const loadCourseView = () => import('../views/CourseView.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,7 +21,7 @@ const router = createRouter({
     { path: '/', name: 'home', component: HomeView },
     {
       path: '/workspace/:domain(high-school|university)',
-      component: WorkspaceShell,
+      component: () => import('../components/WorkspaceShell.vue'),
       children: [
         {
           path: '',
@@ -30,7 +37,7 @@ const router = createRouter({
     },
     {
       path: '/high-school',
-      component: HighSchoolShell,
+      component: () => import('../components/HighSchoolShell.vue'),
       children: [
         {
           path: '',
@@ -87,12 +94,14 @@ const router = createRouter({
     {
       path: '/courses/:courseId',
       name: 'course',
-      component: () => import('../views/CourseView.vue'),
+      component: loadCourseView,
+      props: (route) => ({ course: route.meta.course }),
     },
     {
       path: '/courses/:courseId/:section(.*)*',
       name: 'course-section',
-      component: () => import('../views/CourseView.vue'),
+      component: loadCourseView,
+      props: (route) => ({ course: route.meta.course }),
     },
     {
       path: '/:pathMatch(.*)*',
@@ -100,6 +109,20 @@ const router = createRouter({
       component: () => import('../views/NotFoundView.vue'),
     },
   ],
+})
+
+router.beforeEach(async (to, from) => {
+  if (to.name !== 'course' && to.name !== 'course-section') return
+  const courseId = String(to.params.courseId)
+  if (from.meta.course?.id === courseId) {
+    to.meta.course = from.meta.course
+    return
+  }
+  const [course] = await Promise.all([
+    import('../data/course-content').then(({ loadCourseContent }) => loadCourseContent(courseId)),
+    loadCourseView(),
+  ])
+  to.meta.course = course
 })
 
 router.afterEach((to) => {

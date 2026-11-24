@@ -188,43 +188,58 @@ fn public_material(row: &sqlx::postgres::PgRow) -> Result<Value, sqlx::Error> {
 }
 
 pub(crate) async fn overview(State(state): State<SharedState>) -> Result<Json<Value>, ApiError> {
-    let total: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM materials")
-        .fetch_one(&state.db)
-        .await?;
-    let indexed: i64 =
-        sqlx::query_scalar("SELECT COUNT(*) FROM materials WHERE rag_status = 'indexed'")
-            .fetch_one(&state.db)
-            .await?;
-    let chunks: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM material_chunks")
-        .fetch_one(&state.db)
-        .await?;
-    let bytes: i64 =
-        sqlx::query_scalar("SELECT COALESCE(SUM(size_bytes), 0)::bigint FROM materials")
-            .fetch_one(&state.db)
-            .await?;
-    let facets = sqlx::query(
-        "SELECT subject, COUNT(*)::int AS count FROM materials GROUP BY subject ORDER BY count DESC, subject LIMIT 20",
-    ).fetch_all(&state.db).await?;
-    let subjects: Result<Vec<_>, sqlx::Error> = facets
-        .into_iter()
-        .map(|row| {
-            Ok(json!({
-                "key": row.try_get::<String,_>("subject")?, "count": row.try_get::<i32,_>("count")?
-            }))
+    let row = sqlx::query(
+        r#"WITH material_stats AS (
+            SELECT subject, GROUPING(subject) AS is_total, COUNT(*) AS materials,
+                   COUNT(*) FILTER (WHERE rag_status = 'indexed') AS indexed,
+                   COALESCE(SUM(size_bytes), 0)::bigint AS size_bytes
+            FROM materials
+            GROUP BY GROUPING SETS ((), (subject))
+        ), top_subjects AS (
+            SELECT subject, materials FROM material_stats WHERE is_total = 0
+            ORDER BY materials DESC, subject LIMIT 20
+        )
+        SELECT totals.materials, totals.indexed, totals.size_bytes,
+               (SELECT COUNT(*) FROM material_chunks) AS chunks,
+               COALESCE((
+                   SELECT jsonb_agg(jsonb_build_object('key', subject, 'count', materials)
+                                    ORDER BY materials DESC, subject)
+                   FROM top_subjects
+               ), '[]'::jsonb) AS subjects,
+               run.*
+        FROM material_stats totals
+        LEFT JOIN (
+            SELECT id, status, discovered, deduplicated, extracted, embedded,
+                   failed, remaining, created_at, updated_at
+            FROM material_index_runs ORDER BY created_at DESC LIMIT 1
+        ) run ON true
+        WHERE totals.is_total = 1"#,
+    )
+    .fetch_one(&state.db)
+    .await?;
+    let last_run = row.try_get::<Option<Uuid>, _>("id")?.map(|id| {
+        json!({
+            "id": id,
+            "status": row.try_get::<String, _>("status").ok(),
+            "discovered": row.try_get::<i32, _>("discovered").ok(),
+            "deduplicated": row.try_get::<i32, _>("deduplicated").ok(),
+            "extracted": row.try_get::<i32, _>("extracted").ok(),
+            "embedded": row.try_get::<i32, _>("embedded").ok(),
+            "failed": row.try_get::<i32, _>("failed").ok(),
+            "remaining": row.try_get::<i32, _>("remaining").ok(),
+            "createdAt": row.try_get::<DateTime<Utc>, _>("created_at").ok(),
+            "updatedAt": row.try_get::<DateTime<Utc>, _>("updated_at").ok()
         })
-        .collect();
-    let last_run = sqlx::query("SELECT id, status, discovered, deduplicated, extracted, embedded, failed, remaining, created_at, updated_at FROM material_index_runs ORDER BY created_at DESC LIMIT 1")
-        .fetch_optional(&state.db).await?.map(|row| json!({
-            "id": row.try_get::<Uuid,_>("id").ok(), "status": row.try_get::<String,_>("status").ok(),
-            "discovered": row.try_get::<i32,_>("discovered").ok(), "deduplicated": row.try_get::<i32,_>("deduplicated").ok(),
-            "extracted": row.try_get::<i32,_>("extracted").ok(), "embedded": row.try_get::<i32,_>("embedded").ok(),
-            "failed": row.try_get::<i32,_>("failed").ok(), "remaining": row.try_get::<i32,_>("remaining").ok(),
-            "createdAt": row.try_get::<DateTime<Utc>,_>("created_at").ok(), "updatedAt": row.try_get::<DateTime<Utc>,_>("updated_at").ok()
-        }));
-    Ok(Json(
-        json!({"materials": total, "indexed": indexed, "chunks": chunks, "sizeBytes": bytes,
-        "subjects": subjects?, "lastRun": last_run, "vectorEnabled": state.vector_enabled}),
-    ))
+    });
+    Ok(Json(json!({
+        "materials": row.try_get::<i64, _>("materials")?,
+        "indexed": row.try_get::<i64, _>("indexed")?,
+        "chunks": row.try_get::<i64, _>("chunks")?,
+        "sizeBytes": row.try_get::<i64, _>("size_bytes")?,
+        "subjects": row.try_get::<Value, _>("subjects")?,
+        "lastRun": last_run,
+        "vectorEnabled": state.vector_enabled
+    })))
 }
 
 fn bind_filters<'a>(builder: &mut QueryBuilder<'a, Postgres>, params: &'a MaterialParams) {
