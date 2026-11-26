@@ -69,7 +69,10 @@ jobs:
           fi
       - run: cargo run --manifest-path server-rs/Cargo.toml --bin migrate
       - run: cargo install cargo-llvm-cov --locked
-      - run: cargo llvm-cov --manifest-path server-rs/Cargo.toml --all-features --lcov --output-path coverage/rust-lcov.info
+      - name: Generate Rust coverage
+        run: |
+          mkdir -p coverage
+          cargo llvm-cov --manifest-path server-rs/Cargo.toml --all-features --lcov --output-path coverage/rust-lcov.info
       - uses: actions/upload-artifact@v4
         with:
           name: rust-coverage
