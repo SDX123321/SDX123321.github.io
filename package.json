@@ -62,15 +62,16 @@
   },
   "devDependencies": {
     "@eslint/compat": "^2.1.0",
-    "@eslint/js": "^9.20.0",
+    "@eslint/js": "^10.0.1",
     "@sentry/vite-plugin": "^5.3.0",
     "@sentry/vue": "^10.63.0",
     "@types/three": "^0.185.1",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitest/coverage-v8": "^4.1.10",
     "@vue/test-utils": "^2.4.11",
-    "eslint": "^9.39.4",
-    "eslint-plugin-vue": "^9.32.0",
+    "eslint": "^10.8.0",
+    "eslint-plugin-vue": "^10.12.1",
+    "globals": "^16.5.0",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.0.8",
@@ -79,7 +80,7 @@
     "typescript-eslint": "^8.62.1",
     "vite": "^6.0.0",
     "vitest": "^4.1.10",
-    "vue-eslint-parser": "^9.4.3",
+    "vue-eslint-parser": "^10.3.0",
     "vue-tsc": "^2.2.0"
   }
 }

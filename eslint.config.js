@@ -1,5 +1,6 @@
 import js from '@eslint/js'
 import pluginVue from 'eslint-plugin-vue'
+import globals from 'globals'
 import tseslint from 'typescript-eslint'
 import vueParser from 'vue-eslint-parser'
 
@@ -27,18 +28,7 @@ export default tseslint.config(
         parser: tseslint.parser,
         extraFileExtensions: ['.vue'],
       },
-      globals: {
-        window: 'readonly',
-        document: 'readonly',
-        localStorage: 'readonly',
-        navigator: 'readonly',
-        history: 'readonly',
-        getComputedStyle: 'readonly',
-        HTMLScriptElement: 'readonly',
-        HTMLElement: 'readonly',
-        KeyboardEvent: 'readonly',
-        MouseEvent: 'readonly',
-      },
+      globals: globals.browser,
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
