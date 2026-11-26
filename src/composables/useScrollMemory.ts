@@ -39,7 +39,7 @@ export function useScrollMemory(intervalMs = 8000) {
       pointer-events:none;white-space:nowrap;
       transform:translateX(-50%) translateY(30px);opacity:0;
     `
-    toast.innerHTML = '<span style="font-size:1rem">📍</span>已恢复上次阅读位置'
+    toast.innerHTML = '已恢复上次阅读位置'
     document.body.appendChild(toast)
     gsap.to(toast, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.4)' })
     gsap.to(toast, {
@@ -62,7 +62,7 @@ export function useScrollMemory(intervalMs = 8000) {
       cursor:pointer;font-size:.8rem;font-weight:600;white-space:nowrap;
       transform:translateX(20px);opacity:0;
     `
-    fab.innerHTML = '<span>📍</span><span>上次位置</span>'
+    fab.innerHTML = '<span>上次位置</span>'
     document.body.appendChild(fab)
     fab.addEventListener('click', () => {
       gsap.to(window, {

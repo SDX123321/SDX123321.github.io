@@ -2227,6 +2227,10 @@
   }
   .hs-material-row {
     align-items: flex-start;
+    flex-direction: column;
+  }
+  .hs-material-copy {
+    width: 100%;
   }
   .hs-file-icon {
     display: none;

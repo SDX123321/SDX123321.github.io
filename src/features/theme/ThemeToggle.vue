@@ -3,6 +3,7 @@
  * ThemeToggle — 替代 React 的 features/theme/ThemeToggle.jsx
  * 主题切换按钮（深色/浅色）。
  */
+import { Moon, Sun } from 'lucide-vue-next'
 import { useTheme } from '../../composables/useTheme'
 
 const { isDark, toggleTheme } = useTheme()
@@ -16,8 +17,8 @@ const { isDark, toggleTheme } = useTheme()
     :aria-label="isDark ? '切换为浅色模式' : '切换为深色模式'"
     @click="toggleTheme"
   >
-    <span v-if="isDark">☀</span>
-    <span v-else>🌙</span>
+    <Sun v-if="isDark" :size="18" aria-hidden="true" />
+    <Moon v-else :size="18" aria-hidden="true" />
   </button>
 </template>
 

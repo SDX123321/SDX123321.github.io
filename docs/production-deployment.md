@@ -17,7 +17,7 @@ docker compose up -d
 curl --fail http://127.0.0.1:8787/health/ready
 ```
 
-The compose stack exposes the application on port 8080, Prometheus on 9090, and Grafana on 3000. Restrict the latter two at the firewall or reverse proxy.
+The compose stack exposes the application on port 38080, Prometheus on 9090, and Grafana on 33000. Restrict the latter two at the firewall or reverse proxy. The database, Redis, and direct API ports bind to localhost. With `TRUST_PROXY_CLIENT_IP=true`, the API uses the last address in `X-Forwarded-For` for authentication rate limits. Enable this setting only when the API is reachable through a trusted proxy that appends the actual peer address.
 
 ## Kubernetes
 

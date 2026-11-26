@@ -1,42 +1,85 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
 import {
+  ArrowDown,
   ArrowRight,
+  ArrowUpRight,
   BookOpenCheck,
   Clock3,
-  Command,
+  GraduationCap,
+  LibraryBig,
   Search,
-  Sparkles,
   Target,
   TrendingUp,
 } from 'lucide-vue-next'
 import CourseIcon from '../components/CourseIcon.vue'
-import ResourceShelf from '../features/resources/ResourceShelf.vue'
 import { courses } from '../data/courses'
+import '../styles/home.css'
 
+const universityCourses = courses.filter((course) => course.id !== 'gaokao')
+const searchableCourses = universityCourses.map((course) => ({
+  course,
+  keywords: [course.name, course.shortName, course.description, ...course.tags]
+    .join(' ')
+    .toLocaleLowerCase('zh-CN'),
+}))
 const query = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
-const recentCourseId = ref<string | null>(null)
+const resultsHeading = ref<HTMLElement | null>(null)
+const recentCourse = ref<(typeof courses)[number]>()
+const resourcesSection = ref<HTMLElement | null>(null)
+const resources = shallowRef<typeof import('../features/resources/ResourceShelf.vue').default>()
+const resourcesLoading = ref(false)
+const resourcesFailed = ref(false)
+let resourceObserver: IntersectionObserver | undefined
 
 const filteredCourses = computed(() => {
   const keyword = query.value.trim().toLocaleLowerCase('zh-CN')
-  if (!keyword) return courses
-  return courses.filter((course) =>
-    [course.name, course.shortName, course.description, ...course.tags]
-      .join(' ')
-      .toLocaleLowerCase('zh-CN')
-      .includes(keyword),
-  )
+  return keyword
+    ? searchableCourses.filter((item) => item.keywords.includes(keyword)).map((item) => item.course)
+    : universityCourses
 })
 
-const recentCourse = computed(() => courses.find((course) => course.id === recentCourseId.value))
+async function loadResources() {
+  if (resources.value || resourcesLoading.value) return
+  resourceObserver?.disconnect()
+  resourcesLoading.value = true
+  resourcesFailed.value = false
+  try {
+    resources.value = (await import('../features/resources/ResourceShelf.vue')).default
+  } catch {
+    resourcesFailed.value = true
+  } finally {
+    resourcesLoading.value = false
+  }
+}
 
 onMounted(() => {
-  recentCourseId.value = localStorage.getItem('review_recent_course')
+  try {
+    const recentId = localStorage.getItem('review_recent_course')
+    recentCourse.value = universityCourses.find((course) => course.id === recentId)
+  } catch {
+    recentCourse.value = undefined
+  }
   window.addEventListener('keydown', handleShortcut)
+  if (!resourcesSection.value) return
+  if ('IntersectionObserver' in window) {
+    resourceObserver = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) void loadResources()
+      },
+      { rootMargin: '240px 0px' },
+    )
+    resourceObserver.observe(resourcesSection.value)
+  } else {
+    void loadResources()
+  }
 })
 
-onBeforeUnmount(() => window.removeEventListener('keydown', handleShortcut))
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleShortcut)
+  resourceObserver?.disconnect()
+})
 
 function handleShortcut(event: KeyboardEvent) {
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -45,155 +88,179 @@ function handleShortcut(event: KeyboardEvent) {
   }
 }
 
+function showResults() {
+  resultsHeading.value?.focus({ preventScroll: true })
+  resultsHeading.value?.scrollIntoView({ block: 'start' })
+}
+
+function clearSearch() {
+  query.value = ''
+  searchInput.value?.focus()
+}
+
 function selectHighSchool() {
-  localStorage.setItem('review_edition', 'high-school')
+  try {
+    localStorage.setItem('review_edition', 'high-school')
+  } catch {
+    return
+  }
 }
 </script>
 
 <template>
   <div class="home-shell">
-    <header class="topbar">
-      <RouterLink class="brand" to="/" aria-label="期末复习笔记首页">
-        <span class="brand-mark"><BookOpenCheck :size="20" aria-hidden="true" /></span>
-        <span>期末复习笔记</span>
-      </RouterLink>
-      <nav class="topnav" aria-label="主导航">
-        <RouterLink to="/high-school" @click="selectHighSchool">高中版</RouterLink>
-        <a href="#courses">课程</a>
-        <a href="#resources">资料</a>
-        <a href="#method">复习方法</a>
-        <a href="#about">关于</a>
-      </nav>
-      <div class="topbar-spacer" />
+    <header class="home-header">
+      <div class="page-container home-header-inner">
+        <RouterLink class="home-brand" to="/" aria-label="期末复习笔记首页">
+          <span class="home-brand-mark"><BookOpenCheck :size="20" aria-hidden="true" /></span>
+          期末复习笔记
+        </RouterLink>
+        <nav class="home-navigation" aria-label="主导航">
+          <a href="#courses">大学课程</a>
+          <RouterLink to="/high-school" @click="selectHighSchool">高中学习站</RouterLink>
+          <a href="#resources" @click="loadResources">复习资料</a>
+        </nav>
+      </div>
     </header>
 
-    <main id="main-content">
-      <section class="hero page-container">
-        <div class="hero-copy">
-          <p class="eyebrow"><Sparkles :size="15" />为考试周而生的学习空间</p>
-          <h1>把复杂的知识，<br /><span>复习得更清楚。</span></h1>
-          <p class="hero-lead">
-            结构化笔记、真题练习与进度记录放在一个安静的空间里。少一点寻找，多一点真正的掌握。
-          </p>
-
-          <form class="hero-search" role="search" @submit.prevent>
+    <main id="main-content" tabindex="-1">
+      <section class="page-container home-intro" aria-labelledby="home-title">
+        <div class="home-intro-copy">
+          <h1 id="home-title">把知识复习<span>得更清楚。</span></h1>
+          <p>大学课程笔记、江苏高考真题和复习资料，按科目整理。</p>
+          <form class="home-search" role="search" @submit.prevent="showResults">
             <Search :size="20" aria-hidden="true" />
-            <label class="sr-only" for="course-search">搜索课程或知识点</label>
+            <label class="sr-only" for="course-search">搜索大学课程</label>
             <input
               id="course-search"
               ref="searchInput"
               v-model="query"
               type="search"
-              placeholder="搜索课程、章节或知识点…"
+              aria-controls="courses"
+              placeholder="搜索大学课程，如高数、DSP"
               autocomplete="off"
             />
-            <kbd><Command :size="12" />K</kbd>
+            <button type="submit">搜索</button>
           </form>
-
-          <div class="hero-actions">
-            <a class="primary-button" href="#courses">开始复习<ArrowRight :size="18" /></a>
-            <RouterLink
-              v-if="recentCourse"
-              class="secondary-button"
-              :to="`/courses/${recentCourse.id}`"
-            >
-              <Clock3 :size="17" />继续 {{ recentCourse.shortName }}
-            </RouterLink>
-          </div>
+          <RouterLink v-if="recentCourse" class="home-continue" :to="`/courses/${recentCourse.id}`">
+            <Clock3 :size="17" aria-hidden="true" />
+            继续复习 {{ recentCourse.shortName }}
+            <ArrowRight :size="16" aria-hidden="true" />
+          </RouterLink>
+          <a v-else class="home-continue" href="#courses">
+            浏览大学课程 <ArrowDown :size="16" aria-hidden="true" />
+          </a>
         </div>
 
-        <aside class="home-panel" aria-label="学习概览">
-          <div class="home-panel-head">
-            <span><Target :size="18" /></span>
-            <div>
-              <small>复习概览</small
-              ><strong>{{ recentCourse ? recentCourse.shortName : '准备开始' }}</strong>
-            </div>
-          </div>
-          <div class="home-panel-metric">
-            <strong>{{ courses.length }}</strong
-            ><span>门课程</span>
-          </div>
-          <div class="home-progress"><span /></div>
-          <div class="home-panel-foot">
-            <Clock3 v-if="recentCourse" :size="14" />
-            <span v-if="recentCourse">最近复习：{{ recentCourse.shortName }}</span>
-            <span v-else>从课程库选择第一门课</span>
-          </div>
-        </aside>
+        <nav class="study-index" aria-label="复习入口">
+          <p class="study-index-title"><LibraryBig :size="17" aria-hidden="true" />复习索引</p>
+          <a class="study-index-entry study-index-university" href="#courses">
+            <span class="study-index-icon"><BookOpenCheck :size="23" aria-hidden="true" /></span>
+            <span>
+              <strong>大学期末</strong>
+              <small>{{ universityCourses.length }} 门课程 · 笔记、公式与自测</small>
+            </span>
+            <ArrowDown :size="19" aria-hidden="true" />
+          </a>
+          <RouterLink
+            class="study-index-entry study-index-high-school"
+            to="/high-school"
+            @click="selectHighSchool"
+          >
+            <span class="study-index-icon"><GraduationCap :size="23" aria-hidden="true" /></span>
+            <span>
+              <strong>高中备考</strong>
+              <small>江苏高考真题 · 学科资料与练习</small>
+            </span>
+            <ArrowUpRight :size="19" aria-hidden="true" />
+          </RouterLink>
+        </nav>
       </section>
 
-      <section id="courses" class="course-section page-container" aria-labelledby="courses-title">
+      <section id="courses" class="home-section page-container" aria-labelledby="courses-title">
         <div class="section-heading">
-          <div>
-            <p class="eyebrow">课程资料库</p>
-            <h2 id="courses-title">选择今天要攻克的内容</h2>
-          </div>
-          <p>{{ filteredCourses.length }} 门课程</p>
+          <h2 id="courses-title" ref="resultsHeading" tabindex="-1">大学课程</h2>
+          <p role="status">{{ query.trim() ? '找到 ' : '' }}{{ filteredCourses.length }} 门课程</p>
         </div>
-
-        <div v-if="filteredCourses.length" class="course-list">
+        <div v-if="filteredCourses.length" class="home-course-grid">
           <RouterLink
             v-for="course in filteredCourses"
             :key="course.id"
-            class="course-row"
-            :style="{
-              '--course-accent': course.accent,
-              '--course-soft': course.softAccent,
-            }"
+            class="home-course-card"
+            :style="{ '--course-accent': course.accent, '--course-soft': course.softAccent }"
             :to="`/courses/${course.id}`"
           >
-            <span class="course-row-icon"><CourseIcon :name="course.icon" :size="22" /></span>
-            <span class="course-row-main">
-              <strong>{{ course.name }}</strong>
-              <small>{{ course.description }}</small>
-            </span>
-            <span class="course-row-tags" aria-label="课程特点">
-              <i v-for="tag in course.tags" :key="tag">{{ tag }}</i>
-            </span>
-            <ArrowRight class="course-row-arrow" :size="17" />
+            <div class="home-course-card-top">
+              <span class="home-course-icon"><CourseIcon :name="course.icon" :size="22" /></span>
+              <ArrowUpRight :size="18" aria-hidden="true" />
+            </div>
+            <h3>{{ course.name }}</h3>
+            <p>{{ course.description }}</p>
+            <ul class="home-course-tags" aria-label="课程内容">
+              <li v-for="tag in course.tags" :key="tag">{{ tag }}</li>
+            </ul>
           </RouterLink>
         </div>
         <div v-else class="no-results">
-          <Search :size="28" />
-          <h3>没有找到“{{ query }}”</h3>
+          <h3>没有找到“{{ query.trim() }}”</h3>
           <p>试试课程简称，例如“高数”或“DSP”。</p>
-          <button type="button" @click="query = ''">清除搜索</button>
+          <button type="button" @click="clearSearch">清除搜索</button>
         </div>
       </section>
 
-      <ResourceShelf />
-
-      <section id="method" class="method-section page-container">
+      <section
+        id="resources"
+        ref="resourcesSection"
+        class="home-section page-container"
+        aria-labelledby="resources-title"
+      >
         <div class="section-heading">
-          <div>
-            <p class="eyebrow">更轻松的复习节奏</p>
-            <h2>从读懂，到真正掌握</h2>
-          </div>
+          <h2 id="resources-title">复习资料</h2>
         </div>
-        <div class="method-grid">
-          <article>
-            <span>01</span><BookOpenCheck :size="24" />
-            <h3>结构化阅读</h3>
-            <p>用章节导航快速建立知识全貌，再深入重点。</p>
-          </article>
-          <article>
-            <span>02</span><Target :size="24" />
-            <h3>即时练习</h3>
-            <p>读完马上做题，用反馈确认自己是否真的理解。</p>
-          </article>
-          <article>
-            <span>03</span><TrendingUp :size="24" />
-            <h3>持续复盘</h3>
-            <p>记住进度和错题，让下一次复习从关键处开始。</p>
-          </article>
+        <component :is="resources" v-if="resources" />
+        <div v-else class="home-resource-placeholder" :aria-busy="resourcesLoading">
+          <p v-if="resourcesFailed" role="status">资料目录加载失败。</p>
+          <p v-else-if="resourcesLoading" role="status">正在加载资料目录…</p>
+          <button v-else type="button" class="load-more" @click="loadResources">
+            打开资料目录
+          </button>
+          <button v-if="resourcesFailed" type="button" class="load-more" @click="loadResources">
+            重新加载
+          </button>
         </div>
+      </section>
+
+      <section id="method" class="home-section page-container" aria-labelledby="method-title">
+        <div class="section-heading"><h2 id="method-title">复习方法</h2></div>
+        <ol class="home-method-grid">
+          <li>
+            <BookOpenCheck :size="20" aria-hidden="true" />
+            <div>
+              <h3>读笔记</h3>
+              <p>先过一遍课程目录，再读不熟悉的章节。</p>
+            </div>
+          </li>
+          <li>
+            <Target :size="20" aria-hidden="true" />
+            <div>
+              <h3>做练习</h3>
+              <p>读完一章就做几道题，检查能否独立解答。</p>
+            </div>
+          </li>
+          <li>
+            <TrendingUp :size="20" aria-hidden="true" />
+            <div>
+              <h3>回看错题</h3>
+              <p>下次复习时，先重做错过的题。</p>
+            </div>
+          </li>
+        </ol>
       </section>
     </main>
 
-    <footer id="about" class="site-footer page-container">
-      <span>期末复习笔记</span>
-      <p>愿每一次认真复习，都能换来从容作答。</p>
+    <footer id="about" class="home-footer page-container">
+      <strong>期末复习笔记</strong>
+      <a href="#method">复习方法</a>
     </footer>
   </div>
 </template>

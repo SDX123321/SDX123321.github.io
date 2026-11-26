@@ -41,7 +41,7 @@ onMounted(() => {
     const done = Object.values(s).filter(Boolean).length
     const pct = Math.round((done / total) * 100)
     if (bar) (bar.querySelector('#ux-progress-fill') as HTMLElement).style.width = pct + '%'
-    if (label) label.textContent = '📖 ' + done + '/' + total + ' (' + pct + '%)'
+    if (label) label.textContent = done + '/' + total + ' (' + pct + '%)'
   }
 
   headings.forEach((h2, i) => {

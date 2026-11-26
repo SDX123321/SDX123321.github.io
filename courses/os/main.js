@@ -2,7 +2,7 @@
 function scrollToSection(id){
   document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
 }
-window.addEventListener('scroll',()=>{
+if (document.currentScript?.id !== 'course-interactions') window.addEventListener('scroll',()=>{
   const btn=document.getElementById('backTop');
   btn.classList.toggle('show',window.scrollY>300);
   // Active nav
@@ -325,10 +325,10 @@ function runBanker(){
   }
 
   if(finish.every(f=>f)){
-    html+=`<p style="color:var(--green);font-size:1.1em;font-weight:600">✅ 安全状态！安全序列: ${safeSeq.join(' → ')}</p>`;
+    html+=`<p style="color:var(--green);font-size:1.1em;font-weight:600">安全状态！安全序列: ${safeSeq.join(' → ')}</p>`;
     html+=`<p>可以将资源分配给 ${procName}</p>`;
   }else{
-    html+=`<p style="color:var(--red);font-size:1.1em;font-weight:600">❌ 不安全状态！无法找到安全序列</p>`;
+    html+=`<p style="color:var(--red);font-size:1.1em;font-weight:600">不安全状态！无法找到安全序列</p>`;
     html+=`<p>应拒绝 ${procName} 的资源请求</p>`;
   }
 
@@ -442,9 +442,9 @@ function checkQuiz(btn){
   var result=container.querySelector('.quiz-result');
   if(!selected){result.textContent='请先选择答案';result.className='quiz-result quiz-wrong';return;}
   if(parseInt(selected.value)===correct){
-    result.textContent='✓ 正确！';result.className='quiz-result quiz-correct';
+    result.textContent='正确！';result.className='quiz-result quiz-correct';
   }else{
-    result.textContent='✗ 错误，正确答案是 '+container.querySelectorAll('.quiz-options label')[correct].textContent;
+    result.textContent='错误，正确答案是 '+container.querySelectorAll('.quiz-options label')[correct].textContent;
     result.className='quiz-result quiz-wrong';
   }
 }

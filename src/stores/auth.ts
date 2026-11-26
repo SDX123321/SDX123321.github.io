@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { collectLocalProgressSnapshot } from '../features/account/progressSnapshot'
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL as string) || 'http://127.0.0.1:8787'
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 export interface SessionUser {
   id: string
@@ -30,6 +30,8 @@ export const useAuthStore = defineStore('auth', () => {
   const apiAvailable = ref(true)
   const mustChangePassword = ref(false)
   const lastImport = ref<{ imported: number; snapshot: unknown } | null>(null)
+  let pendingRefresh: Promise<SessionUser | null> | undefined
+  let initialization: Promise<SessionUser | null> | undefined
 
   async function api(path: string, options: RequestInit = {}): Promise<Record<string, unknown>> {
     const response = await fetch(`${API_BASE}${path}`, {
@@ -67,7 +69,19 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function refresh(): Promise<SessionUser | null> {
+  function initialize() {
+    initialization ??= refresh()
+    return initialization
+  }
+
+  function refresh(): Promise<SessionUser | null> {
+    pendingRefresh ??= refreshSession().finally(() => {
+      pendingRefresh = undefined
+    })
+    return pendingRefresh
+  }
+
+  async function refreshSession(): Promise<SessionUser | null> {
     try {
       const data = await api('/api/me')
       user.value = (data['user'] ?? data) as SessionUser
@@ -189,6 +203,7 @@ export const useAuthStore = defineStore('auth', () => {
     login: (u: string, p: string) => authenticate('login', u, p),
     register: (u: string, p: string) => authenticate('register', u, p),
     logout,
+    initialize,
     refresh,
     refreshStats,
     importLocalProgress,

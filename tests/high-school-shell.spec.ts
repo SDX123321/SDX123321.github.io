@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { createPinia } from 'pinia'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import HighSchoolShell from '../src/components/HighSchoolShell.vue'
@@ -22,7 +23,7 @@ describe('HighSchoolShell', () => {
     await router.push('/high-school')
     await router.isReady()
     const wrapper = mount(HighSchoolShell, {
-      global: { plugins: [router], stubs: { RouterView: true } },
+      global: { plugins: [createPinia(), router], stubs: { RouterView: true } },
     })
     const hrefs = wrapper.findAll('nav a').map((link) => link.attributes('href'))
     expect(hrefs).toEqual([

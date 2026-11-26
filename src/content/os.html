@@ -8,7 +8,7 @@
   <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">互动模拟器</div></div>
 </div>
 
-<h2><span class="icon">📋</span> 第一章 概述</h2>
+<h2> 第一章 概述</h2>
 
 <div class="grid-2">
 <div class="card">
@@ -75,7 +75,7 @@
 </div></div>
 
 
-<h2 id="ch2"><span class="icon">⚙️</span> 第二章 处理器管理</h2>
+<h2 id="ch2"> 第二章 处理器管理</h2>
 
 <h3 id="ch2-proc">2.1 进程</h3>
 
@@ -355,13 +355,13 @@ P1 还需 Max-Alloc = 需进一步确认 Max 才能判断安全性。<br>
 <div class="card-title">教材例题：银行家算法详解</div>
 <p><strong>单种资源：</strong>系统有150个内存单元，P1(已有25,最大70)、P2(已有40,最大60)、P3(已有45,最大60)</p>
 <ul>
-<li><strong>情况1</strong>：P4请求25个单元 → 分配后剩余15，安全序列 P3→P1→P2→P4 ✅ 安全</li>
-<li><strong>情况2</strong>：P4请求35个单元 → 分配后剩余5，任何进程都无法满足 ❌ 不安全，拒绝</li>
+<li><strong>情况1</strong>：P4请求25个单元 → 分配后剩余15，安全序列 P3→P1→P2→P4 [安全]</li>
+<li><strong>情况2</strong>：P4请求35个单元 → 分配后剩余5，任何进程都无法满足 [不安全]，拒绝</li>
 </ul>
 </div>
 
 <div class="card" style="border-color:var(--green)">
-<div class="card-title">★ 真题：2024-2025 A卷 综合题详解 <span class="badge badge-important">必看</span></div>
+<div class="card-title">真题：2024-2025 A卷 综合题详解 <span class="badge badge-important">必看</span></div>
 
 <h4>1. PV 操作（生产者-消费者 3 进程）</h4>
 <div class="warning">
@@ -422,7 +422,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 </div></div>
 
 
-<h2 id="ch3"><span class="icon">💾</span> 第三章 存储管理</h2>
+<h2 id="ch3"> 第三章 存储管理</h2>
 
 <h3 id="ch3-page">3.1 分页存储管理</h3>
 
@@ -505,7 +505,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 <strong>三种算法对比：</strong>
 <ul>
 <li><strong>OPT</strong>：替换将来最长时间不使用的页面（理论最优，实际无法实现）</li>
-<li><strong>FIFO</strong>：替换驻留时间最长的页面。⚠️ 可能出现 <strong>Belady 异常</strong>（增加页框数反而缺页率上升）</li>
+<li><strong>FIFO</strong>：替换驻留时间最长的页面。注意：可能出现 <strong>Belady 异常</strong>（增加页框数反而缺页率上升）</li>
 <li><strong>LRU</strong>：替换最近最久未访问的页面。基于局部性原理，性能接近OPT</li>
 </ul>
 </div>
@@ -556,7 +556,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 </div>
 
 
-<h2 id="ch4"><span class="icon">💿</span> 第四章 设备管理</h2>
+<h2 id="ch4"> 第四章 设备管理</h2>
 
 <div class="card">
 <div class="card-title">I/O 控制方式</div>
@@ -665,7 +665,7 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 </div></div>
 
 
-<h2 id="ch5"><span class="icon">📁</span> 第五章 文件系统</h2>
+<h2 id="ch5"> 第五章 文件系统</h2>
 
 <div class="grid-2">
 <div class="card">
@@ -744,14 +744,14 @@ SSTF（最短寻道）：总移动 <strong>220 道</strong><br>
 
 
 <div class="card" style="margin-bottom: 20px; background: var(--card); border: 2px solid var(--accent);">
-  <div class="card-title">📝 习题解答</div>
+  <div class="card-title">习题解答</div>
   <p>基于《操作系统习题》文档整理的 3 套习题完整解答，含选择题、填空题、简答题、解答题。</p>
   <p style="margin-top: 8px;">
     <a href="/courses/os/exercises" style="display:inline-block;padding:8px 18px;background:var(--accent);color:#fff;border-radius:8px;text-decoration:none;font-weight:600;">查看完整解答 →</a>
   </p>
 </div>
 
-<h2 id="exam"><span class="icon">📝</span> 考试题型</h2>
+<h2 id="exam"> 考试题型</h2>
 
 <div class="card">
 <div class="card-title">考试结构</div>

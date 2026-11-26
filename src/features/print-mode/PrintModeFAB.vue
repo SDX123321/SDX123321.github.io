@@ -4,6 +4,7 @@
  * 浮动按钮，一键切换打印优化模式。
  */
 import { ref } from 'vue'
+import { Printer } from 'lucide-vue-next'
 
 const PRINT_CSS = `
 body.f2-print-mode{background:#fff!important;color:#1a1a1a!important}
@@ -35,7 +36,7 @@ function toggle() {
 
 <template>
   <button class="pm-fab" :title="active ? '退出打印模式' : '打印优化模式'" @click="toggle">
-    🖨
+    <Printer :size="19" aria-hidden="true" />
   </button>
 </template>
 

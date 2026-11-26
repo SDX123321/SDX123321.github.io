@@ -86,8 +86,32 @@ async fn main() -> anyhow::Result<()> {
             .unwrap_or_else(|_| format!("{database_url}:exam-review-ai-config"))
             .as_bytes(),
     ));
-    let question_assets = gaokao::load_question_assets(&project_root).await;
-    gaokao::audit_question_completeness(&db, &project_root, &question_assets).await?;
+    let question_assets = Arc::new(gaokao::load_question_assets(&project_root).await);
+    let audit_db = db.clone();
+    let audit_root = project_root.clone();
+    let audit_assets = question_assets.clone();
+    tokio::spawn(async move {
+        if let Err(error) =
+            gaokao::audit_question_completeness(&audit_db, &audit_root, &audit_assets).await
+        {
+            eprintln!("Question audit failed: {error}");
+        }
+    });
+    let cleanup_db = db.clone();
+    tokio::spawn(async move {
+        let mut interval = tokio::time::interval(std::time::Duration::from_secs(3600));
+        loop {
+            interval.tick().await;
+            for statement in [
+                "DELETE FROM visitor_api_keys WHERE expires_at <= now()",
+                "DELETE FROM sessions WHERE expires_at <= now()",
+            ] {
+                if let Err(error) = sqlx::query(statement).execute(&cleanup_db).await {
+                    eprintln!("Expired credential cleanup failed: {error}");
+                }
+            }
+        }
+    });
     let material_root = env::var("MATERIAL_ROOT")
         .map(std::path::PathBuf::from)
         .unwrap_or_else(|_| std::path::PathBuf::from(r"C:\Users\zzz\Desktop\参考资料"));
@@ -130,7 +154,9 @@ async fn main() -> anyhow::Result<()> {
                 .unwrap_or(16),
         )),
         api_config_key,
-        question_assets: Arc::new(question_assets),
+        question_assets,
+        auth_rate: Default::default(),
+        trust_forwarded_ip: env::var("TRUST_PROXY_CLIENT_IP").as_deref() == Ok("true"),
     });
     learning::migrate_seeded_graphs(state.clone());
     let client_origin =
@@ -149,7 +175,10 @@ async fn main() -> anyhow::Result<()> {
             Method::DELETE,
             Method::OPTIONS,
         ])
-        .allow_headers([header::CONTENT_TYPE]);
+        .allow_headers([
+            header::CONTENT_TYPE,
+            header::HeaderName::from_static("x-api-key"),
+        ]);
 
     let app = Router::new()
         .route("/api/gaokao/summary", get(gaokao::gaokao_summary))
@@ -323,6 +352,7 @@ async fn main() -> anyhow::Result<()> {
             auth::api_key_auth,
         ))
         .layer(cors)
+        .layer(middleware::from_fn(security_headers))
         .with_state(state);
 
     let port = env::var("API_PORT")
@@ -333,8 +363,30 @@ async fn main() -> anyhow::Result<()> {
     let addr: SocketAddr = format!("{host}:{port}").parse()?;
     println!("Rust API listening on http://{addr}");
     let listener = tokio::net::TcpListener::bind(addr).await?;
-    axum::serve(listener, app).await?;
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .await?;
     Ok(())
+}
+
+async fn security_headers(req: axum::extract::Request, next: middleware::Next) -> Response {
+    let mut response = next.run(req).await;
+    let headers = response.headers_mut();
+    headers.insert(
+        header::X_CONTENT_TYPE_OPTIONS,
+        HeaderValue::from_static("nosniff"),
+    );
+    headers.insert(
+        header::X_FRAME_OPTIONS,
+        HeaderValue::from_static("SAMEORIGIN"),
+    );
+    headers.insert(
+        header::REFERRER_POLICY,
+        HeaderValue::from_static("strict-origin-when-cross-origin"),
+    );
+    response
 }
 
 async fn health_live() -> Json<Value> {

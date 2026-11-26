@@ -1,6 +1,11 @@
 use super::*;
+use axum::extract::ConnectInfo;
 use deadpool_redis::redis::AsyncCommands;
 use rand::{rngs::OsRng, RngCore};
+use std::{
+    net::SocketAddr,
+    time::{Duration, Instant},
+};
 
 pub(crate) const SESSION_COOKIE: &str = "exam_review_session";
 pub(crate) const SESSION_DAYS: i64 = 30;
@@ -27,14 +32,67 @@ pub(crate) fn parse_cookie(headers: &HeaderMap, name: &str) -> Option<String> {
 }
 
 pub(crate) fn session_cookie(token: &str) -> String {
+    let secure = cookie_security();
     format!(
-        "{SESSION_COOKIE}={token}; Path=/; Max-Age={}; HttpOnly; SameSite=Lax",
+        "{SESSION_COOKIE}={token}; Path=/; Max-Age={}; HttpOnly; SameSite=Lax{secure}",
         SESSION_DAYS * 24 * 60 * 60
     )
 }
 
 pub(crate) fn clear_session_cookie() -> String {
-    format!("{SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax")
+    let secure = cookie_security();
+    format!("{SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax{secure}")
+}
+
+fn cookie_security() -> &'static str {
+    if std::env::var("CLIENT_ORIGIN").is_ok_and(|origin| origin.starts_with("https://"))
+        || std::env::var("NODE_ENV").as_deref() == Ok("production")
+    {
+        "; Secure"
+    } else {
+        ""
+    }
+}
+
+pub(crate) fn enforce_auth_rate(
+    state: &SharedState,
+    headers: &HeaderMap,
+    peer: SocketAddr,
+    endpoint: &'static str,
+    limit: u32,
+) -> Result<(), ApiError> {
+    let mut ip = peer.ip();
+    if state.trust_forwarded_ip {
+        if let Some(forwarded) = headers
+            .get("x-forwarded-for")
+            .and_then(|value| value.to_str().ok())
+            .and_then(|value| value.rsplit(',').next())
+            .and_then(|value| value.trim().parse().ok())
+        {
+            ip = forwarded;
+        }
+    }
+    let mut clients = state.auth_rate.lock().map_err(|_| ApiError::server())?;
+    let now = Instant::now();
+    let window = Duration::from_secs(60);
+    let key = (endpoint, ip);
+    if clients.len() >= 4096 && !clients.contains_key(&key) {
+        clients.retain(|_, (started, _)| now.duration_since(*started) < window);
+    }
+    if clients.len() < 4096 || clients.contains_key(&key) {
+        let (started, count) = clients.entry(key).or_insert((now, 0));
+        if now.duration_since(*started) >= window {
+            (*started, *count) = (now, 0);
+        }
+        if *count < limit {
+            *count += 1;
+            return Ok(());
+        }
+    }
+    Err(ApiError::new(
+        StatusCode::TOO_MANY_REQUESTS,
+        "too_many_requests",
+    ))
 }
 
 pub(crate) fn validate_auth(input: &AuthInput) -> bool {
@@ -102,28 +160,26 @@ pub(crate) async fn create_session(state: &SharedState, user_id: Uuid) -> Result
 
 pub(crate) async fn api_handshake(
     State(state): State<SharedState>,
+    ConnectInfo(peer): ConnectInfo<SocketAddr>,
+    headers: HeaderMap,
 ) -> Result<Json<Value>, ApiError> {
+    enforce_auth_rate(&state, &headers, peer, "handshake", 30)?;
     let mut key_bytes = [0u8; 32];
     OsRng.fill_bytes(&mut key_bytes);
     let api_key = hex::encode(key_bytes);
 
-    sqlx::query(
-        "INSERT INTO visitor_api_keys (api_key, expires_at) VALUES ($1, now() + interval '1 day')",
+    let expires_at = sqlx::query_scalar::<_, DateTime<Utc>>(
+        "INSERT INTO visitor_api_keys (api_key, expires_at) VALUES ($1, now() + interval '1 day') RETURNING expires_at",
     )
     .bind(&api_key)
-    .execute(&state.db)
+    .fetch_one(&state.db)
     .await
     .map_err(|e| {
         eprintln!("Failed to generate API key: {e}");
         ApiError::server()
     })?;
 
-    if let Some(pool) = &state.redis {
-        if let Ok(mut conn) = pool.get().await {
-            let redis_key = format!("visitor_api_key:{}", api_key);
-            let _: Result<(), _> = conn.set_ex(redis_key, "1", 86400).await;
-        }
-    }
+    cache_visitor_expiry(&state, &visitor_cache_key(&api_key), expires_at).await;
 
     Ok(Json(json!({ "apiKey": api_key })))
 }
@@ -150,36 +206,45 @@ pub(crate) async fn api_key_auth(
         .and_then(|value| value.to_str().ok())
         .ok_or_else(|| ApiError::new(StatusCode::UNAUTHORIZED, "missing_api_key"))?;
 
-    let redis_key = format!("visitor_api_key:{}", api_key);
+    let redis_key = visitor_cache_key(api_key);
     if let Some(pool) = &state.redis {
         if let Ok(mut conn) = pool.get().await {
-            let exists: Option<String> = conn.get(&redis_key).await.ok();
-            if exists.is_some() {
+            let expiry: Option<i64> = conn.get(&redis_key).await.ok();
+            if expiry.is_some_and(|value| value > Utc::now().timestamp()) {
                 return Ok(next.run(req).await);
             }
         }
     }
 
-    let exists = sqlx::query_scalar::<_, bool>(
-        "SELECT EXISTS(SELECT 1 FROM visitor_api_keys WHERE api_key = $1 AND expires_at > now())",
+    let expires_at = sqlx::query_scalar::<_, DateTime<Utc>>(
+        "SELECT expires_at FROM visitor_api_keys WHERE api_key = $1 AND expires_at > now()",
     )
     .bind(api_key)
-    .fetch_one(&state.db)
+    .fetch_optional(&state.db)
     .await
     .map_err(|e| {
         eprintln!("API key validation error: {e}");
         ApiError::server()
     })?;
 
-    if !exists {
-        return Err(ApiError::new(StatusCode::UNAUTHORIZED, "invalid_api_key"));
-    }
+    let expires_at =
+        expires_at.ok_or_else(|| ApiError::new(StatusCode::UNAUTHORIZED, "invalid_api_key"))?;
+    cache_visitor_expiry(&state, &redis_key, expires_at).await;
+    Ok(next.run(req).await)
+}
 
+fn visitor_cache_key(api_key: &str) -> String {
+    format!("visitor_api_expiry:{}", hash_token(api_key))
+}
+
+async fn cache_visitor_expiry(state: &SharedState, key: &str, expires_at: DateTime<Utc>) {
     if let Some(pool) = &state.redis {
         if let Ok(mut conn) = pool.get().await {
-            let _: Result<(), _> = conn.set_ex(redis_key, "1", 86400).await;
+            let expiry = expires_at.timestamp();
+            let ttl = expiry - Utc::now().timestamp();
+            if ttl > 0 {
+                let _: Result<(), _> = conn.set_ex(key, expiry, ttl as u64).await;
+            }
         }
     }
-
-    Ok(next.run(req).await)
 }

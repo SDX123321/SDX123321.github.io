@@ -4,6 +4,7 @@
  * 当前页面内容搜索（Ctrl+F 拦截），高亮并跳转匹配项。
  */
 import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { Search, X } from 'lucide-vue-next'
 
 const open = ref(false)
 const query = ref('')
@@ -92,7 +93,7 @@ onUnmounted(() => {
 
 <template>
   <div v-if="open" class="ps-bar">
-    <span class="ps-icon">🔍</span>
+    <span class="ps-icon"><Search :size="15" aria-hidden="true" /></span>
     <input
       ref="inputRef"
       :value="query"
@@ -115,12 +116,13 @@ onUnmounted(() => {
     </button>
     <button
       class="ps-close"
+      aria-label="关闭"
       @click="
         open = false
         clearMarks()
       "
     >
-      ✕
+      <X :size="16" />
     </button>
   </div>
 </template>

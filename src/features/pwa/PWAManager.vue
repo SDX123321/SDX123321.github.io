@@ -4,6 +4,7 @@
  * 注册 Service Worker，处理安装和更新提示。渲染为空节点。
  */
 import { ref, onMounted } from 'vue'
+import { Smartphone, Sparkles, X } from 'lucide-vue-next'
 
 const showInstall = ref(false)
 const showUpdate = ref(false)
@@ -63,16 +64,22 @@ function applyUpdate() {
   <Teleport to="body">
     <!-- 安装横幅 -->
     <div v-if="showInstall" class="pwa-banner">
-      <span>将「期末复习笔记」添加到桌面，离线也能用 📱</span>
+      <span class="pwa-text"
+        ><Smartphone :size="17" />将「期末复习笔记」添加到桌面，离线也能用</span
+      >
       <button class="pwa-btn pwa-btn-install" @click="installApp">添加到主屏幕</button>
-      <button class="pwa-btn pwa-btn-close" @click="showInstall = false">×</button>
+      <button class="pwa-btn pwa-btn-close" aria-label="关闭" @click="showInstall = false">
+        <X :size="16" />
+      </button>
     </div>
 
     <!-- 更新提示 -->
     <div v-if="showUpdate" class="pwa-banner pwa-banner-update">
-      <span>✨ 发现新版本，刷新即可生效</span>
+      <span class="pwa-text"><Sparkles :size="17" />发现新版本，刷新即可生效</span>
       <button class="pwa-btn pwa-btn-install" @click="applyUpdate">立即刷新</button>
-      <button class="pwa-btn pwa-btn-close" @click="showUpdate = false">×</button>
+      <button class="pwa-btn pwa-btn-close" aria-label="关闭" @click="showUpdate = false">
+        <X :size="16" />
+      </button>
     </div>
   </Teleport>
 </template>

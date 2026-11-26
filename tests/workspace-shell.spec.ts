@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { createPinia } from 'pinia'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import WorkspaceShell from '../src/components/WorkspaceShell.vue'
@@ -20,7 +21,7 @@ describe('WorkspaceShell', () => {
       { path: '/high-school/settings', component: { template: '<div />' } },
     ] })
     await router.push('/workspace/university'); await router.isReady()
-    const wrapper = mount(WorkspaceShell, { global: { plugins: [router], stubs: { RouterView: true } } })
+    const wrapper = mount(WorkspaceShell, { global: { plugins: [createPinia(), router], stubs: { RouterView: true } } })
     await vi.waitFor(() => expect(wrapper.findAll('.domain-switch option')).toHaveLength(2))
     expect(wrapper.findAll('nav a').map(a => a.attributes('href'))).toEqual([
       '/workspace/university', '/workspace/university/graph', '/workspace/university?focus=materials',

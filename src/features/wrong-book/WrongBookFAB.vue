@@ -4,6 +4,7 @@
  * 错题本浮动按钮及弹窗，支持按页面分组、清空和导出。
  */
 import { ref, computed } from 'vue'
+import { CheckCircle2, FileX, X, XCircle } from 'lucide-vue-next'
 import { useWrongBook } from '../../composables/useWrongBook'
 
 const { wrongs, clearAll, exportAsText, grouped } = useWrongBook()
@@ -24,7 +25,7 @@ function confirmClearAll() {
 <template>
   <!-- FAB 按钮 -->
   <button class="wb-fab" title="错题本" @click="open = !open">
-    📝
+    <FileX :size="20" aria-hidden="true" />
     <span v-if="wrongs.length > 0" class="wb-badge">{{ wrongs.length }}</span>
   </button>
 
@@ -32,8 +33,8 @@ function confirmClearAll() {
   <Teleport to="body">
     <div v-if="open" class="wb-overlay" @click.self="open = false">
       <div class="wb-panel">
-        <button class="wb-close" @click="open = false">&times;</button>
-        <h3 class="wb-title">📝 错题本</h3>
+        <button class="wb-close" aria-label="关闭" @click="open = false"><X :size="18" /></button>
+        <h3 class="wb-title"><FileX :size="18" /> 错题本</h3>
 
         <!-- 分组 tab -->
         <div class="wb-tabs">
@@ -56,9 +57,11 @@ function confirmClearAll() {
           <div v-for="(w, i) in [...filtered].reverse()" :key="i" class="wb-item">
             <div class="wb-question">{{ w.question }}</div>
             <div class="wb-answers">
-              <span class="wb-wrong">✗ 你的答案: {{ w.userAnswer }}</span
+              <span class="wb-wrong"><XCircle :size="14" /> 你的答案: {{ w.userAnswer }}</span
               ><br />
-              <span class="wb-correct">✓ 正确答案: {{ w.correctAnswer }}</span>
+              <span class="wb-correct"
+                ><CheckCircle2 :size="14" /> 正确答案: {{ w.correctAnswer }}</span
+              >
             </div>
             <div class="wb-time">{{ new Date(w.time).toLocaleString() }}</div>
           </div>

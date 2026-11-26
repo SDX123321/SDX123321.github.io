@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -55,7 +55,6 @@ jobs:
             echo "请在 VPS 上重新生成 RSA 密钥再试："
             echo "  ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N \"\""
             echo "  cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
-            echo "  cat ~/.ssh/id_rsa"
             exit 1
           }
 

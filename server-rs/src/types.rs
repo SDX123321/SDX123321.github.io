@@ -20,6 +20,7 @@ pub(crate) struct AnswerRateState {
 }
 
 pub(crate) type SharedState = Arc<AppState>;
+pub(crate) type AuthRateEntries = HashMap<(&'static str, std::net::IpAddr), (Instant, u32)>;
 
 pub(crate) struct AppState {
     pub(crate) db: PgPool,
@@ -35,6 +36,8 @@ pub(crate) struct AppState {
     pub(crate) answer_slots: Arc<tokio::sync::Semaphore>,
     pub(crate) api_config_key: [u8; 32],
     pub(crate) question_assets: Arc<std::collections::HashMap<String, Value>>,
+    pub(crate) auth_rate: std::sync::Mutex<AuthRateEntries>,
+    pub(crate) trust_forwarded_ip: bool,
 }
 
 #[derive(Clone, Serialize)]

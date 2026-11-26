@@ -17,7 +17,7 @@
     const meta = document.createElement('div');
     meta.className = 'chapter-meta';
     meta.style.cssText = 'display:flex;gap:12px;margin:4px 0 12px;font-size:12px;color:var(--text-dim);flex-wrap:wrap;';
-    meta.innerHTML = `<span>📝 约 ${chars.toLocaleString()} 字</span><span>⏱ 阅读约 ${readMin} 分钟</span>`;
+    meta.innerHTML = `<span>约 ${chars.toLocaleString()} 字</span><span>阅读约 ${readMin} 分钟</span>`;
     h2.insertAdjacentElement('afterend', meta);
   });
 })();
@@ -45,11 +45,11 @@ function checkQuiz(btn) {
   const answer = parseInt(selected.value);
   if (answer === correct) {
     resultDiv.className = 'quiz-result quiz-correct';
-    resultDiv.textContent = '✓ 回答正确！';
+    resultDiv.textContent = '回答正确！';
   } else {
     resultDiv.className = 'quiz-result quiz-wrong';
     const labels = container.querySelectorAll('label');
-    resultDiv.textContent = '✗ 回答错误。正确答案是：' + labels[correct].textContent.trim();
+    resultDiv.textContent = '回答错误。正确答案是：' + labels[correct].textContent.trim();
   }
   resultDiv.style.display = 'block';
 }

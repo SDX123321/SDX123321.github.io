@@ -1,6 +1,14 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import {
+  computed,
+  defineAsyncComponent,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from 'vue'
+import { useRouter } from 'vue-router'
 import {
   ArrowLeft,
   ArrowUp,
@@ -8,38 +16,28 @@ import {
   BookX,
   Check,
   ChevronRight,
-  CircleAlert,
   Menu,
   Search,
   Trash2,
   X,
 } from 'lucide-vue-next'
 import CourseIcon from '../components/CourseIcon.vue'
-import AlgorithmTrainer from '../features/algorithm/AlgorithmTrainer.vue'
-import { loadCourseContent } from '../data/course-content'
+import type { CourseContent } from '../data/course-content'
 import type { NavLink } from '../types/course'
-import type { Course } from '../types/course'
-// 课程内容样式：只在课程路由加载，不再随全站首屏打包
-import '../styles/courses/probability.css'
-import '../styles/courses/os.css'
-import '../styles/courses/algorithm.css'
-import '../styles/courses/dsp.css'
-import '../styles/courses/marxism.css'
-import '../styles/courses/calculus.css'
-import '../styles/courses/signals.css'
 
-const route = useRoute()
+const AlgorithmTrainer = defineAsyncComponent(
+  () => import('../features/algorithm/AlgorithmTrainer.vue'),
+)
+const props = defineProps<{ course?: CourseContent; loadFailed?: boolean }>()
 const router = useRouter()
 const contentElement = ref<HTMLElement | null>(null)
 const sidebarOpen = ref(false)
 const searchOpen = ref(false)
 const searchQuery = ref('')
+const progressBar = ref<HTMLElement | null>(null)
+const progressText = ref<HTMLElement | null>(null)
 const showBackTop = ref(false)
 const activeSection = ref('')
-const progressBarRef = ref<HTMLElement | null>(null)
-const progressTextRef = ref<HTMLElement | null>(null)
-let progressRAF = 0
-let scrollSpy: IntersectionObserver | null = null
 interface WrongAnswer {
   page: string
   question: string
@@ -49,43 +47,34 @@ interface WrongAnswer {
 }
 const wrongAnswers = ref<WrongAnswer[]>(loadWrongAnswers())
 const wrongBookOpen = ref(false)
-const course = ref<Course | null>(null)
-const courseLoading = ref(false)
-const courseError = ref(false)
-let loadSequence = 0
+const course = computed(() => props.course)
 const cleanLabel = (label: string) => label.replace(/<[^>]+>/g, '').trim()
-
-async function loadCourse() {
-  const id = String(route.params.courseId)
-  const sequence = ++loadSequence
-  course.value = null
-  courseError.value = false
-  courseLoading.value = true
-  try {
-    const loaded = await loadCourseContent(id)
-    if (sequence !== loadSequence) return
-    course.value = loaded ?? null
-    if (!loaded) courseError.value = true
-  } catch {
-    if (sequence !== loadSequence) return
-    courseError.value = true
-  } finally {
-    if (sequence === loadSequence) courseLoading.value = false
-  }
-}
-
-watch(() => route.params.courseId, loadCourse, { immediate: true })
+let chapterHeadings: HTMLElement[] = []
+let scrollSpy: IntersectionObserver | undefined
+let progressFrame = 0
 
 watch(
   course,
-  async (next) => {
+  async (next, _, onCleanup) => {
     if (!next) return
-    document.title = `${next.name}｜期末复习笔记`
+    let current = true
+    const style = document.createElement('style')
+    if (next.stylesheet) {
+      style.textContent = next.stylesheet
+      document.head.prepend(style)
+    }
+    onCleanup(() => {
+      current = false
+      style.remove()
+      chapterHeadings = []
+      scrollSpy?.disconnect()
+      scrollSpy = undefined
+      activeSection.value = ''
+      document.getElementById('course-interactions')?.remove()
+    })
     localStorage.setItem('review_recent_course', next.id)
     await nextTick()
-    enhanceContent()
-    setupScrollSpy()
-    updateProgress()
+    if (current) enhanceContent()
   },
   { immediate: true },
 )
@@ -93,49 +82,37 @@ watch(
 function scrollToSection(link: NavLink) {
   const target = document.getElementById(link.id)
   if (!target) return
-  target.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  history.replaceState(null, '', `#${link.id}`)
+  target.scrollIntoView({ block: 'start' })
+  history.replaceState(history.state, '', `#${encodeURIComponent(link.id)}`)
   sidebarOpen.value = false
 }
 
 function updateProgress() {
-  if (progressRAF) return
-  progressRAF = requestAnimationFrame(() => {
-    progressRAF = 0
+  if (progressFrame) return
+  progressFrame = requestAnimationFrame(() => {
+    progressFrame = 0
     const max = document.documentElement.scrollHeight - window.innerHeight
-    const pct = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0
-    // 直接写 DOM，避免每次滚动触发整页模板重渲染
-    if (progressBarRef.value) {
-      progressBarRef.value.style.transform = `scaleX(${pct / 100})`
-    }
-    if (progressTextRef.value) {
-      progressTextRef.value.textContent = `${Math.round(pct)}%`
-    }
-    const crossing = pct > 12
-    if (crossing !== showBackTop.value) showBackTop.value = crossing
+    const progress = max > 0 ? Math.max(0, Math.min(100, (window.scrollY / max) * 100)) : 0
+    if (progressBar.value) progressBar.value.style.transform = `scaleX(${progress / 100})`
+    if (progressText.value) progressText.value.textContent = `${Math.round(progress)}%`
+    showBackTop.value = progress > 12
+    if (!scrollSpy) updateActiveSection()
   })
 }
 
-// 滚动高亮：用 IntersectionObserver 代替每帧 getBoundingClientRect，
-// 由浏览器批量回调，滚动时零强制布局。
-function setupScrollSpy() {
-  scrollSpy?.disconnect()
-  scrollSpy = null
-  const el = contentElement.value
-  if (!el) return
-  const hasIo = typeof IntersectionObserver !== 'undefined'
-  if (!hasIo) return
-  scrollSpy = new IntersectionObserver(
-    (entries) => {
-      let current = activeSection.value
-      for (const entry of entries) {
-        if (entry.isIntersecting) current = entry.target.id
-      }
-      if (current !== activeSection.value) activeSection.value = current
-    },
-    { rootMargin: '0px 0px -75% 0px', threshold: 0 },
-  )
-  el.querySelectorAll<HTMLElement>('[id]').forEach((node) => scrollSpy?.observe(node))
+function updateActiveSection() {
+  for (let index = chapterHeadings.length - 1; index >= 0; index -= 1) {
+    const heading = chapterHeadings[index]
+    if (heading?.getClientRects().length && heading.getBoundingClientRect().top <= 131) {
+      activeSection.value = heading.id
+      return
+    }
+  }
+  activeSection.value = ''
+}
+
+function reloadCourse() {
+  window.location.reload()
 }
 
 function handleContentClick(event: MouseEvent) {
@@ -243,13 +220,32 @@ function clearWrongAnswers() {
   localStorage.setItem('wrong_answers', '[]')
 }
 
+function observeSections() {
+  scrollSpy?.disconnect()
+  scrollSpy = undefined
+  if (typeof IntersectionObserver !== 'undefined') {
+    scrollSpy = new IntersectionObserver(
+      () => {
+        updateActiveSection()
+        updateProgress()
+      },
+      { rootMargin: `0px 0px -${Math.max(0, window.innerHeight - 130)}px 0px` },
+    )
+    chapterHeadings.forEach((heading) => scrollSpy?.observe(heading))
+  }
+  updateActiveSection()
+  updateProgress()
+}
+
 function enhanceContent() {
   if (!contentElement.value) return
-  contentElement.value.removeEventListener('click', handleContentClick)
-  contentElement.value.addEventListener('click', handleContentClick)
+  const sectionIds = new Set(course.value?.nav.map((link) => link.id))
+  chapterHeadings = [...contentElement.value.querySelectorAll<HTMLElement>('[id]')].filter(
+    (element) => sectionIds.has(element.id),
+  )
+  observeSections()
   loadCourseInteractions()
-  renderMath()
-  if (route.hash) document.querySelector(route.hash)?.scrollIntoView({ block: 'start' })
+  void renderMath().then(updateProgress, () => undefined)
 }
 
 function loadCourseInteractions() {
@@ -270,12 +266,19 @@ function loadCourseInteractions() {
 }
 
 async function renderMath() {
-  if (!course.value?.renderer || !contentElement.value) return
-  if (course.value.renderer === 'katex') {
-    await loadStylesheet('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css')
-    await loadScript('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js')
-    await loadScript('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js')
-    window.renderMathInElement?.(contentElement.value, {
+  const renderer = course.value?.renderer
+  const content = contentElement.value
+  if (!renderer || !content) return
+  if (renderer === 'katex') {
+    const core = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist'
+    await Promise.all([
+      loadMathAsset(`${core}/katex.min.css`, 'style'),
+      loadMathAsset(`${core}/katex.min.js`, 'script').then(() =>
+        loadMathAsset(`${core}/contrib/auto-render.min.js`, 'script'),
+      ),
+    ])
+    if (content !== contentElement.value || course.value?.renderer !== renderer) return
+    window.renderMathInElement?.(content, {
       delimiters: [
         { left: '$$', right: '$$', display: true },
         { left: '\\[', right: '\\]', display: true },
@@ -293,31 +296,39 @@ async function renderMath() {
         ],
       },
     }
-    await loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js')
-    await window.MathJax?.typesetPromise?.([contentElement.value])
+    await loadMathAsset('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js', 'script')
+    if (content !== contentElement.value || course.value?.renderer !== renderer) return
+    await window.MathJax?.typesetPromise?.([content])
   }
 }
 
-function loadScript(src: string) {
-  const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`)
-  if (existing) return Promise.resolve()
+function loadMathAsset(url: string, kind: 'style' | 'script') {
+  const existing = document.querySelector<HTMLElement>(`[data-course-math="${url}"]`)
+  if (existing?.dataset.ready) return Promise.resolve()
+  const asset =
+    existing ??
+    (kind === 'style'
+      ? Object.assign(document.createElement('link'), { rel: 'stylesheet', href: url })
+      : Object.assign(document.createElement('script'), { src: url }))
+  asset.dataset.courseMath = url
   return new Promise<void>((resolve, reject) => {
-    const script = document.createElement('script')
-    script.src = src
-    script.onload = () => resolve()
-    script.onerror = () => reject(new Error(`无法加载 ${src}`))
-    document.head.appendChild(script)
-  })
-}
-
-function loadStylesheet(href: string) {
-  if (document.querySelector(`link[href="${href}"]`)) return Promise.resolve()
-  return new Promise<void>((resolve) => {
-    const link = document.createElement('link')
-    link.rel = 'stylesheet'
-    link.href = href
-    link.onload = () => resolve()
-    document.head.appendChild(link)
+    asset.addEventListener(
+      'load',
+      () => {
+        asset.dataset.ready = 'true'
+        resolve()
+      },
+      { once: true },
+    )
+    asset.addEventListener(
+      'error',
+      () => {
+        asset.remove()
+        reject(new Error(`无法加载 ${url}`))
+      },
+      { once: true },
+    )
+    if (!existing) document.head.appendChild(asset)
   })
 }
 
@@ -339,16 +350,16 @@ function scrollToTop() {
 
 onMounted(() => {
   window.addEventListener('scroll', updateProgress, { passive: true })
+  window.addEventListener('resize', observeSections)
   window.addEventListener('keydown', handleKeydown)
   updateProgress()
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', updateProgress)
+  window.removeEventListener('resize', observeSections)
   window.removeEventListener('keydown', handleKeydown)
-  if (progressRAF) cancelAnimationFrame(progressRAF)
-  scrollSpy?.disconnect()
-  contentElement.value?.removeEventListener('click', handleContentClick)
+  cancelAnimationFrame(progressFrame)
   document.getElementById('course-interactions')?.remove()
   for (const id of ['subGuide', 'progressFill', 'sidebarOverlay'])
     document.getElementById(id)?.remove()
@@ -372,7 +383,7 @@ function handleKeydown(event: KeyboardEvent) {
     class="course-shell"
     :style="{ '--course-accent': course.accent, '--course-soft': course.softAccent }"
   >
-    <div ref="progressBarRef" class="reading-progress" />
+    <div ref="progressBar" class="reading-progress" style="transform: scaleX(0)" />
     <button
       class="mobile-menu"
       type="button"
@@ -411,7 +422,7 @@ function handleKeydown(event: KeyboardEvent) {
         </button>
       </nav>
       <div class="sidebar-foot">
-        <BookOpen :size="16" /><span>阅读进度</span><strong ref="progressTextRef">0%</strong>
+        <BookOpen :size="16" /><span>阅读进度</span><strong ref="progressText">0%</strong>
       </div>
     </aside>
     <button
@@ -422,9 +433,15 @@ function handleKeydown(event: KeyboardEvent) {
       @click="sidebarOpen = false"
     />
 
-    <main id="main-content" class="course-main">
+    <main id="main-content" class="course-main" :class="course.id">
       <template v-if="course.html">
-        <div ref="contentElement" class="course-content" v-html="course.html" />
+        <div
+          :key="course.id"
+          ref="contentElement"
+          class="course-content"
+          @click="handleContentClick"
+          v-html="course.html"
+        />
         <AlgorithmTrainer v-if="course.id === 'algorithm'" />
       </template>
       <section v-else class="special-course">
@@ -511,21 +528,12 @@ function handleKeydown(event: KeyboardEvent) {
       </form>
     </div>
   </div>
-  <main v-else-if="courseLoading" id="main-content" class="empty-state">
-    <BookOpen :size="34" />
-    <p class="eyebrow">课程加载中</p>
-    <h1>正在准备学习资料…</h1>
-  </main>
-  <main v-else-if="courseError" id="main-content" class="empty-state">
-    <CircleAlert :size="34" />
-    <p class="eyebrow">课程加载失败</p>
-    <h1>请稍后重试</h1>
-    <button class="primary-button" type="button" @click="loadCourse">重新加载</button>
-  </main>
   <main v-else id="main-content" class="empty-state">
     <BookOpen :size="34" />
-    <p class="eyebrow">课程未找到</p>
-    <h1>这门课还没有迁移</h1>
+    <h1>{{ loadFailed ? '课程加载失败' : '课程未找到' }}</h1>
+    <button v-if="loadFailed" class="secondary-button" type="button" @click="reloadCourse">
+      重新加载
+    </button>
     <RouterLink class="primary-button" to="/"><ArrowLeft :size="18" />返回课程库</RouterLink>
   </main>
 </template>

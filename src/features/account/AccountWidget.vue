@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useAuth } from '../../composables/useAuth'
 import { formatStudyTime } from './progressSnapshot'
 
-const { user, stats, apiAvailable, login, register, logout } = useAuth()
+const auth = useAuth()
+const { user, stats, apiAvailable } = storeToRefs(auth)
+const { login, register, logout } = auth
 
 const open = ref(false)
 const mode = ref<'login' | 'register'>('login')

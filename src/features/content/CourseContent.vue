@@ -65,14 +65,17 @@ function setupQuiz() {
     const chosen = parseInt(sel.value)
     if (chosen === correct) {
       if (res) {
-        res.textContent = '✓ 正确！'
+        res.innerHTML =
+          '<span class="quiz-status-icon success"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> 正确！'
         res.className = 'quiz-result quiz-correct'
         res.style.display = 'block'
       }
     } else {
       const labels = container.querySelectorAll('.quiz-options label, label')
       if (res) {
-        res.textContent = '✗ 错误，正确答案是 ' + (labels[correct]?.textContent?.trim() || '')
+        res.innerHTML =
+          '<span class="quiz-status-icon error"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span> 错误，正确答案是 ' +
+          (labels[correct]?.textContent?.trim() || '')
         res.className = 'quiz-result quiz-wrong'
         res.style.display = 'block'
       }

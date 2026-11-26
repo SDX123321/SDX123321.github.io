@@ -1,6 +1,7 @@
 use super::*;
-use axum::response::IntoResponse;
+use axum::{extract::ConnectInfo, response::IntoResponse};
 use bcrypt::{hash as bcrypt_hash, verify as bcrypt_verify, DEFAULT_COST};
+use std::net::SocketAddr;
 
 pub(crate) async fn record_auth_event(
     state: &SharedState,
@@ -17,9 +18,11 @@ pub(crate) async fn record_auth_event(
 
 pub(crate) async fn register(
     State(state): State<SharedState>,
+    ConnectInfo(peer): ConnectInfo<SocketAddr>,
     headers: HeaderMap,
     Json(input): Json<AuthInput>,
 ) -> Result<Response, ApiError> {
+    enforce_auth_rate(&state, &headers, peer, "register", 10)?;
     if !validate_auth(&input) {
         record_auth_event(
             &state,
@@ -38,17 +41,11 @@ pub(crate) async fn register(
     }
     let password_hash =
         bcrypt_hash(&input.password, DEFAULT_COST).map_err(|_| ApiError::server())?;
-    let role = if input.username.trim() == "admin" {
-        "admin"
-    } else {
-        "student"
-    };
     let row = sqlx::query(
-        "INSERT INTO users (username, password_hash, role, last_login_at) VALUES ($1, $2, $3, now()) RETURNING id, username, role, created_at, last_login_at",
+        "INSERT INTO users (username, password_hash, role, last_login_at) VALUES ($1, $2, 'student', now()) RETURNING id, username, role, created_at, last_login_at",
     )
     .bind(input.username.trim())
     .bind(password_hash)
-    .bind(role)
     .fetch_optional(&state.db)
     .await;
 
@@ -105,9 +102,11 @@ pub(crate) async fn register(
 
 pub(crate) async fn login(
     State(state): State<SharedState>,
+    ConnectInfo(peer): ConnectInfo<SocketAddr>,
     headers: HeaderMap,
     Json(input): Json<AuthInput>,
 ) -> Result<Response, ApiError> {
+    enforce_auth_rate(&state, &headers, peer, "login", 10)?;
     if !validate_auth(&input) {
         record_auth_event(
             &state,

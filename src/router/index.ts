@@ -1,11 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import type { CourseContent } from '../data/course-content'
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    course?: CourseContent
+    courseLoadFailed?: boolean
+    title?: string
+  }
+}
+
+const loadCourseView = () => import('../views/CourseView.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, _from, savedPosition) {
     if (savedPosition) return savedPosition
-    if (to.hash) return { el: to.hash, top: 92, behavior: 'smooth' }
+    const target = to.hash ? document.getElementById(to.hash.slice(1)) : null
+    if (target) return { el: target, top: 92 }
     return { top: 0 }
   },
   routes: [
@@ -85,12 +97,14 @@ const router = createRouter({
     {
       path: '/courses/:courseId',
       name: 'course',
-      component: () => import('../views/CourseView.vue'),
+      component: loadCourseView,
+      props: (route) => ({ course: route.meta.course, loadFailed: route.meta.courseLoadFailed }),
     },
     {
       path: '/courses/:courseId/:section(.*)*',
       name: 'course-section',
-      component: () => import('../views/CourseView.vue'),
+      component: loadCourseView,
+      props: (route) => ({ course: route.meta.course, loadFailed: route.meta.courseLoadFailed }),
     },
     {
       path: '/:pathMatch(.*)*',
@@ -100,8 +114,26 @@ const router = createRouter({
   ],
 })
 
+router.beforeEach(async (to, from) => {
+  if (to.name !== 'course' && to.name !== 'course-section') return
+  const courseId = String(to.params.courseId)
+  if (from.meta.course?.id === courseId) {
+    to.meta.course = from.meta.course
+    return
+  }
+  const result = import('../data/course-content')
+    .then(({ loadCourseContent }) => loadCourseContent(courseId))
+    .catch(() => {
+      to.meta.courseLoadFailed = true
+    })
+  const [course] = await Promise.all([result, loadCourseView()])
+  if (course) to.meta.course = course
+})
+
 router.afterEach((to) => {
-  const title = typeof to.meta.title === 'string' ? to.meta.title : '期末复习笔记'
+  const title = to.meta.course
+    ? `${to.meta.course.name}｜期末复习笔记`
+    : (to.meta.title ?? '期末复习笔记')
   document.title = title
 })
 

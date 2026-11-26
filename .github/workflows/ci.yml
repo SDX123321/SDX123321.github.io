@@ -53,6 +53,20 @@ jobs:
       - run: cargo fmt --manifest-path server-rs/Cargo.toml -- --check
       - run: cargo clippy --manifest-path server-rs/Cargo.toml --all-targets
       - run: cargo test --manifest-path server-rs/Cargo.toml --all-targets
+      - name: Initialize database through the API
+        run: |
+          cargo build --manifest-path server-rs/Cargo.toml --bin exam-review-api
+          server-rs/target/debug/exam-review-api > /tmp/exam-review-api.log 2>&1 &
+          api_pid=$!
+          trap 'kill "$api_pid" 2>/dev/null || true' EXIT
+          if ! curl --fail --silent --retry 15 --retry-connrefused --retry-delay 1 http://127.0.0.1:8787/health/ready; then
+            if kill -0 "$api_pid" 2>/dev/null; then
+              echo "API started but did not become ready."
+            else
+              echo "API exited before becoming ready."
+            fi
+            exit 1
+          fi
       - run: cargo run --manifest-path server-rs/Cargo.toml --bin migrate
       - run: cargo install cargo-llvm-cov --locked
       - run: cargo llvm-cov --manifest-path server-rs/Cargo.toml --all-features --lcov --output-path coverage/rust-lcov.info

@@ -12,7 +12,6 @@ import {
 } from 'lucide-vue-next'
 import { useRoute } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
-// 工作台样式只在进入 /workspace 路由时加载，不再随首页首屏打包
 import '../styles/workspace.css'
 
 const route = useRoute()
@@ -23,9 +22,13 @@ const domainKey = computed(() => String(route.params.domain || 'high-school'))
 const domain = computed(() => domains.value.find((item) => item.key === domainKey.value))
 
 onMounted(async () => {
-  await auth.refresh()
-  const response = await fetch('/api/domains')
-  if (response.ok) domains.value = (await response.json()).domains || []
+  void auth.refresh()
+  try {
+    const response = await fetch('/api/domains')
+    if (response.ok) domains.value = (await response.json()).domains || []
+  } catch {
+    domains.value = []
+  }
 })
 </script>
 

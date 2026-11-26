@@ -4,6 +4,7 @@
  * 显示键盘快捷键帮助弹窗，支持 T 切换主题、Ctrl+K 聚焦搜索。
  */
 import { ref, onMounted, onUnmounted } from 'vue'
+import { Keyboard } from 'lucide-vue-next'
 import { useTheme } from '../../composables/useTheme'
 
 const { toggleTheme } = useTheme()
@@ -47,7 +48,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
   <Teleport to="body">
     <div v-if="showHelp" class="ks-overlay" @click.self="showHelp = false">
       <div class="ks-panel">
-        <h3 class="ks-title">⌨ 快捷键</h3>
+        <h3 class="ks-title"><Keyboard :size="18" /> 快捷键</h3>
         <ul class="ks-list">
           <li v-for="s in SHORTCUTS" :key="s.key" class="ks-item">
             <span class="ks-desc">{{ s.desc }}</span>
