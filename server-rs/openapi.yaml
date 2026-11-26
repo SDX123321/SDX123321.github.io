@@ -76,9 +76,9 @@ paths:
                   type: array
                   uniqueItems: true
                   items: { type: string, enum: [grade-1, grade-2, grade-3] }
-                subject: { type: string, nullable: true }
+                subject: { type: [string, 'null'] }
       responses:
-        '200': { description: NDJSON source, reasoning, delta, metrics, gate and completion events }
+        '200': { description: "NDJSON source, reasoning, delta, metrics, gate and completion events" }
         '401': { description: Authentication required }
   /api/high-school/rag/search:
     get:
@@ -91,6 +91,8 @@ paths:
       tags: [Knowledge]
       summary: Preview the first extracted text chunk of a material
       security: [{ cookieAuth: [] }]
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
         '200': { description: Material text preview }
         '401': { description: Authentication required }
@@ -115,7 +117,10 @@ paths:
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
-        '200': { description: Graph metadata including sourceRevision and sources; nodes include formulas, sourcePages, sourceLocator, methods, mistakes, questionTypes and nullable material-backed source ids }
+        '200':
+          description: >-
+            Graph metadata including sourceRevision and sources. Nodes include formulas, sourcePages,
+            sourceLocator, methods, mistakes, questionTypes and nullable material-backed source ids.
         '404': { description: Graph not found }
   /api/knowledge/graphs/current:
     get:
