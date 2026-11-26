@@ -41,6 +41,6 @@ tower-http = { version = "0.6", features = ["cors"] }
 uuid = { version = "1.11", features = ["serde", "v4"] }
 walkdir = "2.5"
 regex = "1.10"
-zip = { version = "2.1", default-features = false, features = ["deflate"] }
-lopdf = { version = "0.33", default-features = false, features = ["pom_parser"] }
+zip = { version = "9.0", default-features = false, features = ["deflate"] }
+lopdf = { version = "0.34", default-features = false, features = ["pom_parser"] }
 quick-xml = "0.36"
